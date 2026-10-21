@@ -1,0 +1,10 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>settings</title><link rel="stylesheet" href="webview.css"><link rel="stylesheet" id="theme" href="theme-dark.css"></head><body>
+<div id="app"></div>
+<script>window.acquireVsCodeApi=()=>({postMessage(){}})</script><script src="settings.js"></script>
+<script>const b=(k,t,d,v,m)=>({key:'rizomadb.'+k,title:t,description:d,kind:'boolean',value:v,modified:!!m});
+window.dispatchEvent(new MessageEvent('message',{data:{v:1,type:'load',language:'es',groups:[
+{id:'language',title:'Language',items:[{key:'rizomadb.language',title:'Extension language',description:'Language of the screens: `auto` follows VS Code.',kind:'choice',value:'auto',modified:false,options:['auto','en','es']}]},
+{id:'results',title:'Results',items:[{key:'rizomadb.results.location',title:'Where results open',description:'Bottom half, whole area or beside.',kind:'choice',value:'bottom',modified:false,options:['bottom','full','beside']}]},
+{id:'security',title:'Security',items:[b('security.confirmDestructive','Confirm destructive statements','Ask before DROP or DELETE.',true),b('security.prodReadOnlyByDefault','Production is read-only by default','New prod connections start read-only.',false,true)]},
+{id:'query',title:'Queries',items:[{key:'rizomadb.query.maxRows',title:'Maximum rows per result',description:'Rows kept in memory.',kind:'number',value:10000,modified:false,min:1},{key:'rizomadb.query.timeoutSeconds',title:'Query timeout (seconds)',description:'0 means no limit.',kind:'number',value:0,modified:false,min:0}]},
+{id:'ai',title:'AI assistant',items:[b('ai.enabled','Enable AI assistance','Off by default; schema only.',false),{key:'rizomadb.ai.provider',title:'AI provider',description:'Which API to call.',kind:'choice',value:'anthropic',modified:true,options:['openai-compatible','anthropic']},{key:'rizomadb.ai.endpoint',title:'AI endpoint',description:'Base URL.',kind:'text',value:'http://localhost:11434/v1',modified:false},{key:'rizomadb.policy.team',title:'Team policy',description:'Object setting.',kind:'object',value:'',modified:false}]}]}}));</script></body></html>

@@ -60,7 +60,7 @@
     "viewsWelcome": [
       {
         "view": "rizomadb.connections",
-        "contents": "%welcome%\n[%cmd.newConnection%](command:rizomadb.newConnection)"
+        "contents": "%welcome%"
       }
     ],
     "commands": [
@@ -101,7 +101,8 @@
       {
         "command": "rizomadb.openTable",
         "title": "%cmd.openTable%",
-        "category": "RizomaDB"
+        "category": "RizomaDB",
+        "icon": "$(go-to-file)"
       },
       {
         "command": "rizomadb.openHistory",
@@ -327,7 +328,36 @@
       {
         "command": "rizomadb.importConnections",
         "title": "%cmd.importConnections%",
+        "category": "RizomaDB",
+        "icon": "$(cloud-download)"
+      },
+      {
+        "command": "rizomadb.openSettings",
+        "title": "%cmd.openSettings%",
+        "category": "RizomaDB",
+        "icon": "$(gear)"
+      },
+      {
+        "command": "rizomadb.runAt",
+        "title": "%cmd.runAt%",
         "category": "RizomaDB"
+      },
+      {
+        "command": "rizomadb.explainAt",
+        "title": "%cmd.explainAt%",
+        "category": "RizomaDB"
+      },
+      {
+        "command": "rizomadb.runAll",
+        "title": "%cmd.runAll%",
+        "category": "RizomaDB",
+        "icon": "$(run-all)"
+      },
+      {
+        "command": "rizomadb.openGuide",
+        "title": "%cmd.openGuide%",
+        "category": "RizomaDB",
+        "icon": "$(book)"
       }
     ],
     "menus": {
@@ -346,9 +376,34 @@
           "command": "rizomadb.importConnections",
           "when": "view == rizomadb.connections",
           "group": "navigation@3"
+        },
+        {
+          "command": "rizomadb.openGuide",
+          "when": "view == rizomadb.connections",
+          "group": "navigation@5"
+        },
+        {
+          "command": "rizomadb.openSettings",
+          "when": "view == rizomadb.connections",
+          "group": "navigation@4"
         }
       ],
       "view/item/context": [
+        {
+          "command": "rizomadb.newQuery",
+          "when": "view == rizomadb.connections && viewItem == connection",
+          "group": "inline@1"
+        },
+        {
+          "command": "rizomadb.refresh",
+          "when": "view == rizomadb.connections && (viewItem == connection || viewItem == schema || viewItem == category)",
+          "group": "inline@2"
+        },
+        {
+          "command": "rizomadb.openTable",
+          "when": "view == rizomadb.connections && viewItem =~ /^table/",
+          "group": "inline@1"
+        },
         {
           "command": "rizomadb.newQuery",
           "when": "view == rizomadb.connections && viewItem == connection"
@@ -519,6 +574,67 @@
     "configuration": {
       "title": "RizomaDB",
       "properties": {
+        "rizomadb.language": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "en",
+            "es"
+          ],
+          "default": "auto",
+          "description": "%cfg.language%"
+        },
+        "rizomadb.environments": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "type": "object",
+            "required": [
+              "name"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "pattern": "^[a-z0-9-]{1,24}$"
+              },
+              "protection": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "confirm",
+                  "readOnly"
+                ],
+                "default": "none"
+              }
+            }
+          },
+          "description": "%cfg.environments%"
+        },
+        "rizomadb.editor.codeLens": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "%cfg.codeLens%"
+        },
+        "rizomadb.editor.highlightStatement": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "%cfg.highlightStatement%"
+        },
+        "rizomadb.explorer.groupByFamily": {
+          "type": "boolean",
+          "default": true,
+          "description": "%cfg.groupByFamily%"
+        },
+        "rizomadb.results.location": {
+          "type": "string",
+          "enum": [
+            "bottom",
+            "full",
+            "beside"
+          ],
+          "default": "bottom",
+          "description": "%cfg.resultsLocation%"
+        },
         "rizomadb.security.confirmDestructive": {
           "type": "boolean",
           "default": true,
@@ -529,9 +645,15 @@
           "default": true,
           "markdownDescription": "%cfg.prodReadOnly%"
         },
+        "rizomadb.query.pageSize": {
+          "type": "number",
+          "default": 1000,
+          "minimum": 10,
+          "markdownDescription": "%cfg.pageSize%"
+        },
         "rizomadb.query.maxRows": {
           "type": "number",
-          "default": 10000,
+          "default": 100000,
           "minimum": 1,
           "markdownDescription": "%cfg.maxRows%"
         },
@@ -551,6 +673,11 @@
           "default": 90,
           "minimum": 1,
           "markdownDescription": "%cfg.retention%"
+        },
+        "rizomadb.edit.applyImmediately": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "%cfg.applyImmediately%"
         },
         "rizomadb.table.openRows": {
           "type": "number",
@@ -697,6 +824,75 @@
         "scopeName": "source.rizomadb-cypher",
         "path": "./syntaxes/cypher.tmLanguage.json"
       }
+    ],
+    "walkthroughs": [
+      {
+        "id": "rizomadb.getStarted",
+        "title": "%walk.title%",
+        "description": "%walk.description%",
+        "steps": [
+          {
+            "id": "connect",
+            "title": "%walk.connect.title%",
+            "description": "%walk.connect.desc%",
+            "media": {
+              "image": "media/icon.png",
+              "altText": "RizomaDB"
+            },
+            "completionEvents": [
+              "onCommand:rizomadb.newConnection"
+            ]
+          },
+          {
+            "id": "explore",
+            "title": "%walk.explore.title%",
+            "description": "%walk.explore.desc%",
+            "media": {
+              "image": "media/icon.png",
+              "altText": "RizomaDB"
+            },
+            "completionEvents": [
+              "onView:rizomadb.connections"
+            ]
+          },
+          {
+            "id": "query",
+            "title": "%walk.query.title%",
+            "description": "%walk.query.desc%",
+            "media": {
+              "image": "media/icon.png",
+              "altText": "RizomaDB"
+            },
+            "completionEvents": [
+              "onCommand:rizomadb.newQuery"
+            ]
+          },
+          {
+            "id": "edit",
+            "title": "%walk.edit.title%",
+            "description": "%walk.edit.desc%",
+            "media": {
+              "image": "media/icon.png",
+              "altText": "RizomaDB"
+            },
+            "completionEvents": [
+              "onCommand:rizomadb.openGuide"
+            ]
+          },
+          {
+            "id": "settings",
+            "title": "%walk.settings.title%",
+            "description": "%walk.settings.desc%",
+            "media": {
+              "image": "media/icon.png",
+              "altText": "RizomaDB"
+            },
+            "completionEvents": [
+              "onCommand:rizomadb.openSettings"
+            ]
+          }
+        ]
+      }
     ]
   },
   "scripts": {
@@ -704,7 +900,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
     "test:e2e": "node e2e/run.mjs",
-    "package": "pnpm build && vsce package --no-dependencies"
+    "package": "turbo run build --filter=rizomadb && vsce package --no-dependencies"
   },
   "dependencies": {
     "@rizomadb/admin": "workspace:*",
@@ -720,6 +916,7 @@
     "@rizomadb/driver-firestore": "workspace:*",
     "@rizomadb/driver-influxdb": "workspace:*",
     "@rizomadb/driver-influxdb3": "workspace:*",
+    "@rizomadb/driver-hydradb": "workspace:*",
     "@rizomadb/driver-neo4j": "workspace:*",
     "@rizomadb/driver-trino": "workspace:*",
     "@rizomadb/driver-mongodb": "workspace:*",

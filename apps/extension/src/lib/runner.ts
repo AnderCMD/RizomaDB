@@ -8,6 +8,8 @@ export type RunEvent =
   | { type: "error"; kind: string; message: string; position?: number };
 
 export interface RunOptions {
+  /** Rows to read and drop before the first one shown: how the next page of a result is reached on every engine. */
+  skip?: number;
   conn: Connection;
   profile: ConnectionProfile;
   sql: string;
@@ -50,16 +52,18 @@ export async function runStatement(o: RunOptions): Promise<RunOutcome> {
   const onAbort = () => ac.abort();
   o.signal.addEventListener("abort", onAbort, { once: true });
   const timer = o.timeoutMs ? setTimeout(() => { timedOut = true; ac.abort(); }, o.timeoutMs) : undefined;
-  let rowCount = 0;
+  let rowCount = 0, toSkip = o.skip ?? 0;
   try {
-    for await (const ev of o.conn.execute({ sql: o.sql, ...(o.params ? { params: o.params } : {}), maxRows: o.maxRows + 1 }, ac.signal)) {
+    for await (const ev of o.conn.execute({ sql: o.sql, ...(o.params ? { params: o.params } : {}), maxRows: toSkip + o.maxRows + 1 }, ac.signal)) {
       if (ev.type === "columns") o.onEvent({ type: "start", sql: o.sql, columns: ev.columns });
       else if (ev.type === "rows") {
+        let batch = ev.rows;
+        if (toSkip > 0) { const drop = Math.min(toSkip, batch.length); batch = batch.slice(drop); toSkip -= drop; }
         const room = o.maxRows - rowCount;
-        const slice = ev.rows.length > room ? ev.rows.slice(0, room) : ev.rows;
+        const slice = batch.length > room ? batch.slice(0, room) : batch;
         rowCount += slice.length;
         if (slice.length) o.onEvent({ type: "rows", rows: slice });
-        if (ev.rows.length > room) { ac.abort(); throw new DriverError("cancelled", "row limit"); }
+        if (batch.length > room) { ac.abort(); throw new DriverError("cancelled", "row limit"); }
       } else if (ev.type === "done") {
         o.onEvent({ type: "done", rowCount, durationMs: ev.durationMs, truncated: false, ...(ev.affectedRows !== undefined ? { affectedRows: ev.affectedRows } : {}) });
       }

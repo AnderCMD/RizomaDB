@@ -1,5 +1,7 @@
 import { tr } from "./i18n.js";
+import { enableTips } from "./ui.js";
 
+enableTips();
 declare function acquireVsCodeApi(): { postMessage(m: unknown): void };
 
 interface Node { label: string; detail?: string; rows?: number; actualRows?: number; cost?: number; timeMs?: number; children: Node[]; slow?: boolean }

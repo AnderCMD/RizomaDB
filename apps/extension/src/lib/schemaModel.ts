@@ -30,19 +30,23 @@ export function missingFkIndexes(m: SchemaModel): MissingIndex[] {
   return out;
 }
 
-export function describeChanges(from: SchemaModel, to: SchemaModel): string[] {
+export interface ChangeLabels { table: string; column: string; index: string; foreignKey: string; primaryKeyOf: string; on: string }
+const EN: ChangeLabels = { table: "table", column: "column", index: "index", foreignKey: "foreign key", primaryKeyOf: "primary key of", on: "on" };
+
+/** One line per difference, with the words of the UI language (English by default). */
+export function describeChanges(from: SchemaModel, to: SchemaModel, L: ChangeLabels = EN): string[] {
   return diffModels(from, to).changes.map((c) => {
     switch (c.kind) {
-      case "create-table": return `+ table ${c.table.name}`;
-      case "drop-table": return `- table ${c.table.name}`;
-      case "add-column": return `+ column ${c.table.name}.${c.column.name} ${c.column.type}`;
-      case "drop-column": return `- column ${c.table.name}.${c.column.name}`;
-      case "alter-column": return `~ column ${c.table.name}.${c.to.name} (${c.what.join(", ")})`;
-      case "add-index": return `+ index ${c.index.name} on ${c.table.name}`;
-      case "drop-index": return `- index ${c.name} on ${c.table.name}`;
-      case "add-fk": return `+ foreign key ${c.fk.name} on ${c.table.name}`;
-      case "drop-fk": return `- foreign key ${c.name} on ${c.table.name}`;
-      case "change-pk": return `~ primary key of ${c.table.name}`;
+      case "create-table": return `+ ${L.table} ${c.table.name}`;
+      case "drop-table": return `- ${L.table} ${c.table.name}`;
+      case "add-column": return `+ ${L.column} ${c.table.name}.${c.column.name} ${c.column.type}`;
+      case "drop-column": return `- ${L.column} ${c.table.name}.${c.column.name}`;
+      case "alter-column": return `~ ${L.column} ${c.table.name}.${c.to.name} (${c.what.join(", ")})`;
+      case "add-index": return `+ ${L.index} ${c.index.name} ${L.on} ${c.table.name}`;
+      case "drop-index": return `- ${L.index} ${c.name} ${L.on} ${c.table.name}`;
+      case "add-fk": return `+ ${L.foreignKey} ${c.fk.name} ${L.on} ${c.table.name}`;
+      case "drop-fk": return `- ${L.foreignKey} ${c.name} ${L.on} ${c.table.name}`;
+      case "change-pk": return `~ ${L.primaryKeyOf} ${c.table.name}`;
     }
   });
 }

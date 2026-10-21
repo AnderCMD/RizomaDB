@@ -7,8 +7,9 @@ import { explain } from "@rizomadb/sql";
 import type { ConnectionManager } from "../lib/connections.js";
 import { DIALECT_OF, type SchemaCache } from "../lib/schemaCache.js";
 import type { Node } from "./explorer.js";
+import { t } from "../i18n.js";
+import { friendly } from "./driverMessages.js";
 
-const t = vscode.l10n.t;
 const KEY = "rizomadb/ai/apiKey";
 
 interface Deps { ctx: vscode.ExtensionContext; mgr: ConnectionManager; cache: SchemaCache; reg: (id: string, fn: (...a: never[]) => unknown) => void; pick: () => Promise<string | undefined>; bind: (d: vscode.TextDocument) => Promise<string | undefined> }
@@ -44,7 +45,7 @@ export function registerAiCommands({ ctx, mgr, cache, reg, pick, bind }: Deps) {
       });
     } catch (e) {
       if (e instanceof AiDeclinedError || e instanceof AiDisabledError) return undefined;
-      void vscode.window.showErrorMessage(t("AI request failed: {0}", (e as Error).message)); return undefined;
+      void vscode.window.showErrorMessage(t("AI request failed: {0}", friendly((e as Error).message))); return undefined;
     }
   }
 

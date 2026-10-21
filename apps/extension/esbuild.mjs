@@ -22,7 +22,7 @@ await build({
   ...common, entryPoints: ["src/ui/webview/plan.ts"], outfile: "dist/plan.js",
   platform: "browser", format: "iife", target: "es2022",
 });
-for (const name of ["er", "designer", "metrics"]) {
+for (const name of ["er", "designer", "metrics", "connect", "settings", "history", "guide"]) {
   await build({ ...common, entryPoints: [`src/ui/webview/${name}.ts`], outfile: `dist/${name}.js`, platform: "browser", format: "iife", target: "es2022" });
 }
 cpSync("src/ui/webview/webview.css", "dist/webview.css");

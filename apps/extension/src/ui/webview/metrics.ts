@@ -1,3 +1,5 @@
+import { enableTips } from "./ui.js";
+enableTips();
 declare function acquireVsCodeApi(): { postMessage(m: unknown): void };
 
 interface Def { name: string; label: string; kind: string }

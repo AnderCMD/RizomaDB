@@ -1,4 +1,4 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><title>metrics</title><link rel="stylesheet" href="webview.css"><link rel="stylesheet" id="theme" href="theme-dark.css"></head><body>
-<header><h1 id="title"></h1></header><main><div id="charts"></div><div id="live" class="sr-only" aria-live="polite"></div></main>
+<header class="tb hdr"><h1 id="title"></h1></header><main><div id="charts"></div><div id="live" class="sr-only" aria-live="polite"></div></main>
 <script>window.acquireVsCodeApi=()=>({postMessage(){}})</script><script src="metrics.js"></script>
 <script>const defs=[{name:'connections',label:'Connections',kind:'gauge'},{name:'tps',label:'Transactions/s',kind:'counter'},{name:'hit',label:'Cache hit ratio',kind:'ratio'}];for(let i=0;i<20;i++)window.dispatchEvent(new MessageEvent('message',{data:{v:1,type:'sample',title:'shop',defs,values:{connections:3+i%4,tps:10+i,hit:97.5},t:i}}));</script></body></html>

@@ -6,8 +6,9 @@ import { formatValue } from "../lib/format.js";
 import { commandAt } from "../lib/commandAt.js";
 import type { ConnectionManager } from "../lib/connections.js";
 import type { Node } from "./explorer.js";
+import { t } from "../i18n.js";
+import { friendly } from "./driverMessages.js";
 
-const t = vscode.l10n.t;
 const sig = () => new AbortController().signal;
 
 interface Deps { mgr: ConnectionManager; policy: () => EffectivePolicy; reg: (id: string, fn: (...a: never[]) => unknown) => void; refresh: () => void; bind: (d: vscode.TextDocument) => Promise<string | undefined> }
@@ -22,11 +23,11 @@ export function registerNoSqlCommands({ mgr, policy, reg, refresh, bind }: Deps)
   const guarded = async (n: Extract<Node, { kind: "table" }>, command: string, what: string) => {
     const profile = n.profile; const plugin = await mgr.loadDriver(profile.driver);
     const d = decideEffective(command, { environment: profile.environment, readOnly: mgr.isReadOnly(profile) }, policy(), plugin.assess);
-    if (!d.allowed) { void vscode.window.showErrorMessage(d.reason ?? t("Blocked by policy")); return false; }
+    if (!d.allowed) { void vscode.window.showErrorMessage(d.reason ? friendly(d.reason) : t("Blocked by policy")); return false; }
     const ok = await vscode.window.showWarningMessage(t("[{0}] {1}: {2}", profile.environment.toUpperCase(), profile.name, what), { modal: true, detail: command }, t("Run"));
     if (!ok) return false;
     try { await exec(await mgr.connect(profile.id), command); refresh(); return true; }
-    catch (e) { void vscode.window.showErrorMessage(t("Command failed: {0}", (e as Error).message)); return false; }
+    catch (e) { void vscode.window.showErrorMessage(t("Command failed: {0}", friendly((e as Error).message))); return false; }
   };
 
   reg("rizomadb.mongo.analyzeSchema", async (n?: Node) => {
@@ -34,7 +35,7 @@ export function registerNoSqlCommands({ mgr, policy, reg, refresh, bind }: Deps)
     const conn = await mgr.connect(tb.profile.id);
     const cmd = `db.getSiblingDB(${JSON.stringify(tb.schema ?? "test")}).getCollection(${JSON.stringify(tb.name)}).aggregate([{ "$sample": { "size": 1000 } }])`;
     const docs = docsOf(await vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: t("Sampling {0}…", tb.name) }, () => exec(conn, cmd)));
-    await vscode.window.showTextDocument(await vscode.workspace.openTextDocument({ language: "markdown", content: analysisMarkdown(`${tb.schema ?? ""}.${tb.name}`, analyzeDocuments(docs)) }), { preview: false });
+    await vscode.window.showTextDocument(await vscode.workspace.openTextDocument({ language: "markdown", content: analysisMarkdown(`${tb.schema ?? ""}.${tb.name}`, analyzeDocuments(docs), { title: (n) => t("Schema analysis: {0}", n), sampled: (n) => t("Sampled {0} documents.", n), field: t("Field"), presentIn: t("Present in"), types: t("Types (occurrences)") }) }), { preview: false });
   });
 
   reg("rizomadb.mongo.previewPipeline", async () => {

@@ -1,6 +1,8 @@
 import { HostToDesigner, type DesignTable } from "../../designMessages.js";
+import { enableTips, iconButton } from "./ui.js";
 import { tr as msg } from "./i18n.js";
 
+enableTips();
 declare function acquireVsCodeApi(): { postMessage(m: unknown): void };
 const vscode = acquireVsCodeApi();
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
@@ -20,18 +22,18 @@ const cell = (...c: Node[]) => { const td = el("td"); td.append(...c); return td
 
 function colRow(c: { name: string; type: string; nullable: boolean; default?: string; identity?: boolean }, pk: boolean) {
   const tr = el("tr");
-  const rm = el("button", { type: "button", "aria-label": msg("Remove column") }, "✕");
+  const rm = iconButton("trash", msg("Remove column"));
   rm.addEventListener("click", () => tr.remove());
-  tr.append(cell(input(c.name, msg("Column name"), "c-name")), cell(input(c.type, "Type", "c-type")), cell(check(!c.nullable, "NOT NULL")), cell(check(pk, msg("Primary key"))), cell(input(c.default ?? "", msg("Default (SQL expression)"), "c-def")), cell(check(!!c.identity, msg("Auto-increment"))), cell(rm));
+  tr.append(cell(input(c.name, msg("Column name"), "c-name")), cell(input(c.type, msg("Type"), "c-type")), cell(check(!c.nullable, "NOT NULL")), cell(check(pk, msg("Primary key"))), cell(input(c.default ?? "", msg("Default (SQL expression)"), "c-def")), cell(check(!!c.identity, msg("Auto-increment"))), cell(rm));
   (tr.querySelectorAll("input[type=text]")[1] as HTMLInputElement).setAttribute("list", "types");
   return tr;
 }
 function idxRow(i: { name: string; columns: string[]; unique: boolean }) {
-  const tr = el("tr"); const rm = el("button", { type: "button", "aria-label": msg("Remove index") }, "✕"); rm.addEventListener("click", () => tr.remove());
+  const tr = el("tr"); const rm = iconButton("trash", msg("Remove index")); rm.addEventListener("click", () => tr.remove());
   tr.append(cell(input(i.name, msg("Index name"))), cell(input(i.columns.join(", "), msg("Index columns, comma separated"))), cell(check(i.unique, "Unique")), cell(rm)); return tr;
 }
 function fkRow(f: { name: string; columns: string[]; refTable: string; refColumns: string[] }) {
-  const tr = el("tr"); const rm = el("button", { type: "button", "aria-label": msg("Remove foreign key") }, "✕"); rm.addEventListener("click", () => tr.remove());
+  const tr = el("tr"); const rm = iconButton("trash", msg("Remove foreign key")); rm.addEventListener("click", () => tr.remove());
   tr.append(cell(input(f.name, msg("Constraint name"))), cell(input(f.columns.join(", "), "Columns")), cell(input(f.refTable, msg("Referenced table"))), cell(input(f.refColumns.join(", "), "Referenced columns")), cell(rm)); return tr;
 }
 

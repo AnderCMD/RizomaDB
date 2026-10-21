@@ -6,8 +6,9 @@ import { Admin, MetricSampler, grantStatement, providers, snapshotToRecord, type
 import { i18nBlock } from "./webviewStrings.js";
 import type { ConnectionManager } from "../lib/connections.js";
 import type { Node } from "./explorer.js";
+import { t, effectiveLanguage } from "../i18n.js";
+import { friendly } from "./driverMessages.js";
 
-const t = vscode.l10n.t;
 const ENGINES = new Set(["postgres", "mysql", "mssql", "oracle"]);
 
 interface Deps {
@@ -27,7 +28,7 @@ export function registerAdminCommands({ ctx, mgr, policy, pick, reg, show }: Dep
     for (const s of statements) {
       const d = decideEffective(s, { environment: profile.environment, readOnly: mgr.isReadOnly(profile) }, policy());
       // administrative statements are never "reads"; a read-only connection or prod policy must stop them
-      if (!d.allowed || mgr.isReadOnly(profile)) { void vscode.window.showErrorMessage(d.reason ?? t("This connection is read-only.")); return false; }
+      if (!d.allowed || mgr.isReadOnly(profile)) { void vscode.window.showErrorMessage(d.reason ? friendly(d.reason) : t("This connection is read-only.")); return false; }
     }
     const ok = await vscode.window.showWarningMessage(t("[{0}] {1}: {2}", profile.environment.toUpperCase(), profile.name, what), { modal: true, detail: `${statements.join("\n")}${note ? `\n\n${note}` : ""}` }, t("Run"));
     return ok !== undefined;
@@ -44,7 +45,7 @@ export function registerAdminCommands({ ctx, mgr, policy, pick, reg, show }: Dep
     const pickV = await vscode.window.showQuickPick([...views.map(([label, , f], i) => ({ label: t(label), i, f })), { label: t("Live metrics"), i: -1, f: undefined }], { title: t("Administration: {0}", x.profile.name) }); if (!pickV) return;
     if (pickV.i === -1) { await vscode.commands.executeCommand("rizomadb.admin.metrics", n); return; }
     try { const table = await pickV.f!(x.admin); show(`${x.profile.name} — ${views[pickV.i]![1]}`, table); }
-    catch (e) { void vscode.window.showErrorMessage(t("Could not read this information (it may need elevated privileges): {0}", (e as Error).message)); }
+    catch (e) { void vscode.window.showErrorMessage(t("Could not read this information (it may need elevated privileges): {0}", friendly((e as Error).message))); }
   });
 
   reg("rizomadb.admin.kill", async (n?: Node) => {
@@ -58,7 +59,7 @@ export function registerAdminCommands({ ctx, mgr, policy, pick, reg, show }: Dep
       if (hard === undefined) return;
       const stmts = x.admin.killStatements(pickS.id, hard);
       if (await guarded(x.profile, stmts, t("end session {0}?", pickS.id))) { await run(x.id, stmts); void vscode.window.showInformationMessage(t("Done.")); }
-    } catch (e) { void vscode.window.showErrorMessage(t("Failed: {0}", (e as Error).message)); }
+    } catch (e) { void vscode.window.showErrorMessage(t("Failed: {0}", friendly((e as Error).message))); }
   });
 
   reg("rizomadb.admin.setVariable", async (n?: Node) => {
@@ -69,7 +70,7 @@ export function registerAdminCommands({ ctx, mgr, policy, pick, reg, show }: Dep
       const val = await vscode.window.showInputBox({ title: t("New value for {0}", pickV.label), value: pickV.description, ignoreFocusOut: true }); if (val === undefined) return;
       const plan = x.admin.setVariableStatements(pickV.label, val);
       if (await guarded(x.profile, plan.statements, t("change server setting {0}?", pickV.label), plan.note)) { await run(x.id, plan.statements); void vscode.window.showInformationMessage(t("Setting changed.")); }
-    } catch (e) { void vscode.window.showErrorMessage(t("Failed: {0}", (e as Error).message)); }
+    } catch (e) { void vscode.window.showErrorMessage(t("Failed: {0}", friendly((e as Error).message))); }
   });
 
   reg("rizomadb.admin.privileges", async (n?: Node) => {
@@ -79,7 +80,7 @@ export function registerAdminCommands({ ctx, mgr, policy, pick, reg, show }: Dep
       const pickR = await vscode.window.showQuickPick(roles.rows.map((r) => ({ label: String(r[0]), description: r.length > 1 ? String(r[1] ?? "") : "" })), { title: t("Role or user") }); if (!pickR) return;
       const role = x.profile.driver === "mysql" ? `${pickR.label}@${pickR.description || "%"}` : pickR.label;
       show(`${x.profile.name} — ${t("Effective privileges of {0}", pickR.label)}`, await x.admin.privileges(role));
-    } catch (e) { void vscode.window.showErrorMessage(t("Failed: {0}", (e as Error).message)); }
+    } catch (e) { void vscode.window.showErrorMessage(t("Failed: {0}", friendly((e as Error).message))); }
   });
 
   reg("rizomadb.admin.grant", async (n?: Node) => {
@@ -92,17 +93,17 @@ export function registerAdminCommands({ ctx, mgr, policy, pick, reg, show }: Dep
       const [a, b] = obj.includes(".") ? obj.split(".") : [undefined, obj];
       const sql = grantStatement(x.profile.driver as Engine, action as "GRANT" | "REVOKE", priv, { ...(a ? { schema: a } : {}), name: b! }, role);
       await vscode.window.showTextDocument(await vscode.workspace.openTextDocument({ language: "sql", content: `-- ${t("Review, then run with the editor connected to {0}", x.profile.name)}\n${sql};\n` }), { preview: false });
-    } catch (e) { void vscode.window.showErrorMessage((e as Error).message); }
+    } catch (e) { void vscode.window.showErrorMessage(friendly((e as Error).message)); }
   });
 
   reg("rizomadb.admin.metrics", async (n?: Node) => {
     const x = await target(n); if (!x) return;
     const root = vscode.Uri.joinPath(ctx.extensionUri, "dist");
-    const panel = vscode.window.createWebviewPanel("rizomadb.metrics", `Metrics: ${x.profile.name}`, vscode.ViewColumn.Active, { enableScripts: true, localResourceRoots: [root] });
+    const panel = vscode.window.createWebviewPanel("rizomadb.metrics", t("Metrics: {0}", x.profile.name), vscode.ViewColumn.Active, { enableScripts: true, localResourceRoots: [root] });
     const nonce = randomBytes(16).toString("base64"), w = panel.webview;
-    w.html = `<!doctype html><html lang="${vscode.env.language}"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${w.cspSource}; script-src 'nonce-${nonce}';">
+    w.html = `<!doctype html><html lang="${effectiveLanguage()}"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${w.cspSource}; script-src 'nonce-${nonce}';">
 <link rel="stylesheet" href="${w.asWebviewUri(vscode.Uri.joinPath(root, "webview.css"))}"><title>Metrics</title></head>
-<body><header><h1 id="title"></h1></header><main><div id="charts"></div><div id="live" class="sr-only" aria-live="polite"></div></main>
+<body><header class="tb hdr"><h1 id="title"></h1></header><main><div id="charts"></div><div id="live" class="sr-only" aria-live="polite"></div></main>
 ${i18nBlock()}<script nonce="${nonce}" src="${w.asWebviewUri(vscode.Uri.joinPath(root, "metrics.js"))}"></script></body></html>`;
     const defs = providers[x.profile.driver as Engine].metricDefs, sampler = new MetricSampler(defs);
     let busy = false;

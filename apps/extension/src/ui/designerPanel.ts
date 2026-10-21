@@ -6,6 +6,8 @@ import { createScript, diffModels, migrationStatements, type ColumnM, type Diale
 import { i18nBlock } from "./webviewStrings.js";
 import { DesignerToHost, type DesignTable } from "../designMessages.js";
 import type { ConnectionManager } from "../lib/connections.js";
+import { t, effectiveLanguage } from "../i18n.js";
+import { friendly } from "./driverMessages.js";
 
 const TYPES: Record<string, string[]> = {
   sqlite: ["INTEGER", "TEXT", "REAL", "NUMERIC", "BLOB"],
@@ -15,7 +17,7 @@ const TYPES: Record<string, string[]> = {
   oracle: ["NUMBER(10)", "NUMBER(19)", "NUMBER(10,2)", "VARCHAR2(255)", "CLOB", "DATE", "TIMESTAMP", "RAW(16)", "BLOB"],
 };
 // Engines where DDL participates in transactions (others commit each statement implicitly).
-const TRANSACTIONAL_DDL = new Set(["postgres", "mssql", "sqlite"]);
+export const TRANSACTIONAL_DDL = new Set(["postgres", "mssql", "sqlite"]);
 
 const toTable = (d: DesignTable): TableM => ({
   name: d.name, columns: d.columns.map((c): ColumnM => ({ name: c.name, type: c.type, nullable: c.nullable && !d.primaryKey.includes(c.name), ...(c.default ? { default: c.default } : {}), ...(c.identity ? { identity: true } : {}) })),
@@ -23,11 +25,11 @@ const toTable = (d: DesignTable): TableM => ({
 });
 
 export function openDesigner(ctx: vscode.ExtensionContext, mgr: ConnectionManager, policy: () => EffectivePolicy, profileId: string, current: SchemaModel, existingName?: string, onApplied?: () => void) {
-  const profile = mgr.get(profileId)!, dialect = profile.driver as Dialect, t = vscode.l10n.t;
+  const profile = mgr.get(profileId)!, dialect = profile.driver as Dialect;
   const root = vscode.Uri.joinPath(ctx.extensionUri, "dist");
-  const panel = vscode.window.createWebviewPanel("rizomadb.designer", existingName ? `Table: ${existingName}` : "New table", vscode.ViewColumn.Active, { enableScripts: true, localResourceRoots: [root] });
+  const panel = vscode.window.createWebviewPanel("rizomadb.designer", existingName ? t("Table: {0}", existingName) : t("New table"), vscode.ViewColumn.Active, { enableScripts: true, localResourceRoots: [root] });
   const nonce = randomBytes(16).toString("base64"), w = panel.webview;
-  w.html = `<!doctype html><html lang="${vscode.env.language}"><head><meta charset="utf-8">
+  w.html = `<!doctype html><html lang="${effectiveLanguage()}"><head><meta charset="utf-8">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${w.cspSource}; script-src 'nonce-${nonce}';">
 <link rel="stylesheet" href="${w.asWebviewUri(vscode.Uri.joinPath(root, "webview.css"))}"><title>Designer</title></head>
 <body><main><form class="designer" onsubmit="return false"><h1 id="heading"></h1>
@@ -81,7 +83,7 @@ ${i18nBlock()}<script nonce="${nonce}" src="${w.asWebviewUri(vscode.Uri.joinPath
       onApplied?.();
     } catch (e) {
       await tx?.rollback().catch(() => {});
-      post({ v: 1, type: "result", ok: false, message: tx ? t("Failed, everything was rolled back: {0}", (e as Error).message) : t("Failed after {0} statement(s) (this engine commits DDL implicitly): {1}", n, (e as Error).message) });
+      post({ v: 1, type: "result", ok: false, message: tx ? t("Failed, everything was rolled back: {0}", friendly((e as Error).message)) : t("Failed after {0} statement(s) (this engine commits DDL implicitly): {1}", n, (e as Error).message) });
     }
   });
 }

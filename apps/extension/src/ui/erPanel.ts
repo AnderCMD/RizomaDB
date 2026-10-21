@@ -4,6 +4,8 @@ import { writeFile } from "node:fs/promises";
 import { i18nBlock } from "./webviewStrings.js";
 import { layoutEr, toMermaid, toPlantUml, toSvg, type SchemaModel } from "@rizomadb/schema-tools";
 import * as z from "zod/mini";
+import { t, effectiveLanguage } from "../i18n.js";
+import { iconBtn } from "./iconHtml.js";
 
 const FromWebview = z.discriminatedUnion("type", [
   z.object({ v: z.literal(1), type: z.literal("export"), format: z.enum(["svg", "mermaid", "plantuml"]) }),
@@ -12,14 +14,12 @@ const FromWebview = z.discriminatedUnion("type", [
 
 export function showEr(ctx: vscode.ExtensionContext, title: string, model: SchemaModel, only?: Set<string>) {
   const root = vscode.Uri.joinPath(ctx.extensionUri, "dist");
-  const panel = vscode.window.createWebviewPanel("rizomadb.er", `ER: ${title}`, vscode.ViewColumn.Active, { enableScripts: true, localResourceRoots: [root] });
-  const nonce = randomBytes(16).toString("base64"), w = panel.webview, t = vscode.l10n.t;
-  w.html = `<!doctype html><html lang="${vscode.env.language}"><head><meta charset="utf-8">
+  const panel = vscode.window.createWebviewPanel("rizomadb.er", t("ER: {0}", title), vscode.ViewColumn.Active, { enableScripts: true, localResourceRoots: [root] });
+  const nonce = randomBytes(16).toString("base64"), w = panel.webview;
+  w.html = `<!doctype html><html lang="${effectiveLanguage()}"><head><meta charset="utf-8">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${w.cspSource}; script-src 'nonce-${nonce}'; img-src data:;">
 <link rel="stylesheet" href="${w.asWebviewUri(vscode.Uri.joinPath(root, "webview.css"))}"><title>ER</title></head>
-<body><header><h1 id="title"></h1>
-<button id="zin" aria-label="${t("Zoom in")}">+</button><button id="zout" aria-label="${t("Zoom out")}">−</button><button id="zfit">${t("Fit")}</button>
-<button id="x-svg">SVG</button><button id="x-png">PNG</button><button id="x-mermaid">Mermaid</button><button id="x-plantuml">PlantUML</button></header>
+<body><header class="tb hdr"><h1 id="title"></h1><span class="grow"></span>${iconBtn("zin", "plus", t("Zoom in"))}${iconBtn("zout", "minus", t("Zoom out"))}${iconBtn("zfit", "fit", t("Fit"))}<span class="sep" aria-hidden="true"></span>${iconBtn("x-svg", "image", t("Export as SVG"))}${iconBtn("x-png", "image", t("Export as PNG"))}${iconBtn("x-mermaid", "code", t("Export as Mermaid"))}${iconBtn("x-plantuml", "code", t("Export as PlantUML"))}</header>
 <main><svg id="svg" role="group" aria-label="${t("Entity-relationship diagram")}"><defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs><g id="viewport"></g></svg>
 <div id="live" class="sr-only" aria-live="polite"></div></main>
 ${i18nBlock()}<script nonce="${nonce}" src="${w.asWebviewUri(vscode.Uri.joinPath(root, "er.js"))}"></script></body></html>`;

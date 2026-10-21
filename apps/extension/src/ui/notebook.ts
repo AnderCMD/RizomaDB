@@ -6,9 +6,9 @@ import { formatValue } from "../lib/format.js";
 import { DIALECT_OF } from "../lib/schemaCache.js";
 import type { ConnectionManager } from "../lib/connections.js";
 import type { EffectivePolicy } from "@rizomadb/core";
+import { t } from "../i18n.js";
 
 const TYPE = "rizomadb-sql-notebook";
-const t = vscode.l10n.t;
 
 export function registerNotebooks(ctx: vscode.ExtensionContext, mgr: ConnectionManager, policy: () => EffectivePolicy, cfg: () => vscode.WorkspaceConfiguration, pick: () => Promise<string | undefined>) {
   ctx.subscriptions.push(vscode.workspace.registerNotebookSerializer(TYPE, {
@@ -62,7 +62,7 @@ export function registerNotebooks(ctx: vscode.ExtensionContext, mgr: ConnectionM
             },
           });
           if (out.status !== "ok") { ok = false; outputs.push(new vscode.NotebookCellOutput([vscode.NotebookCellOutputItem.error(new Error(errMsg ?? out.error ?? out.status))])); break; }
-          outputs.push(new vscode.NotebookCellOutput([vscode.NotebookCellOutputItem.text(cols.length ? tableHtml(cols, rows, `${out.rowCount} rows · ${Math.round(out.durationMs)} ms${truncated || out.rowCount > 1000 ? " · showing first 1000" : ""}`) : `<p>${affected ?? 0} rows affected · ${Math.round(out.durationMs)} ms</p>`, "text/html")]));
+          outputs.push(new vscode.NotebookCellOutput([vscode.NotebookCellOutputItem.text(cols.length ? tableHtml(cols, rows, `${t("{0} rows · {1} ms", out.rowCount, Math.round(out.durationMs))}${truncated || out.rowCount > 1000 ? ` · ${t("showing first 1000")}` : ""}`) : `<p>${t("{0} rows affected · {1} ms", affected ?? 0, Math.round(out.durationMs))}</p>`, "text/html")]));
         }
       } catch (e) { ok = false; outputs.push(new vscode.NotebookCellOutput([vscode.NotebookCellOutputItem.error(e as Error)])); }
       await exec.replaceOutput(outputs);

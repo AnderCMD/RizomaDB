@@ -1,5 +1,5 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><title>plan</title><link rel="stylesheet" href="webview.css"><link rel="stylesheet" id="theme" href="theme-dark.css"></head><body>
-<header><h1 id="title">Plan</h1><span id="summary" role="status"></span></header>
+<header class="tb hdr"><h1 id="title">Plan</h1><span id="summary" role="status" class="chip"></span></header>
 <main><ul id="tree" role="tree" aria-label="Execution plan"></ul><details><summary>Raw plan</summary><pre id="raw"></pre></details></main>
 <script>window.acquireVsCodeApi=()=>({postMessage(){}})</script><script src="plan.js"></script>
 <script>window.dispatchEvent(new MessageEvent('message',{data:{v:1,type:'plan',title:'shop',analyzed:true,totalCost:500,executionMs:81,raw:'raw',root:[{label:'Hash Join',cost:500,rows:100,actualRows:90,timeMs:80,detail:'cond',children:[{label:'Seq Scan on orders',cost:400,rows:1000,timeMs:70,slow:true,children:[]},{label:'Hash',cost:5,children:[{label:'Index Scan on customers',cost:4,children:[]}]}]}]}}));</script></body></html>

@@ -19,6 +19,7 @@ const drivers: Record<string, () => Promise<DriverPlugin>> = {
   influxdb: async () => (await import("@rizomadb/driver-influxdb")).influxdbDriver,
   dynamodb: async () => (await import("@rizomadb/driver-dynamodb")).dynamodbDriver,
   neo4j: async () => (await import("@rizomadb/driver-neo4j")).neo4jDriver,
+  hydradb: async () => (await import("@rizomadb/driver-hydradb")).hydradbDriver,
   duckdb: async () => {
     try { return (await import("@rizomadb/driver-duckdb")).duckdbDriver; }
     catch (e) { throw new DriverError("unsupported", `DuckDB is not included in this build (its native library is platform-specific): ${(e as Error).message}`); }

@@ -241,6 +241,9 @@ importers:
       '@rizomadb/driver-firestore':
         specifier: workspace:*
         version: link:../../packages/drivers/firestore
+      '@rizomadb/driver-hydradb':
+        specifier: workspace:*
+        version: link:../../packages/drivers/hydradb
       '@rizomadb/driver-influxdb':
         specifier: workspace:*
         version: link:../../packages/drivers/influxdb
@@ -451,6 +454,16 @@ importers:
         version: 4.10.2
 
   packages/drivers/firestore:
+    dependencies:
+      '@rizomadb/driver-api':
+        specifier: workspace:*
+        version: link:../../driver-api
+    devDependencies:
+      fast-check:
+        specifier: 4.10.2
+        version: 4.10.2
+
+  packages/drivers/hydradb:
     dependencies:
       '@rizomadb/driver-api':
         specifier: workspace:*

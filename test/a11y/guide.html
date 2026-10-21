@@ -1,0 +1,9 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>guide</title><link rel="stylesheet" href="webview.css"><link rel="stylesheet" id="theme" href="theme-dark.css"></head><body>
+<div id="app"></div>
+<script>window.acquireVsCodeApi=()=>({postMessage(){}})</script><script src="guide.js"></script>
+<script>const s=(id,icon,title,points,actions=[],tip)=>({id,icon,title,lead:'Lead text for '+title,points,actions,...(tip?{tip}:{})});
+window.dispatchEvent(new MessageEvent('message',{data:{v:1,type:'load',current:'connect',done:['welcome'],steps:[
+s('welcome','plug','Welcome to RizomaDB',['It works with many engines.','Nothing is sent anywhere.'],[{id:'showView',label:'Show the connections view',icon:'rows'}]),
+s('connect','plus','1. Create a connection',['The form already has the usual values.','Choose the environment.'],[{id:'newConnection',label:'Open New connection',icon:'plus'}],'Passwords are never written to your settings files.'),
+s('tree','rows','2. Find your way around the tree',['A dot marks the connection in use.']),
+s('done','check','You are ready',['Hover any icon to read what it does.'])]}}));</script></body></html>

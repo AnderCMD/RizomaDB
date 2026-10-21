@@ -14,6 +14,21 @@ import { Explorer, type Node } from "./ui/explorer.js";
 import { ResultsPanel } from "./ui/resultsPanel.js";
 import { InputError, TableSession } from "./lib/tableSession.js";
 import { newConnectionWizard } from "./ui/wizard.js";
+import { openConnectionScreen } from "./ui/connectionPanel.js";
+import { openSettingsScreen } from "./ui/settingsPanel.js";
+import { runColumnAction } from "./ui/columnActions.js";
+import { engineOf } from "./ui/explorer.js";
+import { ENGINE_LOGOS } from "./engineLogos.js";
+import { tableProperties } from "./lib/tableProperties.js";
+import { openHistoryScreen } from "./ui/historyPanel.js";
+import { customEnvironmentPolicy } from "./lib/environments.js";
+import { databaseOf } from "./lib/connectionInfo.js";
+import { friendly, friendlyReasons } from "./ui/driverMessages.js";
+import { registerEditorTools } from "./ui/editorTools.js";
+import { statementRanges } from "./lib/statements.js";
+import { openGuide, offerGuideOnce } from "./ui/guidePanel.js";
+import { logoSvg } from "./lib/logoSvg.js";
+import { mkdirSync, writeFileSync, existsSync } from "node:fs";
 import { registerLanguage } from "./ui/language.js";
 import { PlanPanel } from "./ui/planPanel.js";
 import { registerNotebooks } from "./ui/notebook.js";
@@ -36,8 +51,8 @@ import { homedir } from "node:os";
 import { HostKeyError, formatEntry, openTunnel } from "@rizomadb/network";
 import { exportResult, maskFor, type ExportFormat } from "@rizomadb/data-tools";
 import { workerDriver } from "./worker/workerDriver.js";
+import { t, initI18n } from "./i18n.js";
 
-const t = vscode.l10n.t;
 const cfg = () => vscode.workspace.getConfiguration("rizomadb");
 
 // Drivers load lazily so activation stays cheap.
@@ -59,11 +74,14 @@ function makeRegistry(workerFile: string): DriverRegistry {
     influxdb: async () => workerDriver((await import("@rizomadb/driver-influxdb/meta")).meta, workerFile),
     dynamodb: async () => workerDriver((await import("@rizomadb/driver-dynamodb/meta")).meta, workerFile),
     neo4j: async () => workerDriver((await import("@rizomadb/driver-neo4j/meta")).meta, workerFile),
+    hydradb: async () => workerDriver((await import("@rizomadb/driver-hydradb/meta")).meta, workerFile),
     duckdb: async () => workerDriver((await import("@rizomadb/driver-duckdb/meta")).meta, workerFile),
   };
 }
 
 export async function activate(ctx: vscode.ExtensionContext) {
+  ctx.subscriptions.push(initI18n(ctx));
+  ctx.subscriptions.push(vscode.workspace.onDidChangeConfiguration((e) => { if (e.affectsConfiguration("rizomadb.language")) void vscode.commands.executeCommand("rizomadb.refresh"); }));
   const secrets: SecretStore = {
     get: async (k) => ctx.secrets.get(k),
     set: async (k, v) => ctx.secrets.store(k, v),
@@ -79,7 +97,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
       ...(vscode.workspace.isTrusted ? folders.map((f) => ({ label: `project ${f.name}`, path: join(f.uri.fsPath, ".rizomadb", "policy.json") })) : []),
       { label: "user", path: join(ctx.globalStorageUri.fsPath, "policy.json") },
     ];
-    const r = await loadPolicy({ builtinProdReadOnly: cfg().get<boolean>("security.prodReadOnlyByDefault", true), files, inline: [{ label: "team (settings)", value: cfg().get("policy.team") }] });
+    const r = await loadPolicy({ builtinProdReadOnly: cfg().get<boolean>("security.prodReadOnlyByDefault", true), files, inline: [{ label: "team (settings)", value: cfg().get("policy.team") }, { label: "environments (settings)", value: customEnvironmentPolicy(cfg().get("environments")) }] });
     effective = r.policy;
     policyOutput.clear();
     policyOutput.appendLine(r.loaded.length ? `Policy layers loaded: ${r.loaded.join(", ")}` : "Policy: built-in defaults only.");
@@ -91,7 +109,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
   const audit = new AuditLog({ file: cfg().get<string>("audit.path") || join(ctx.globalStorageUri.fsPath, "audit.jsonl"), includeValues: cfg().get<boolean>("audit.includeValues", false) });
   pendingAudit = audit;
   const approve = async (name: string, reason: string, statement: string) => {
-    const typed = await vscode.window.showInputBox({ title: t("Approval required on {0}", name), prompt: t("{0}\n\n{1}\n\nType the connection name to approve.", reason, statement.slice(0, 300)), ignoreFocusOut: true });
+    const typed = await vscode.window.showInputBox({ title: t("Approval required on {0}", name), prompt: t("{0}\n\n{1}\n\nType the connection name to approve.", friendlyReasons(reason), statement.slice(0, 300)), ignoreFocusOut: true });
     return typed?.trim() === name;
   };
   const knownHostsFile = join(ctx.globalStorageUri.fsPath, "known_hosts");
@@ -132,24 +150,87 @@ export async function activate(ctx: vscode.ExtensionContext) {
   function watcher2(fn: () => Promise<void>) { const w = vscode.workspace.createFileSystemWatcher("**/.rizomadb/connections.json"); w.onDidChange(() => void fn()); w.onDidCreate(() => void fn()); w.onDidDelete(() => void fn()); vscode.workspace.onDidGrantWorkspaceTrust(() => void fn()); return w; }
   const watcher = vscode.workspace.createFileSystemWatcher("**/.rizomadb/{policy,connections}.json");
   ctx.subscriptions.push(watcher, watcher.onDidChange(() => void reloadPolicy()), watcher.onDidCreate(() => void reloadPolicy()), watcher.onDidDelete(() => void reloadPolicy()),
-    vscode.workspace.onDidGrantWorkspaceTrust(() => void reloadPolicy()), vscode.workspace.onDidChangeConfiguration((e) => { if (e.affectsConfiguration("rizomadb.security") || e.affectsConfiguration("rizomadb.policy")) void reloadPolicy(); }));
+    vscode.workspace.onDidGrantWorkspaceTrust(() => void reloadPolicy()), vscode.workspace.onDidChangeConfiguration((e) => { if (e.affectsConfiguration("rizomadb.security") || e.affectsConfiguration("rizomadb.environments") || e.affectsConfiguration("rizomadb.policy")) void reloadPolicy(); }));
   const history = new History(join(ctx.globalStorageUri.fsPath, "history.jsonl"));
   void history.prune(cfg().get<number>("history.retentionDays", 90));
 
   const explorer = new Explorer(mgr);
+  // The connection in use: the one bound to the active query editor, else the last one that ran something.
+  let lastUsedId: string | undefined;
+  const activeEmitter = new vscode.EventEmitter<void>();
+  const activeId = (): string | undefined => {
+    const ed = vscode.window.activeTextEditor;
+    const bound = ed && isQueryLanguage(ed.document.languageId) ? ctx.workspaceState.get<string>(`doc:${ed.document.uri.toString()}`) : undefined;
+    const id = bound && mgr.get(bound) ? bound : lastUsedId;
+    return id && mgr.get(id) ? id : undefined;
+  };
+  explorer.activeId = activeId;
   let running: AbortController | undefined;
-  let session: { s: TableSession; profileId: string; refresh: () => Promise<void> } | undefined;
+  type TableRef = { schema?: string; name: string; isView?: boolean };
+  let lastRun: { id: string; sql: string; title: string; edit?: { target: EditTarget } | undefined; params?: Value[] | undefined; table?: TableRef | undefined; loaded?: number } | undefined;
+  let lastRaw: Value[][] = [];
+  let session: { s: TableSession; profileId: string; refresh: () => Promise<unknown> } | undefined;
   const results = new ResultsPanel(ctx, (m) => void onWebviewMessage(m));
   const notice = (level: "error" | "info", text: string) => results.post({ v: 1, type: "notice", level, text });
   const pushPending = () => { if (session) results.post({ v: 1, type: "pending", ...session.s.view(), inserts: session.s.view().inserts.map((r) => r.map((x) => ({ set: x !== undefined, text: x ?? null }))) }); };
 
   async function onWebviewMessage(m: import("./messages.js").WebviewToHost) {
     if (m.type === "cancel") { running?.abort(); return; }
+    if (m.type === "openText") {
+      const doc = await vscode.workspace.openTextDocument({ language: "sql", content: m.text });
+      if (lastRun) await ctx.workspaceState.update(`doc:${doc.uri.toString()}`, lastRun.id);
+      await vscode.window.showTextDocument(doc, { viewColumn: vscode.ViewColumn.One });
+      return;
+    }
+    if (m.type === "loadProperties") {
+      const run = lastRun; if (!run?.table) return;
+      const empty = { columns: [], indexes: [], foreignKeys: [], referencedBy: [], ddl: "" };
+      try {
+        const conn = await mgr.connect(run.id);
+        results.post({ v: 1, type: "properties", ok: true, ...(await tableProperties(conn, mgr.get(run.id)!.driver, run.table)) });
+      } catch (e) { results.post({ v: 1, type: "properties", ok: false, error: (e as Error).message, ...empty }); }
+      return;
+    }
+    if (m.type === "showEr") {
+      const run = lastRun; const p = run && mgr.get(run.id); if (!run?.table || !p) return;
+      await vscode.commands.executeCommand("rizomadb.showER", { kind: "table", profile: p, ...(run.table.schema ? { schema: run.table.schema } : {}), name: run.table.name, isView: !!run.table.isView });
+      return;
+    }
+    if (m.type === "openRelated") {
+      const run = lastRun; const p = run && mgr.get(run.id); if (!p) return;
+      await vscode.commands.executeCommand("rizomadb.openTable", { kind: "table", profile: p, ...(m.schema ? { schema: m.schema } : {}), name: m.name, isView: false });
+      return;
+    }
+    if (m.type === "openSql") {
+      if (!lastRun) return;
+      const doc = await vscode.workspace.openTextDocument({ language: "sql", content: lastRun.sql });
+      await ctx.workspaceState.update(`doc:${doc.uri.toString()}`, lastRun.id);
+      await vscode.window.showTextDocument(doc, { viewColumn: vscode.ViewColumn.One, preserveFocus: false });
+      return;
+    }
+    if (m.type === "refresh") { if (lastRun) await execute(lastRun.id, lastRun.sql, lastRun.title, lastRun.edit, lastRun.params, lastRun.table, lastRun.loaded ? { skip: 0, size: lastRun.loaded } : undefined); return; }
+    if (m.type === "loadMore") {
+      const run = lastRun; if (!run) return;
+      if (session && session.s.pending.count > 0) { notice("error", t("Apply or discard your changes before loading more rows.")); return; }
+      const cap = cfg().get<number>("query.maxRows", 100000), loaded = run.loaded ?? 0;
+      const size = m.mode === "all" ? cap - loaded : cfg().get<number>("query.pageSize", 1000);
+      if (size <= 0) return;
+      await execute(run.id, run.sql, run.title, run.edit, run.params, run.table, { skip: loaded, size });
+      return;
+    }
+    if (m.type === "columnAction") {
+      const run = lastRun; if (!run?.table) return;
+      try {
+        await runColumnAction({ mgr, profileId: run.id, policy, afterApply: async () => { schemaCache.invalidate(run.id); lang.refreshAll(); void vscode.commands.executeCommand("rizomadb.refresh"); await execute(run.id, run.sql, run.title, run.edit, run.params, run.table); } }, run.table, m.action, m.column);
+      } catch (e) { void vscode.window.showErrorMessage(friendly((e as Error).message)); }
+      return;
+    }
     if (!session) return;
     const cur = session;
     try {
       if (m.type === "edit") cur.s.edit(m.row, m.col, m.text);
       else if (m.type === "toggleDelete") cur.s.toggleDelete(m.row);
+      else if (m.type === "setDeleted") { const has = new Set(cur.s.view().deletes); for (const r of m.rows) if (has.has(r) !== m.deleted) cur.s.toggleDelete(r); }
       else if (m.type === "insertRow") cur.s.insertRow();
       else if (m.type === "undo") cur.s.pending.undo();
       else if (m.type === "redo") cur.s.pending.redo();
@@ -158,8 +239,9 @@ export async function activate(ctx: vscode.ExtensionContext) {
       else if (m.type === "apply") { await applyPending(); return; }
       notice("info", "");
       pushPending();
+      if (m.type === "edit" && cfg().get<boolean>("edit.applyImmediately", false) && cur.s.pending.count > 0) await applyPending(true);
     } catch (e) {
-      notice("error", e instanceof InputError || e instanceof EditError ? e.message : (e as Error).message);
+      notice("error", friendly(e instanceof InputError || e instanceof EditError ? e.message : (e as Error).message));
     }
   }
 
@@ -173,7 +255,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
     await vscode.window.showTextDocument(doc, { viewColumn: vscode.ViewColumn.Beside, preview: true });
   }
 
-  async function applyPending() {
+  async function applyPending(immediate = false) {
     if (!session || session.s.pending.count === 0) return;
     const cur = session;
     const profile = mgr.get(cur.profileId)!; const plugin = await mgr.loadDriver(profile.driver);
@@ -182,6 +264,8 @@ export async function activate(ctx: vscode.ExtensionContext) {
       const r = await applyChanges(cur.s.pending.toChanges(), {
         conn, plugin, target: cur.s.target, environment: profile.environment, readOnly: mgr.isReadOnly(profile), policy: policy(),
         confirm: async (stmts) => {
+          // "Save each edit immediately" skips the prompt only on dev: every other environment keeps asking.
+          if (immediate && profile.environment === "dev") return true;
           const prod = profile.environment === "prod" || profile.environment === "staging";
           const msg = t("[{0}] {1}: apply {2} change(s)?", profile.environment.toUpperCase(), profile.name, stmts.length);
           return (await vscode.window.showWarningMessage(msg, { modal: true, detail: stmts.map((x) => x.sql).join("\n").slice(0, 1500) }, prod ? t("Apply to {0}", profile.environment.toUpperCase()) : t("Apply"))) !== undefined;
@@ -207,12 +291,14 @@ export async function activate(ctx: vscode.ExtensionContext) {
   const planPanel = new PlanPanel(ctx);
   const lang = registerLanguage(ctx, mgr, schemaCache, docConn);
   registerNotebooks(ctx, mgr, policy, cfg, () => pickConnection());
+  const editorToolsRef: { current?: { refresh: () => void } } = {};
   const refreshStatus = () => {
-    const ed = vscode.window.activeTextEditor;
-    const p = ed && isQueryLanguage(ed.document.languageId) ? mgr.get(docConn(ed.document) ?? "") : undefined;
-    if (!ed || !isQueryLanguage(ed.document.languageId)) { status.hide(); return; }
-    status.text = p ? `$(database) [${p.environment.toUpperCase()}] ${p.name}${mgr.isReadOnly(p) ? " 🔒" : ""}` : `$(database) ${t("No connection")}`;
-    status.tooltip = t("Select connection for this editor");
+    explorer.refresh(); activeEmitter.fire(); editorToolsRef.current?.refresh();
+    const p = mgr.get(activeId() ?? "");
+    if (!p) { if (!mgr.list().length) { status.hide(); return; } status.text = `$(database) ${t("No connection")}`; status.tooltip = t("Select connection for this editor"); status.show(); return; }
+    const db = databaseOf(p), engine = engineOf(p)?.name ?? p.driver;
+    status.text = `$(database) [${p.environment.toUpperCase()}] ${p.name}${db ? ` · ${db}` : ""}${mgr.isReadOnly(p) ? " 🔒" : ""}${mgr.isConnected(p.id) ? "" : ` (${t("disconnected")})`}`;
+    status.tooltip = new vscode.MarkdownString(`**${p.name}** — ${engine}\n\n${db ? `${t("Database")}: \`${db}\`\n\n` : ""}${t("Environment")}: ${p.environment}${mgr.isReadOnly(p) ? ` · ${t("read-only")}` : ""}\n\n${t("Click to change the connection of this editor")}`);
     status.show();
   };
 
@@ -237,9 +323,11 @@ export async function activate(ctx: vscode.ExtensionContext) {
     return id;
   }
 
-  async function execute(id: string, sql: string, title: string, edit?: { target: EditTarget }, params?: Value[]) {
+  async function execute(id: string, sql: string, title: string, edit?: { target: EditTarget }, params?: Value[], tableRef?: TableRef, page?: { skip: number; size: number }): Promise<string | undefined> {
+    let result: string = "error";
     const profile = mgr.get(id);
     if (!profile) return;
+    lastUsedId = id; refreshStatus();
     if (running) { void vscode.window.showWarningMessage(t("A query is already running. Cancel it first.")); return; }
     const ac = new AbortController();
     running = ac;
@@ -247,17 +335,33 @@ export async function activate(ctx: vscode.ExtensionContext) {
     cancelItem.show();
     let columnsSeen = false;
     session = undefined;
+    const skip = page?.skip ?? 0, cap = cfg().get<number>("query.maxRows", 100000), pageSize = cfg().get<number>("query.pageSize", 1000);
+    const size = Math.max(1, Math.min(page?.size ?? (tableRef ? cfg().get<number>("table.openRows", 200) : pageSize), cap - skip));
+    lastRun = { id, sql, title, edit, params, table: tableRef, loaded: skip };
+    const tabIcon = (): { light: vscode.Uri; dark: vscode.Uri } | undefined => {
+      const eng = engineOf(profile), logo = eng ? ENGINE_LOGOS[eng.key] : undefined;
+      if (!eng || !logo || logo.wordmark) return undefined;
+      try {
+        const dir = join(ctx.globalStorageUri.fsPath, "icons"), file = (theme: "light" | "dark") => join(dir, `${eng.key}-${theme}.svg`);
+        for (const theme of ["light", "dark"] as const) if (!existsSync(file(theme))) { mkdirSync(dir, { recursive: true }); writeFileSync(file(theme), logoSvg(logo, eng.key, theme)); }
+        return { light: vscode.Uri.file(file("light")), dark: vscode.Uri.file(file("dark")) };
+      } catch { return undefined; }
+    };
+    const connectionInfo = () => { const eng = engineOf(profile); return { name: profile.name, environment: profile.environment, key: eng?.key ?? profile.driver, color: eng?.color ?? "#555555", fg: eng?.fg ?? "#ffffff", mark: eng?.mark ?? profile.driver.slice(0, 2), ...(eng && ENGINE_LOGOS[eng.key] ? { logo: ENGINE_LOGOS[eng.key]! } : {}) }; };
     let mask: ((r: Value[]) => Value[]) | undefined;
-    const rawRows: Value[][] = []; let cols: ColumnInfo[] = [];
+    const rawRows: Value[][] = skip > 0 ? lastRaw : []; lastRaw = rawRows; let cols: ColumnInfo[] = [];
     const emit = (e: RunEvent) => {
-      if (e.type === "start") { columnsSeen = true; cols = e.columns; mask = maskFor(policy().maskColumns, e.columns.map((c) => c.name)); if (mask) edit = undefined; results.post({ v: 1, type: "start", title, sql: e.sql, columns: e.columns, editable: !!edit }); }
+      if (e.type === "start") { columnsSeen = true; cols = e.columns; mask = maskFor(policy().maskColumns, e.columns.map((c) => c.name)); if (mask) edit = undefined; results.describe(tableRef ? `${profile.name}.${tableRef.name}` : `${profile.name} · ${title}`, tabIcon()); results.post({ v: 1, type: "start", title, sql: e.sql, columns: e.columns, editable: !!edit, ...(skip > 0 ? { append: true } : {}), connection: connectionInfo(), ...(edit ? { flags: { pk: edit.target.columns.filter((c) => c.primaryKey).map((c) => c.name), required: edit.target.columns.filter((c) => !c.nullable).map((c) => c.name) } } : {}), ...(tableRef ? { table: { name: tableRef.name, ...(tableRef.schema ? { schema: tableRef.schema } : {}), alter: !tableRef.isView && !mgr.isReadOnly(profile) && profile.driver in DIALECT_OF && ["sqlite", "postgres", "mysql", "mssql", "oracle"].includes(profile.driver) } } : {}) }); }
       else if (e.type === "rows") { const shown = mask ? e.rows.map(mask) : e.rows; if (edit) rawRows.push(...e.rows); results.post({ v: 1, type: "rows", rows: shown.map((r) => r.map(formatValue)) }); }
       else if (e.type === "done") {
         if (!columnsSeen) results.post({ v: 1, type: "start", title, sql: "", columns: [] });
-        results.post({ v: 1, ...e });
+        // "truncated" means the page was full and at least one more row exists: offer the next page unless the row cap is reached.
+        const loaded = skip + e.rowCount, capped = e.truncated && loaded >= cap;
+        if (lastRun) lastRun.loaded = loaded;
+        results.post({ v: 1, ...e, rowCount: e.affectedRows !== undefined ? e.rowCount : loaded, more: e.truncated && !capped, capped, next: Math.max(0, Math.min(pageSize, cap - loaded)) });
       } else {
         if (!columnsSeen) results.post({ v: 1, type: "start", title, sql: "", columns: [] });
-        results.post({ v: 1, type: "error", kind: e.kind, message: e.message, ...(e.position !== undefined ? { position: e.position } : {}) });
+        results.post({ v: 1, type: "error", kind: e.kind, message: friendly(e.message), ...(e.position !== undefined ? { position: e.position } : {}) });
       }
     };
     try {
@@ -266,19 +370,20 @@ export async function activate(ctx: vscode.ExtensionContext) {
       const timeout = cfg().get<number>("query.timeoutSeconds", 0);
       const out = await runStatement({
         conn, profile, sql, ...(params ? { params } : {}), ...(drv.assess ? { assess: drv.assess } : {}), signal: ac.signal, policy: policy(), readOnly: mgr.isReadOnly(profile),
-        maxRows: cfg().get<number>("query.maxRows", 10000), ...(timeout > 0 ? { timeoutMs: timeout * 1000 } : {}),
+        maxRows: size, ...(skip > 0 ? { skip } : {}), ...(timeout > 0 ? { timeoutMs: timeout * 1000 } : {}),
         confirmDestructive: cfg().get<boolean>("security.confirmDestructive", true),
         confirm: async (reason) => (await vscode.window.showWarningMessage(
-          t("[{0}] {1}: {2}", profile.environment.toUpperCase(), profile.name, reason), { modal: true, detail: sql.slice(0, 500) }, t("Run anyway"))) === t("Run anyway"),
+          t("[{0}] {1}: {2}", profile.environment.toUpperCase(), profile.name, friendlyReasons(reason)), { modal: true, detail: sql.slice(0, 500) }, t("Run anyway"))) === t("Run anyway"),
         onEvent: emit,
       });
+      result = out.status;
       if (out.status === "ok" && /^\s*(create|alter|drop|rename|truncate)\b/i.test(sql)) { schemaCache.invalidate(id); lang.refreshAll(); void vscode.commands.executeCommand("rizomadb.refresh"); }
       if (edit && out.status === "ok") {
         const ts = new TableSession(edit.target, cols, rawRows);
-        session = { s: ts, profileId: id, refresh: () => execute(id, sql, title, edit) };
+        session = { s: ts, profileId: id, refresh: () => execute(id, sql, title, edit, undefined, tableRef, lastRun?.loaded ? { skip: 0, size: lastRun.loaded } : undefined) };
         pushPending();
       }
-      if (cfg().get<boolean>("history.enabled", true)) {
+      if (cfg().get<boolean>("history.enabled", true) && skip === 0) {
         await history.add({ connectionId: id, connectionName: profile.name, environment: profile.environment, sql, durationMs: Math.round(out.durationMs), rowCount: out.rowCount, status: out.status, ...(out.error ? { error: out.error } : {}) });
       }
     } catch (e) {
@@ -288,6 +393,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
       running = undefined; cancelItem.hide();
       void vscode.commands.executeCommand("setContext", "rizomadb.running", false);
     }
+    return result;
   }
 
   /** Replaces :name / $1 / @name / ? placeholders with the driver's positional binds after asking for values. */
@@ -325,12 +431,13 @@ export async function activate(ctx: vscode.ExtensionContext) {
     return (fn as (...x: unknown[]) => unknown)(...a);
   }) as never));
 
-  reg("rizomadb.newConnection", async () => { await newConnectionWizard(mgr); });
+  reg("rizomadb.openSettings", async () => { openSettingsScreen(ctx); });
+  reg("rizomadb.newConnection", async () => { openConnectionScreen(ctx, mgr, { get: activeId, onChange: activeEmitter.event }); });
   reg("rizomadb.newQuery", async (n?: Node) => {
     const id = n && "profile" in n ? n.profile.id : await pickConnection();
     const plugin = id ? await mgr.loadDriver(mgr.get(id)!.driver) : undefined;
     const language = plugin?.language === "mongo" ? "rizomadb-mongo" : plugin?.language === "redis" ? "rizomadb-redis" : plugin?.language === "json" ? "rizomadb-es" : plugin?.language === "cypher" ? "rizomadb-cypher" : "sql";
-    const sample = language === "rizomadb-es" ? (plugin?.id === "firestore" ? "{ \"from\": \"collection\", \"limit\": 20 }\n" : "GET /_cluster/health\n") : language === "rizomadb-cypher" ? "// run with Ctrl/Cmd+Enter; end statements with ;\nMATCH (n) RETURN n LIMIT 25;\n" : language === "rizomadb-mongo" ? "db.getCollection(\"collection\").find({}).limit(20)\n" : language === "rizomadb-redis" ? "# one command per line; run with Ctrl/Cmd+Enter\nSCAN 0 MATCH * COUNT 100\n" : "";
+    const sample = language === "rizomadb-es" ? (plugin?.id === "firestore" ? "{ \"from\": \"collection\", \"limit\": 20 }\n" : "GET /_cluster/health\n") : language === "rizomadb-cypher" ? `// ${t("run with Ctrl/Cmd+Enter; end statements with ;")}\nMATCH (n) RETURN n LIMIT 25;\n` : language === "rizomadb-mongo" ? "db.getCollection(\"collection\").find({}).limit(20)\n" : language === "rizomadb-redis" ? `# ${t("one command per line; run with Ctrl/Cmd+Enter")}\nSCAN 0 MATCH * COUNT 100\n` : "";
     const doc = await vscode.workspace.openTextDocument({ language, content: sample });
     await vscode.window.showTextDocument(doc);
     if (id) await ctx.workspaceState.update(`doc:${doc.uri.toString()}`, id);
@@ -358,6 +465,34 @@ export async function activate(ctx: vscode.ExtensionContext) {
     const id = await bind(ed.document); if (!id) return;
     for (const s of stmts) { await execute(id, s.text, t("Query")); }
   });
+  /** Brings the document to the front with the cursor at `offset`, so the existing run/explain commands act on that statement. */
+  const focusAt = async (uri: string, offset: number) => {
+    const doc = await vscode.workspace.openTextDocument(vscode.Uri.parse(uri));
+    const col = vscode.window.visibleTextEditors.find((x) => x.document.uri.toString() === uri)?.viewColumn;
+    const ed = await vscode.window.showTextDocument(doc, { preview: false, ...(col ? { viewColumn: col } : {}) });
+    const pos = doc.positionAt(offset); ed.selection = new vscode.Selection(pos, pos);
+    return doc;
+  };
+  reg("rizomadb.runAt", async (uri: string, offset: number) => { await focusAt(uri, offset); await vscode.commands.executeCommand("rizomadb.runQuery"); });
+  reg("rizomadb.explainAt", async (uri: string, offset: number) => { await focusAt(uri, offset); await vscode.commands.executeCommand("rizomadb.explain"); });
+  reg("rizomadb.runAll", async (uri?: string) => {
+    const doc = uri ? await focusAt(uri, 0) : vscode.window.activeTextEditor?.document; if (!doc) return;
+    const stmts = statementRanges(doc.languageId, doc.getText());
+    if (!stmts.length) { void vscode.window.showInformationMessage(t("Nothing to run.")); return; }
+    const id = await bind(doc); if (!id) return;
+    const profile = mgr.get(id)!;
+    if (stmts.length > 1 && profile.environment !== "dev") {
+      const go = t("Run {0} statements", stmts.length);
+      if ((await vscode.window.showWarningMessage(t("[{0}] {1}: run {2} statements in order?", profile.environment.toUpperCase(), profile.name, stmts.length), { modal: true }, go)) !== go) return;
+    }
+    for (let i = 0; i < stmts.length; i++) {
+      const bound = await promptParameters(id, stmts[i]!.text); if (!bound) return;
+      const status = await execute(id, bound.sql, t("Statement {0} of {1}", i + 1, stmts.length), undefined, bound.params);
+      if (status !== "ok") { void vscode.window.showWarningMessage(t("Stopped at statement {0} of {1}.", i + 1, stmts.length)); return; }
+    }
+    void vscode.window.setStatusBarMessage(t("Ran {0} statements.", stmts.length), 4000);
+  });
+  reg("rizomadb.openGuide", async (step?: string) => { openGuide(ctx, typeof step === "string" ? step : undefined); });
   reg("rizomadb.cancelQuery", () => running?.abort());
   reg("rizomadb.openTable", async (n: Node) => {
     if (n.kind !== "table") return;
@@ -371,7 +506,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
       if (info.columns?.some((c) => c.primaryKey)) edit = { target: { ...(n.schema ? { schema: n.schema } : {}), table: n.name, columns: info.columns } };
     }
     const limit = cfg().get<number>("table.openRows", 200);
-    await execute(profile.id, plugin.openCommand ? plugin.openCommand({ ...(n.schema ? { schema: n.schema } : {}), name: n.name }, limit) : plugin.selectTop(name, limit), n.name, edit);
+    await execute(profile.id, plugin.openCommand ? plugin.openCommand({ ...(n.schema ? { schema: n.schema } : {}), name: n.name }, limit) : plugin.selectTop(name, limit), n.name, edit, undefined, { name: n.name, ...(n.schema ? { schema: n.schema } : {}), isView: !!n.isView });
     if (!edit) notice("info", n.isView ? t("Views are read-only.") : mgr.isReadOnly(profile) ? t("Read-only connection: editing is disabled.") : t("This table has no primary key, so its rows cannot be edited safely."));
   });
   reg("rizomadb.export", async (n?: Node) => {
@@ -411,7 +546,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
       });
       void vscode.window.showInformationMessage(t("Exported {0} rows to {1}", r.rows, uri.fsPath));
     } catch (e) {
-      if ((e as Error).name !== "AbortError") void vscode.window.showErrorMessage(t("Export failed: {0}", (e as Error).message));
+      if ((e as Error).name !== "AbortError") void vscode.window.showErrorMessage(t("Export failed: {0}", friendly((e as Error).message)));
     }
   });
   const connOf = async (n?: Node) => (n && "profile" in n ? n.profile.id : await pickConnection());
@@ -430,7 +565,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
       const model = await vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: t("Reading schema…") }, () => loadModel(mgr, id));
       const only = n?.kind === "table" ? new Set([n.name.toLowerCase(), ...model.tables.flatMap((x) => x.foreignKeys.flatMap((f) => (x.name.toLowerCase() === n.name.toLowerCase() ? [f.refTable.toLowerCase()] : f.refTable.toLowerCase() === n.name.toLowerCase() ? [x.name.toLowerCase()] : [])))]) : undefined;
       showEr(ctx, mgr.get(id)!.name, model, only);
-    } catch (e) { void vscode.window.showErrorMessage(t("Could not build the diagram: {0}", (e as Error).message)); }
+    } catch (e) { void vscode.window.showErrorMessage(t("Could not build the diagram: {0}", friendly((e as Error).message))); }
   });
   reg("rizomadb.designTable", async (n?: Node) => {
     const id = await sqlConnOf(n); if (!id) return;
@@ -440,7 +575,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
     try {
       const model = await loadModel(mgr, id);
       openDesigner(ctx, mgr, policy, id, model, n?.kind === "table" ? n.name : undefined, () => { schemaCache.invalidate(id); explorer.refresh(); });
-    } catch (e) { void vscode.window.showErrorMessage(t("Could not open the designer: {0}", (e as Error).message)); }
+    } catch (e) { void vscode.window.showErrorMessage(t("Could not open the designer: {0}", friendly((e as Error).message))); }
   });
   reg("rizomadb.exportSchemaSnapshot", async (n?: Node) => {
     const id = await sqlConnOf(n); if (!id) return;
@@ -468,7 +603,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
     const current = await loadModel(mgr, targetId);
     const plan = diffModels(current, source);
     if (plan.identical) { void vscode.window.showInformationMessage(t("Schemas are identical.")); return; }
-    const summary = describeChanges(current, source);
+    const summary = describeChanges(current, source, { table: t("table"), column: t("column"), index: t("index"), foreignKey: t("foreign key"), primaryKeyOf: t("primary key of"), on: t("on") });
     const picked = await vscode.window.showQuickPick(summary.map((label, i) => ({ label, picked: true, i })), { canPickMany: true, title: t("{0} difference(s): choose what to include", summary.length) });
     if (!picked?.length) return;
     const chosen = plan.changes.filter((_, i) => picked.some((p) => p.i === i));
@@ -489,7 +624,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
     const id = await sqlConnOf(n); if (!id) return;
     const model = await loadModel(mgr, id); const missing = missingFkIndexes(model);
     if (!missing.length) { void vscode.window.showInformationMessage(t("Every foreign key is covered by an index.")); return; }
-    const lines = missing.map((m) => { const tb = model.tables.find((x) => x.name === m.table)!; return `-- ${m.table}.${m.fk}: joins and cascades on ${m.columns.join(", ")} scan the whole table\n${renderScript([{ sql: createIndex(model.dialect, tb, { name: `ix_${m.table}_${m.columns.join("_")}`.slice(0, 60), columns: m.columns, unique: false }) }]).trim()}`; });
+    const lines = missing.map((m) => { const tb = model.tables.find((x) => x.name === m.table)!; return `-- ${t("{0}.{1}: joins and cascades on {2} scan the whole table", m.table, m.fk, m.columns.join(", "))}\n${renderScript([{ sql: createIndex(model.dialect, tb, { name: `ix_${m.table}_${m.columns.join("_")}`.slice(0, 60), columns: m.columns, unique: false }) }]).trim()}`; });
     await doc(`-- ${t("Suggested indexes (review before running)")}\n\n${lines.join("\n\n")}\n`);
   });
   const showTable = (title: string, table: { columns: string[]; rows: Value[][] }) => {
@@ -556,19 +691,23 @@ export async function activate(ctx: vscode.ExtensionContext) {
       const sqlText = bound.sql;
       const plan = await vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: t("Planning…") }, () => explain(conn, profile.driver as never, sqlText, { analyze: analyze === true }));
       planPanel.show(`${profile.name}`, plan);
-    } catch (e) { void vscode.window.showErrorMessage(t("Could not get a plan: {0}", (e as Error).message)); }
+    } catch (e) { void vscode.window.showErrorMessage(t("Could not get a plan: {0}", friendly((e as Error).message))); }
   });
   reg("rizomadb.openHistory", async () => {
-    const items = await history.list({ limit: 200 });
-    const pick = await vscode.window.showQuickPick(items.map((e) => ({
-      label: e.sql.replace(/\s+/g, " ").slice(0, 100), description: `${e.status} · ${e.rowCount} rows · ${e.durationMs} ms`,
-      detail: `${e.ts} · [${e.environment}] ${e.connectionName}`, sql: e.sql,
-    })), { title: t("Query history"), matchOnDetail: true });
-    if (pick) await vscode.window.showTextDocument(await vscode.workspace.openTextDocument({ language: "sql", content: pick.sql }));
+    openHistoryScreen(ctx, history, {
+      exists: (id) => !!mgr.get(id),
+      run: (id, sql) => execute(id, sql, t("Query")),
+      open: async (id, sql) => {
+        const doc = await vscode.workspace.openTextDocument({ language: "sql", content: sql });
+        if (mgr.get(id)) await ctx.workspaceState.update(`doc:${doc.uri.toString()}`, id);
+        await vscode.window.showTextDocument(doc, { viewColumn: vscode.ViewColumn.One });
+      },
+      clear: async () => { const ok = await vscode.window.showWarningMessage(t("Delete the whole query history?"), { modal: true }, t("Delete")); if (!ok) return false; await history.prune(-1); return true; },
+    });
   });
 
   ctx.subscriptions.push(
-    vscode.window.registerTreeDataProvider("rizomadb.connections", explorer),
+    vscode.window.createTreeView("rizomadb.connections", { treeDataProvider: explorer, showCollapseAll: true }),
     vscode.window.onDidChangeActiveTextEditor(refreshStatus),
     mgr.onChange(refreshStatus), status, cancelItem,
     vscode.languages.registerCodeLensProvider([{ language: "sql" }, { language: "rizomadb-mongo" }, { language: "rizomadb-redis" }, { language: "rizomadb-es" }, { language: "rizomadb-cypher" }], {
@@ -583,7 +722,10 @@ export async function activate(ctx: vscode.ExtensionContext) {
     }),
     { dispose: () => void mgr.disposeAll() },
   );
+  editorToolsRef.current = registerEditorTools(ctx, { label: (doc) => { const p = mgr.get(docConn(doc) ?? ""); if (!p) return undefined; const db = databaseOf(p); return `[${p.environment.toUpperCase()}] ${p.name}${db ? ` · ${db}` : ""}`; } });
   refreshStatus();
+  // The first time only: offer the guide (never blocks activation).
+  setTimeout(() => { void offerGuideOnce(ctx).catch(() => {}); }, 2500);
 }
 
 let pendingAudit: AuditLog | undefined;

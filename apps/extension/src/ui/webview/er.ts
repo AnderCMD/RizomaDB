@@ -1,3 +1,5 @@
+import { enableTips } from "./ui.js";
+enableTips();
 declare function acquireVsCodeApi(): { postMessage(m: unknown): void };
 const vscode = acquireVsCodeApi();
 

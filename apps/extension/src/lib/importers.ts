@@ -1,3 +1,8 @@
+
+/** English source of the notes the importers attach; the UI translates them by these exact strings. */
+export const NOTE_MONGO_URI = "The connection string is stored as a secret because it may contain credentials.";
+export const NOTE_SSLMODE = "sslmode=require only encrypts here: certificates are verified. Turn off “Verify server certificate” if the server uses a private CA you cannot add.";
+export const NOTE_DBEAVER = "DBeaver keeps user names and passwords in an encrypted file; they were not imported. Enter them when you first connect.";
 /** Parsers that turn other tools' connection files into RizomaDB connections. Secrets are returned separately so the caller can ask before storing them. */
 
 export interface ImportedConnection {
@@ -33,7 +38,7 @@ export function parseConnectionUri(raw: string, name?: string): ImportedConnecti
   if (spec.driver === "mongodb") {
     // The whole URI carries the password (and SRV hosts): keep it as a single secret, show a redacted label.
     const u = new URL(text.replace(/^mongodb\+srv:/, "mongodb:"));
-    return { name: name ?? u.hostname, driver: "mongodb", options: { database: dec(u.pathname.slice(1)) || undefined }, secrets: { uri: raw.trim() }, notes: ["The connection string is stored as a secret because it may contain credentials."] };
+    return { name: name ?? u.hostname, driver: "mongodb", options: { database: dec(u.pathname.slice(1)) || undefined }, secrets: { uri: raw.trim() }, notes: [NOTE_MONGO_URI] };
   }
   let u: URL;
   try { u = new URL(text.replace(/^[a-z][a-z0-9+.-]*:/i, "http:")); } catch { throw new Error("Malformed connection string"); }
@@ -46,7 +51,7 @@ export function parseConnectionUri(raw: string, name?: string): ImportedConnecti
   const host = u.hostname.replace(/^\[|\]$/g, "");
   const database = dec(u.pathname.replace(/^\//, ""));
   const options: Record<string, unknown> = { host, port: u.port ? Number(u.port) : spec.port, ...(u.username || q.get("user") ? { user: dec(u.username) || q.get("user") } : {}), ...(database ? (spec.driver === "oracle" ? { service: database } : { database }) : {}), ssl };
-  if (sslmode === "require" || sslmode === "prefer") notes.push("sslmode=require only encrypts here: certificates are verified. Turn off “Verify server certificate” if the server uses a private CA you cannot add.");
+  if (sslmode === "require" || sslmode === "prefer") notes.push(NOTE_SSLMODE);
   if (spec.driver === "redis" && /^\d+$/.test(database)) options.database = Number(database);
   return { name: name ?? `${host}${database ? "/" + database : ""}`, driver: spec.driver, options, secrets, notes };
 }
@@ -93,7 +98,7 @@ export function parseDBeaver(json: unknown): ImportedConnection[] {
   for (const c of Object.values(conns)) {
     const driver = DBEAVER_DRIVERS[c.driver ?? ""]; const cfg = c.configuration ?? {};
     if (!driver) continue;
-    const notes = ["DBeaver keeps user names and passwords in an encrypted file; they were not imported. Enter them when you first connect."];
+    const notes = [NOTE_DBEAVER];
     if (driver === "sqlite") { const p = (cfg.database ?? cfg.url ?? "").replace(/^jdbc:sqlite:/, ""); if (p) out.push({ name: c.name ?? p, driver, options: { path: p }, secrets: {}, notes: [] }); continue; }
     const portDefault = SCHEMES[driver === "postgres" ? "postgres" : driver === "mssql" ? "mssql" : driver]?.port;
     if (!cfg.host && cfg.url) { try { const p = parseConnectionUri(cfg.url, c.name); out.push({ ...p, secrets: {}, notes: [...p.notes, ...notes] }); } catch { /* unsupported JDBC form */ } continue; }

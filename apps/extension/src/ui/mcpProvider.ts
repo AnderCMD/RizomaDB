@@ -1,8 +1,8 @@
 import * as vscode from "vscode";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
+import { t } from "../i18n.js";
 
-const t = vscode.l10n.t;
 
 // The MCP provider API arrived in VS Code 1.101 and is absent from the 1.100 typings this extension builds against.
 interface StdioDefinition { label: string; command: string; args: string[]; env: Record<string, string | null>; version?: string }

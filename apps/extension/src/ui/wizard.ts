@@ -2,13 +2,15 @@ import * as vscode from "vscode";
 import { randomUUID } from "node:crypto";
 import type { JsonSchemaProp } from "@rizomadb/driver-api";
 import type { ConnectionManager } from "../lib/connections.js";
+import { t } from "../i18n.js";
+import { fieldText } from "../lib/fieldText.js";
+import { friendly } from "./driverMessages.js";
 
-const t = vscode.l10n.t;
 
 /** Builds the connection form from the driver's connectionSchema, as input prompts. */
 export async function newConnectionWizard(mgr: ConnectionManager): Promise<string | undefined> {
   const driverPick = await vscode.window.showQuickPick(
-    await Promise.all(mgr.driverIds().map(async (id) => { const d = await mgr.loadDriver(id); return { label: d.displayName, description: d.family, id }; })),
+    await Promise.all(mgr.driverIds().map(async (id) => { const d = await mgr.loadDriver(id); return { label: d.displayName, description: d.family === "relational" ? t("Relational") : d.family === "document" ? t("Document and cloud NoSQL") : d.family === "keyvalue" ? t("Key-value") : d.family, id }; })),
     { title: t("New connection: engine"), ignoreFocusOut: true });
   if (!driverPick) return;
   const driver = await mgr.loadDriver(driverPick.id);
@@ -27,7 +29,7 @@ export async function newConnectionWizard(mgr: ConnectionManager): Promise<strin
     const required = driver.connectionSchema.required?.includes(key) ?? false;
     if (prop.type === "boolean") {
       const pick = await vscode.window.showQuickPick([{ label: t("Yes"), v: true }, { label: t("No"), v: false }], {
-        title: prop.title, placeHolder: prop.description, ignoreFocusOut: true });
+        title: fieldText(prop.title), placeHolder: prop.description ? fieldText(prop.description) : undefined, ignoreFocusOut: true });
       if (!pick) return;
       values[key] = pick.v;
       if (key === "ssl" && pick.v === false) {
@@ -41,7 +43,7 @@ export async function newConnectionWizard(mgr: ConnectionManager): Promise<strin
       continue;
     }
     const v = await vscode.window.showInputBox({
-      title: prop.title, prompt: prop.description, value: prop.default !== undefined ? String(prop.default) : "",
+      title: fieldText(prop.title), prompt: prop.description ? fieldText(prop.description) : undefined, value: prop.default !== undefined ? String(prop.default) : "",
       password: !!prop.secret, ignoreFocusOut: true,
       validateInput: (x) => (required && !x.trim() ? t("Required") : prop.type === "number" && x && Number.isNaN(Number(x)) ? t("Must be a number") : undefined),
     });
@@ -94,7 +96,7 @@ export async function newConnectionWizard(mgr: ConnectionManager): Promise<strin
     void vscode.window.showInformationMessage(t("Connected to {0}.", name));
   } catch (e) {
     await mgr.disconnect(id);
-    const act = await vscode.window.showErrorMessage(t("Could not connect: {0}", (e as Error).message), t("Keep connection"), t("Delete"));
+    const act = await vscode.window.showErrorMessage(t("Could not connect: {0}", friendly((e as Error).message)), t("Keep connection"), t("Delete"));
     if (act !== t("Keep connection")) await mgr.remove(id);
     return act === t("Keep connection") ? id : undefined;
   }

@@ -6,8 +6,9 @@ import { decideEffective, type EditTarget, type EffectivePolicy } from "@rizomad
 import { backupSpec, backupSqlite, diffTables, generateRows, importRows, kindFromNative, openSource, renderSyncScript, restoreSpec, runTool, syncChanges, applySync, verifyBackup, type GenColumn, type ImportMapping, type DataDiff } from "@rizomadb/data-tools";
 import type { ConnectionManager } from "../lib/connections.js";
 import type { Node } from "./explorer.js";
+import { t } from "../i18n.js";
+import { friendly } from "./driverMessages.js";
 
-const t = vscode.l10n.t;
 const sig = () => new AbortController().signal;
 
 interface Deps { ctx: vscode.ExtensionContext; mgr: ConnectionManager; policy: () => EffectivePolicy; pick: () => Promise<string | undefined>; reg: (id: string, fn: (...a: never[]) => unknown) => void; refresh: () => void }
@@ -16,7 +17,7 @@ export function registerDataCommands({ mgr, policy, pick, reg, refresh }: Deps) 
   const tableOf = (n: Node | undefined) => (n?.kind === "table" ? n : undefined);
   const ensureWritable = (profile: NonNullable<ReturnType<ConnectionManager["get"]>>, sql: string) => {
     const d = decideEffective(sql, { environment: profile.environment, readOnly: mgr.isReadOnly(profile) }, policy());
-    if (!d.allowed) { void vscode.window.showErrorMessage(d.reason ?? t("Blocked by policy")); return false; }
+    if (!d.allowed) { void vscode.window.showErrorMessage(d.reason ? friendly(d.reason) : t("Blocked by policy")); return false; }
     return true;
   };
   const confirmEnv = async (profile: { environment: string; name: string }, what: string, detail?: string) => {
@@ -65,7 +66,7 @@ export function registerDataCommands({ mgr, policy, pick, reg, refresh }: Deps) 
       void vscode.window.showInformationMessage(t("Imported {0} rows ({1} skipped).", res.inserted.toLocaleString(), res.skipped));
       if (res.errors.length) { const d = await vscode.workspace.openTextDocument({ content: res.errors.map((e) => `row ${e.row}: ${e.message}`).join("\n") }); await vscode.window.showTextDocument(d, { preview: true }); }
       refresh();
-    } catch (e) { void vscode.window.showErrorMessage(t("Import failed (nothing was imported): {0}", (e as Error).message)); }
+    } catch (e) { void vscode.window.showErrorMessage(t("Import failed (nothing was imported): {0}", friendly((e as Error).message))); }
   });
 
   reg("rizomadb.backup", async (n?: Node) => {
@@ -86,7 +87,7 @@ export function registerDataCommands({ mgr, policy, pick, reg, refresh }: Deps) 
       if (r.code !== 0) { void vscode.window.showErrorMessage(t("Backup tool failed: {0}", r.stderr.slice(0, 400))); return; }
       const v = await verifyBackup(profile.driver as "postgres" | "mysql" | "mongodb" | "sqlite", uri.fsPath);
       void (v.ok ? vscode.window.showInformationMessage(t("Backup written and verified: {0}", v.detail)) : vscode.window.showErrorMessage(t("Backup written but NOT verified: {0}", v.detail)));
-    } catch (e) { void vscode.window.showErrorMessage(t("Backup failed: {0}", (e as Error).message)); }
+    } catch (e) { void vscode.window.showErrorMessage(t("Backup failed: {0}", friendly((e as Error).message))); }
   });
 
   reg("rizomadb.restore", async (n?: Node) => {
@@ -105,7 +106,7 @@ export function registerDataCommands({ mgr, policy, pick, reg, refresh }: Deps) 
       });
       void (r.code === 0 ? vscode.window.showInformationMessage(t("Restore completed.")) : vscode.window.showErrorMessage(t("Restore reported errors: {0}", r.stderr.slice(0, 400))));
       refresh();
-    } catch (e) { void vscode.window.showErrorMessage(t("Restore failed: {0}", (e as Error).message)); }
+    } catch (e) { void vscode.window.showErrorMessage(t("Restore failed: {0}", friendly((e as Error).message))); }
   });
 
   reg("rizomadb.compareData", async (n?: Node) => {
@@ -147,7 +148,7 @@ export function registerDataCommands({ mgr, policy, pick, reg, refresh }: Deps) 
       if (!ensureWritable(tProfile, "UPDATE t SET a = 1 WHERE id = 1")) return;
       const r = await applySync(changes, { conn: tConn, plugin: tPlugin, table: target, environment: tProfile.environment, readOnly: mgr.isReadOnly(tProfile), policy: policy(), confirm: async (sql) => confirmEnv(tProfile, t("apply {0} change(s)?", sql.length), sql.slice(0, 5).join("\n")) });
       void vscode.window.showInformationMessage(t("{0} change(s) applied in one transaction.", r.applied));
-    } catch (e) { void vscode.window.showErrorMessage(t("Comparison failed: {0}", (e as Error).message)); }
+    } catch (e) { void vscode.window.showErrorMessage(t("Comparison failed: {0}", friendly((e as Error).message))); }
   });
 
   reg("rizomadb.generateData", async (n?: Node) => {
@@ -193,7 +194,7 @@ export function registerDataCommands({ mgr, policy, pick, reg, refresh }: Deps) 
       });
       void vscode.window.showInformationMessage(t("Inserted {0} generated rows.", res.inserted.toLocaleString()));
       refresh();
-    } catch (e) { void vscode.window.showErrorMessage(t("Generation failed (nothing was inserted): {0}", (e as Error).message)); }
+    } catch (e) { void vscode.window.showErrorMessage(t("Generation failed (nothing was inserted): {0}", friendly((e as Error).message))); }
   });
 
   function mgrSecrets() { return (mgr as unknown as { secrets: import("@rizomadb/core").SecretStore }).secrets; }

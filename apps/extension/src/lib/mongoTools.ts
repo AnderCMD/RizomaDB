@@ -20,9 +20,12 @@ export function analyzeDocuments(docs: Record<string, unknown>[], maxDepth = 4):
   return { sampled: docs.length, fields: [...stats.values()].sort((a, b) => b.present - a.present || (a.path < b.path ? -1 : 1)) };
 }
 
-export function analysisMarkdown(name: string, a: { sampled: number; fields: FieldStat[] }): string {
+export interface AnalysisLabels { title: (name: string) => string; sampled: (n: number) => string; field: string; presentIn: string; types: string }
+const EN: AnalysisLabels = { title: (n) => `Schema analysis: ${n}`, sampled: (n) => `Sampled ${n} documents.`, field: "Field", presentIn: "Present in", types: "Types (occurrences)" };
+
+export function analysisMarkdown(name: string, a: { sampled: number; fields: FieldStat[] }, L: AnalysisLabels = EN): string {
   const rows = a.fields.map((f) => `| \`${f.path}\` | ${Math.round((f.present / Math.max(1, a.sampled)) * 100)}% | ${Object.entries(f.types).sort((x, y) => y[1] - x[1]).map(([t, n]) => `${t} (${n})`).join(", ")} |`);
-  return `# Schema analysis: ${name}\n\nSampled ${a.sampled} documents.\n\n| Field | Present in | Types (occurrences) |\n|---|---|---|\n${rows.join("\n")}\n`;
+  return `# ${L.title(name)}\n\n${L.sampled(a.sampled)}\n\n| ${L.field} | ${L.presentIn} | ${L.types} |\n|---|---|---|\n${rows.join("\n")}\n`;
 }
 
 /** Splits `db.c.aggregate([ ... ])` into its stages' source text so prefixes of the pipeline can be previewed. */

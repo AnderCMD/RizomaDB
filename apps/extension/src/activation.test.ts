@@ -15,7 +15,7 @@ vi.mock("vscode", () => {
     notebooks: { createNotebookController: () => ({ dispose() {} }) },
     CompletionItemKind: {}, DiagnosticSeverity: {}, NotebookCellKind: {},
     Uri: { joinPath: (u: { fsPath: string }, ...p: string[]) => ({ fsPath: [u.fsPath, ...p].join('/') }) },
-    window: { createOutputChannel: () => ({ appendLine() {}, clear() {}, show() {}, dispose() {} }), showErrorMessage: async () => undefined, createStatusBarItem: item, registerTreeDataProvider: noop, onDidChangeActiveTextEditor: noop, activeTextEditor: undefined },
+    window: { createOutputChannel: () => ({ appendLine() {}, clear() {}, show() {}, dispose() {} }), showErrorMessage: async () => undefined, createStatusBarItem: item, registerTreeDataProvider: noop, createTreeView: noop, createTextEditorDecorationType: () => ({ dispose() {} }), onDidChangeTextEditorSelection: noop, onDidChangeActiveTextEditor: noop, activeTextEditor: undefined },
     commands: { registerCommand: (id: string, fn: unknown) => { commands.set(id, fn); return noop(); }, executeCommand: async () => {} },
     languages: { registerCodeLensProvider: noop, registerCompletionItemProvider: noop, createDiagnosticCollection: () => ({ dispose() {}, set() {}, delete() {} }), registerDocumentFormattingEditProvider: noop, registerDocumentRangeFormattingEditProvider: noop },
     lm: { registerMcpServerDefinitionProvider: (id: string) => { (globalThis as { __mcpIds?: string[] }).__mcpIds = [...((globalThis as { __mcpIds?: string[] }).__mcpIds ?? []), id]; return { dispose() {} }; } }, McpStdioServerDefinition: class {},
