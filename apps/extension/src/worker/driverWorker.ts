@@ -12,6 +12,7 @@ const drivers: Record<string, () => Promise<DriverPlugin>> = {
   redis: async () => (await import("@rizomadb/driver-redis")).redisDriver,
   clickhouse: async () => (await import("@rizomadb/driver-clickhouse")).clickhouseDriver,
   elasticsearch: async () => (await import("@rizomadb/driver-elasticsearch")).elasticsearchDriver,
+  trino: async () => (await import("@rizomadb/driver-trino")).trinoDriver,
   firestore: async () => (await import("@rizomadb/driver-firestore")).firestoreDriver,
   cassandra: async () => (await import("@rizomadb/driver-cassandra")).cassandraDriver,
   influxdb: async () => (await import("@rizomadb/driver-influxdb")).influxdbDriver,

@@ -30,6 +30,8 @@ export interface ConformanceOptions {
   slowSql: string;
   /** false = the engine has no foreign keys / secondary-index DDL in this form: those introspection checks are skipped. */
   skipFkAndIndexTests?: boolean;
+  /** true = the engine has no enforced primary keys (e.g. Trino): the primary-key check of introspection is skipped. */
+  noPrimaryKeys?: boolean;
   /** CREATE TABLE conf_t(id integer primary key, name text not null) in the dialect. */
   createTableSql?: string;
   /** Expression yielding the BIGINT 9223372036854775807 (dialects differ on literals/casts). */
@@ -107,7 +109,7 @@ export function runConformance(opts: ConformanceOptions): void {
       const found = tables.find((t) => t.name.toLowerCase() === "conf_t");
       expect(found, "table listed").toBeTruthy();
       const t = await conn.introspect().describeTable({ name: found!.name, ...(found!.schema ? { schema: found!.schema } : {}) });
-      expect(t.columns?.find((c) => c.name.toLowerCase() === "id")?.primaryKey).toBe(true);
+      if (!opts.noPrimaryKeys) expect(t.columns?.find((c) => c.name.toLowerCase() === "id")?.primaryKey).toBe(true);
       expect(t.columns?.find((c) => c.name.toLowerCase() === "name")?.nullable).toBe(false);
     });
 

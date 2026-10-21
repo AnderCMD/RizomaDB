@@ -720,6 +720,7 @@
     "@rizomadb/driver-firestore": "workspace:*",
     "@rizomadb/driver-influxdb": "workspace:*",
     "@rizomadb/driver-neo4j": "workspace:*",
+    "@rizomadb/driver-trino": "workspace:*",
     "@rizomadb/driver-mongodb": "workspace:*",
     "@rizomadb/driver-mssql": "workspace:*",
     "@rizomadb/driver-mysql": "workspace:*",

@@ -268,6 +268,9 @@ importers:
       '@rizomadb/driver-sqlite':
         specifier: workspace:*
         version: link:../../packages/drivers/sqlite
+      '@rizomadb/driver-trino':
+        specifier: workspace:*
+        version: link:../../packages/drivers/trino
       '@rizomadb/network':
         specifier: workspace:*
         version: link:../../packages/network
@@ -556,6 +559,16 @@ importers:
       '@rizomadb/driver-api':
         specifier: workspace:*
         version: link:../../driver-api
+
+  packages/drivers/trino:
+    dependencies:
+      '@rizomadb/driver-api':
+        specifier: workspace:*
+        version: link:../../driver-api
+    devDependencies:
+      fast-check:
+        specifier: 4.10.2
+        version: 4.10.2
 
   packages/mcp:
     dependencies:
