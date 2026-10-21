@@ -9,8 +9,17 @@ afterEach(async () => { for (const c of closers.splice(0).reverse()) await c(); 
 
 const listen = (srv: net.Server) => new Promise<number>((res) => srv.listen(0, "127.0.0.1", () => res((srv.address() as net.AddressInfo).port)));
 
+/** ssh2's generated ed25519 keys occasionally fail to parse back (seen once on Linux CI: "Malformed OpenSSH private key"); regenerate until they round-trip. */
+function freshKeyPair() {
+  for (let i = 0; i < 10; i++) {
+    const k = utils.generateKeyPairSync("ed25519");
+    if (!(utils.parseKey(k.private) instanceof Error)) return k;
+  }
+  throw new Error("could not generate a parseable ed25519 key");
+}
+
 function sshServer(opts: { password?: string } = {}) {
-  const keys = utils.generateKeyPairSync("ed25519");
+  const keys = freshKeyPair();
   const hostKey = keys.private;
   const pub = utils.parseKey(keys.public) as { getPublicSSH(): Buffer; type: string };
   const server = new Server({ hostKeys: [hostKey] }, (client) => {
