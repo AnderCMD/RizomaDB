@@ -14,7 +14,7 @@ beforeAll(async () => {
   await build({ entryPoints: [join(process.cwd(), "src/worker/driverWorker.ts")], outfile: out, bundle: true, platform: "node", format: "cjs", external: ["pg-native", "@duckdb/node-api", "@duckdb/node-bindings"], logLevel: "silent" });
 }, 30_000);
 
-const base = { host: "localhost", port: 54329, user: "postgres", password: "rizoma_test", ssl: false };
+const base = { host: "localhost", port: Number(process.env.RZ_PG_PORT ?? 54329), user: "postgres", password: "rizoma_test", ssl: false };
 async function freshDb() {
   const name = `rz_${randomBytes(6).toString("hex")}`;
   const admin = new pg.Client({ ...base, database: "postgres" });

@@ -4,3 +4,4 @@ dist
 *.vsix
 coverage
 assets/brand/_proof
+sbom.cdx.json

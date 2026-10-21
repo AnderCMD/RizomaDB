@@ -3,25 +3,78 @@ on:
   push: { branches: [main] }
   pull_request:
 permissions: { contents: read }
+env:
+  RZ_REQUIRE_ENGINES: "1"      # engine suites fail instead of skipping when a service is missing
+  RZ_ENGINES: all
+  RZ_MYSQL_PORT: "3306"
+  RZ_MSSQL_PORT: "1433"
+  RZ_ORACLE_PORT: "1521"
+  RZ_PG_PORT: "5432"
+  RZ_MONGO_PORT: "27017"
+  RZ_REDIS_PORT: "6379"
+  RZ_VALKEY_PORT: "6380"
+  RZ_CLICKHOUSE_PORT: "8123"
+  RZ_ELASTICSEARCH_PORT: "9200"
+  RZ_OPENSEARCH_PORT: "9201"
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     services:
       postgres:
         image: postgres:17
         env: { POSTGRES_PASSWORD: rizoma_test, POSTGRES_DB: rizoma }
-        ports: ["54329:5432"]
-        options: >-
-          --health-cmd "pg_isready -U postgres" --health-interval 5s --health-timeout 5s --health-retries 10
+        ports: ["5432:5432"]
+        options: --health-cmd "pg_isready -U postgres" --health-interval 5s --health-retries 15
+      mysql:
+        image: mysql:8.4
+        env: { MYSQL_ROOT_PASSWORD: rizoma_test }
+        ports: ["3306:3306"]
+        options: --health-cmd "mysqladmin ping -prizoma_test" --health-interval 5s --health-retries 30
+      mssql:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        env: { ACCEPT_EULA: "Y", MSSQL_SA_PASSWORD: "Rizoma_test1" }
+        ports: ["1433:1433"]
+      oracle:
+        image: gvenzl/oracle-free:23-slim-faststart
+        env: { ORACLE_PASSWORD: rizoma_test }
+        ports: ["1521:1521"]
+        options: --health-cmd healthcheck.sh --health-interval 10s --health-retries 30
+      mongo:
+        image: mongo:7
+        ports: ["27017:27017"]
+      redis:
+        image: redis:7
+        ports: ["6379:6379"]
+      valkey:
+        image: valkey/valkey:8
+        ports: ["6380:6379"]
+      clickhouse:
+        image: clickhouse/clickhouse-server:24.8
+        env: { CLICKHOUSE_USER: default, CLICKHOUSE_PASSWORD: rizoma_test }
+        ports: ["8123:8123"]
+      elasticsearch:
+        image: docker.elastic.co/elasticsearch/elasticsearch:8.15.3
+        env: { discovery.type: single-node, xpack.security.enabled: "false", ES_JAVA_OPTS: "-Xms512m -Xmx512m" }
+        ports: ["9200:9200"]
+      opensearch:
+        image: opensearchproject/opensearch:2.17.1
+        env: { discovery.type: single-node, DISABLE_SECURITY_PLUGIN: "true", DISABLE_INSTALL_DEMO_CONFIG: "true", OPENSEARCH_JAVA_OPTS: "-Xms512m -Xmx512m" }
+        ports: ["9201:9200"]
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24, cache: pnpm }
       - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
       - run: pnpm build
       - run: pnpm typecheck
+      - run: pnpm audit:licenses --check
       - run: pnpm test
+      - run: pnpm bench
+      - run: pnpm --filter rizomadb package
+      - run: node scripts/check-vsix-size.mjs apps/extension/*.vsix 8
   secrets:
     runs-on: ubuntu-latest
     steps:
@@ -29,3 +82,11 @@ jobs:
         with: { fetch-depth: 0 }
       - uses: gitleaks/gitleaks-action@v2
         env: { GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }
+  codeql:
+    runs-on: ubuntu-latest
+    permissions: { security-events: write, contents: read }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: github/codeql-action/init@v3
+        with: { languages: javascript-typescript }
+      - uses: github/codeql-action/analyze@v3

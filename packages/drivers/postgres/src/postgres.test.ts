@@ -3,7 +3,7 @@ import { randomBytes } from "node:crypto";
 import { engineUp, runConformance } from "@rizomadb/driver-api/conformance";
 import { postgresDriver } from "./index.js";
 
-const base = { host: "localhost", port: 54329, user: "postgres", password: "rizoma_test", ssl: false };
+const base = { host: "localhost", port: Number(process.env.RZ_PG_PORT ?? 54329), user: "postgres", password: "rizoma_test", ssl: false };
 
 /** Each config() call provisions a fresh empty database so runs are independent. */
 async function freshDb() {
@@ -15,7 +15,7 @@ async function freshDb() {
   return { ...base, database: name };
 }
 
-const enabled = await engineUp("localhost", 54329);
+const enabled = await engineUp("localhost", Number(process.env.RZ_PG_PORT ?? 54329));
 
 runConformance({
   enabled,

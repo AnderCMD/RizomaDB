@@ -9,7 +9,9 @@
     "test": "turbo run test",
     "lint": "eslint .",
     "build:brand": "node scripts/build-brand.mjs",
-    "bench": "pnpm --filter @rizomadb/sql build && node packages/sql/bench/run.mjs"
+    "bench": "pnpm --filter @rizomadb/sql build && node packages/sql/bench/run.mjs",
+    "audit:licenses": "node scripts/license-audit.mjs",
+    "sbom:generate": "pnpm sbom --sbom-format cyclonedx --prod --out sbom.cdx.json"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

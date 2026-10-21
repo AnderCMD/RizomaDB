@@ -1,4 +1,5 @@
 import { meta, quoteIdent } from "./meta.js";
+import { readFile } from "node:fs/promises";
 import pg from "pg";
 import Cursor from "pg-cursor";
 import {
@@ -195,7 +196,8 @@ class PgConnection implements Connection {
 export const postgresDriver: DriverPlugin = {
   ...meta,
   async connect(cfg) {
-    const ssl = cfg.ssl ? { rejectUnauthorized: cfg.sslVerify !== false } : false;
+    const ca = cfg.sslCaFile ? await readFile(String(cfg.sslCaFile)) : undefined;
+    const ssl = cfg.ssl ? { rejectUnauthorized: cfg.sslVerify !== false, ...(ca ? { ca } : {}) } : false;
     const config: pg.ClientConfig = {
       host: cfg.host as string, port: (cfg.port as number | undefined) ?? 5432,
       database: cfg.database as string, user: cfg.user as string,

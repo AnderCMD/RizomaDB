@@ -23,7 +23,7 @@ const engines: Engine[] = [
     ddl: ["CREATE TABLE people (id INTEGER PRIMARY KEY, name TEXT NOT NULL, note TEXT)", "CREATE TABLE nokey (a INTEGER, b TEXT)"] },
   { id: "postgres", plugin: postgresDriver, ddl: ["CREATE TABLE people (id integer PRIMARY KEY, name text NOT NULL, note text)", "CREATE TABLE nokey (a integer, b text)"],
     config: async () => {
-      const base = { host: "localhost", port: 54329, user: "postgres", password: "rizoma_test", ssl: false }; const db = `rz_${rand()}`;
+      const base = { host: "localhost", port: Number(process.env.RZ_PG_PORT ?? 54329), user: "postgres", password: "rizoma_test", ssl: false }; const db = `rz_${rand()}`;
       const a = new pg.Client({ ...base, database: "postgres" }); await a.connect(); await a.query(`CREATE DATABASE ${db}`); await a.end(); return { ...base, database: db };
     } },
   { id: "mysql", plugin: mysqlDriver, ddl: ["CREATE TABLE people (id INT PRIMARY KEY, name VARCHAR(100) NOT NULL, note VARCHAR(100))", "CREATE TABLE nokey (a INT, b VARCHAR(10))"],

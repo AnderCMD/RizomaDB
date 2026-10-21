@@ -1,4 +1,5 @@
 import { meta, quoteIdent } from "./meta.js";
+import { readFile } from "node:fs/promises";
 import mysql from "mysql2";
 import {
   DriverError, type ColumnInfo, type Connection, type DriverPlugin, type DriverErrorKind,
@@ -201,7 +202,7 @@ export const mysqlDriver: DriverPlugin = {
       host: cfg.host as string, port: (cfg.port as number | undefined) ?? 3306, user: cfg.user as string,
       ...(cfg.database ? { database: cfg.database as string } : {}),
       ...(cfg.password !== undefined ? { password: cfg.password as string } : {}),
-      ...(cfg.ssl ? { ssl: { rejectUnauthorized: cfg.sslVerify !== false } } : {}),
+      ...(cfg.ssl ? { ssl: { rejectUnauthorized: cfg.sslVerify !== false, ...(cfg.sslCaFile ? { ca: await readFile(String(cfg.sslCaFile)) } : {}) } } : {}),
       timezone: "Z", multipleStatements: false, rowsAsArray: true,
     };
     const conn = mysql.createConnection(options);

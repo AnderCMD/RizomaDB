@@ -28,6 +28,7 @@ export const meta: Omit<DriverPlugin, "connect"> = {
       password: { type: "string", title: "Password", secret: true },
       ssl: { type: "boolean", title: "Use TLS", default: true },
       sslVerify: { type: "boolean", title: "Verify server certificate", default: true },
+      sslCaFile: { type: "string", title: "CA certificate file (PEM, optional)", description: "Trust this CA in addition to the system store (internal PKI)." },
       readOnly: { type: "boolean", title: "Read-only", default: false },
     },
   },

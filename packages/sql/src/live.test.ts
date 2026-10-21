@@ -15,8 +15,8 @@ import { SchemaIndex, complete, explain, type Dialect } from "./index.js";
 const rand = () => randomBytes(5).toString("hex");
 type Eng = { id: "postgres" | "mysql" | "mssql" | "oracle"; dialect: Dialect; plugin: DriverPlugin; host: string; port: number; config: () => Promise<ResolvedConnectionConfig> };
 const engines: Eng[] = [
-  { id: "postgres", dialect: "postgres", plugin: postgresDriver, host: "localhost", port: 54329, config: async () => {
-    const base = { host: "localhost", port: 54329, user: "postgres", password: "rizoma_test", ssl: false }; const db = `rz_${rand()}`;
+  { id: "postgres", dialect: "postgres", plugin: postgresDriver, host: "localhost", port: Number(process.env.RZ_PG_PORT ?? 54329), config: async () => {
+    const base = { host: "localhost", port: Number(process.env.RZ_PG_PORT ?? 54329), user: "postgres", password: "rizoma_test", ssl: false }; const db = `rz_${rand()}`;
     const a = new pg.Client({ ...base, database: "postgres" }); await a.connect(); await a.query(`CREATE DATABASE ${db}`); await a.end(); return { ...base, database: db }; } },
   { id: "mysql", dialect: "mysql", plugin: mysqlDriver, host: "127.0.0.1", port: Number(process.env.RZ_MYSQL_PORT ?? 33069), config: async () => {
     const base = { host: "127.0.0.1", port: Number(process.env.RZ_MYSQL_PORT ?? 33069), user: "root", password: "rizoma_test", ssl: false }; const db = `rz_${rand()}`;

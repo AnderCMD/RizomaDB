@@ -1,0 +1,42 @@
+name: Release
+# Builds, signs and attaches artifacts for a tag. Publishing to a marketplace is a separate, manually approved job.
+on:
+  push: { tags: ["v*"] }
+  workflow_dispatch:
+    inputs:
+      publish: { description: "Publish to Marketplace and Open VSX (needs environment approval)", type: boolean, default: false }
+permissions: { contents: write, id-token: write, attestations: write }
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 24, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build && pnpm audit:licenses --check
+      - run: pnpm --filter rizomadb package
+      - run: node scripts/check-vsix-size.mjs apps/extension/*.vsix 8
+      - run: pnpm run sbom:generate
+      - name: Checksums
+        run: cd apps/extension && sha256sum *.vsix > SHA256SUMS && mv SHA256SUMS ../../ && cp *.vsix ../../ && cd ../.. && ls
+      - uses: actions/attest-build-provenance@v2
+        with: { subject-path: "*.vsix" }
+      - uses: actions/upload-artifact@v4
+        with: { name: release, path: "*.vsix\nSHA256SUMS\nsbom.cdx.json" }
+      - uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with: { files: "*.vsix\nSHA256SUMS\nsbom.cdx.json", prerelease: true }
+  publish:
+    needs: build
+    if: github.event.inputs.publish == 'true'
+    runs-on: ubuntu-latest
+    environment: marketplace   # configure required reviewers on this environment: nothing is published without a human approval
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { name: release }
+      - run: npx @vscode/vsce publish --packagePath *.vsix
+        env: { VSCE_PAT: "${{ secrets.VSCE_PAT }}" }
+      - run: npx ovsx publish *.vsix
+        env: { OVSX_PAT: "${{ secrets.OVSX_PAT }}" }
