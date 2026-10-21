@@ -1,0 +1,88 @@
+{
+  "name": "rizomadb",
+  "displayName": "RizomaDB — Database Client",
+  "description": "%description%",
+  "version": "0.0.1",
+  "publisher": "tu-publisher",
+  "license": "Apache-2.0",
+  "private": true,
+  "icon": "media/icon.png",
+  "galleryBanner": { "color": "#0F172A", "theme": "dark" },
+  "categories": ["Data Science", "Other"],
+  "keywords": ["database", "sql", "postgres", "sqlite", "client"],
+  "engines": { "vscode": "^1.100.0" },
+  "main": "./dist/extension.js",
+  "l10n": "./l10n",
+  "capabilities": {
+    "untrustedWorkspaces": { "supported": "limited", "description": "Workspace connection catalogs and policies are not loaded in untrusted workspaces." }
+  },
+  "contributes": {
+    "viewsContainers": { "activitybar": [{ "id": "rizomadb", "title": "RizomaDB", "icon": "media/activity.svg" }] },
+    "views": { "rizomadb": [{ "id": "rizomadb.connections", "name": "%view.connections%" }] },
+    "viewsWelcome": [{ "view": "rizomadb.connections", "contents": "%welcome%\n[%cmd.newConnection%](command:rizomadb.newConnection)" }],
+    "commands": [
+      { "command": "rizomadb.newConnection", "title": "%cmd.newConnection%", "category": "RizomaDB", "icon": "$(add)" },
+      { "command": "rizomadb.newQuery", "title": "%cmd.newQuery%", "category": "RizomaDB", "icon": "$(new-file)" },
+      { "command": "rizomadb.selectConnection", "title": "%cmd.selectConnection%", "category": "RizomaDB" },
+      { "command": "rizomadb.runQuery", "title": "%cmd.runQuery%", "category": "RizomaDB", "icon": "$(play)" },
+      { "command": "rizomadb.runSelection", "title": "%cmd.runSelection%", "category": "RizomaDB" },
+      { "command": "rizomadb.cancelQuery", "title": "%cmd.cancelQuery%", "category": "RizomaDB", "icon": "$(debug-stop)" },
+      { "command": "rizomadb.openTable", "title": "%cmd.openTable%", "category": "RizomaDB" },
+      { "command": "rizomadb.openHistory", "title": "%cmd.openHistory%", "category": "RizomaDB" },
+      { "command": "rizomadb.toggleReadOnly", "title": "%cmd.toggleReadOnly%", "category": "RizomaDB" },
+      { "command": "rizomadb.disconnect", "title": "%cmd.disconnect%", "category": "RizomaDB" },
+      { "command": "rizomadb.deleteConnection", "title": "%cmd.deleteConnection%", "category": "RizomaDB" },
+      { "command": "rizomadb.refresh", "title": "%cmd.refresh%", "category": "RizomaDB", "icon": "$(refresh)" }
+    ],
+    "menus": {
+      "view/title": [
+        { "command": "rizomadb.newConnection", "when": "view == rizomadb.connections", "group": "navigation" },
+        { "command": "rizomadb.refresh", "when": "view == rizomadb.connections", "group": "navigation" }
+      ],
+      "view/item/context": [
+        { "command": "rizomadb.newQuery", "when": "view == rizomadb.connections && viewItem == connection" },
+        { "command": "rizomadb.toggleReadOnly", "when": "view == rizomadb.connections && viewItem == connection" },
+        { "command": "rizomadb.disconnect", "when": "view == rizomadb.connections && viewItem == connection" },
+        { "command": "rizomadb.deleteConnection", "when": "view == rizomadb.connections && viewItem == connection" },
+        { "command": "rizomadb.openTable", "when": "view == rizomadb.connections && viewItem == table" }
+      ],
+      "editor/title": [
+        { "command": "rizomadb.runQuery", "when": "editorLangId == sql", "group": "navigation" },
+        { "command": "rizomadb.cancelQuery", "when": "editorLangId == sql && rizomadb.running", "group": "navigation" }
+      ]
+    },
+    "keybindings": [
+      { "command": "rizomadb.runQuery", "key": "ctrl+enter", "mac": "cmd+enter", "when": "editorLangId == sql && editorTextFocus" },
+      { "command": "rizomadb.runSelection", "key": "ctrl+shift+enter", "mac": "cmd+shift+enter", "when": "editorLangId == sql && editorTextFocus" }
+    ],
+    "configuration": {
+      "title": "RizomaDB",
+      "properties": {
+        "rizomadb.security.confirmDestructive": { "type": "boolean", "default": true, "markdownDescription": "%cfg.confirmDestructive%" },
+        "rizomadb.security.prodReadOnlyByDefault": { "type": "boolean", "default": true, "markdownDescription": "%cfg.prodReadOnly%" },
+        "rizomadb.query.maxRows": { "type": "number", "default": 10000, "minimum": 1, "markdownDescription": "%cfg.maxRows%" },
+        "rizomadb.query.timeoutSeconds": { "type": "number", "default": 0, "minimum": 0, "markdownDescription": "%cfg.timeout%" },
+        "rizomadb.history.enabled": { "type": "boolean", "default": true, "markdownDescription": "%cfg.historyEnabled%" },
+        "rizomadb.history.retentionDays": { "type": "number", "default": 90, "minimum": 1, "markdownDescription": "%cfg.retention%" }
+      }
+    }
+  },
+  "scripts": {
+    "build": "node esbuild.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "package": "pnpm build && vsce package --no-dependencies"
+  },
+  "dependencies": {
+    "@rizomadb/core": "workspace:*",
+    "@rizomadb/driver-api": "workspace:*",
+    "@rizomadb/driver-postgres": "workspace:*",
+    "@rizomadb/driver-sqlite": "workspace:*",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@types/vscode": "1.100.0",
+    "esbuild": "0.28.2",
+    "@vscode/vsce": "4.0.0"
+  }
+}

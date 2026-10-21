@@ -1,0 +1,23 @@
+{
+  "description": "Cliente de bases de datos gratuito y de código abierto. Sin telemetría, sin cuentas, sin funciones bloqueadas.",
+  "view.connections": "Conexiones",
+  "welcome": "Aún no hay conexiones.",
+  "cmd.newConnection": "Nueva conexión",
+  "cmd.newQuery": "Nueva consulta",
+  "cmd.selectConnection": "Elegir conexión para este editor",
+  "cmd.runQuery": "Ejecutar sentencia",
+  "cmd.runSelection": "Ejecutar selección",
+  "cmd.cancelQuery": "Cancelar consulta en curso",
+  "cmd.openTable": "Abrir datos de la tabla",
+  "cmd.openHistory": "Abrir historial de consultas",
+  "cmd.toggleReadOnly": "Alternar solo lectura",
+  "cmd.disconnect": "Desconectar",
+  "cmd.deleteConnection": "Eliminar conexión",
+  "cmd.refresh": "Actualizar",
+  "cfg.confirmDestructive": "Pedir confirmación antes de sentencias destructivas (DROP, TRUNCATE, UPDATE/DELETE sin WHERE). El bloqueo por solo lectura nunca depende de este ajuste.",
+  "cfg.prodReadOnly": "Tratar las conexiones etiquetadas `prod` como de solo lectura.",
+  "cfg.maxRows": "Máximo de filas conservadas por resultado.",
+  "cfg.timeout": "Tiempo de espera de consultas en segundos (0 = sin límite).",
+  "cfg.historyEnabled": "Registrar las sentencias ejecutadas en un historial local (los secretos se redactan).",
+  "cfg.retention": "Días que se conservan las entradas del historial."
+}

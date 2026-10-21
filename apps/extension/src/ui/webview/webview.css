@@ -1,0 +1,17 @@
+:root { color-scheme: light dark; }
+body { margin: 0; padding: 0; font: var(--vscode-font-size) var(--vscode-font-family); color: var(--vscode-foreground); background: var(--vscode-editor-background); height: 100vh; display: flex; flex-direction: column; }
+header { padding: 6px 10px; border-bottom: 1px solid var(--vscode-panel-border); display: flex; gap: 12px; align-items: center; }
+#status { flex: 1; }
+button { color: var(--vscode-button-secondaryForeground); background: var(--vscode-button-secondaryBackground); border: 1px solid var(--vscode-button-border, transparent); padding: 2px 10px; cursor: pointer; }
+button:focus-visible, #grid:focus-visible { outline: 2px solid var(--vscode-focusBorder); outline-offset: -2px; }
+#error { margin: 10px; padding: 8px 10px; border: 1px solid var(--vscode-inputValidation-errorBorder); background: var(--vscode-inputValidation-errorBackground); }
+#error[hidden] { display: none; }
+#grid { flex: 1; overflow: auto; position: relative; outline-offset: -2px; }
+.row { display: flex; position: absolute; left: 0; height: 24px; line-height: 24px; white-space: nowrap; }
+.cell { box-sizing: border-box; width: 180px; padding: 0 8px; overflow: hidden; text-overflow: ellipsis; border-right: 1px solid var(--vscode-panel-border); border-bottom: 1px solid var(--vscode-panel-border); flex: none; }
+.head { position: sticky; top: 0; z-index: 2; background: var(--vscode-editorGroupHeader-tabsBackground, var(--vscode-editor-background)); font-weight: 600; display: flex; height: 26px; line-height: 26px; width: max-content; }
+.head .cell small { opacity: .7; font-weight: 400; margin-left: 6px; }
+.null { opacity: .6; font-style: italic; }
+.sel { outline: 2px solid var(--vscode-focusBorder); outline-offset: -2px; background: var(--vscode-list-activeSelectionBackground); color: var(--vscode-list-activeSelectionForeground); }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
