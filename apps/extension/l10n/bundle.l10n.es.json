@@ -274,7 +274,6 @@
  "Continue anyway": "Continuar igualmente",
  "Must be a number": "Debe ser un número",
  "Yes, via an SSH tunnel": "Sí, mediante un túnel SSH",
- "Connect through SSH?": "¿Conectar mediante SSH?",
  "SSH host": "Servidor SSH",
  "SSH port": "Puerto SSH",
  "SSH user": "Usuario SSH",
@@ -327,5 +326,12 @@
  "{0} and its relations highlighted": "{0} y sus relaciones resaltadas",
  "Selection cleared": "Selección borrada",
  "RizomaDB MCP server": "Servidor MCP de RizomaDB",
- "Password for {0} (use a read-only database account; it is kept only in the server process)": "Contraseña para {0} (usa una cuenta de solo lectura; solo se conserva en el proceso del servidor)"
+ "Password for {0} (use a read-only database account; it is kept only in the server process)": "Contraseña para {0} (usa una cuenta de solo lectura; solo se conserva en el proceso del servidor)",
+ "Connect through SSH or a proxy?": "¿Conectar mediante SSH o un proxy?",
+ "Yes, via an HTTP proxy": "Sí, mediante un proxy HTTP",
+ "Yes, via a SOCKS5 proxy": "Sí, mediante un proxy SOCKS5",
+ "Proxy host": "Host del proxy",
+ "Proxy port": "Puerto del proxy",
+ "Proxy user (leave empty if none)": "Usuario del proxy (vacío si no hay)",
+ "Proxy password": "Contraseña del proxy"
 }

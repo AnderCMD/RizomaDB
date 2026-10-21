@@ -18,7 +18,7 @@ Leyenda: ✅ cumplido y verificado · 🟡 parcial · ❌ no hecho
 | CI y release ejecutados en GitHub | ❌ | Flujos escritos, nunca ejecutados |
 | Tamaño del VSIX / arranque | 🟡 | Comprobación de tamaño en pruebas; sin medida de arranque en VS Code real |
 | Licencias y SBOM | ✅ | `pnpm audit:licenses`, `pnpm sbom:generate` |
-| Proxy HTTP/SOCKS | ❌ | No implementado |
+| Proxy HTTP/SOCKS | 🟡 | HTTP CONNECT y SOCKS5 (con usuario/contraseña, DNS en el proxy) hacia el servidor de base de datos, probados contra proxies de prueba escritos en el repo, NO contra Squid/Dante/etc. No cubre el salto SSH ni las llamadas de IA |
 | VSIX por plataforma (DuckDB) | ❌ | Módulo nativo fuera del VSIX |
 | Sitio de documentación es/en | 🟡 | `site/` (VitePress) compila en es/en (`pnpm --filter @rizomadb/site build`); NO desplegado ni revisado visualmente; páginas técnicas solo en inglés |
 | Firma de artefactos | ❌ | Prevista atestación de procedencia de GitHub |

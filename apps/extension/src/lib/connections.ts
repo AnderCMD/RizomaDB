@@ -1,4 +1,5 @@
 import type { Connection, DriverPlugin } from "@rizomadb/driver-api";
+import { openProxyTunnel, type ProxySettings } from "@rizomadb/network";
 import { guardConnection, parseProfile, redactString, resolveConfig, ruleFor, saveSecrets, type AuditLog, type ConnectionProfile, type EffectivePolicy, type SecretStore } from "@rizomadb/core";
 
 export interface Memento {
@@ -109,6 +110,14 @@ export class ConnectionManager {
       const cfg = await resolveConfig({ ...p, readOnly: this.isReadOnly(p) }, this.secrets, this.env, vars);
       this.known.set(id, Object.entries(cfg).filter(([k, v]) => typeof v === "string" && v.length >= 4 && (p.secretKeys.includes(k) || /pass|secret|token|key|uri/i.test(k))).map(([, v]) => v as string));
       const ssh = takeSsh(cfg);
+      const proxy = takeProxy(cfg);
+      if (ssh && proxy) throw new Error("Choose either an SSH tunnel or a proxy for this connection, not both.");
+      if (proxy) {
+        const defaultPort = Number((driver.connectionSchema.properties.port as { default?: unknown } | undefined)?.default ?? 0);
+        const tunnel = await openProxyTunnel({ proxy, target: { host: String(cfg.host), port: Number(cfg.port ?? defaultPort) } });
+        this.tunnels.set(id, tunnel);
+        cfg.host = "127.0.0.1"; cfg.port = tunnel.localPort;
+      }
       if (ssh) {
         if (!this.openSsh) throw new Error("SSH tunnels are not available in this environment");
         const defaultPort = Number((driver.connectionSchema.properties.port as { default?: unknown } | undefined)?.default ?? 0);
@@ -156,5 +165,20 @@ function takeSsh(cfg: Record<string, unknown>): SshSettings | undefined {
         ...(typeof get("passphrase") === "string" ? { passphrase: get("passphrase") as string } : {}) }
     : undefined;
   for (const k of Object.keys(cfg)) if (k.startsWith("ssh.")) delete cfg[k];
+  return out;
+}
+
+/** Flat `proxy.*` options (type http|socks5, host, port, username, password) route the database connection through a proxy. */
+function takeProxy(cfg: Record<string, unknown>): ProxySettings | undefined {
+  const get = (k: string) => cfg[`proxy.${k}`];
+  const type = get("type"), host = get("host");
+  let out: ProxySettings | undefined;
+  if (typeof host === "string" && host) {
+    if (type !== "http" && type !== "socks5") throw new Error(`Unsupported proxy type "${String(type)}": use http or socks5.`);
+    out = { type, host, port: Number(get("port") ?? (type === "http" ? 3128 : 1080)),
+      ...(typeof get("username") === "string" && get("username") ? { username: get("username") as string } : {}),
+      ...(typeof get("password") === "string" ? { password: get("password") as string } : {}) };
+  }
+  for (const k of Object.keys(cfg)) if (k.startsWith("proxy.")) delete cfg[k];
   return out;
 }

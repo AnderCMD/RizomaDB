@@ -52,11 +52,23 @@ export async function newConnectionWizard(mgr: ConnectionManager): Promise<strin
   }
 
   if (driver.capabilities.sql || driver.family !== "relational") {
-    const useSsh = await vscode.window.showQuickPick([{ label: t("No"), v: false }, { label: t("Yes, via an SSH tunnel"), v: true }], { title: t("Connect through SSH?"), ignoreFocusOut: true });
-    if (!useSsh) return;
+    const via = await vscode.window.showQuickPick([{ label: t("No"), v: "none" }, { label: t("Yes, via an SSH tunnel"), v: "ssh" }, { label: t("Yes, via an HTTP proxy"), v: "http" }, { label: t("Yes, via a SOCKS5 proxy"), v: "socks5" }], { title: t("Connect through SSH or a proxy?"), ignoreFocusOut: true });
+    if (!via) return;
+    const useSsh = { v: via.v === "ssh" };
+    const ask = async (title: string, value = "", password = false, required = true) =>
+      vscode.window.showInputBox({ title, value, password, ignoreFocusOut: true, validateInput: (x) => (required && !x.trim() ? t("Required") : undefined) });
+    if (via.v === "http" || via.v === "socks5") {
+      const host = await ask(t("Proxy host")); if (!host) return;
+      const port = await ask(t("Proxy port"), via.v === "http" ? "3128" : "1080"); if (!port) return;
+      const user = await ask(t("Proxy user (leave empty if none)"), "", false, false); if (user === undefined) return;
+      values["proxy.type"] = via.v; values["proxy.host"] = host; values["proxy.port"] = Number(port);
+      if (user) {
+        values["proxy.username"] = user;
+        const pw = await ask(t("Proxy password"), "", true, false); if (pw === undefined) return;
+        if (pw) { values["proxy.password"] = pw; secretKeys.push("proxy.password"); }
+      }
+    }
     if (useSsh.v) {
-      const ask = async (title: string, value = "", password = false, required = true) =>
-        vscode.window.showInputBox({ title, value, password, ignoreFocusOut: true, validateInput: (x) => (required && !x.trim() ? t("Required") : undefined) });
       const host = await ask(t("SSH host")); if (!host) return;
       const port = await ask(t("SSH port"), "22"); if (!port) return;
       const user = await ask(t("SSH user")); if (!user) return;

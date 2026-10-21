@@ -240,3 +240,45 @@ describe("connection importers", () => {
     expect(() => parseSqlTools("{ nope")).toThrow(/could not be read/);
   });
 });
+
+import net from "node:net";
+describe("proxy integration in ConnectionManager", () => {
+  it("routes the driver through an HTTP CONNECT proxy, hides proxy.* from the driver and sends credentials", async () => {
+    const echo = net.createServer((s) => { s.on("data", (d) => s.write(`echo:${d}`)); s.on("error", () => {}); });
+    await new Promise<void>((r) => echo.listen(0, "127.0.0.1", () => r()));
+    const echoPort = (echo.address() as net.AddressInfo).port;
+    const seen: string[] = [];
+    const proxy = net.createServer((c) => {
+      c.on("error", () => {}); let buf = "";
+      c.on("data", (d) => {
+        buf += d.toString("latin1"); if (!buf.includes("\r\n\r\n")) return;
+        seen.push(buf.split("\r\n").filter((l) => /^(CONNECT|proxy-authorization)/i.test(l)).join("|"));
+        const up = net.connect(echoPort, "127.0.0.1", () => { c.write("HTTP/1.1 200 OK\r\n\r\n"); c.removeAllListeners("data"); c.pipe(up).pipe(c); });
+        up.on("error", () => c.destroy());
+      });
+    });
+    await new Promise<void>((r) => proxy.listen(0, "127.0.0.1", () => r()));
+    let cfgSeen: Record<string, unknown> = {}; let reply = "";
+    const fake = { id: "fake", displayName: "f", family: "relational", capabilities: {}, connectionSchema: { type: "object", properties: { port: { type: "number", title: "p", default: 5432 } } },
+      quoteIdent: (x: string) => x, placeholder: () => "?", selectTop: () => "",
+      connect: async (cfg: Record<string, unknown>) => {
+        cfgSeen = { ...cfg };
+        reply = await new Promise<string>((res, rej) => { const s = net.connect(Number(cfg.port), String(cfg.host), () => s.write("hi")); s.once("data", (d) => { res(String(d)); s.destroy(); }); s.once("error", rej); });
+        return { serverInfo: { product: "f", version: "1" }, close: async () => {}, ping: async () => {} };
+      } };
+    const mgr = new ConnectionManager(memento(), new MemorySecretStore(), { fake: async () => fake as never }, () => defaultEffectivePolicy, {});
+    await mgr.add({ id: "p", name: "p", driver: "fake", environment: "dev", readOnly: false, tags: [], secretKeys: ["proxy.password"],
+      values: { host: "db.internal", "proxy.type": "http", "proxy.host": "127.0.0.1", "proxy.port": (proxy.address() as net.AddressInfo).port, "proxy.username": "u", "proxy.password": "pw" } });
+    await mgr.connect("p");
+    expect(reply).toBe("echo:hi");
+    expect(seen[0]).toContain("CONNECT db.internal:5432"); expect(seen[0]).toContain(Buffer.from("u:pw").toString("base64"));
+    expect(cfgSeen).toMatchObject({ host: "127.0.0.1" }); expect(Object.keys(cfgSeen).some((k) => k.startsWith("proxy."))).toBe(false);
+    await mgr.disconnect("p"); proxy.close(); echo.close();
+  });
+  it("refuses SSH and a proxy together", async () => {
+    const fake = { id: "fake", displayName: "f", family: "relational", capabilities: {}, connectionSchema: { type: "object", properties: {} }, quoteIdent: (x: string) => x, placeholder: () => "?", selectTop: () => "", connect: async () => { throw new Error("must not connect"); } };
+    const mgr = new ConnectionManager(memento(), new MemorySecretStore(), { fake: async () => fake as never }, () => defaultEffectivePolicy, {}, async () => ({ localPort: 1, close: async () => {} }));
+    await mgr.add({ id: "b", name: "b", driver: "fake", environment: "dev", readOnly: false, tags: [], secretKeys: [], values: { host: "h", "ssh.host": "s", "ssh.username": "u", "proxy.type": "socks5", "proxy.host": "p" } });
+    await expect(mgr.connect("b")).rejects.toThrow(/either an SSH tunnel or a proxy/);
+  });
+});
