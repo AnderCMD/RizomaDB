@@ -1,7 +1,29 @@
 {
-  "name": "@rizomadb/sql", "version": "0.0.0", "license": "Apache-2.0", "type": "module",
-  "main": "dist/index.js", "types": "dist/index.d.ts",
-  "scripts": { "build": "tsc -p tsconfig.json", "typecheck": "tsc -p tsconfig.json --noEmit", "test": "vitest run" },
-  "dependencies": { "@rizomadb/driver-api": "workspace:*", "sql-formatter": "15.9.0" },
-  "devDependencies": { "fast-check": "4.10.2" }
+  "name": "@rizomadb/sql",
+  "version": "0.0.0",
+  "license": "Apache-2.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@rizomadb/driver-api": "workspace:*",
+    "sql-formatter": "15.9.0"
+  },
+  "devDependencies": {
+    "fast-check": "4.10.2",
+    "@rizomadb/driver-sqlite": "workspace:*",
+    "@rizomadb/driver-postgres": "workspace:*",
+    "@rizomadb/driver-mysql": "workspace:*",
+    "@rizomadb/driver-mssql": "workspace:*",
+    "@rizomadb/driver-oracle": "workspace:*",
+    "pg": "8.23.1",
+    "mysql2": "3.24.6",
+    "tedious": "20.3.8",
+    "oracledb": "26.0.0"
+  }
 }

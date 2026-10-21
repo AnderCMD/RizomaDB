@@ -25,3 +25,14 @@ runConformance({
   paramSql: "SELECT $1::text AS a, $2::text AS b",
   badConfig: () => ({ ...base, database: "postgres", password: "wrong" }),
 });
+
+import { describe, it, expect } from "vitest";
+import { collect } from "@rizomadb/driver-api";
+describe.skipIf(!enabled)("postgres value mapping", () => {
+  it("returns int8 losslessly, jsonb as {json}, arrays as arrays", async () => {
+    const c = await postgresDriver.connect({ ...base, database: "postgres" }, { log() {} });
+    const r = await collect(c.execute({ sql: "SELECT 9223372036854775807::int8 AS a, 5::int8 AS b, '{\"x\":1}'::jsonb AS j, ARRAY['p','q']::text[] AS arr" }, new AbortController().signal));
+    expect(r.rows[0]).toEqual([9223372036854775807n, 5, { json: { x: 1 } }, ["p", "q"]]);
+    await c.close();
+  });
+});

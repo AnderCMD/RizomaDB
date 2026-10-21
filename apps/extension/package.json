@@ -142,6 +142,21 @@
         "command": "rizomadb.export",
         "title": "%cmd.export%",
         "category": "RizomaDB"
+      },
+      {
+        "command": "rizomadb.explain",
+        "title": "%cmd.explain%",
+        "category": "RizomaDB"
+      },
+      {
+        "command": "rizomadb.newNotebook",
+        "title": "%cmd.newNotebook%",
+        "category": "RizomaDB"
+      },
+      {
+        "command": "rizomadb.pinResults",
+        "title": "%cmd.pin%",
+        "category": "RizomaDB"
       }
     ],
     "menus": {
@@ -193,6 +208,11 @@
           "command": "rizomadb.cancelQuery",
           "when": "editorLangId == sql && rizomadb.running",
           "group": "navigation"
+        },
+        {
+          "command": "rizomadb.explain",
+          "when": "editorLangId == sql",
+          "group": "navigation@2"
         }
       ]
     },
@@ -253,7 +273,18 @@
           "markdownDescription": "%cfg.openRows%"
         }
       }
-    }
+    },
+    "notebooks": [
+      {
+        "type": "rizomadb-sql-notebook",
+        "displayName": "RizomaDB SQL Notebook",
+        "selector": [
+          {
+            "filenamePattern": "*.sqlnb"
+          }
+        ]
+      }
+    ]
   },
   "scripts": {
     "build": "node esbuild.mjs",
@@ -272,7 +303,8 @@
     "@rizomadb/driver-mssql": "workspace:*",
     "@rizomadb/driver-oracle": "workspace:*",
     "@rizomadb/network": "workspace:*",
-    "@rizomadb/data-tools": "workspace:*"
+    "@rizomadb/data-tools": "workspace:*",
+    "@rizomadb/sql": "workspace:*"
   },
   "devDependencies": {
     "@types/vscode": "1.100.0",

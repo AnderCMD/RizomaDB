@@ -24,5 +24,8 @@
   "cmd.apply": "Apply Pending Changes",
   "cmd.discard": "Discard Pending Changes",
   "cfg.openRows": "Rows loaded when opening a table.",
-  "cmd.export": "Export Data…"
+  "cmd.export": "Export Data…",
+  "cmd.explain": "Explain Query Plan",
+  "cmd.newNotebook": "New SQL Notebook",
+  "cmd.pin": "Pin Results Tab"
 }

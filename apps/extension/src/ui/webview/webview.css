@@ -23,3 +23,17 @@ button:focus-visible, #grid:focus-visible { outline: 2px solid var(--vscode-focu
 .row.inserted .cell { background: var(--vscode-diffEditor-insertedTextBackground, rgba(0,255,0,.12)); }
 .cell.changed { background: var(--vscode-diffEditor-insertedTextBackground, rgba(0,255,0,.18)); border-bottom: 2px solid var(--vscode-gitDecoration-modifiedResourceForeground, #e2c08d); }
 .editor { box-sizing: border-box; width: 100%; height: 22px; color: var(--vscode-input-foreground); background: var(--vscode-input-background); border: 1px solid var(--vscode-focusBorder); }
+/* plan viewer */
+#tree, #tree ul { list-style: none; padding-left: 18px; margin: 0; }
+#tree { padding: 8px 12px; }
+#tree [aria-expanded="false"] > ul { display: none; }
+.node { padding: 3px 6px; border-radius: 3px; }
+.node:focus-visible { outline: 2px solid var(--vscode-focusBorder); }
+.node .label { font-weight: 600; }
+.node .meta { margin-left: 10px; opacity: .8; }
+.node .detail { opacity: .75; font-size: .92em; }
+.bar { height: 4px; background: var(--vscode-panel-border); margin-top: 3px; max-width: 320px; }
+.fill { height: 100%; background: var(--vscode-charts-blue, #3794ff); }
+li.slow > .node { background: var(--vscode-inputValidation-warningBackground, rgba(255,200,0,.15)); border-left: 3px solid var(--vscode-inputValidation-warningBorder, #cca700); }
+li.slow > .node .fill { background: var(--vscode-charts-orange, #d18616); }
+details { padding: 0 12px 12px; } pre#raw { overflow: auto; max-height: 40vh; }

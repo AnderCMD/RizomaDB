@@ -24,5 +24,8 @@
   "cmd.apply": "Aplicar cambios pendientes",
   "cmd.discard": "Descartar cambios pendientes",
   "cfg.openRows": "Filas cargadas al abrir una tabla.",
-  "cmd.export": "Exportar datos…"
+  "cmd.export": "Exportar datos…",
+  "cmd.explain": "Explicar plan de ejecución",
+  "cmd.newNotebook": "Nuevo cuaderno SQL",
+  "cmd.pin": "Fijar pestaña de resultados"
 }

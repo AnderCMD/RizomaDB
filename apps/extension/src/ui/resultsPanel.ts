@@ -7,6 +7,14 @@ export class ResultsPanel {
   private panel: vscode.WebviewPanel | undefined;
   constructor(private ctx: vscode.ExtensionContext, private onMessage: (m: WebviewToHost) => void) {}
 
+  /** Detaches the current tab so it keeps its results; the next query opens a fresh tab. */
+  pin(): boolean {
+    if (!this.panel) return false;
+    this.panel.title = `${this.panel.title} 📌`;
+    this.panel = undefined;
+    return true;
+  }
+
   post(m: HostToWebview) {
     this.ensure();
     void this.panel!.webview.postMessage(m);
@@ -36,7 +44,7 @@ export class ResultsPanel {
       if (p.data.type === "copy") void vscode.env.clipboard.writeText(p.data.text);
       else this.onMessage(p.data);
     });
-    panel.onDidDispose(() => { this.panel = undefined; });
+    panel.onDidDispose(() => { if (this.panel === panel) this.panel = undefined; });
     this.panel = panel;
   }
 }

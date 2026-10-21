@@ -11,11 +11,13 @@ vi.mock("vscode", () => {
   const item = () => ({ show() {}, hide() {}, dispose() {} });
   return {
     l10n: { t: (s: string, ...a: unknown[]) => s.replace(/\{(\d)\}/g, (_, i) => String(a[Number(i)])) },
-    workspace: { getConfiguration: () => ({ get: (_: string, d: unknown) => d }) },
+    workspace: { getConfiguration: () => ({ get: (_: string, d: unknown) => d }), registerNotebookSerializer: noop, onDidChangeTextDocument: noop, onDidOpenTextDocument: noop, onDidCloseTextDocument: noop, textDocuments: [] },
+    notebooks: { createNotebookController: () => ({ dispose() {} }) },
+    CompletionItemKind: {}, DiagnosticSeverity: {}, NotebookCellKind: {},
     Uri: { joinPath: (u: { fsPath: string }, ...p: string[]) => ({ fsPath: [u.fsPath, ...p].join('/') }) },
     window: { createStatusBarItem: item, registerTreeDataProvider: noop, onDidChangeActiveTextEditor: noop, activeTextEditor: undefined },
     commands: { registerCommand: (id: string, fn: unknown) => { commands.set(id, fn); return noop(); }, executeCommand: async () => {} },
-    languages: { registerCodeLensProvider: noop },
+    languages: { registerCodeLensProvider: noop, registerCompletionItemProvider: noop, createDiagnosticCollection: () => ({ dispose() {}, set() {}, delete() {} }), registerDocumentFormattingEditProvider: noop, registerDocumentRangeFormattingEditProvider: noop },
     StatusBarAlignment: { Left: 1 }, EventEmitter: class { event = () => noop(); fire() {} },
     TreeItem: class {}, ThemeIcon: class {}, ThemeColor: class {}, TreeItemCollapsibleState: {}, ProgressLocation: {}, ViewColumn: {},
   };

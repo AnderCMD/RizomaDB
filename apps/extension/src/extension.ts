@@ -11,6 +11,11 @@ import { Explorer, type Node } from "./ui/explorer.js";
 import { ResultsPanel } from "./ui/resultsPanel.js";
 import { InputError, TableSession } from "./lib/tableSession.js";
 import { newConnectionWizard } from "./ui/wizard.js";
+import { registerLanguage } from "./ui/language.js";
+import { PlanPanel } from "./ui/planPanel.js";
+import { registerNotebooks } from "./ui/notebook.js";
+import { SchemaCache, DIALECT_OF } from "./lib/schemaCache.js";
+import { bindParameters, explain, findParameters } from "@rizomadb/sql";
 import { createWriteStream } from "node:fs";
 import { appendFile, mkdir, readFile } from "node:fs/promises";
 import { homedir } from "node:os";
@@ -136,6 +141,10 @@ export async function activate(ctx: vscode.ExtensionContext) {
   cancelItem.text = `$(sync~spin) ${t("Running… click to cancel")}`;
 
   const docConn = (d: vscode.TextDocument) => ctx.workspaceState.get<string>(`doc:${d.uri.toString()}`);
+  const schemaCache = new SchemaCache(mgr);
+  const planPanel = new PlanPanel(ctx);
+  const lang = registerLanguage(ctx, mgr, schemaCache, docConn);
+  registerNotebooks(ctx, mgr, policy, cfg, () => pickConnection());
   const refreshStatus = () => {
     const ed = vscode.window.activeTextEditor;
     const p = ed && ed.document.languageId === "sql" ? mgr.get(docConn(ed.document) ?? "") : undefined;
@@ -166,7 +175,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
     return id;
   }
 
-  async function execute(id: string, sql: string, title: string, edit?: { target: EditTarget }) {
+  async function execute(id: string, sql: string, title: string, edit?: { target: EditTarget }, params?: Value[]) {
     const profile = mgr.get(id);
     if (!profile) return;
     if (running) { void vscode.window.showWarningMessage(t("A query is already running. Cancel it first.")); return; }
@@ -192,13 +201,14 @@ export async function activate(ctx: vscode.ExtensionContext) {
       const conn = await vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: t("Connecting…") }, () => mgr.connect(id));
       const timeout = cfg().get<number>("query.timeoutSeconds", 0);
       const out = await runStatement({
-        conn, profile, sql, signal: ac.signal, policy: policy(), readOnly: mgr.isReadOnly(profile),
+        conn, profile, sql, ...(params ? { params } : {}), signal: ac.signal, policy: policy(), readOnly: mgr.isReadOnly(profile),
         maxRows: cfg().get<number>("query.maxRows", 10000), ...(timeout > 0 ? { timeoutMs: timeout * 1000 } : {}),
         confirmDestructive: cfg().get<boolean>("security.confirmDestructive", true),
         confirm: async (reason) => (await vscode.window.showWarningMessage(
           t("[{0}] {1}: {2}", profile.environment.toUpperCase(), profile.name, reason), { modal: true, detail: sql.slice(0, 500) }, t("Run anyway"))) === t("Run anyway"),
         onEvent: emit,
       });
+      if (out.status === "ok" && /^\s*(create|alter|drop|rename|truncate)\b/i.test(sql)) { schemaCache.invalidate(id); lang.refreshAll(); void vscode.commands.executeCommand("rizomadb.refresh"); }
       if (edit && out.status === "ok") {
         const ts = new TableSession(edit.target, cols, rawRows);
         session = { s: ts, profileId: id, refresh: () => execute(id, sql, title, edit) };
@@ -216,6 +226,32 @@ export async function activate(ctx: vscode.ExtensionContext) {
     }
   }
 
+  /** Replaces :name / $1 / @name / ? placeholders with the driver's positional binds after asking for values. */
+  async function promptParameters(id: string, sql: string): Promise<{ sql: string; params?: Value[] } | undefined> {
+    const profile = mgr.get(id); if (!profile) return { sql };
+    const dialect = DIALECT_OF[profile.driver] ?? "ansi";
+    const found = findParameters(sql, dialect);
+    if (!found.length) return { sql };
+    const plugin = await mgr.loadDriver(profile.driver);
+    const values: Record<string, Value> = {};
+    for (const p of found) {
+      const key = `param:${profile.id}:${p.name}`;
+      const raw = await vscode.window.showInputBox({ title: t("Parameter {0}", p.style === "positional" ? `#${p.name}` : p.name), prompt: t("Value (null, true/false, numbers and \"quoted text\" are typed; anything else is text)"), value: ctx.workspaceState.get<string>(key) ?? "", ignoreFocusOut: true });
+      if (raw === undefined) return undefined;
+      await ctx.workspaceState.update(key, raw);
+      values[p.name] = parseParam(raw);
+    }
+    const b = bindParameters(sql, dialect, values, plugin.placeholder);
+    return { sql: b.sql, params: b.params };
+  }
+  const parseParam = (raw: string): Value => {
+    const s = raw.trim();
+    if (/^null$/i.test(s)) return null;
+    if (/^(true|false)$/i.test(s)) return s.toLowerCase() === "true";
+    if (/^-?\d+$/.test(s)) { const b = BigInt(s); return b > BigInt(Number.MAX_SAFE_INTEGER) || b < BigInt(Number.MIN_SAFE_INTEGER) ? b : Number(b); }
+    if (/^-?\d*\.\d+$/.test(s)) return Number(s);
+    return /^".*"$/s.test(s) ? s.slice(1, -1) : raw;
+  };
   const editorDoc = () => vscode.window.activeTextEditor?.document;
   const reg = (id: string, fn: (...a: never[]) => unknown) => ctx.subscriptions.push(vscode.commands.registerCommand(id, fn as never));
 
@@ -237,7 +273,9 @@ export async function activate(ctx: vscode.ExtensionContext) {
     const sel = ed.selection;
     const text = sel.isEmpty ? statementAt(ed.document.getText(), ed.document.offsetAt(sel.active))?.text : ed.document.getText(sel);
     if (!text?.trim()) { void vscode.window.showInformationMessage(t("Nothing to run.")); return; }
-    const id = await bind(ed.document); if (id) await execute(id, text, t("Query"));
+    const id = await bind(ed.document); if (!id) return;
+    const bound = await promptParameters(id, text); if (!bound) return;
+    await execute(id, bound.sql, t("Query"), undefined, bound.params);
   });
   reg("rizomadb.runSelection", async () => {
     const ed = vscode.window.activeTextEditor; if (!ed) return;
@@ -312,7 +350,35 @@ export async function activate(ctx: vscode.ExtensionContext) {
     const ok = await vscode.window.showWarningMessage(t("Delete connection '{0}'? Stored secrets are removed too.", n.profile.name), { modal: true }, t("Delete"));
     if (ok) await mgr.remove(n.profile.id);
   });
-  reg("rizomadb.refresh", () => explorer.refresh());
+  reg("rizomadb.pinResults", () => { session = undefined; if (!results.pin()) void vscode.window.showInformationMessage(t("No results to pin.")); });
+  reg("rizomadb.newNotebook", async () => {
+    const data = new vscode.NotebookData([new vscode.NotebookCellData(vscode.NotebookCellKind.Code, "SELECT 1;", "sql")]);
+    await vscode.window.showNotebookDocument(await vscode.workspace.openNotebookDocument("rizomadb-sql-notebook", data));
+  });
+  reg("rizomadb.refresh", () => { schemaCache.invalidate(); lang.refreshAll(); explorer.refresh(); });
+  reg("rizomadb.explain", async (analyze?: boolean) => {
+    const ed = vscode.window.activeTextEditor; if (!ed) return;
+    const sel = ed.selection;
+    const text = sel.isEmpty ? statementAt(ed.document.getText(), ed.document.offsetAt(sel.active))?.text : ed.document.getText(sel);
+    if (!text) return;
+    const id = await bind(ed.document); if (!id) return;
+    const profile = mgr.get(id)!;
+    const bound = await promptParameters(id, text); if (!bound) return;
+    const conn = await mgr.connect(id);
+    if (bound.params?.length) { void vscode.window.showWarningMessage(t("Explain does not support bind parameters; replace them with literal values.")); return; }
+    const d = decide(text, { environment: profile.environment, readOnly: true }, policy());
+    if (analyze === true) {
+      if (profile.driver !== "postgres") { void vscode.window.showWarningMessage(t("EXPLAIN ANALYZE is only available for PostgreSQL.")); return; }
+      if (!d.allowed) { void vscode.window.showErrorMessage(t("EXPLAIN ANALYZE executes the statement, so it is limited to read-only statements.")); return; }
+      const ok = await vscode.window.showWarningMessage(t("EXPLAIN ANALYZE will execute this query on {0}.", profile.name), { modal: true }, t("Run it"));
+      if (!ok) return;
+    }
+    try {
+      const sqlText = bound.sql;
+      const plan = await vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: t("Planning…") }, () => explain(conn, profile.driver as never, sqlText, { analyze: analyze === true }));
+      planPanel.show(`${profile.name}`, plan);
+    } catch (e) { void vscode.window.showErrorMessage(t("Could not get a plan: {0}", (e as Error).message)); }
+  });
   reg("rizomadb.openHistory", async () => {
     const items = await history.list({ limit: 200 });
     const pick = await vscode.window.showQuickPick(items.map((e) => ({

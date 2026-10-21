@@ -171,3 +171,18 @@ describe("ssh tunnel integration in ConnectionManager", () => {
     expect(closed).toBe(true);
   });
 });
+
+import { parseNotebook, serializeNotebook, tableHtml } from "./notebookFormat.js";
+describe("notebook format", () => {
+  it("round-trips without outputs and rejects foreign files", () => {
+    const n = { version: 1 as const, connection: "c1", cells: [{ kind: "sql" as const, source: "select 1" }, { kind: "markdown" as const, source: "# hi" }] };
+    expect(parseNotebook(serializeNotebook(n))).toEqual(n);
+    expect(parseNotebook("")).toEqual({ version: 1, cells: [] });
+    expect(() => parseNotebook('{"version":2}')).toThrow();
+    expect(parseNotebook('{"version":1,"cells":[{"kind":"evil","source":"x"},{"kind":"sql","source":"ok"}]}').cells).toHaveLength(1);
+  });
+  it("escapes HTML in result cells (data is never markup)", () => {
+    const h = tableHtml(["<b>x</b>"], [["<script>alert(1)</script>"], [null]]);
+    expect(h).not.toContain("<script>"); expect(h).toContain("&lt;script&gt;"); expect(h).toContain("<i>NULL</i>");
+  });
+});

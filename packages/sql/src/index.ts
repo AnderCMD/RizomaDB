@@ -1,2 +1,10 @@
 export * from "./tokenizer.js";
 export * from "./splitter.js";
+export * from "./schema.js";
+export { analyzeContext, type CompletionContext, type TableRef, type Clause } from "./scope.js";
+export * from "./completion.js";
+export * from "./diagnostics.js";
+export * from "./params.js";
+export * from "./format.js";
+export * from "./keywords.js";
+export * from "./explain.js";

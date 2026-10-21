@@ -62,7 +62,7 @@ type Runner = { client: pg.Client; cancel: (pid: number) => Promise<void>; pid: 
 async function* run(r: Runner, req: ExecuteRequest, signal: AbortSignal): AsyncGenerator<ResultEvent> {
   if (signal.aborted) throw new DriverError("cancelled", "Query cancelled");
   const t0 = performance.now();
-  const cursor = r.client.query(new Cursor(req.sql, (req.params ?? []).map(toParam) as unknown[], { rowMode: "array" }));
+  const cursor = r.client.query(new Cursor(req.sql, (req.params ?? []).map(toParam) as unknown[], { rowMode: "array", types: typeParser }));
   const onAbort = () => { void r.cancel(r.pid).catch(() => {}); };
   signal.addEventListener("abort", onAbort, { once: true });
   const batch = req.batchSize ?? 500;

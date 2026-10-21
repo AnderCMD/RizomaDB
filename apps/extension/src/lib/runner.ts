@@ -11,6 +11,7 @@ export interface RunOptions {
   conn: Connection;
   profile: ConnectionProfile;
   sql: string;
+  params?: Value[];
   maxRows: number;
   timeoutMs?: number;
   signal: AbortSignal;
@@ -48,7 +49,7 @@ export async function runStatement(o: RunOptions): Promise<RunOutcome> {
   const timer = o.timeoutMs ? setTimeout(() => { timedOut = true; ac.abort(); }, o.timeoutMs) : undefined;
   let rowCount = 0;
   try {
-    for await (const ev of o.conn.execute({ sql: o.sql, maxRows: o.maxRows + 1 }, ac.signal)) {
+    for await (const ev of o.conn.execute({ sql: o.sql, ...(o.params ? { params: o.params } : {}), maxRows: o.maxRows + 1 }, ac.signal)) {
       if (ev.type === "columns") o.onEvent({ type: "start", sql: o.sql, columns: ev.columns });
       else if (ev.type === "rows") {
         const room = o.maxRows - rowCount;
