@@ -1,0 +1,35 @@
+{
+  "scopeName": "source.rizomadb-cypher",
+  "name": "RizomaDB Cypher",
+  "patterns": [
+    {
+      "match": "//.*$",
+      "name": "comment.line.double-slash.rizomadb-cypher"
+    },
+    {
+      "begin": "/\\*",
+      "end": "\\*/",
+      "name": "comment.block.rizomadb-cypher"
+    },
+    {
+      "match": "'(?:[^'\\\\]|\\\\.)*'|\"(?:[^\"\\\\]|\\\\.)*\"",
+      "name": "string.quoted.rizomadb-cypher"
+    },
+    {
+      "match": "`[^`]*`",
+      "name": "variable.other.quoted.rizomadb-cypher"
+    },
+    {
+      "match": "\\$\\w+",
+      "name": "variable.parameter.rizomadb-cypher"
+    },
+    {
+      "match": "(?i)\\b(MATCH|OPTIONAL|WHERE|RETURN|WITH|UNWIND|ORDER|BY|SKIP|LIMIT|CREATE|MERGE|SET|DELETE|DETACH|REMOVE|CALL|YIELD|UNION|ALL|DISTINCT|AS|AND|OR|XOR|NOT|IN|IS|NULL|STARTS|ENDS|CONTAINS|CASE|WHEN|THEN|ELSE|END|EXPLAIN|PROFILE|SHOW|FOREACH|ON|DROP|INDEX|CONSTRAINT|FOR|ASC|DESC)\\b",
+      "name": "keyword.control.rizomadb-cypher"
+    },
+    {
+      "match": "\\b\\d+(\\.\\d+)?\\b",
+      "name": "constant.numeric.rizomadb-cypher"
+    }
+  ]
+}

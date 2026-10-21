@@ -7,7 +7,7 @@ Leyenda: ✅ cumplido y verificado · 🟡 parcial · ❌ no hecho
 | Criterio | Estado | Evidencia / límite |
 |---|---|---|
 | Tier 1 (PG, MySQL/MariaDB, SQLite, SQL Server, Oracle, MongoDB, Redis/Valkey) con pruebas contra motor real | ✅ | Kit de conformidad + pruebas por motor (contenedores Docker) |
-| Tier 2 completo | 🟡 | ClickHouse, Elasticsearch/OpenSearch, DuckDB, CockroachDB-por-PG: ver docs/engines. Faltan Cassandra, DynamoDB, Neo4j, Firestore, InfluxDB, Trino, Redshift probado |
+| Tier 2 completo | 🟡 | ClickHouse, Elasticsearch/OpenSearch, DuckDB, CockroachDB-por-PG: ver docs/engines. Neo4j 5.26 añadido (HTTP Query API, 14 pruebas contra motor real). Faltan Cassandra, DynamoDB, Firestore, InfluxDB, Trino, Redshift probado |
 | Cero telemetría | ✅ | Prueba de activación sin sockets |
 | Secretos solo en SecretStorage | ✅ | Pruebas de depuración de secretos y auto-auditoría |
 | Política/auditoría en un único punto | ✅ | `guardConnection`, `policy-paths.test.ts` |

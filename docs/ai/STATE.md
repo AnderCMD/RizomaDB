@@ -34,3 +34,5 @@ PENDIENTE para cerrar la Fase 10 / v1.0 (no hecho): ejecutar la suite completa t
 - Suite completa con `RZ_ENGINES=sqlite`: 40/40 tareas verdes. Los drivers de motores en contenedor no se han vuelto a ejecutar tras el cambio de `ConnectionLoss` salvo PostgreSQL (16/16).
 - Documentos nuevos: `docs/guides/migration.md`, `docs/market/honest-comparison.md`, `docs/release/v1-checklist.md` (v1.0 NO lista).
 - Sin push ni publicación desde `4b90488`.
+- Neo4j (Nivel 2) añadido: `@rizomadb/driver-neo4j` sobre la API HTTP Query v2 (sin dependencias; tipos JSON tipados, enteros de 64 bits sin pérdida), clasificador Cypher por defecto-denegar, transacciones, introspección de etiquetas/propiedades/índices, modo de lenguaje `rizomadb-cypher`. 14 pruebas contra Neo4j 5.26 real. Límites: sin Bolt, resultados no en streaming, cancelar solo aborta la petición HTTP, sin visor de plan.
+- Prueba e2e en VS Code real 1.142 (`pnpm --filter rizomadb test:e2e`): activa la extensión, 52 comandos registrados, `node:sqlite` disponible. Sitio VitePress es/en compila (`site/`), sin desplegar.

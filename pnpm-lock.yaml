@@ -241,6 +241,9 @@ importers:
       '@rizomadb/driver-mysql':
         specifier: workspace:*
         version: link:../../packages/drivers/mysql
+      '@rizomadb/driver-neo4j':
+        specifier: workspace:*
+        version: link:../../packages/drivers/neo4j
       '@rizomadb/driver-oracle':
         specifier: workspace:*
         version: link:../../packages/drivers/oracle
@@ -440,6 +443,16 @@ importers:
       pg:
         specifier: 8.23.1
         version: 8.23.1
+
+  packages/drivers/neo4j:
+    dependencies:
+      '@rizomadb/driver-api':
+        specifier: workspace:*
+        version: link:../../driver-api
+    devDependencies:
+      fast-check:
+        specifier: 4.10.2
+        version: 4.10.2
 
   packages/drivers/oracle:
     dependencies:

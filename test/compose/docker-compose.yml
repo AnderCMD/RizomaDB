@@ -42,3 +42,7 @@ services:
     image: opensearchproject/opensearch:2.17.1
     environment: { discovery.type: single-node, DISABLE_SECURITY_PLUGIN: "true", DISABLE_INSTALL_DEMO_CONFIG: "true", OPENSEARCH_JAVA_OPTS: "-Xms512m -Xmx512m" }
     ports: ["19201:9200"]
+  neo4j:
+    image: neo4j:5.26
+    environment: { NEO4J_AUTH: "neo4j/rizoma-test-pw", NEO4J_server_memory_heap_max__size: 512m, NEO4J_server_memory_pagecache_size: 128m }
+    ports: ["17474:7474", "17687:7687"]

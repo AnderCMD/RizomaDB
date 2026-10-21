@@ -476,17 +476,17 @@
       "editor/title": [
         {
           "command": "rizomadb.runQuery",
-          "when": "editorLangId =~ /^(sql|rizomadb-mongo|rizomadb-redis|rizomadb-es)$/",
+          "when": "editorLangId =~ /^(sql|rizomadb-mongo|rizomadb-redis|rizomadb-es|rizomadb-cypher)$/",
           "group": "navigation"
         },
         {
           "command": "rizomadb.cancelQuery",
-          "when": "editorLangId =~ /^(sql|rizomadb-mongo|rizomadb-redis|rizomadb-es)$/ && rizomadb.running",
+          "when": "editorLangId =~ /^(sql|rizomadb-mongo|rizomadb-redis|rizomadb-es|rizomadb-cypher)$/ && rizomadb.running",
           "group": "navigation"
         },
         {
           "command": "rizomadb.explain",
-          "when": "editorLangId =~ /^(sql|rizomadb-mongo|rizomadb-redis|rizomadb-es)$/",
+          "when": "editorLangId =~ /^(sql|rizomadb-mongo|rizomadb-redis|rizomadb-es|rizomadb-cypher)$/",
           "group": "navigation@2"
         },
         {
@@ -501,13 +501,13 @@
         "command": "rizomadb.runQuery",
         "key": "ctrl+enter",
         "mac": "cmd+enter",
-        "when": "editorLangId =~ /^(sql|rizomadb-mongo|rizomadb-redis|rizomadb-es)$/ && editorTextFocus"
+        "when": "editorLangId =~ /^(sql|rizomadb-mongo|rizomadb-redis|rizomadb-es|rizomadb-cypher)$/ && editorTextFocus"
       },
       {
         "command": "rizomadb.runSelection",
         "key": "ctrl+shift+enter",
         "mac": "cmd+shift+enter",
-        "when": "editorLangId =~ /^(sql|rizomadb-mongo|rizomadb-redis|rizomadb-es)$/ && editorTextFocus"
+        "when": "editorLangId =~ /^(sql|rizomadb-mongo|rizomadb-redis|rizomadb-es|rizomadb-cypher)$/ && editorTextFocus"
       }
     ],
     "configuration": {
@@ -652,6 +652,17 @@
           ".es"
         ],
         "configuration": "./syntaxes/language-configuration.json"
+      },
+      {
+        "id": "rizomadb-cypher",
+        "aliases": [
+          "RizomaDB Cypher"
+        ],
+        "extensions": [
+          ".cypher",
+          ".cyp"
+        ],
+        "configuration": "./syntaxes/language-configuration.json"
       }
     ],
     "grammars": [
@@ -669,6 +680,11 @@
         "language": "rizomadb-es",
         "scopeName": "source.rizomadb-es",
         "path": "./syntaxes/es.tmLanguage.json"
+      },
+      {
+        "language": "rizomadb-cypher",
+        "scopeName": "source.rizomadb-cypher",
+        "path": "./syntaxes/cypher.tmLanguage.json"
       }
     ]
   },
@@ -688,6 +704,7 @@
     "@rizomadb/driver-clickhouse": "workspace:*",
     "@rizomadb/driver-duckdb": "workspace:*",
     "@rizomadb/driver-elasticsearch": "workspace:*",
+    "@rizomadb/driver-neo4j": "workspace:*",
     "@rizomadb/driver-mongodb": "workspace:*",
     "@rizomadb/driver-mssql": "workspace:*",
     "@rizomadb/driver-mysql": "workspace:*",
@@ -711,6 +728,7 @@
   "activationEvents": [
     "onLanguage:rizomadb-mongo",
     "onLanguage:rizomadb-redis",
-    "onLanguage:rizomadb-es"
+    "onLanguage:rizomadb-es",
+    "onLanguage:rizomadb-cypher"
   ]
 }
