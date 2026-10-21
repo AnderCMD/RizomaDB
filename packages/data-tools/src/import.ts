@@ -140,7 +140,7 @@ export async function importRows(o: ImportOptions): Promise<ImportResult> {
       } catch (e) {
         if (!(e instanceof ConversionError)) throw e;
         if (o.onError === "skip") { res.skipped++; if (res.errors.length < 1000) res.errors.push({ row: res.read, message: e.message }); continue; }
-        throw new Error(`Row ${res.read}: ${e.message}`);
+        throw new Error(`Row ${res.read}: ${e.message}`, { cause: e });
       }
       if (buf.length >= size) await flush();
     }
