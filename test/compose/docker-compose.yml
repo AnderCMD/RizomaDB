@@ -50,3 +50,7 @@ services:
     image: amazon/dynamodb-local:2.5.2
     command: ["-jar", "DynamoDBLocal.jar", "-inMemory", "-sharedDb"]
     ports: ["18000:8000"]
+  influxdb:
+    image: influxdb:2.7
+    environment: { DOCKER_INFLUXDB_INIT_MODE: setup, DOCKER_INFLUXDB_INIT_USERNAME: rizoma, DOCKER_INFLUXDB_INIT_PASSWORD: rizoma-test-pw, DOCKER_INFLUXDB_INIT_ORG: rizoma, DOCKER_INFLUXDB_INIT_BUCKET: test, DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: rizoma-test-token }
+    ports: ["18086:8086"]

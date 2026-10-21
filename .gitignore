@@ -9,3 +9,4 @@ test/a11y/out
 site/.vitepress/cache
 site/content/en/*/
 site/content/es/*/
+.soak

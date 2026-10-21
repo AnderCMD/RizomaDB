@@ -123,7 +123,7 @@ export interface DriverPlugin {
   readonly capabilities: Capabilities;
   readonly connectionSchema: JsonSchema;
   /** Query language of `execute().sql`: "sql" (default), or an engine's own command syntax. */
-  readonly language?: "sql" | "mongo" | "redis" | "json" | "cql" | "cypher";
+  readonly language?: "sql" | "mongo" | "redis" | "json" | "cql" | "cypher" | "flux";
   /** Engine-specific risk classification of a command (used by policy instead of the SQL heuristic). */
   /** Non-SQL engines: the command that applies one row/document change (shown to the user, then executed). */
   generateChange?(target: EditTargetRef, change: RowChange): { sql: string; params: Value[]; description: string };
