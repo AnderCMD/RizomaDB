@@ -229,6 +229,9 @@ importers:
       '@rizomadb/driver-duckdb':
         specifier: workspace:*
         version: link:../../packages/drivers/duckdb
+      '@rizomadb/driver-dynamodb':
+        specifier: workspace:*
+        version: link:../../packages/drivers/dynamodb
       '@rizomadb/driver-elasticsearch':
         specifier: workspace:*
         version: link:../../packages/drivers/elasticsearch
@@ -398,6 +401,16 @@ importers:
       '@rizomadb/driver-api':
         specifier: workspace:*
         version: link:../../driver-api
+
+  packages/drivers/dynamodb:
+    dependencies:
+      '@rizomadb/driver-api':
+        specifier: workspace:*
+        version: link:../../driver-api
+    devDependencies:
+      fast-check:
+        specifier: 4.10.2
+        version: 4.10.2
 
   packages/drivers/elasticsearch:
     dependencies:
