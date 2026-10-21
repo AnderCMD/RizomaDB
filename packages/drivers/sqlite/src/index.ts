@@ -146,6 +146,8 @@ export const sqliteDriver: DriverPlugin = {
   family: "relational",
   capabilities,
   quoteIdent,
+  selectTop: (t: string, n: number) => `SELECT * FROM ${t} LIMIT ${n}`,
+  placeholder: () => "?",
   connectionSchema: {
     type: "object", required: ["path"],
     properties: {

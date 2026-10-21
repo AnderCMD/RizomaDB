@@ -13,5 +13,16 @@
   "dependencies": {
     "@rizomadb/driver-api": "workspace:*",
     "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@rizomadb/driver-sqlite": "workspace:*",
+    "@rizomadb/driver-postgres": "workspace:*",
+    "@rizomadb/driver-mysql": "workspace:*",
+    "@rizomadb/driver-mssql": "workspace:*",
+    "@rizomadb/driver-oracle": "workspace:*",
+    "pg": "8.23.1",
+    "mysql2": "3.24.6",
+    "tedious": "20.3.8",
+    "oracledb": "26.0.0"
   }
 }

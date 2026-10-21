@@ -122,6 +122,21 @@
         "title": "%cmd.refresh%",
         "category": "RizomaDB",
         "icon": "$(refresh)"
+      },
+      {
+        "command": "rizomadb.reviewPendingChanges",
+        "title": "%cmd.review%",
+        "category": "RizomaDB"
+      },
+      {
+        "command": "rizomadb.applyChanges",
+        "title": "%cmd.apply%",
+        "category": "RizomaDB"
+      },
+      {
+        "command": "rizomadb.discardChanges",
+        "title": "%cmd.discard%",
+        "category": "RizomaDB"
       }
     ],
     "menus": {
@@ -221,6 +236,12 @@
           "default": 90,
           "minimum": 1,
           "markdownDescription": "%cfg.retention%"
+        },
+        "rizomadb.table.openRows": {
+          "type": "number",
+          "default": 200,
+          "minimum": 1,
+          "markdownDescription": "%cfg.openRows%"
         }
       }
     }
@@ -237,7 +258,10 @@
     "@rizomadb/driver-postgres": "workspace:*",
     "@rizomadb/driver-sqlite": "workspace:*",
     "pg": "8.23.1",
-    "zod": "4.6.7"
+    "zod": "4.6.7",
+    "@rizomadb/driver-mysql": "workspace:*",
+    "@rizomadb/driver-mssql": "workspace:*",
+    "@rizomadb/driver-oracle": "workspace:*"
   },
   "devDependencies": {
     "@types/vscode": "1.100.0",

@@ -127,3 +127,29 @@ describe("connections + runner (SQLite)", () => {
   });
 });
 void collect;
+
+import { TableSession, parseInput, InputError } from "./tableSession.js";
+describe("TableSession", () => {
+  const target = { table: "t", columns: [
+    { name: "id", nativeType: "int", nullable: false, primaryKey: true },
+    { name: "name", nativeType: "text", nullable: false, primaryKey: false },
+  ] };
+  const cols = [{ name: "id", nativeType: "int", kind: "integer" as const }, { name: "name", nativeType: "text", kind: "text" as const }];
+  it("parses typed input and rejects bad values", () => {
+    expect(parseInput("integer", "42")).toBe(42);
+    expect(parseInput("integer", "9223372036854775807")).toBe(9223372036854775807n);
+    expect(parseInput("decimal", "1.50")).toBe("1.50");
+    expect(parseInput("json", '{"a":1}')).toEqual({ json: { a: 1 } });
+    expect(parseInput("text", null)).toBeNull();
+    expect(() => parseInput("integer", "4x")).toThrow(InputError);
+    expect(() => parseInput("binary", "ab")).toThrow(InputError);
+  });
+  it("maps grid edits, inserts and deletes into a view and changes", () => {
+    const s = new TableSession(target, cols, [[1, "a"], [2, "b"]]);
+    s.edit(0, 1, "A"); s.toggleDelete(1); s.insertRow(); s.edit(2, 0, "3"); s.edit(2, 1, "c");
+    const v = s.view();
+    expect(v).toMatchObject({ count: 3, deletes: [1], sets: [{ row: 0, col: 1, text: "A" }], inserts: [["3", "c"]], canUndo: true, canRedo: false });
+    expect(s.pending.toChanges().map((c) => c.kind).sort()).toEqual(["delete", "insert", "update"]);
+    expect(() => s.edit(0, 0, "x")).toThrow(InputError);
+  });
+});

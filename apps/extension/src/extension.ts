@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { join } from "node:path";
-import { defaultPolicy, type Policy, type SecretStore } from "@rizomadb/core";
+import { applyChanges, defaultPolicy, EditError, generate, type EditTarget, type Policy, type SecretStore } from "@rizomadb/core";
+import type { ColumnInfo, Value } from "@rizomadb/driver-api";
 import { ConnectionManager, type DriverRegistry } from "./lib/connections.js";
 import { runStatement, type RunEvent } from "./lib/runner.js";
 import { History } from "./lib/history.js";
@@ -8,6 +9,7 @@ import { splitStatements, statementAt } from "./lib/splitter.js";
 import { formatValue } from "./lib/format.js";
 import { Explorer, type Node } from "./ui/explorer.js";
 import { ResultsPanel } from "./ui/resultsPanel.js";
+import { InputError, TableSession } from "./lib/tableSession.js";
 import { newConnectionWizard } from "./ui/wizard.js";
 import { workerDriver } from "./worker/workerDriver.js";
 
@@ -19,6 +21,9 @@ function makeRegistry(workerFile: string): DriverRegistry {
   return {
     sqlite: async () => workerDriver((await import("@rizomadb/driver-sqlite")).sqliteDriver, workerFile),
     postgres: async () => workerDriver((await import("@rizomadb/driver-postgres")).postgresDriver, workerFile),
+    mysql: async () => workerDriver((await import("@rizomadb/driver-mysql")).mysqlDriver, workerFile),
+    mssql: async () => workerDriver((await import("@rizomadb/driver-mssql")).mssqlDriver, workerFile),
+    oracle: async () => workerDriver((await import("@rizomadb/driver-oracle")).oracleDriver, workerFile),
   };
 }
 
@@ -38,7 +43,63 @@ export async function activate(ctx: vscode.ExtensionContext) {
 
   const explorer = new Explorer(mgr);
   let running: AbortController | undefined;
-  const results = new ResultsPanel(ctx, () => running?.abort());
+  let session: { s: TableSession; profileId: string; refresh: () => Promise<void> } | undefined;
+  const results = new ResultsPanel(ctx, (m) => void onWebviewMessage(m));
+  const notice = (level: "error" | "info", text: string) => results.post({ v: 1, type: "notice", level, text });
+  const pushPending = () => { if (session) results.post({ v: 1, type: "pending", ...session.s.view(), inserts: session.s.view().inserts.map((r) => r.map((x) => ({ set: x !== undefined, text: x ?? null }))) }); };
+
+  async function onWebviewMessage(m: import("./messages.js").WebviewToHost) {
+    if (m.type === "cancel") { running?.abort(); return; }
+    if (!session) return;
+    const cur = session;
+    try {
+      if (m.type === "edit") cur.s.edit(m.row, m.col, m.text);
+      else if (m.type === "toggleDelete") cur.s.toggleDelete(m.row);
+      else if (m.type === "insertRow") cur.s.insertRow();
+      else if (m.type === "undo") cur.s.pending.undo();
+      else if (m.type === "redo") cur.s.pending.redo();
+      else if (m.type === "discard") cur.s.pending.clear();
+      else if (m.type === "review") { await reviewChanges(); return; }
+      else if (m.type === "apply") { await applyPending(); return; }
+      notice("info", "");
+      pushPending();
+    } catch (e) {
+      notice("error", e instanceof InputError || e instanceof EditError ? e.message : (e as Error).message);
+    }
+  }
+
+  const renderStatements = (plugin: Parameters<typeof generate>[0], target: EditTarget, s: TableSession) =>
+    s.pending.toChanges().map((c) => { const g = generate(plugin, target, c); return `${g.sql};\n-- params: ${JSON.stringify(g.params, (_, v) => (typeof v === "bigint" ? v.toString() : v instanceof Uint8Array ? "<binary>" : v))}`; }).join("\n\n");
+
+  async function reviewChanges() {
+    if (!session) return;
+    const p = mgr.get(session.profileId)!; const plugin = await mgr.loadDriver(p.driver);
+    const doc = await vscode.workspace.openTextDocument({ language: "sql", content: `-- ${t("Pending changes (not yet applied). Apply them from the results toolbar.")}\n${renderStatements(plugin, session.s.target, session.s)}\n` });
+    await vscode.window.showTextDocument(doc, { viewColumn: vscode.ViewColumn.Beside, preview: true });
+  }
+
+  async function applyPending() {
+    if (!session || session.s.pending.count === 0) return;
+    const cur = session;
+    const profile = mgr.get(cur.profileId)!; const plugin = await mgr.loadDriver(profile.driver);
+    const conn = await mgr.connect(cur.profileId);
+    try {
+      const r = await applyChanges(cur.s.pending.toChanges(), {
+        conn, plugin, target: cur.s.target, environment: profile.environment, readOnly: mgr.isReadOnly(profile), policy: policy(),
+        confirm: async (stmts) => {
+          const prod = profile.environment === "prod" || profile.environment === "staging";
+          const msg = t("[{0}] {1}: apply {2} change(s)?", profile.environment.toUpperCase(), profile.name, stmts.length);
+          return (await vscode.window.showWarningMessage(msg, { modal: true, detail: stmts.map((x) => x.sql).join("\n").slice(0, 1500) }, prod ? t("Apply to {0}", profile.environment.toUpperCase()) : t("Apply"))) !== undefined;
+        },
+      });
+      void vscode.window.showInformationMessage(t("{0} change(s) applied in one transaction.", r.applied));
+      await history.add({ connectionId: profile.id, connectionName: profile.name, environment: profile.environment, sql: `-- data edit (${r.applied} changes)\n${renderStatements(plugin, cur.s.target, cur.s)}`, durationMs: 0, rowCount: r.applied, status: "ok" }).catch(() => {});
+      await cur.refresh();
+    } catch (e) {
+      if (e instanceof EditError && e.code === "declined") return;
+      notice("error", e instanceof EditError ? (e.code === "conflict" ? t("Nothing was applied. {0}", e.message) : e.message) : (e as Error).message);
+    }
+  }
 
   const status = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 50);
   status.command = "rizomadb.selectConnection";
@@ -77,7 +138,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
     return id;
   }
 
-  async function execute(id: string, sql: string, title: string) {
+  async function execute(id: string, sql: string, title: string, edit?: { target: EditTarget }) {
     const profile = mgr.get(id);
     if (!profile) return;
     if (running) { void vscode.window.showWarningMessage(t("A query is already running. Cancel it first.")); return; }
@@ -86,9 +147,11 @@ export async function activate(ctx: vscode.ExtensionContext) {
     void vscode.commands.executeCommand("setContext", "rizomadb.running", true);
     cancelItem.show();
     let columnsSeen = false;
+    session = undefined;
+    const rawRows: Value[][] = []; let cols: ColumnInfo[] = [];
     const emit = (e: RunEvent) => {
-      if (e.type === "start") { columnsSeen = true; results.post({ v: 1, type: "start", title, sql: e.sql, columns: e.columns }); }
-      else if (e.type === "rows") results.post({ v: 1, type: "rows", rows: e.rows.map((r) => r.map(formatValue)) });
+      if (e.type === "start") { columnsSeen = true; cols = e.columns; results.post({ v: 1, type: "start", title, sql: e.sql, columns: e.columns, editable: !!edit }); }
+      else if (e.type === "rows") { if (edit) rawRows.push(...e.rows); results.post({ v: 1, type: "rows", rows: e.rows.map((r) => r.map(formatValue)) }); }
       else if (e.type === "done") {
         if (!columnsSeen) results.post({ v: 1, type: "start", title, sql: "", columns: [] });
         results.post({ v: 1, ...e });
@@ -108,6 +171,11 @@ export async function activate(ctx: vscode.ExtensionContext) {
           t("[{0}] {1}: {2}", profile.environment.toUpperCase(), profile.name, reason), { modal: true, detail: sql.slice(0, 500) }, t("Run anyway"))) === t("Run anyway"),
         onEvent: emit,
       });
+      if (edit && out.status === "ok") {
+        const ts = new TableSession(edit.target, cols, rawRows);
+        session = { s: ts, profileId: id, refresh: () => execute(id, sql, title, edit) };
+        pushPending();
+      }
       if (cfg().get<boolean>("history.enabled", true)) {
         await history.add({ connectionId: id, connectionName: profile.name, environment: profile.environment, sql, durationMs: Math.round(out.durationMs), rowCount: out.rowCount, status: out.status, ...(out.error ? { error: out.error } : {}) });
       }
@@ -153,11 +221,21 @@ export async function activate(ctx: vscode.ExtensionContext) {
   reg("rizomadb.cancelQuery", () => running?.abort());
   reg("rizomadb.openTable", async (n: Node) => {
     if (n.kind !== "table") return;
-    const conn = await mgr.connect(n.profile.id);
-    const q = conn.quoteIdent;
-    const name = n.schema ? `${q(n.schema)}.${q(n.name)}` : q(n.name);
-    await execute(n.profile.id, `SELECT * FROM ${name} LIMIT 100`, n.name);
+    const profile = n.profile;
+    const conn = await mgr.connect(profile.id);
+    const plugin = await mgr.loadDriver(profile.driver);
+    const name = n.schema ? `${conn.quoteIdent(n.schema)}.${conn.quoteIdent(n.name)}` : conn.quoteIdent(n.name);
+    let edit: { target: EditTarget } | undefined;
+    if (!n.isView && plugin.capabilities.rowEditing === "primaryKey" && !mgr.isReadOnly(profile)) {
+      const info = await conn.introspect().describeTable({ name: n.name, ...(n.schema ? { schema: n.schema } : {}) });
+      if (info.columns?.some((c) => c.primaryKey)) edit = { target: { ...(n.schema ? { schema: n.schema } : {}), table: n.name, columns: info.columns } };
+    }
+    await execute(profile.id, plugin.selectTop(name, cfg().get<number>("table.openRows", 200)), n.name, edit);
+    if (!edit) notice("info", n.isView ? t("Views are read-only.") : mgr.isReadOnly(profile) ? t("Read-only connection: editing is disabled.") : t("This table has no primary key, so its rows cannot be edited safely."));
   });
+  reg("rizomadb.reviewPendingChanges", () => reviewChanges());
+  reg("rizomadb.applyChanges", () => applyPending());
+  reg("rizomadb.discardChanges", () => { session?.s.pending.clear(); pushPending(); });
   reg("rizomadb.toggleReadOnly", async (n: Node) => {
     if (n.kind !== "connection") return;
     await mgr.update(n.profile.id, { readOnly: !n.profile.readOnly });

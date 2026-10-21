@@ -1,6 +1,6 @@
 import pg from "pg";
 import { randomBytes } from "node:crypto";
-import { runConformance } from "@rizomadb/driver-api/conformance";
+import { engineUp, runConformance } from "@rizomadb/driver-api/conformance";
 import { postgresDriver } from "./index.js";
 
 const base = { host: "localhost", port: 54329, user: "postgres", password: "rizoma_test", ssl: false };
@@ -15,7 +15,10 @@ async function freshDb() {
   return { ...base, database: name };
 }
 
+const enabled = await engineUp("localhost", 54329);
+
 runConformance({
+  enabled,
   plugin: postgresDriver,
   config: freshDb,
   slowSql: "SELECT pg_sleep(10)",

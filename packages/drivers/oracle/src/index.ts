@@ -156,6 +156,8 @@ export const oracleDriver: DriverPlugin = {
   family: "relational",
   capabilities,
   quoteIdent,
+  selectTop: (t: string, n: number) => `SELECT * FROM ${t} FETCH FIRST ${n} ROWS ONLY`,
+  placeholder: (i: number) => `:${i}`,
   connectionSchema: {
     type: "object", required: ["host", "service", "user"],
     properties: {

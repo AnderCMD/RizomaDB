@@ -47,7 +47,7 @@ describe("no telemetry surface", () => {
   it("extension and core sources never import network modules or fetch", () => {
     const roots = [join(process.cwd(), "src"), join(process.cwd(), "../../packages/core/src"), join(process.cwd(), "../../packages/driver-api/src")];
     const bad = /from "node:(http|https|net|tls|dgram|dns|http2)"|from "(http|https|net|tls)"|\bfetch\(|XMLHttpRequest|navigator\.sendBeacon|WebSocket\(/;
-    const walk = (d: string): string[] => readdirSync(d).flatMap((f) => { const p = join(d, f); return statSync(p).isDirectory() ? walk(p) : p.endsWith(".ts") && !p.endsWith(".test.ts") ? [p] : []; });
+    const walk = (d: string): string[] => readdirSync(d).flatMap((f) => { const p = join(d, f); return statSync(p).isDirectory() ? walk(p) : p.endsWith(".ts") && !p.endsWith(".test.ts") && !p.endsWith("conformance.ts") ? [p] : []; });
     const offenders = roots.flatMap(walk).filter((f) => bad.test(readFileSync(f, "utf8")));
     expect(offenders).toEqual([]);
   });

@@ -1,6 +1,6 @@
 import oracledb from "oracledb";
 import { randomBytes } from "node:crypto";
-import { runConformance } from "@rizomadb/driver-api/conformance";
+import { engineUp, runConformance } from "@rizomadb/driver-api/conformance";
 import { oracleDriver } from "./index.js";
 
 const base = { host: "127.0.0.1", port: Number(process.env.RZ_ORACLE_PORT ?? 15219), service: "FREEPDB1", password: "rizoma_test" };
@@ -15,7 +15,10 @@ async function freshUser() {
   return { ...base, user };
 }
 
+const enabled = await engineUp("127.0.0.1", Number(process.env.RZ_ORACLE_PORT ?? 15219));
+
 runConformance({
+  enabled,
   plugin: oracleDriver, config: freshUser,
   // DBMS_SESSION.SLEEP is not interruptible by break(); a CPU-bound query is (documented limitation).
   slowSql: "SELECT COUNT(*) FROM dual CONNECT BY LEVEL <= 2000000000", paramSql: "SELECT :1 AS a, :2 AS b FROM dual",

@@ -180,6 +180,8 @@ export const mssqlDriver: DriverPlugin = {
   family: "relational",
   capabilities,
   quoteIdent,
+  selectTop: (t: string, n: number) => `SELECT TOP (${n}) * FROM ${t}`,
+  placeholder: (i: number) => `@p${i}`,
   connectionSchema: {
     type: "object", required: ["host", "user"],
     properties: {

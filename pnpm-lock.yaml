@@ -211,6 +211,15 @@ importers:
       '@rizomadb/driver-api':
         specifier: workspace:*
         version: link:../../packages/driver-api
+      '@rizomadb/driver-mssql':
+        specifier: workspace:*
+        version: link:../../packages/drivers/mssql
+      '@rizomadb/driver-mysql':
+        specifier: workspace:*
+        version: link:../../packages/drivers/mysql
+      '@rizomadb/driver-oracle':
+        specifier: workspace:*
+        version: link:../../packages/drivers/oracle
       '@rizomadb/driver-postgres':
         specifier: workspace:*
         version: link:../../packages/drivers/postgres
@@ -245,6 +254,34 @@ importers:
       zod:
         specifier: 4.6.7
         version: 4.6.7
+    devDependencies:
+      '@rizomadb/driver-mssql':
+        specifier: workspace:*
+        version: link:../drivers/mssql
+      '@rizomadb/driver-mysql':
+        specifier: workspace:*
+        version: link:../drivers/mysql
+      '@rizomadb/driver-oracle':
+        specifier: workspace:*
+        version: link:../drivers/oracle
+      '@rizomadb/driver-postgres':
+        specifier: workspace:*
+        version: link:../drivers/postgres
+      '@rizomadb/driver-sqlite':
+        specifier: workspace:*
+        version: link:../drivers/sqlite
+      mysql2:
+        specifier: 3.24.6
+        version: 3.24.6(@types/node@26.6.5)
+      oracledb:
+        specifier: 26.0.0
+        version: 26.0.0
+      pg:
+        specifier: 8.23.1
+        version: 8.23.1
+      tedious:
+        specifier: 20.3.8
+        version: 20.3.8
 
   packages/driver-api:
     dependencies:

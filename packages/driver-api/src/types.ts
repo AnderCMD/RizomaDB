@@ -97,5 +97,9 @@ export interface DriverPlugin {
   readonly connectionSchema: JsonSchema;
   /** Dialect identifier quoting; pure, usable without a connection. */
   quoteIdent(name: string): string;
+  /** Positional bind placeholder for the 1-based index, e.g. `?`, `$1`, `@p1`, `:1`. */
+  placeholder(index: number): string;
+  /** `SELECT *` over an already-quoted table name limited to n rows, in the dialect. */
+  selectTop(quotedTable: string, n: number): string;
   connect(cfg: ResolvedConnectionConfig, ctx: DriverContext): Promise<Connection>;
 }

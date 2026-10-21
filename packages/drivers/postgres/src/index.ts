@@ -163,6 +163,8 @@ export const postgresDriver: DriverPlugin = {
   family: "relational",
   capabilities,
   quoteIdent,
+  selectTop: (t: string, n: number) => `SELECT * FROM ${t} LIMIT ${n}`,
+  placeholder: (i: number) => `$${i}`,
   connectionSchema: {
     type: "object", required: ["host", "database", "user"],
     properties: {

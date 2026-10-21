@@ -1,8 +1,28 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
+import net from "node:net";
 import { DriverError, type DriverPlugin, type Connection, type ResolvedConnectionConfig } from "./index.js";
 import { collect } from "./util.js";
 
+/** True when something accepts TCP connections at host:port. */
+export function reachable(host: string, port: number, timeoutMs = 1000): Promise<boolean> {
+  return new Promise((res) => {
+    const s = net.connect({ host, port });
+    const done = (ok: boolean) => { s.destroy(); res(ok); };
+    s.setTimeout(timeoutMs, () => done(false));
+    s.once("connect", () => done(true)); s.once("error", () => done(false));
+  });
+}
+
+/** Engine suites skip when the engine is down locally, but fail in CI (RZ_REQUIRE_ENGINES=1). */
+export async function engineUp(host: string, port: number): Promise<boolean> {
+  const up = await reachable(host, port);
+  if (!up && process.env.RZ_REQUIRE_ENGINES) throw new Error(`Engine required but unreachable at ${host}:${port}`);
+  return up;
+}
+
 export interface ConformanceOptions {
+  /** When false, the whole suite is skipped (see engineUp). */
+  enabled?: boolean;
   plugin: DriverPlugin;
   /** Config for a fresh, empty, writable database. */
   config: () => Promise<ResolvedConnectionConfig> | ResolvedConnectionConfig;
@@ -22,7 +42,7 @@ const ctx = { log: () => {} };
 
 /** Every driver must pass this kit. */
 export function runConformance(opts: ConformanceOptions): void {
-  describe(`conformance: ${opts.plugin.id}`, () => {
+  describe.skipIf(opts.enabled === false)(`conformance: ${opts.plugin.id}`, () => {
     let conn: Connection;
     beforeAll(async () => { conn = await opts.plugin.connect(await opts.config(), ctx); });
     afterAll(async () => { await conn?.close(); });

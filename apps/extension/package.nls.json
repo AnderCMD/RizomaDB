@@ -19,5 +19,9 @@
   "cfg.maxRows": "Maximum rows kept per result.",
   "cfg.timeout": "Query timeout in seconds (0 = none).",
   "cfg.historyEnabled": "Record executed statements in a local history file (secrets are redacted).",
-  "cfg.retention": "Days to keep history entries."
+  "cfg.retention": "Days to keep history entries.",
+  "cmd.review": "Review Pending Changes",
+  "cmd.apply": "Apply Pending Changes",
+  "cmd.discard": "Discard Pending Changes",
+  "cfg.openRows": "Rows loaded when opening a table."
 }

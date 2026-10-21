@@ -15,3 +15,11 @@ button:focus-visible, #grid:focus-visible { outline: 2px solid var(--vscode-focu
 .sel { outline: 2px solid var(--vscode-focusBorder); outline-offset: -2px; background: var(--vscode-list-activeSelectionBackground); color: var(--vscode-list-activeSelectionForeground); }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+#toolbar { padding: 4px 10px; border-bottom: 1px solid var(--vscode-panel-border); display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+#toolbar[hidden] { display: none; }
+#toolbar button:disabled { opacity: .5; cursor: default; }
+#pending-count { margin-left: 8px; opacity: .85; }
+.row.deleted .cell { text-decoration: line-through; opacity: .6; background: var(--vscode-diffEditor-removedTextBackground, rgba(255,0,0,.15)); }
+.row.inserted .cell { background: var(--vscode-diffEditor-insertedTextBackground, rgba(0,255,0,.12)); }
+.cell.changed { background: var(--vscode-diffEditor-insertedTextBackground, rgba(0,255,0,.18)); border-bottom: 2px solid var(--vscode-gitDecoration-modifiedResourceForeground, #e2c08d); }
+.editor { box-sizing: border-box; width: 100%; height: 22px; color: var(--vscode-input-foreground); background: var(--vscode-input-background); border: 1px solid var(--vscode-focusBorder); }
