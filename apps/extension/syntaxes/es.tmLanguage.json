@@ -1,0 +1,13 @@
+{
+  "scopeName": "source.rizomadb-es",
+  "name": "RizomaDB Elasticsearch",
+  "patterns": [
+    {
+      "match": "^\\s*(GET|POST|PUT|DELETE|HEAD)\\b",
+      "name": "keyword.control.rizomadb-es"
+    },
+    {
+      "include": "source.json"
+    }
+  ]
+}

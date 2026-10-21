@@ -9,7 +9,7 @@ import { workerDriver } from "./workerDriver.js";
 
 const out = join(mkdtempSync(join(tmpdir(), "rz-worker-")), "driverWorker.cjs");
 beforeAll(async () => {
-  await build({ entryPoints: [join(process.cwd(), "src/worker/driverWorker.ts")], outfile: out, bundle: true, platform: "node", format: "cjs", external: ["pg-native"], logLevel: "silent" });
+  await build({ entryPoints: [join(process.cwd(), "src/worker/driverWorker.ts")], outfile: out, bundle: true, platform: "node", format: "cjs", external: ["pg-native", "@duckdb/node-api", "@duckdb/node-bindings"], logLevel: "silent" });
 }, 30_000);
 
 // The wrapper reads the worker path lazily so beforeAll has run.

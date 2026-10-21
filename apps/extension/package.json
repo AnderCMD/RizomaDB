@@ -386,17 +386,17 @@
       "editor/title": [
         {
           "command": "rizomadb.runQuery",
-          "when": "editorLangId =~ /^(sql|rizomadb-mongo|rizomadb-redis)$/",
+          "when": "editorLangId =~ /^(sql|rizomadb-mongo|rizomadb-redis|rizomadb-es)$/",
           "group": "navigation"
         },
         {
           "command": "rizomadb.cancelQuery",
-          "when": "editorLangId =~ /^(sql|rizomadb-mongo|rizomadb-redis)$/ && rizomadb.running",
+          "when": "editorLangId =~ /^(sql|rizomadb-mongo|rizomadb-redis|rizomadb-es)$/ && rizomadb.running",
           "group": "navigation"
         },
         {
           "command": "rizomadb.explain",
-          "when": "editorLangId =~ /^(sql|rizomadb-mongo|rizomadb-redis)$/",
+          "when": "editorLangId =~ /^(sql|rizomadb-mongo|rizomadb-redis|rizomadb-es)$/",
           "group": "navigation@2"
         },
         {
@@ -411,13 +411,13 @@
         "command": "rizomadb.runQuery",
         "key": "ctrl+enter",
         "mac": "cmd+enter",
-        "when": "editorLangId =~ /^(sql|rizomadb-mongo|rizomadb-redis)$/ && editorTextFocus"
+        "when": "editorLangId =~ /^(sql|rizomadb-mongo|rizomadb-redis|rizomadb-es)$/ && editorTextFocus"
       },
       {
         "command": "rizomadb.runSelection",
         "key": "ctrl+shift+enter",
         "mac": "cmd+shift+enter",
-        "when": "editorLangId =~ /^(sql|rizomadb-mongo|rizomadb-redis)$/ && editorTextFocus"
+        "when": "editorLangId =~ /^(sql|rizomadb-mongo|rizomadb-redis|rizomadb-es)$/ && editorTextFocus"
       }
     ],
     "configuration": {
@@ -495,6 +495,17 @@
           ".redis"
         ],
         "configuration": "./syntaxes/redis-language-configuration.json"
+      },
+      {
+        "id": "rizomadb-es",
+        "aliases": [
+          "RizomaDB Elasticsearch"
+        ],
+        "extensions": [
+          ".esql",
+          ".es"
+        ],
+        "configuration": "./syntaxes/language-configuration.json"
       }
     ],
     "grammars": [
@@ -507,6 +518,11 @@
         "language": "rizomadb-redis",
         "scopeName": "source.rizomadb-redis",
         "path": "./syntaxes/redis.tmLanguage.json"
+      },
+      {
+        "language": "rizomadb-es",
+        "scopeName": "source.rizomadb-es",
+        "path": "./syntaxes/es.tmLanguage.json"
       }
     ]
   },
@@ -531,7 +547,10 @@
     "@rizomadb/sql": "workspace:*",
     "@rizomadb/schema-tools": "workspace:*",
     "@rizomadb/driver-mongodb": "workspace:*",
-    "@rizomadb/driver-redis": "workspace:*"
+    "@rizomadb/driver-redis": "workspace:*",
+    "@rizomadb/driver-clickhouse": "workspace:*",
+    "@rizomadb/driver-elasticsearch": "workspace:*",
+    "@rizomadb/driver-duckdb": "workspace:*"
   },
   "devDependencies": {
     "@types/vscode": "1.100.0",
@@ -541,6 +560,7 @@
   },
   "activationEvents": [
     "onLanguage:rizomadb-mongo",
-    "onLanguage:rizomadb-redis"
+    "onLanguage:rizomadb-redis",
+    "onLanguage:rizomadb-es"
   ]
 }

@@ -1,4 +1,4 @@
-export const QUERY_LANGUAGES = ["sql", "rizomadb-mongo", "rizomadb-redis"] as const;
+export const QUERY_LANGUAGES = ["sql", "rizomadb-mongo", "rizomadb-redis", "rizomadb-es"] as const;
 export const isQueryLanguage = (id: string) => (QUERY_LANGUAGES as readonly string[]).includes(id);
 
 /**
@@ -15,6 +15,7 @@ export function commandAt(language: string, text: string, offset: number): strin
     for (const i of [idx, ...Array.from({ length: idx }, (_, k) => idx - 1 - k)]) { const l = lines[i]!.trim(); if (l && !l.startsWith("#")) return l; }
     return undefined;
   }
+  // Mongo shell and Elasticsearch console requests are blank-line separated blocks.
   let a = idx, b = idx;
   if (!lines[idx]!.trim()) { while (a > 0 && !lines[a]!.trim()) a--; b = a; }
   while (a > 0 && lines[a - 1]!.trim()) a--;

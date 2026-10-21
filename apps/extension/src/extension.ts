@@ -45,6 +45,9 @@ function makeRegistry(workerFile: string): DriverRegistry {
     oracle: async () => workerDriver((await import("@rizomadb/driver-oracle/meta")).meta, workerFile),
     mongodb: async () => workerDriver((await import("@rizomadb/driver-mongodb/meta")).meta, workerFile),
     redis: async () => workerDriver((await import("@rizomadb/driver-redis/meta")).meta, workerFile),
+    clickhouse: async () => workerDriver((await import("@rizomadb/driver-clickhouse/meta")).meta, workerFile),
+    elasticsearch: async () => workerDriver((await import("@rizomadb/driver-elasticsearch/meta")).meta, workerFile),
+    duckdb: async () => workerDriver((await import("@rizomadb/driver-duckdb/meta")).meta, workerFile),
   };
 }
 
@@ -270,8 +273,8 @@ export async function activate(ctx: vscode.ExtensionContext) {
   reg("rizomadb.newQuery", async (n?: Node) => {
     const id = n && "profile" in n ? n.profile.id : await pickConnection();
     const plugin = id ? await mgr.loadDriver(mgr.get(id)!.driver) : undefined;
-    const language = plugin?.language === "mongo" ? "rizomadb-mongo" : plugin?.language === "redis" ? "rizomadb-redis" : "sql";
-    const sample = language === "rizomadb-mongo" ? "db.getCollection(\"collection\").find({}).limit(20)\n" : language === "rizomadb-redis" ? "# one command per line; run with Ctrl/Cmd+Enter\nSCAN 0 MATCH * COUNT 100\n" : "";
+    const language = plugin?.language === "mongo" ? "rizomadb-mongo" : plugin?.language === "redis" ? "rizomadb-redis" : plugin?.language === "json" ? "rizomadb-es" : "sql";
+    const sample = language === "rizomadb-es" ? "GET /_cluster/health\n" : language === "rizomadb-mongo" ? "db.getCollection(\"collection\").find({}).limit(20)\n" : language === "rizomadb-redis" ? "# one command per line; run with Ctrl/Cmd+Enter\nSCAN 0 MATCH * COUNT 100\n" : "";
     const doc = await vscode.workspace.openTextDocument({ language, content: sample });
     await vscode.window.showTextDocument(doc);
     if (id) await ctx.workspaceState.update(`doc:${doc.uri.toString()}`, id);

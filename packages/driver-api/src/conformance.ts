@@ -28,6 +28,8 @@ export interface ConformanceOptions {
   config: () => Promise<ResolvedConnectionConfig> | ResolvedConnectionConfig;
   /** SQL that blocks for ~seconds, to exercise cancellation. */
   slowSql: string;
+  /** false = the engine has no foreign keys / secondary-index DDL in this form: those introspection checks are skipped. */
+  skipFkAndIndexTests?: boolean;
   /** CREATE TABLE conf_t(id integer primary key, name text not null) in the dialect. */
   createTableSql?: string;
   /** Expression yielding the BIGINT 9223372036854775807 (dialects differ on literals/casts). */
@@ -109,7 +111,7 @@ export function runConformance(opts: ConformanceOptions): void {
       expect(t.columns?.find((c) => c.name.toLowerCase() === "name")?.nullable).toBe(false);
     });
 
-    it("bulk-describes schemas and reports foreign keys", async () => {
+    it.skipIf(opts.skipFkAndIndexTests)("bulk-describes schemas and reports foreign keys", async () => {
       const api = conn.introspect();
       const exec = (sql: string) => collect(conn.execute({ sql }, new AbortController().signal));
       await exec("CREATE TABLE conf_p (id INTEGER PRIMARY KEY)");
@@ -128,7 +130,7 @@ export function runConformance(opts: ConformanceOptions): void {
       }
     });
 
-    it("lists indexes with ordered columns and primary/unique flags", async () => {
+    it.skipIf(opts.skipFkAndIndexTests)("lists indexes with ordered columns and primary/unique flags", async () => {
       const api = conn.introspect();
       if (!api.indexes) return;
       const exec = (sql: string) => collect(conn.execute({ sql }, new AbortController().signal));

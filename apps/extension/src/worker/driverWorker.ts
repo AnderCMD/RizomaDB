@@ -1,14 +1,22 @@
 import { DriverError, type Connection, type DriverPlugin, type Transaction } from "@rizomadb/driver-api";
-import { sqliteDriver } from "@rizomadb/driver-sqlite";
-import { postgresDriver } from "@rizomadb/driver-postgres";
-import { mysqlDriver } from "@rizomadb/driver-mysql";
-import { mssqlDriver } from "@rizomadb/driver-mssql";
-import { oracleDriver } from "@rizomadb/driver-oracle";
-import { mongoDriver } from "@rizomadb/driver-mongodb";
-import { redisDriver } from "@rizomadb/driver-redis";
 import type { Request, Response, WireError } from "./protocol.js";
 
-const drivers: Record<string, DriverPlugin> = { sqlite: sqliteDriver, postgres: postgresDriver, mysql: mysqlDriver, mssql: mssqlDriver, oracle: oracleDriver, mongodb: mongoDriver, redis: redisDriver };
+// Drivers load on first use, so a worker only pays for the engine it actually talks to.
+const drivers: Record<string, () => Promise<DriverPlugin>> = {
+  sqlite: async () => (await import("@rizomadb/driver-sqlite")).sqliteDriver,
+  postgres: async () => (await import("@rizomadb/driver-postgres")).postgresDriver,
+  mysql: async () => (await import("@rizomadb/driver-mysql")).mysqlDriver,
+  mssql: async () => (await import("@rizomadb/driver-mssql")).mssqlDriver,
+  oracle: async () => (await import("@rizomadb/driver-oracle")).oracleDriver,
+  mongodb: async () => (await import("@rizomadb/driver-mongodb")).mongoDriver,
+  redis: async () => (await import("@rizomadb/driver-redis")).redisDriver,
+  clickhouse: async () => (await import("@rizomadb/driver-clickhouse")).clickhouseDriver,
+  elasticsearch: async () => (await import("@rizomadb/driver-elasticsearch")).elasticsearchDriver,
+  duckdb: async () => {
+    try { return (await import("@rizomadb/driver-duckdb")).duckdbDriver; }
+    catch (e) { throw new DriverError("unsupported", `DuckDB is not included in this build (its native library is platform-specific): ${(e as Error).message}`); }
+  },
+};
 type Target = Connection | Transaction;
 const targets = new Map<number, Target>();
 const iters = new Map<number, { it: AsyncIterator<unknown>; ac: AbortController }>();
@@ -24,8 +32,9 @@ process.on("message", async (m: Request) => {
   if (m.op === "abort") { iters.get(m.rid)?.ac.abort(); return; }
   try {
     if (m.op === "connect") {
-      const d = drivers[m.driver];
-      if (!d) throw new DriverError("unsupported", `Unknown driver ${m.driver}`);
+      const load = drivers[m.driver];
+      if (!load) throw new DriverError("unsupported", `Unknown driver ${m.driver}`);
+      const d = await load();
       const c = await d.connect(m.cfg, { log: () => {} });
       const target = seq++;
       targets.set(target, c);

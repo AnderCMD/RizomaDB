@@ -1,0 +1,7 @@
+{
+  "name": "@rizomadb/driver-clickhouse", "version": "0.0.0", "license": "Apache-2.0", "type": "module",
+  "main": "dist/index.js", "types": "dist/index.d.ts",
+  "exports": { ".": "./dist/index.js", "./meta": "./dist/meta.js" },
+  "scripts": { "build": "tsc -p tsconfig.json", "typecheck": "tsc -p tsconfig.json --noEmit", "test": "vitest run" },
+  "dependencies": { "@rizomadb/driver-api": "workspace:*", "@clickhouse/client": "1.24.1" }
+}

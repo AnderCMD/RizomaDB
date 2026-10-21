@@ -29,3 +29,16 @@ services:
   valkey:
     image: valkey/valkey:8
     ports: ["63800:6379"]
+  clickhouse:
+    image: clickhouse/clickhouse-server:24.8
+    environment: { CLICKHOUSE_USER: default, CLICKHOUSE_PASSWORD: rizoma_test, CLICKHOUSE_DB: default }
+    ports: ["18124:8123"]
+    ulimits: { nofile: { soft: 262144, hard: 262144 } }
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.3
+    environment: { discovery.type: single-node, xpack.security.enabled: "false", ES_JAVA_OPTS: "-Xms512m -Xmx512m" }
+    ports: ["19200:9200"]
+  opensearch:
+    image: opensearchproject/opensearch:2.17.1
+    environment: { discovery.type: single-node, DISABLE_SECURITY_PLUGIN: "true", DISABLE_INSTALL_DEMO_CONFIG: "true", OPENSEARCH_JAVA_OPTS: "-Xms512m -Xmx512m" }
+    ports: ["19201:9200"]

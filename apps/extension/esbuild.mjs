@@ -9,7 +9,7 @@ await build({
 // Driver child process: runs drivers outside the extension host.
 await build({
   ...common, entryPoints: ["src/worker/driverWorker.ts"], outfile: "dist/driverWorker.cjs",
-  platform: "node", format: "cjs", target: "node22", external: ["pg-native"],
+  platform: "node", format: "cjs", target: "node22", external: ["pg-native", "@duckdb/node-api", "@duckdb/node-bindings"],
 });
 // Webview script runs in the browser sandbox: no Node APIs, no eval.
 await build({
