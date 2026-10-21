@@ -2,6 +2,7 @@ packages:
   - "packages/*"
   - "packages/drivers/*"
   - "apps/*"
+  - "site"
 allowBuilds:
   '@vscode/vsce-sign': false
   cpu-features: false

@@ -20,6 +20,6 @@ Leyenda: ✅ cumplido y verificado · 🟡 parcial · ❌ no hecho
 | Licencias y SBOM | ✅ | `pnpm audit:licenses`, `pnpm sbom:generate` |
 | Proxy HTTP/SOCKS | ❌ | No implementado |
 | VSIX por plataforma (DuckDB) | ❌ | Módulo nativo fuera del VSIX |
-| Sitio de documentación es/en publicado | ❌ | Documentos en `docs/`; sin sitio |
+| Sitio de documentación es/en | 🟡 | `site/` (VitePress) compila en es/en (`pnpm --filter @rizomadb/site build`); NO desplegado ni revisado visualmente; páginas técnicas solo en inglés |
 | Firma de artefactos | ❌ | Prevista atestación de procedencia de GitHub |
 | Publicación | ❌ | Requiere confirmación explícita de la persona responsable |
