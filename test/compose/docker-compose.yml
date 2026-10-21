@@ -72,3 +72,7 @@ services:
   trino:
     image: trinodb/trino:470
     ports: ["18081:8080"]
+  scylla:
+    image: scylladb/scylla:6.2
+    command: ["--smp", "1", "--memory", "750M", "--overprovisioned", "1", "--developer-mode", "1", "--skip-wait-for-gossip-to-settle", "0"]
+    ports: ["19043:9042"]

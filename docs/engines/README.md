@@ -15,8 +15,8 @@
 | Neo4j | 2 | [neo4j.md](neo4j.md) |
 | Amazon DynamoDB | 2 | [dynamodb.md](dynamodb.md) |
 | InfluxDB 2.x | 2 | [influxdb.md](influxdb.md) |
-| Apache Cassandra | 2 | [cassandra.md](cassandra.md) |
+| Apache Cassandra (and ScyllaDB, tested) | 2 | [cassandra.md](cassandra.md) |
 | Google Cloud Firestore | 2 | [firestore.md](firestore.md) |
 | Trino | 2 | [trino.md](trino.md) |
 
-Not implemented: ScyllaDB (the Cassandra driver may work but is untested), Redshift, YugabyteDB (protocol-compatible with the PostgreSQL/MySQL drivers but **not tested**, so compatibility is not claimed), and all Level 3 engines. The JDBC/ODBC bridge is not implemented.
+Not implemented: Redshift, YugabyteDB (protocol-compatible with the PostgreSQL/MySQL drivers but **not tested**, so compatibility is not claimed), and all Level 3 engines. The JDBC/ODBC bridge is not implemented.

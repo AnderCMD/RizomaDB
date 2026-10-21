@@ -127,7 +127,9 @@ class CassandraConnection implements Connection {
       listTables: async (ks) => {
         if (!ks) return [];
         const t = (await q("SELECT table_name FROM system_schema.tables WHERE keyspace_name = ?", [ks])).map((r): TableInfo => ({ name: String(r.get("table_name")), schema: ks, kind: "table" }));
-        const v = (await q("SELECT view_name FROM system_schema.views WHERE keyspace_name = ?", [ks])).map((r): TableInfo => ({ name: String(r.get("view_name")), schema: ks, kind: "view" }));
+        // ScyllaDB implements each secondary index as a hidden materialized view named <index>_index: not a user view.
+        const idx = new Set((await q("SELECT index_name FROM system_schema.indexes WHERE keyspace_name = ?", [ks])).map((r) => `${String(r.get("index_name"))}_index`));
+        const v = (await q("SELECT view_name FROM system_schema.views WHERE keyspace_name = ?", [ks])).filter((r) => !idx.has(String(r.get("view_name")))).map((r): TableInfo => ({ name: String(r.get("view_name")), schema: ks, kind: "view" }));
         return [...t, ...v].sort((a, b) => (a.name < b.name ? -1 : 1));
       },
       describeTable: async (ref) => {
@@ -163,8 +165,8 @@ export const cassandraDriver: DriverPlugin = {
       await client.connect();
       const r = (await client.execute("SELECT release_version, data_center FROM system.local")).first();
       const version = String(r?.get("release_version") ?? "");
-      // Scylla exposes its own version column; Cassandra rejects the query.
-      const scylla = await client.execute("SELECT scylla_version FROM system.local").then((x) => x.first()?.get("scylla_version") as string | undefined, () => undefined);
+      // ScyllaDB keeps its own version in system.versions (and reports a Cassandra-compatible release_version); Cassandra has no such table.
+      const scylla = await client.execute("SELECT version FROM system.versions").then((x) => (x.first()?.get("version") as string | undefined)?.split("-")[0], () => undefined);
       return new CassandraConnection(client, { product: scylla ? "ScyllaDB" : "Apache Cassandra", version: scylla ?? version }, !!cfg.readOnly);
     } catch (e) { await client.shutdown().catch(() => {}); throw mapError(e); }
   },

@@ -32,7 +32,7 @@ describe.skipIf(!up)("cassandra driver", () => {
   });
   afterAll(async () => { await run(conn, `DROP KEYSPACE IF EXISTS ${ks}`).catch(() => {}); await conn.close(); await ro.close(); });
 
-  it("identifies the server and pings", async () => { expect(conn.serverInfo.product).toMatch(/Cassandra|Scylla/); expect(conn.serverInfo.version).toMatch(/^\d/); await conn.ping(); });
+  it("identifies the server and pings", async () => { expect(conn.serverInfo.product).toBe(process.env.RZ_CASSANDRA_EXPECT ?? "Apache Cassandra"); expect(conn.serverInfo.version).toMatch(/^\d/); await conn.ping(); });
   it("round-trips typed values", async () => {
     await run(conn, `INSERT INTO ${ks}.t (pk, ck, big, d, v, b, f, ts, id, tags, m, l, blob_c) VALUES ('a', 1, 9007199254740993, 1.50, 123456789012345678901234567890, true, 2.5, '2020-01-02T03:04:05Z', 123e4567-e89b-12d3-a456-426614174000, {'x','y'}, {'k': 1}, [1,2], 0x0102ff)`);
     const r = await run(conn, `SELECT pk, ck, big, d, v, b, f, ts, id, tags, m, l, blob_c FROM ${ks}.t WHERE pk = ? AND ck = ?`, ["a", 1]);

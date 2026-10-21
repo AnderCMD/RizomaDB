@@ -1,6 +1,6 @@
 # Apache Cassandra / ScyllaDB
 
-**Level:** 2 · **Versions tested:** Apache Cassandra 5.0 (tested). ScyllaDB speaks the same protocol and the driver detects it, but it is **not tested**, so compatibility is not claimed.
+**Level:** 2 · **Versions tested:** Apache Cassandra 5.0 (tested). ScyllaDB 6.2.3 (single node, developer mode) passes the same 10 tests (`RZ_CASSANDRA_PORT=19043 RZ_CASSANDRA_EXPECT=ScyllaDB`); the driver detects it through `system.versions` and hides the hidden `<index>_index` materialized views Scylla creates for secondary indexes. Multi-node clusters, Scylla Cloud, Alternator (DynamoDB API) and Scylla-specific features are **not** tested.
 
 ## Authentication and transport
 Username/password (PasswordAuthenticator) and optional TLS, through the Apache-2.0 `cassandra-driver`. The local data center is required. Kerberos, client certificates and Astra secure bundles are **not** supported.
@@ -27,4 +27,4 @@ none
 Apache-2.0 (`cassandra-driver` 4.10.0)
 
 ## Running the integration tests
-`docker compose -f test/compose/docker-compose.yml up -d cassandra` (takes about a minute to accept connections) then `pnpm --filter @rizomadb/driver-cassandra test` (port 19042, data center `datacenter1`, override the port with `RZ_CASSANDRA_PORT`).
+`docker compose -f test/compose/docker-compose.yml up -d cassandra` (or `scylla`) (takes about a minute to accept connections) then `pnpm --filter @rizomadb/driver-cassandra test` (port 19042, data center `datacenter1`, override the port with `RZ_CASSANDRA_PORT`).
