@@ -22,3 +22,6 @@ pg (MIT), pg-cursor (MIT)
 
 ## Running the integration tests
 `docker compose -f test/compose/docker-compose.yml up -d <service>` then `RZ_ENGINES=postgres pnpm test` (see `test/compose/docker-compose.yml` for ports and `packages/test-engines` for the helpers).
+
+## CockroachDB
+The PostgreSQL driver passes the full conformance kit (15/15, including query cancellation) against CockroachDB v24.3.4, single node, insecure mode (`RZ_COCKROACH_PORT`, default 26257; `docker compose ... up -d cockroach`). The server is detected from `version()` and queries are cancelled through `CANCEL QUERIES` for the session instead of `pg_cancel_backend`. Not tested: secure clusters with client certificates, multi-node clusters, CockroachDB Cloud, serializable-retry (40001) handling beyond reporting the error, and Cockroach-specific DDL (the schema designer targets PostgreSQL syntax). Schema changes take seconds on CockroachDB.

@@ -104,7 +104,7 @@ async function* run(r: Runner, req: ExecuteRequest, signal: AbortSignal): AsyncG
 class PgConnection implements Connection {
   private cancelClient: pg.Client | undefined;
   private lost = new ConnectionLoss();
-  constructor(private client: pg.Client, readonly serverInfo: Connection["serverInfo"], private pid: number, private cfg: pg.ClientConfig) {
+  constructor(private client: pg.Client, readonly serverInfo: Connection["serverInfo"], private pid: number, private cfg: pg.ClientConfig, private cockroachSession?: string) {
     const gone = (e?: Error) => this.lost.fire(new DriverError("connection", e?.message ?? "The server closed the connection", { cause: e }));
     client.once("end", () => gone());
     client.once("error", (e) => gone(e));
@@ -115,7 +115,11 @@ class PgConnection implements Connection {
       cancel: async (pid) => {
         const c = new Client(this.cfg);
         await c.connect();
-        try { await c.query("select pg_cancel_backend($1)", [pid]); } finally { await c.end(); }
+        try {
+          // CockroachDB has no pg_cancel_backend(pid): its queries are cancelled through the session id.
+          if (this.cockroachSession) await c.query(`CANCEL QUERIES (SELECT query_id FROM [SHOW CLUSTER STATEMENTS] WHERE session_id = '${this.cockroachSession}')`);
+          else await c.query("select pg_cancel_backend($1)", [pid]);
+        } finally { await c.end(); }
       },
     };
   }
@@ -206,7 +210,13 @@ export const postgresDriver: DriverPlugin = {
     client.on("error", () => {});
     try {
       await client.connect();
-      const v = await client.query("select current_setting('server_version') v, pg_backend_pid() pid");
+      const v = await client.query("select current_setting('server_version') v, pg_backend_pid() pid, version() full");
+      // CockroachDB answers the PostgreSQL wire protocol but identifies itself in version().
+      if (/^CockroachDB/.test(String(v.rows[0].full))) {
+        const sid = String((await client.query("SHOW session_id")).rows[0].session_id);
+        if (!/^[0-9a-f]+$/.test(sid)) throw new DriverError("unknown", "Unexpected CockroachDB session id");
+        return new PgConnection(client, { product: "CockroachDB", version: /v(\d+\.\d+\.\d+)/.exec(String(v.rows[0].full))?.[1] ?? v.rows[0].v }, v.rows[0].pid, config, sid);
+      }
       return new PgConnection(client, { product: "PostgreSQL", version: v.rows[0].v }, v.rows[0].pid, config);
     } catch (e) {
       await client.end().catch(() => {});
