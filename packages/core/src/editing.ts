@@ -58,6 +58,7 @@ export function validateChange(t: EditTarget, c: Change): void {
 /** Builds parameterized SQL with optimistic-concurrency predicates (key + original values of edited columns). */
 export function generate(p: DriverPlugin, t: EditTarget, c: Change): GeneratedStatement {
   validateChange(t, c);
+  if (p.generateChange) { const g = p.generateChange(t, c); return { sql: g.sql, params: g.params, change: c, description: g.description }; }
   const params: Value[] = [];
   const bind = (v: Value) => { params.push(v); return p.placeholder(params.length); };
   const q = p.quoteIdent;
@@ -109,7 +110,6 @@ export interface ApplyResult { applied: number }
 /** All-or-nothing apply. Any conflict (0 rows matched) or error rolls the whole batch back. */
 export async function applyChanges(changes: readonly Change[], o: ApplyOptions): Promise<ApplyResult> {
   if (changes.length === 0) return { applied: 0 };
-  if (!o.plugin.capabilities.transactions || !o.conn.begin) throw new EditError("failed", "This engine cannot apply edits transactionally.");
   const statements = changes.map((c, i) => { try { return generate(o.plugin, o.target, c); } catch (e) { throw e instanceof EditError ? new EditError(e.code, e.message, i) : e; } });
   for (const s of statements) {
     const d = decide(s.sql, { environment: o.environment, readOnly: o.readOnly }, o.policy);
@@ -118,6 +118,22 @@ export async function applyChanges(changes: readonly Change[], o: ApplyOptions):
   if (!(await o.confirm(statements))) throw new EditError("declined", "Changes were not confirmed.");
 
   const signal = o.signal ?? new AbortController().signal;
+  if (!o.plugin.capabilities.transactions || !o.conn.begin) {
+    // Engines without multi-statement transactions (e.g. standalone MongoDB): apply in order and stop at the first problem.
+    let done = 0;
+    for (const [i, s] of statements.entries()) {
+      try {
+        const r = await collect(o.conn.execute({ sql: s.sql, params: s.params }, signal), );
+        const n = r.done?.affectedRows;
+        if (n !== undefined && n !== 1) throw new EditError("conflict", `${n === 0 ? "The document changed or was deleted by someone else since it was loaded." : `Statement affected ${n} documents, expected 1.`} ${done} of ${statements.length} change(s) were already applied and are NOT rolled back on this engine.`, i);
+        done++;
+      } catch (e) {
+        if (e instanceof EditError) throw e;
+        throw new EditError("failed", `${e instanceof DriverError ? e.message : (e as Error).message} (${done} of ${statements.length} change(s) were already applied and are NOT rolled back on this engine.)`, i);
+      }
+    }
+    return { applied: done };
+  }
   const tx = await o.conn.begin();
   try {
     for (const [i, s] of statements.entries()) {

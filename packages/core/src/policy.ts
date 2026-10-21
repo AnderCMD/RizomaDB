@@ -34,8 +34,8 @@ export function assessStatement(sql: string): Assessment {
 
 export interface Decision { allowed: boolean; needsConfirmation: boolean; reason?: string }
 
-export function decide(sql: string, ctx: { environment: string; readOnly: boolean }, policy: Policy = defaultPolicy): Decision {
-  const a = assessStatement(sql);
+export function decide(sql: string, ctx: { environment: string; readOnly: boolean }, policy: Policy = defaultPolicy, assess: (s: string) => Assessment = assessStatement): Decision {
+  const a = assess(sql);
   const forcedRO = ctx.readOnly || policy.readOnlyEnvironments.includes(ctx.environment);
   if (a.risk !== "none" && forcedRO) {
     return { allowed: false, needsConfirmation: false, reason: ctx.readOnly ? "Connection is read-only" : `Environment '${ctx.environment}' is read-only by policy` };

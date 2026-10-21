@@ -1,5 +1,5 @@
 import { DriverError, type Connection, type ColumnInfo, type Value } from "@rizomadb/driver-api";
-import { decide, type Policy, type ConnectionProfile } from "@rizomadb/core";
+import { decide, type Assessment, type Policy, type ConnectionProfile } from "@rizomadb/core";
 
 export type RunEvent =
   | { type: "start"; sql: string; columns: ColumnInfo[] }
@@ -16,6 +16,8 @@ export interface RunOptions {
   timeoutMs?: number;
   signal: AbortSignal;
   policy: Policy;
+  /** Engine-specific classifier (non-SQL engines); defaults to the SQL heuristic. */
+  assess?: (command: string) => Assessment;
   readOnly: boolean;
   confirmDestructive: boolean;
   confirm: (reason: string) => Promise<boolean>;
@@ -30,7 +32,7 @@ export interface RunOutcome {
 /** Single path for every statement the UI runs: policy first, then the driver. */
 export async function runStatement(o: RunOptions): Promise<RunOutcome> {
   const t0 = performance.now();
-  const decision = decide(o.sql, { environment: o.profile.environment, readOnly: o.readOnly }, o.policy);
+  const decision = decide(o.sql, { environment: o.profile.environment, readOnly: o.readOnly }, o.policy, o.assess);
   if (!decision.allowed) {
     o.onEvent({ type: "error", kind: "permission", message: decision.reason ?? "Blocked by policy" });
     return { status: "blocked", rowCount: 0, durationMs: 0, error: decision.reason ?? "Blocked by policy" };

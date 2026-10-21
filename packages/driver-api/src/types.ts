@@ -109,12 +109,27 @@ export interface JsonSchemaProp {
   title: string; description?: string; default?: unknown; secret?: boolean; enum?: string[];
 }
 
+export type RowValues = Record<string, Value>;
+export type RowChange =
+  | { kind: "insert"; values: RowValues }
+  | { kind: "update"; key: RowValues; before: RowValues; set: RowValues }
+  | { kind: "delete"; key: RowValues; before: RowValues };
+export interface EditTargetRef { schema?: string; table: string; columns: ColumnDef[] }
+
 export interface DriverPlugin {
   readonly id: string;
   readonly displayName: string;
   readonly family: EngineFamily;
   readonly capabilities: Capabilities;
   readonly connectionSchema: JsonSchema;
+  /** Query language of `execute().sql`: "sql" (default), or an engine's own command syntax. */
+  readonly language?: "sql" | "mongo" | "redis" | "json" | "cql" | "cypher";
+  /** Engine-specific risk classification of a command (used by policy instead of the SQL heuristic). */
+  /** Non-SQL engines: the command that applies one row/document change (shown to the user, then executed). */
+  generateChange?(target: EditTargetRef, change: RowChange): { sql: string; params: Value[]; description: string };
+  /** Non-SQL engines: the command that opens a collection/key for browsing. */
+  openCommand?(ref: { schema?: string; name: string }, limit: number): string;
+  assess?(command: string): { risk: "none" | "write" | "destructive"; reasons: string[] };
   /** Dialect identifier quoting; pure, usable without a connection. */
   quoteIdent(name: string): string;
   /** Positional bind placeholder for the 1-based index, e.g. `?`, `$1`, `@p1`, `:1`. */

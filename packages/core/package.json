@@ -23,6 +23,8 @@
     "pg": "8.23.1",
     "mysql2": "3.24.6",
     "tedious": "20.3.8",
-    "oracledb": "26.0.0"
+    "oracledb": "26.0.0",
+    "@rizomadb/driver-mongodb": "workspace:*",
+    "mongodb": "7.7.0"
   }
 }
