@@ -15,7 +15,7 @@ Leyenda: ✅ cumplido y verificado · 🟡 parcial · ❌ no hecho
 | UI es/en | ✅ | Prueba contra deriva de textos |
 | Probado en un VS Code real | 🟡 | `pnpm --filter rizomadb test:e2e`: VS Code 1.142 (Node 24.21, Electron 43.7) activa la extensión, registra los 52 comandos y `node:sqlite` existe. Sin recorrido manual de la interfaz |
 | Prueba de resistencia 8 h | ❌ | `pnpm soak`: solo 2 min ejecutados, sin crecimiento sostenido tras corregir dos fugas |
-| CI y release ejecutados en GitHub | ❌ | Flujos escritos, nunca ejecutados |
+| CI y release ejecutados en GitHub | 🟡 | CI ejecutado y en verde (run 39567405227: pruebas con motores reales como servicios, licencias, CodeQL, gitleaks). Hallazgos reales que corregimos: turbo ocultaba las variables RZ_* (las suites de motores se saltaban en silencio), versión de pg_dump, clave ed25519 de ssh2 no analizable (0.4 %), tiempos. cockroach/yugabyte/firestore/influxdb3 no corren en CI (necesitan comando propio). El flujo de release NO se ha ejecutado |
 | Tamaño del VSIX / arranque | 🟡 | Comprobación de tamaño en pruebas; sin medida de arranque en VS Code real |
 | Licencias y SBOM | ✅ | `pnpm audit:licenses`, `pnpm sbom:generate` |
 | Proxy HTTP/SOCKS | 🟡 | HTTP CONNECT y SOCKS5 (con usuario/contraseña, DNS en el proxy) hacia el servidor de base de datos, probados contra proxies de prueba escritos en el repo, NO contra Squid/Dante/etc. No cubre el salto SSH ni las llamadas de IA |
