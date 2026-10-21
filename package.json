@@ -1,0 +1,23 @@
+{
+  "name": "rizomadb-monorepo",
+  "private": true,
+  "license": "Apache-2.0",
+  "packageManager": "pnpm@12.6.0",
+  "scripts": {
+    "build": "turbo run build",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "lint": "eslint .",
+    "build:brand": "node scripts/build-brand.mjs"
+  },
+  "devDependencies": {
+    "@fontsource/inter": "^5.3.0",
+    "@resvg/resvg-js": "^2.6.2",
+    "@types/node": "26.6.5",
+    "opentype.js": "^2.0.0",
+    "svgo": "^4.1.0",
+    "turbo": "2.11.10",
+    "typescript": "7.0.2",
+    "vitest": "5.0.5"
+  }
+}

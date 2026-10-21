@@ -1,0 +1,5 @@
+services:
+  postgres:
+    image: postgres:17
+    environment: { POSTGRES_PASSWORD: rizoma_test, POSTGRES_DB: rizoma }
+    ports: ["54329:5432"]

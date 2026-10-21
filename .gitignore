@@ -1,0 +1,6 @@
+node_modules
+dist
+.turbo
+*.vsix
+coverage
+assets/brand/_proof
