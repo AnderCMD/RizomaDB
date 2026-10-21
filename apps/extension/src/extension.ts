@@ -22,6 +22,7 @@ import { diffModels, migrationStatements, toHtml, toMarkdown, toMigration, creat
 import { writeFile } from "node:fs/promises";
 import { registerDataCommands } from "./ui/dataCommands.js";
 import { registerNoSqlCommands } from "./ui/nosqlCommands.js";
+import { registerAdminCommands } from "./ui/adminCommands.js";
 import { SchemaCache, DIALECT_OF } from "./lib/schemaCache.js";
 import { bindParameters, explain, findParameters } from "@rizomadb/sql";
 import { createWriteStream } from "node:fs";
@@ -436,6 +437,13 @@ export async function activate(ctx: vscode.ExtensionContext) {
     const lines = missing.map((m) => { const tb = model.tables.find((x) => x.name === m.table)!; return `-- ${m.table}.${m.fk}: joins and cascades on ${m.columns.join(", ")} scan the whole table\n${renderScript([{ sql: createIndex(model.dialect, tb, { name: `ix_${m.table}_${m.columns.join("_")}`.slice(0, 60), columns: m.columns, unique: false }) }]).trim()}`; });
     await doc(`-- ${t("Suggested indexes (review before running)")}\n\n${lines.join("\n\n")}\n`);
   });
+  const showTable = (title: string, table: { columns: string[]; rows: Value[][] }) => {
+    session = undefined;
+    results.post({ v: 1, type: "start", title, sql: "", columns: table.columns.map((name) => ({ name, nativeType: "", kind: "text" })) });
+    results.post({ v: 1, type: "rows", rows: table.rows.map((r) => r.map(formatValue)) });
+    results.post({ v: 1, type: "done", rowCount: table.rows.length, durationMs: 0, truncated: false });
+  };
+  registerAdminCommands({ ctx, mgr, policy, pick: () => pickConnection(), reg, show: showTable });
   registerNoSqlCommands({ mgr, policy, reg, refresh: () => explorer.refresh(), bind });
   registerDataCommands({ ctx, mgr, policy, pick: () => pickConnection(), reg, refresh: () => explorer.refresh() });
   reg("rizomadb.reviewPendingChanges", () => reviewChanges());

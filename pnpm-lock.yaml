@@ -205,6 +205,9 @@ importers:
 
   apps/extension:
     dependencies:
+      '@rizomadb/admin':
+        specifier: workspace:*
+        version: link:../../packages/admin
       '@rizomadb/core':
         specifier: workspace:*
         version: link:../../packages/core

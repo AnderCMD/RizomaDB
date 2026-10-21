@@ -247,6 +247,36 @@
         "command": "rizomadb.redis.renameKey",
         "title": "%cmd.redis_renameKey%",
         "category": "RizomaDB"
+      },
+      {
+        "command": "rizomadb.admin",
+        "title": "%cmd.admin%",
+        "category": "RizomaDB"
+      },
+      {
+        "command": "rizomadb.admin.kill",
+        "title": "%cmd.adminKill%",
+        "category": "RizomaDB"
+      },
+      {
+        "command": "rizomadb.admin.setVariable",
+        "title": "%cmd.adminSet%",
+        "category": "RizomaDB"
+      },
+      {
+        "command": "rizomadb.admin.privileges",
+        "title": "%cmd.adminPriv%",
+        "category": "RizomaDB"
+      },
+      {
+        "command": "rizomadb.admin.grant",
+        "title": "%cmd.adminGrant%",
+        "category": "RizomaDB"
+      },
+      {
+        "command": "rizomadb.admin.metrics",
+        "title": "%cmd.adminMetrics%",
+        "category": "RizomaDB"
       }
     ],
     "menus": {
@@ -381,6 +411,11 @@
           "command": "rizomadb.redis.renameKey",
           "when": "view == rizomadb.connections && viewItem == table.redis",
           "group": "nosql"
+        },
+        {
+          "command": "rizomadb.admin",
+          "when": "view == rizomadb.connections && viewItem == connection",
+          "group": "admin"
         }
       ],
       "editor/title": [
@@ -550,7 +585,8 @@
     "@rizomadb/driver-redis": "workspace:*",
     "@rizomadb/driver-clickhouse": "workspace:*",
     "@rizomadb/driver-elasticsearch": "workspace:*",
-    "@rizomadb/driver-duckdb": "workspace:*"
+    "@rizomadb/driver-duckdb": "workspace:*",
+    "@rizomadb/admin": "workspace:*"
   },
   "devDependencies": {
     "@types/vscode": "1.100.0",

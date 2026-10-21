@@ -45,5 +45,11 @@
   "cmd.mongo_dropIndex": "Drop Index…",
   "cmd.redis_deleteKey": "Delete Key",
   "cmd.redis_setTtl": "Set Key Expiry…",
-  "cmd.redis_renameKey": "Rename Key…"
+  "cmd.redis_renameKey": "Rename Key…",
+  "cmd.admin": "Administration…",
+  "cmd.adminKill": "Administration: End a Session…",
+  "cmd.adminSet": "Administration: Change a Server Variable…",
+  "cmd.adminPriv": "Administration: Show Effective Privileges…",
+  "cmd.adminGrant": "Administration: Generate GRANT/REVOKE…",
+  "cmd.adminMetrics": "Administration: Live Metrics"
 }
