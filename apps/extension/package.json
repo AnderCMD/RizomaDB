@@ -137,6 +137,11 @@
         "command": "rizomadb.discardChanges",
         "title": "%cmd.discard%",
         "category": "RizomaDB"
+      },
+      {
+        "command": "rizomadb.export",
+        "title": "%cmd.export%",
+        "category": "RizomaDB"
       }
     ],
     "menus": {
@@ -171,6 +176,10 @@
         },
         {
           "command": "rizomadb.openTable",
+          "when": "view == rizomadb.connections && viewItem == table"
+        },
+        {
+          "command": "rizomadb.export",
           "when": "view == rizomadb.connections && viewItem == table"
         }
       ],
@@ -261,7 +270,9 @@
     "zod": "4.6.7",
     "@rizomadb/driver-mysql": "workspace:*",
     "@rizomadb/driver-mssql": "workspace:*",
-    "@rizomadb/driver-oracle": "workspace:*"
+    "@rizomadb/driver-oracle": "workspace:*",
+    "@rizomadb/network": "workspace:*",
+    "@rizomadb/data-tools": "workspace:*"
   },
   "devDependencies": {
     "@types/vscode": "1.100.0",

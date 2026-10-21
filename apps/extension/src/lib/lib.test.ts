@@ -153,3 +153,21 @@ describe("TableSession", () => {
     expect(() => s.edit(0, 0, "x")).toThrow(InputError);
   });
 });
+
+describe("ssh tunnel integration in ConnectionManager", () => {
+  it("rewrites host/port to the tunnel, hides ssh.* from the driver, and closes the tunnel on disconnect", async () => {
+    let seen: Record<string, unknown> = {}; let closed = false;
+    const fake = { id: "fake", displayName: "f", family: "relational", capabilities: {}, connectionSchema: { type: "object", properties: { port: { type: "number", title: "p", default: 5432 } } },
+      quoteIdent: (x: string) => x, placeholder: () => "?", selectTop: () => "",
+      connect: async (cfg: Record<string, unknown>) => { seen = { ...cfg }; return { serverInfo: { product: "f", version: "1" }, close: async () => {}, ping: async () => {} }; } };
+    const mgr = new ConnectionManager(memento(), new MemorySecretStore(), { fake: async () => fake as never }, () => defaultPolicy, {},
+      async (ssh, target) => { expect(ssh).toMatchObject({ host: "bastion", username: "u", password: "pw" }); expect(target).toEqual({ host: "db.internal", port: 5432 }); return { localPort: 40001, close: async () => { closed = true; } }; });
+    await mgr.add({ id: "s", name: "s", driver: "fake", environment: "dev", readOnly: false, tags: [], secretKeys: ["ssh.password"],
+      values: { host: "db.internal", "ssh.host": "bastion", "ssh.port": 22, "ssh.username": "u", "ssh.password": "pw" } });
+    await mgr.connect("s");
+    expect(seen).toMatchObject({ host: "127.0.0.1", port: 40001 });
+    expect(Object.keys(seen).some((k) => k.startsWith("ssh."))).toBe(false);
+    await mgr.disconnect("s");
+    expect(closed).toBe(true);
+  });
+});

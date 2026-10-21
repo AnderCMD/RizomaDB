@@ -6,17 +6,23 @@ export interface Memento {
   update(key: string, value: unknown): PromiseLike<void> | Promise<void>;
 }
 
+export interface SshSettings { host: string; port: number; username: string; password?: string; keyPath?: string; passphrase?: string }
+export interface OpenTunnel { localPort: number; close(): Promise<void> }
+/** Provided by the host application (VS Code) so prompts for unknown host keys stay out of this module. */
+export type TunnelFactory = (ssh: SshSettings, target: { host: string; port: number }) => Promise<OpenTunnel>;
+
 export type DriverRegistry = Record<string, () => Promise<DriverPlugin>>;
 
 const KEY = "rizomadb.profiles";
 
 export class ConnectionManager {
   private open = new Map<string, Promise<Connection>>();
+  private tunnels = new Map<string, OpenTunnel>();
   private listeners = new Set<() => void>();
 
   constructor(
     private state: Memento, private secrets: SecretStore, private registry: DriverRegistry,
-    private getPolicy: () => Policy, private env: Record<string, string | undefined> = process.env,
+    private getPolicy: () => Policy, private env: Record<string, string | undefined> = process.env, private openSsh?: TunnelFactory,
   ) {}
 
   onChange(fn: () => void) { this.listeners.add(fn); return { dispose: () => this.listeners.delete(fn) }; }
@@ -77,7 +83,17 @@ export class ConnectionManager {
     const pending = (async () => {
       const driver = await this.loadDriver(p.driver);
       const cfg = await resolveConfig({ ...p, readOnly: this.isReadOnly(p) }, this.secrets, this.env, vars);
-      return driver.connect(cfg, { log: () => {} });
+      const ssh = takeSsh(cfg);
+      if (ssh) {
+        if (!this.openSsh) throw new Error("SSH tunnels are not available in this environment");
+        const defaultPort = Number((driver.connectionSchema.properties.port as { default?: unknown } | undefined)?.default ?? 0);
+        const target = { host: String(cfg.host), port: Number(cfg.port ?? defaultPort) };
+        const tunnel = await this.openSsh(ssh, target);
+        this.tunnels.set(id, tunnel);
+        cfg.host = "127.0.0.1"; cfg.port = tunnel.localPort;
+      }
+      try { return await driver.connect(cfg, { log: () => {} }); }
+      catch (e) { await this.tunnels.get(id)?.close().catch(() => {}); this.tunnels.delete(id); throw e; }
     })();
     this.open.set(id, pending);
     pending.then(() => this.fire(), () => this.open.delete(id));
@@ -88,8 +104,24 @@ export class ConnectionManager {
     const c = this.open.get(id);
     this.open.delete(id);
     if (c) await c.then((x) => x.close(), () => {});
+    await this.tunnels.get(id)?.close().catch(() => {});
+    this.tunnels.delete(id);
     this.fire();
   }
 
   async disposeAll() { await Promise.all([...this.open.keys()].map((id) => this.disconnect(id))); }
+}
+
+/** Flat `ssh.*` options hold the tunnel settings; they are removed before the driver sees the config. */
+function takeSsh(cfg: Record<string, unknown>): SshSettings | undefined {
+  const get = (k: string) => cfg[`ssh.${k}`];
+  const host = get("host");
+  const out: SshSettings | undefined = typeof host === "string" && host
+    ? { host, port: Number(get("port") ?? 22), username: String(get("username") ?? ""),
+        ...(typeof get("password") === "string" ? { password: get("password") as string } : {}),
+        ...(typeof get("keyPath") === "string" ? { keyPath: get("keyPath") as string } : {}),
+        ...(typeof get("passphrase") === "string" ? { passphrase: get("passphrase") as string } : {}) }
+    : undefined;
+  for (const k of Object.keys(cfg)) if (k.startsWith("ssh.")) delete cfg[k];
+  return out;
 }

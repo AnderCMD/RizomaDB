@@ -23,5 +23,6 @@
   "cmd.review": "Revisar cambios pendientes",
   "cmd.apply": "Aplicar cambios pendientes",
   "cmd.discard": "Descartar cambios pendientes",
-  "cfg.openRows": "Filas cargadas al abrir una tabla."
+  "cfg.openRows": "Filas cargadas al abrir una tabla.",
+  "cmd.export": "Exportar datos…"
 }

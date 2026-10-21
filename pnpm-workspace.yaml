@@ -4,8 +4,10 @@ packages:
   - "apps/*"
 allowBuilds:
   '@vscode/vsce-sign': false
+  cpu-features: set this to true or false
   esbuild: true
   oracledb: set this to true or false
+  ssh2: set this to true or false
 minimumReleaseAgeExclude:
   - '@turbo/darwin-64@2.11.10'
   - '@turbo/darwin-arm64@2.11.10'

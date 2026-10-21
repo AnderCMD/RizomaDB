@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import { join } from "node:path";
 import { applyChanges, defaultPolicy, EditError, generate, type EditTarget, type Policy, type SecretStore } from "@rizomadb/core";
 import type { ColumnInfo, Value } from "@rizomadb/driver-api";
-import { ConnectionManager, type DriverRegistry } from "./lib/connections.js";
+import { ConnectionManager, type DriverRegistry, type TunnelFactory } from "./lib/connections.js";
 import { runStatement, type RunEvent } from "./lib/runner.js";
 import { History } from "./lib/history.js";
 import { splitStatements, statementAt } from "./lib/splitter.js";
@@ -11,6 +11,12 @@ import { Explorer, type Node } from "./ui/explorer.js";
 import { ResultsPanel } from "./ui/resultsPanel.js";
 import { InputError, TableSession } from "./lib/tableSession.js";
 import { newConnectionWizard } from "./ui/wizard.js";
+import { createWriteStream } from "node:fs";
+import { appendFile, mkdir, readFile } from "node:fs/promises";
+import { homedir } from "node:os";
+import { HostKeyError, formatEntry, openTunnel } from "@rizomadb/network";
+import { exportResult, type ExportFormat } from "@rizomadb/data-tools";
+import { decide } from "@rizomadb/core";
 import { workerDriver } from "./worker/workerDriver.js";
 
 const t = vscode.l10n.t;
@@ -37,7 +43,29 @@ export async function activate(ctx: vscode.ExtensionContext) {
     set: async (k, v) => ctx.secrets.store(k, v),
     delete: async (k) => ctx.secrets.delete(k),
   };
-  const mgr = new ConnectionManager(ctx.globalState, secrets, makeRegistry(vscode.Uri.joinPath(ctx.extensionUri, "dist", "driverWorker.cjs").fsPath), policy);
+  const knownHostsFile = join(ctx.globalStorageUri.fsPath, "known_hosts");
+  const tunnelFactory: TunnelFactory = async (ssh, target) => {
+    for (;;) {
+      const read = (f: string) => readFile(f, "utf8").catch(() => "");
+      const knownHosts = (await read(join(homedir(), ".ssh", "known_hosts"))) + "\n" + (await read(knownHostsFile));
+      try {
+        return await openTunnel({
+          hops: [{ host: ssh.host, port: ssh.port, username: ssh.username, ...(ssh.password !== undefined ? { password: ssh.password } : {}),
+            ...(ssh.keyPath ? { privateKey: await readFile(ssh.keyPath) } : {}), ...(ssh.passphrase ? { passphrase: ssh.passphrase } : {}) }],
+          target, knownHosts,
+        });
+      } catch (e) {
+        if (!(e instanceof HostKeyError) || e.reason !== "unknown") throw e;
+        const ok = await vscode.window.showWarningMessage(
+          t("Unknown SSH host key for {0}:{1}", e.host, e.port),
+          { modal: true, detail: t("Fingerprint: {0}\nOnly trust it if you verified it with the server owner.", e.fingerprint) }, t("Trust this host"));
+        if (!ok) throw e;
+        await mkdir(ctx.globalStorageUri.fsPath, { recursive: true });
+        await appendFile(knownHostsFile, formatEntry(e.host, e.port, e.keyType, e.key), { mode: 0o600 });
+      }
+    }
+  };
+  const mgr = new ConnectionManager(ctx.globalState, secrets, makeRegistry(vscode.Uri.joinPath(ctx.extensionUri, "dist", "driverWorker.cjs").fsPath), policy, process.env, tunnelFactory);
   const history = new History(join(ctx.globalStorageUri.fsPath, "history.jsonl"));
   void history.prune(cfg().get<number>("history.retentionDays", 90));
 
@@ -232,6 +260,44 @@ export async function activate(ctx: vscode.ExtensionContext) {
     }
     await execute(profile.id, plugin.selectTop(name, cfg().get<number>("table.openRows", 200)), n.name, edit);
     if (!edit) notice("info", n.isView ? t("Views are read-only.") : mgr.isReadOnly(profile) ? t("Read-only connection: editing is disabled.") : t("This table has no primary key, so its rows cannot be edited safely."));
+  });
+  reg("rizomadb.export", async (n?: Node) => {
+    let profileId: string | undefined, sql: string | undefined, quoted: string | undefined;
+    if (n?.kind === "table") {
+      const conn = await mgr.connect(n.profile.id);
+      quoted = n.schema ? `${conn.quoteIdent(n.schema)}.${conn.quoteIdent(n.name)}` : conn.quoteIdent(n.name);
+      profileId = n.profile.id; sql = `SELECT * FROM ${quoted}`;
+    } else {
+      const ed = vscode.window.activeTextEditor; if (!ed) return;
+      const text = ed.selection.isEmpty ? statementAt(ed.document.getText(), ed.document.offsetAt(ed.selection.active))?.text : ed.document.getText(ed.selection);
+      if (!text) return;
+      profileId = await bind(ed.document); sql = text;
+    }
+    if (!profileId || !sql) return;
+    const profile = mgr.get(profileId)!;
+    const d = decide(sql, { environment: profile.environment, readOnly: true }, policy());
+    if (!d.allowed) { void vscode.window.showErrorMessage(t("Only read-only statements can be exported.")); return; }
+    const fmt = await vscode.window.showQuickPick(["csv", "tsv", "json", "jsonl", "sql", "markdown"].map((label) => ({ label })), { title: t("Export format") });
+    if (!fmt) return;
+    const uri = await vscode.window.showSaveDialog({ saveLabel: t("Export"), defaultUri: vscode.Uri.file(join(homedir(), `export.${fmt.label === "markdown" ? "md" : fmt.label}`)) });
+    if (!uri) return;
+    const plugin = await mgr.loadDriver(profile.driver);
+    const conn = await mgr.connect(profileId);
+    const ac = new AbortController();
+    try {
+      const r = await vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: t("Exporting…"), cancellable: true }, (progress, token) => {
+        token.onCancellationRequested(() => ac.abort());
+        let last = 0;
+        return exportResult(conn.execute({ sql: sql!, batchSize: 2000 }, ac.signal), createWriteStream(uri.fsPath, { mode: 0o600 }), {
+          format: fmt.label as ExportFormat, signal: ac.signal,
+          ...(fmt.label === "sql" ? { sql: { table: quoted ?? plugin.quoteIdent("exported"), quoteIdent: plugin.quoteIdent } } : {}),
+          onProgress: (rows) => { progress.report({ message: t("{0} rows", rows), increment: 0 }); last = rows; void last; },
+        });
+      });
+      void vscode.window.showInformationMessage(t("Exported {0} rows to {1}", r.rows, uri.fsPath));
+    } catch (e) {
+      if ((e as Error).name !== "AbortError") void vscode.window.showErrorMessage(t("Export failed: {0}", (e as Error).message));
+    }
   });
   reg("rizomadb.reviewPendingChanges", () => reviewChanges());
   reg("rizomadb.applyChanges", () => applyPending());

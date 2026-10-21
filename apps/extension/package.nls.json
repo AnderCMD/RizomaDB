@@ -23,5 +23,6 @@
   "cmd.review": "Review Pending Changes",
   "cmd.apply": "Apply Pending Changes",
   "cmd.discard": "Discard Pending Changes",
-  "cfg.openRows": "Rows loaded when opening a table."
+  "cfg.openRows": "Rows loaded when opening a table.",
+  "cmd.export": "Export Data…"
 }

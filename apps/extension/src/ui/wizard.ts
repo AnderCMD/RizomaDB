@@ -51,6 +51,28 @@ export async function newConnectionWizard(mgr: ConnectionManager): Promise<strin
     if (prop.secret) secretKeys.push(key);
   }
 
+  if (driver.capabilities.sql || driver.family !== "relational") {
+    const useSsh = await vscode.window.showQuickPick([{ label: t("No"), v: false }, { label: t("Yes, via an SSH tunnel"), v: true }], { title: t("Connect through SSH?"), ignoreFocusOut: true });
+    if (!useSsh) return;
+    if (useSsh.v) {
+      const ask = async (title: string, value = "", password = false, required = true) =>
+        vscode.window.showInputBox({ title, value, password, ignoreFocusOut: true, validateInput: (x) => (required && !x.trim() ? t("Required") : undefined) });
+      const host = await ask(t("SSH host")); if (!host) return;
+      const port = await ask(t("SSH port"), "22"); if (!port) return;
+      const user = await ask(t("SSH user")); if (!user) return;
+      const method = await vscode.window.showQuickPick([{ label: t("Private key file"), k: "key" }, { label: t("Password"), k: "pw" }], { title: t("SSH authentication"), ignoreFocusOut: true });
+      if (!method) return;
+      values["ssh.host"] = host; values["ssh.port"] = Number(port); values["ssh.username"] = user;
+      if (method.k === "pw") { const pw = await ask(t("SSH password"), "", true); if (pw === undefined) return; values["ssh.password"] = pw; secretKeys.push("ssh.password"); }
+      else {
+        const key = await ask(t("Path to private key"), "~/.ssh/id_ed25519"); if (!key) return;
+        values["ssh.keyPath"] = key.replace(/^~/, process.env.HOME ?? "~");
+        const pass = await ask(t("Key passphrase (leave empty if none)"), "", true, false);
+        if (pass) { values["ssh.passphrase"] = pass; secretKeys.push("ssh.passphrase"); }
+      }
+    }
+  }
+
   const id = randomUUID();
   await mgr.add({ id, name: name.trim(), driver: driverPick.id, environment: env.label, readOnly: false, tags: [], secretKeys, values });
   try {
