@@ -10,7 +10,7 @@ import { postgresDriver } from "@rizomadb/driver-postgres";
 import { mysqlDriver } from "@rizomadb/driver-mysql";
 import { mssqlDriver } from "@rizomadb/driver-mssql";
 import { oracleDriver } from "@rizomadb/driver-oracle";
-import { applyChanges, EditError, EditQueue, generate, defaultPolicy, type EditTarget } from "./index.js";
+import { applyChanges, EditError, EditQueue, generate, defaultEffectivePolicy, type EditTarget } from "./index.js";
 
 const ctl = new AbortController().signal;
 const run = (c: Connection, sql: string, params: never[] = []) => collect(c.execute({ sql, params }, ctl));
@@ -66,7 +66,7 @@ for (const e of engines) {
       };
       const people = await describe("people");
       const rows = async () => (await run(admin, `SELECT ${N("id")}, ${N("name")}, ${N("note")} FROM people ORDER BY 1`)).rows.map((r) => r.map((v) => (typeof v === "bigint" ? Number(v) : v)));
-      const base = { conn, plugin: e.plugin, environment: "dev", readOnly: false, policy: defaultPolicy, confirm: async () => true };
+      const base = { conn, plugin: e.plugin, environment: "dev", readOnly: false, policy: defaultEffectivePolicy, confirm: async () => true };
       return { admin, conn, people, describe, rows, base, cfg, close: async () => { if (conn !== admin) await conn.close(); await admin.close(); } };
     }
 

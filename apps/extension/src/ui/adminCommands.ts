@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { randomBytes } from "node:crypto";
 import { collect } from "@rizomadb/driver-api";
-import { decide, type Policy } from "@rizomadb/core";
+import { decideEffective, type EffectivePolicy } from "@rizomadb/core";
 import { Admin, MetricSampler, grantStatement, providers, snapshotToRecord, type Engine, type Table } from "@rizomadb/admin";
 import type { ConnectionManager } from "../lib/connections.js";
 import type { Node } from "./explorer.js";
@@ -10,7 +10,7 @@ const t = vscode.l10n.t;
 const ENGINES = new Set(["postgres", "mysql", "mssql", "oracle"]);
 
 interface Deps {
-  ctx: vscode.ExtensionContext; mgr: ConnectionManager; policy: () => Policy; pick: () => Promise<string | undefined>;
+  ctx: vscode.ExtensionContext; mgr: ConnectionManager; policy: () => EffectivePolicy; pick: () => Promise<string | undefined>;
   reg: (id: string, fn: (...a: never[]) => unknown) => void;
   show: (title: string, table: Table) => void;
 }
@@ -24,7 +24,7 @@ export function registerAdminCommands({ ctx, mgr, policy, pick, reg, show }: Dep
   };
   const guarded = async (profile: NonNullable<ReturnType<ConnectionManager["get"]>>, statements: string[], what: string, note?: string) => {
     for (const s of statements) {
-      const d = decide(s, { environment: profile.environment, readOnly: mgr.isReadOnly(profile) }, policy());
+      const d = decideEffective(s, { environment: profile.environment, readOnly: mgr.isReadOnly(profile) }, policy());
       // administrative statements are never "reads"; a read-only connection or prod policy must stop them
       if (!d.allowed || mgr.isReadOnly(profile)) { void vscode.window.showErrorMessage(d.reason ?? t("This connection is read-only.")); return false; }
     }

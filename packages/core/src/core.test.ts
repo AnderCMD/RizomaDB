@@ -41,3 +41,14 @@ describe("policy", () => {
     expect(decide("SELECT 1", { environment: "prod", readOnly: false })).toMatchObject({ allowed: true, needsConfirmation: false });
   });
 });
+
+describe("statement classification (default-deny)", () => {
+  it("treats ordinary reads as reads even when they use risky-looking identifiers", () => {
+    for (const sql of ["SELECT REPLACE(name, 'a', 'b') FROM t", "SELECT comment, set, copy FROM t", "SELECT created, updated_at, deleted FROM t", "WITH x AS (SELECT 1) SELECT * FROM x", "EXPLAIN SELECT 1", "SELECT 'DROP TABLE t'", "SHOW TABLES", "PRAGMA table_info(t)", "SELECT * FROM t -- delete me", "SELECT \"update\" FROM t", "VACUUM INTO 'b.db'"])
+      expect(assessStatement(sql).risk, sql).toBe("none");
+  });
+  it("treats everything that can change state as a write, including unknown shapes", () => {
+    for (const sql of ["PRAGMA writable_schema = 1", "PRAGMA journal_mode(wal)", "ATTACH DATABASE 'x' AS y", "VACUUM", "SET search_path = x", "CALL do_things()", "COPY t FROM '/tmp/x'", "SELECT * INTO copy_t FROM t", "SELECT 1; DROP TABLE t", "REINDEX t", "EXPLAIN ANALYZE DELETE FROM t WHERE id = 1", "WITH d AS (DELETE FROM t RETURNING *) SELECT * FROM d", "LOCK TABLE t", "DO $$ BEGIN END $$", "FROBNICATE t"])
+      expect(assessStatement(sql).risk, sql).not.toBe("none");
+  });
+});

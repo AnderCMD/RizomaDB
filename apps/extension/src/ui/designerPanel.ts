@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { randomBytes } from "node:crypto";
 import { collect } from "@rizomadb/driver-api";
-import { decide, type Policy } from "@rizomadb/core";
+import { decideEffective, type EffectivePolicy } from "@rizomadb/core";
 import { createScript, diffModels, migrationStatements, type ColumnM, type Dialect, type SchemaModel, type Statement, type TableM } from "@rizomadb/schema-tools";
 import { DesignerToHost, type DesignTable } from "../designMessages.js";
 import type { ConnectionManager } from "../lib/connections.js";
@@ -21,7 +21,7 @@ const toTable = (d: DesignTable): TableM => ({
   primaryKey: d.primaryKey, indexes: d.indexes, foreignKeys: d.foreignKeys.map((f) => ({ name: f.name, columns: f.columns, refTable: f.refTable, refColumns: f.refColumns })),
 });
 
-export function openDesigner(ctx: vscode.ExtensionContext, mgr: ConnectionManager, policy: () => Policy, profileId: string, current: SchemaModel, existingName?: string, onApplied?: () => void) {
+export function openDesigner(ctx: vscode.ExtensionContext, mgr: ConnectionManager, policy: () => EffectivePolicy, profileId: string, current: SchemaModel, existingName?: string, onApplied?: () => void) {
   const profile = mgr.get(profileId)!, dialect = profile.driver as Dialect, t = vscode.l10n.t;
   const root = vscode.Uri.joinPath(ctx.extensionUri, "dist");
   const panel = vscode.window.createWebviewPanel("rizomadb.designer", existingName ? `Table: ${existingName}` : "New table", vscode.ViewColumn.Active, { enableScripts: true, localResourceRoots: [root] });
@@ -62,7 +62,7 @@ export function openDesigner(ctx: vscode.ExtensionContext, mgr: ConnectionManage
     const runnable = stmts.filter((s) => !s.sql.startsWith("--") && !s.manual);
     if (!runnable.length) { post({ v: 1, type: "result", ok: true, message: t("Nothing to apply.") }); return; }
     for (const s of runnable) {
-      const d = decide(s.sql, { environment: profile.environment, readOnly: mgr.isReadOnly(profile) }, policy());
+      const d = decideEffective(s.sql, { environment: profile.environment, readOnly: mgr.isReadOnly(profile) }, policy());
       if (!d.allowed) { post({ v: 1, type: "result", ok: false, message: d.reason ?? t("Blocked by policy") }); return; }
     }
     const destructive = runnable.some((s) => s.destructive);

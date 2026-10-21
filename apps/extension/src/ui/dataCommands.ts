@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { collect, type ColumnDef, type Value } from "@rizomadb/driver-api";
-import { decide, type EditTarget, type Policy } from "@rizomadb/core";
+import { decideEffective, type EditTarget, type EffectivePolicy } from "@rizomadb/core";
 import { backupSpec, backupSqlite, diffTables, generateRows, importRows, kindFromNative, openSource, renderSyncScript, restoreSpec, runTool, syncChanges, applySync, verifyBackup, type GenColumn, type ImportMapping, type DataDiff } from "@rizomadb/data-tools";
 import type { ConnectionManager } from "../lib/connections.js";
 import type { Node } from "./explorer.js";
@@ -10,12 +10,12 @@ import type { Node } from "./explorer.js";
 const t = vscode.l10n.t;
 const sig = () => new AbortController().signal;
 
-interface Deps { ctx: vscode.ExtensionContext; mgr: ConnectionManager; policy: () => Policy; pick: () => Promise<string | undefined>; reg: (id: string, fn: (...a: never[]) => unknown) => void; refresh: () => void }
+interface Deps { ctx: vscode.ExtensionContext; mgr: ConnectionManager; policy: () => EffectivePolicy; pick: () => Promise<string | undefined>; reg: (id: string, fn: (...a: never[]) => unknown) => void; refresh: () => void }
 
 export function registerDataCommands({ mgr, policy, pick, reg, refresh }: Deps) {
   const tableOf = (n: Node | undefined) => (n?.kind === "table" ? n : undefined);
   const ensureWritable = (profile: NonNullable<ReturnType<ConnectionManager["get"]>>, sql: string) => {
-    const d = decide(sql, { environment: profile.environment, readOnly: mgr.isReadOnly(profile) }, policy());
+    const d = decideEffective(sql, { environment: profile.environment, readOnly: mgr.isReadOnly(profile) }, policy());
     if (!d.allowed) { void vscode.window.showErrorMessage(d.reason ?? t("Blocked by policy")); return false; }
     return true;
   };

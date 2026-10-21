@@ -1,5 +1,5 @@
 import type { Connection, DriverPlugin } from "@rizomadb/driver-api";
-import { parseProfile, resolveConfig, saveSecrets, type ConnectionProfile, type Policy, type SecretStore } from "@rizomadb/core";
+import { guardConnection, parseProfile, resolveConfig, ruleFor, saveSecrets, type AuditLog, type ConnectionProfile, type EffectivePolicy, type SecretStore } from "@rizomadb/core";
 
 export interface Memento {
   get<T>(key: string, fallback: T): T;
@@ -15,14 +15,18 @@ export type DriverRegistry = Record<string, () => Promise<DriverPlugin>>;
 
 const KEY = "rizomadb.profiles";
 
+export type CatalogProfile = ConnectionProfile & { source: string };
+
 export class ConnectionManager {
+  private catalog: CatalogProfile[] = [];
   private open = new Map<string, Promise<Connection>>();
   private tunnels = new Map<string, OpenTunnel>();
   private listeners = new Set<() => void>();
 
   constructor(
     private state: Memento, private secrets: SecretStore, private registry: DriverRegistry,
-    private getPolicy: () => Policy, private env: Record<string, string | undefined> = process.env, private openSsh?: TunnelFactory,
+    private getPolicy: () => EffectivePolicy, private env: Record<string, string | undefined> = process.env, private openSsh?: TunnelFactory,
+    private hooks: { audit?: AuditLog; approve?: (profileName: string, reason: string, statement: string) => Promise<boolean>; promptSecret?: (profile: ConnectionProfile, key: string) => Promise<string | undefined> } = {},
   ) {}
 
   onChange(fn: () => void) { this.listeners.add(fn); return { dispose: () => this.listeners.delete(fn) }; }
@@ -35,11 +39,20 @@ export class ConnectionManager {
     return f();
   }
 
-  list(): ConnectionProfile[] {
+  /** Shared (team/project) connections: read-only here, secrets still belong to each user. */
+  setCatalog(entries: CatalogProfile[]) { this.catalog = entries; this.fire(); }
+  isShared(id: string) { return this.catalog.some((c) => c.id === id); }
+  sourceOf(id: string) { return this.catalog.find((c) => c.id === id)?.source; }
+
+  private userProfiles(): ConnectionProfile[] {
     const raw = this.state.get<unknown[]>(KEY, []);
     const out: ConnectionProfile[] = [];
     for (const r of raw) { try { out.push(parseProfile(r)); } catch { /* ignore invalid stored profile */ } }
     return out;
+  }
+  list(): ConnectionProfile[] {
+    const shared = this.catalog.map(({ source: _s, ...p }) => { void _s; return p as ConnectionProfile; });
+    return [...shared, ...this.userProfiles().filter((u) => !this.isShared(u.id))];
   }
   get(id: string) { return this.list().find((p) => p.id === id); }
 
@@ -47,7 +60,7 @@ export class ConnectionManager {
     const { values, ...rest } = p;
     const options = await saveSecrets(this.secrets, p.id, p.secretKeys, values);
     const profile = parseProfile({ ...rest, options });
-    await this.state.update(KEY, [...this.list().filter((x) => x.id !== p.id), profile]);
+    await this.state.update(KEY, [...this.userProfiles().filter((x) => x.id !== p.id), profile]);
     this.fire();
     return profile;
   }
@@ -55,8 +68,9 @@ export class ConnectionManager {
   async update(id: string, patch: Partial<Pick<ConnectionProfile, "readOnly" | "name" | "environment">>) {
     const cur = this.get(id);
     if (!cur) return;
+    if (this.isShared(id)) throw new Error(`This connection is managed by the ${this.sourceOf(id)} catalog and cannot be changed here.`);
     await this.disconnect(id);
-    await this.state.update(KEY, this.list().map((x) => (x.id === id ? { ...x, ...patch } : x)));
+    await this.state.update(KEY, this.userProfiles().map((x) => (x.id === id ? { ...x, ...patch } : x)));
     this.fire();
   }
 
@@ -64,13 +78,14 @@ export class ConnectionManager {
     const p = this.get(id);
     await this.disconnect(id);
     if (p) for (const k of p.secretKeys) await this.secrets.delete(`rizomadb/${id}/${k}`);
-    await this.state.update(KEY, this.list().filter((x) => x.id !== id));
+    if (this.isShared(id)) { this.fire(); return; }
+    await this.state.update(KEY, this.userProfiles().filter((x) => x.id !== id));
     this.fire();
   }
 
   /** The effective read-only flag: profile setting OR environment policy. */
   isReadOnly(p: ConnectionProfile) {
-    return p.readOnly || this.getPolicy().readOnlyEnvironments.includes(p.environment);
+    return p.readOnly || !!ruleFor(this.getPolicy(), p.environment).readOnly;
   }
 
   isConnected(id: string) { return this.open.has(id); }
@@ -82,6 +97,13 @@ export class ConnectionManager {
     if (!p) return Promise.reject(new Error(`Unknown connection: ${id}`));
     const pending = (async () => {
       const driver = await this.loadDriver(p.driver);
+      // catalog entries carry no secrets: ask this user once and keep the answer in their own SecretStorage
+      for (const k of p.secretKeys) {
+        if (await this.secrets.get(`rizomadb/${p.id}/${k}`) !== undefined) continue;
+        const v = await this.hooks.promptSecret?.(p, k);
+        if (v === undefined) throw new Error(`Credentials for "${p.name}" were not provided.`);
+        await saveSecrets(this.secrets, p.id, [k], { [k]: v });
+      }
       const cfg = await resolveConfig({ ...p, readOnly: this.isReadOnly(p) }, this.secrets, this.env, vars);
       const ssh = takeSsh(cfg);
       if (ssh) {
@@ -92,7 +114,15 @@ export class ConnectionManager {
         this.tunnels.set(id, tunnel);
         cfg.host = "127.0.0.1"; cfg.port = tunnel.localPort;
       }
-      try { return await driver.connect(cfg, { log: () => {} }); }
+      try {
+        const raw = await driver.connect(cfg, { log: () => {} });
+        // Every feature receives this guarded connection: one policy check and one audit trail for all of them.
+        return guardConnection(raw, {
+          plugin: driver, connectionId: id, connectionName: p.name, environment: p.environment,
+          readOnly: () => this.isReadOnly(this.get(id) ?? p), policy: this.getPolicy, ...(this.hooks.audit ? { audit: this.hooks.audit } : {}),
+          ...(this.hooks.approve ? { approve: (reason: string, statement: string) => this.hooks.approve!(p.name, reason, statement) } : {}),
+        });
+      }
       catch (e) { await this.tunnels.get(id)?.close().catch(() => {}); this.tunnels.delete(id); throw e; }
     })();
     this.open.set(id, pending);

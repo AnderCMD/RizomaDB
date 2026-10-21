@@ -4,3 +4,6 @@ export * from "./redact.js";
 export * from "./policy.js";
 export * from "./editing.js";
 export * from "./pending.js";
+export * from "./effective-policy.js";
+export * from "./audit.js";
+export * from "./guard.js";

@@ -277,6 +277,16 @@
         "command": "rizomadb.admin.metrics",
         "title": "%cmd.adminMetrics%",
         "category": "RizomaDB"
+      },
+      {
+        "command": "rizomadb.openAudit",
+        "title": "%cmd.openAudit%",
+        "category": "RizomaDB"
+      },
+      {
+        "command": "rizomadb.exportAudit",
+        "title": "%cmd.exportAudit%",
+        "category": "RizomaDB"
       }
     ],
     "menus": {
@@ -496,6 +506,33 @@
           "default": 200,
           "minimum": 1,
           "markdownDescription": "%cfg.openRows%"
+        },
+        "rizomadb.policy.team": {
+          "type": "object",
+          "default": {},
+          "scope": "machine-overridable",
+          "markdownDescription": "%cfg.policyTeam%"
+        },
+        "rizomadb.catalog.teamFile": {
+          "type": "string",
+          "default": "",
+          "scope": "machine-overridable",
+          "markdownDescription": "%cfg.catalogTeam%"
+        },
+        "rizomadb.audit.enabled": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "%cfg.auditEnabled%"
+        },
+        "rizomadb.audit.path": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "%cfg.auditPath%"
+        },
+        "rizomadb.audit.includeValues": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "%cfg.auditValues%"
         }
       }
     },

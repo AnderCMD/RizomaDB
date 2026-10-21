@@ -1,5 +1,5 @@
 import { DriverError, collect, type ColumnDef, type Connection, type DriverPlugin, type Value } from "@rizomadb/driver-api";
-import { decide, type Policy } from "./policy.js";
+import { decideEffective, type EffectivePolicy } from "./effective-policy.js";
 
 /** Data edits never run directly: they accumulate here, are previewed as exact SQL, then applied in one transaction. */
 
@@ -99,7 +99,7 @@ export interface ApplyOptions {
   target: EditTarget;
   environment: string;
   readOnly: boolean;
-  policy: Policy;
+  policy: EffectivePolicy;
   /** Called with the exact SQL before anything runs; return false to abort. Required for confirm-environments. */
   confirm: (statements: GeneratedStatement[]) => Promise<boolean>;
   signal?: AbortSignal;
@@ -112,7 +112,7 @@ export async function applyChanges(changes: readonly Change[], o: ApplyOptions):
   if (changes.length === 0) return { applied: 0 };
   const statements = changes.map((c, i) => { try { return generate(o.plugin, o.target, c); } catch (e) { throw e instanceof EditError ? new EditError(e.code, e.message, i) : e; } });
   for (const s of statements) {
-    const d = decide(s.sql, { environment: o.environment, readOnly: o.readOnly }, o.policy);
+    const d = decideEffective(s.sql, { environment: o.environment, readOnly: o.readOnly }, o.policy, o.plugin.assess);
     if (!d.allowed) throw new EditError("blocked", d.reason ?? "Blocked by policy");
   }
   if (!(await o.confirm(statements))) throw new EditError("declined", "Changes were not confirmed.");

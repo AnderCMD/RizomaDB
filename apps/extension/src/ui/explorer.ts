@@ -21,7 +21,8 @@ export class Explorer implements vscode.TreeDataProvider<Node> {
       const p = n.profile, ro = this.mgr.isReadOnly(p);
       const it = new vscode.TreeItem(p.name, vscode.TreeItemCollapsibleState.Collapsed);
       // Environment is conveyed by text as well as colour (WCAG: not colour alone).
-      it.description = `[${p.environment.toUpperCase()}]${ro ? " · " + vscode.l10n.t("read-only") : ""}${this.mgr.isConnected(p.id) ? "" : " · " + vscode.l10n.t("disconnected")}`;
+      const src = this.mgr.sourceOf(p.id);
+      it.description = `[${p.environment.toUpperCase()}]${src ? ` · ${src}` : ""}${ro ? " · " + vscode.l10n.t("read-only") : ""}${this.mgr.isConnected(p.id) ? "" : " · " + vscode.l10n.t("disconnected")}`;
       it.iconPath = new vscode.ThemeIcon(ro ? "lock" : "database", new vscode.ThemeColor(envColor[p.environment] ?? "charts.blue"));
       it.contextValue = "connection";
       it.tooltip = `${p.name} (${p.driver}) — ${p.environment}`;

@@ -313,6 +313,9 @@ importers:
       '@rizomadb/driver-sqlite':
         specifier: workspace:*
         version: link:../drivers/sqlite
+      fast-check:
+        specifier: 4.10.2
+        version: 4.10.2
       mongodb:
         specifier: 7.7.0
         version: 7.7.0

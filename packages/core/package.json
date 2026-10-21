@@ -25,6 +25,7 @@
     "tedious": "20.3.8",
     "oracledb": "26.0.0",
     "@rizomadb/driver-mongodb": "workspace:*",
-    "mongodb": "7.7.0"
+    "mongodb": "7.7.0",
+    "fast-check": "4.10.2"
   }
 }

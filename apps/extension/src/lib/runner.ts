@@ -1,5 +1,5 @@
 import { DriverError, type Connection, type ColumnInfo, type Value } from "@rizomadb/driver-api";
-import { decide, type Assessment, type Policy, type ConnectionProfile } from "@rizomadb/core";
+import { decideEffective, type Assessment, type EffectivePolicy, type ConnectionProfile } from "@rizomadb/core";
 
 export type RunEvent =
   | { type: "start"; sql: string; columns: ColumnInfo[] }
@@ -15,7 +15,7 @@ export interface RunOptions {
   maxRows: number;
   timeoutMs?: number;
   signal: AbortSignal;
-  policy: Policy;
+  policy: EffectivePolicy;
   /** Engine-specific classifier (non-SQL engines); defaults to the SQL heuristic. */
   assess?: (command: string) => Assessment;
   readOnly: boolean;
@@ -32,12 +32,13 @@ export interface RunOutcome {
 /** Single path for every statement the UI runs: policy first, then the driver. */
 export async function runStatement(o: RunOptions): Promise<RunOutcome> {
   const t0 = performance.now();
-  const decision = decide(o.sql, { environment: o.profile.environment, readOnly: o.readOnly }, o.policy, o.assess);
+  const decision = decideEffective(o.sql, { environment: o.profile.environment, readOnly: o.readOnly }, o.policy, o.assess);
   if (!decision.allowed) {
     o.onEvent({ type: "error", kind: "permission", message: decision.reason ?? "Blocked by policy" });
     return { status: "blocked", rowCount: 0, durationMs: 0, error: decision.reason ?? "Blocked by policy" };
   }
-  if (decision.needsConfirmation && (o.confirmDestructive || o.policy.confirmEnvironments.includes(o.profile.environment))) {
+  // A user preference can switch off the routine destructive prompt, never a confirmation the policy asks for.
+  if (decision.needsConfirmation && (o.confirmDestructive || decision.confirmSource === "policy")) {
     if (!(await o.confirm(decision.reason ?? "This statement modifies data"))) {
       o.onEvent({ type: "error", kind: "cancelled", message: "Cancelled: not confirmed" });
       return { status: "cancelled", rowCount: 0, durationMs: 0 };

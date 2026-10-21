@@ -3,7 +3,7 @@ import { randomBytes } from "node:crypto";
 import { collect, type ColumnDef, type Value } from "@rizomadb/driver-api";
 import { engineUp } from "@rizomadb/driver-api/conformance";
 import { mongoDriver } from "@rizomadb/driver-mongodb";
-import { applyChanges, defaultPolicy, EditError, PendingEdits, generate, type EditTarget, type Row } from "./index.js";
+import { applyChanges, defaultEffectivePolicy, EditError, PendingEdits, generate, type EditTarget, type Row } from "./index.js";
 
 const port = Number(process.env.RZ_MONGO_PORT ?? 27018);
 const up = await engineUp("127.0.0.1", port);
@@ -19,7 +19,7 @@ describe.skipIf(!up)("document edit queue on MongoDB", () => {
     const target: EditTarget = { schema: db, table: "people", columns: info.columns as ColumnDef[] };
     const found = await run(`db.getSiblingDB("${db}").people.find({}).sort({ name: 1 })`);
     const rows: Row[] = found.rows.map((r) => Object.fromEntries(found.columns.map((c, i) => [c.name, r[i] as Value])));
-    const base = { conn, plugin: mongoDriver, target, environment: "dev", readOnly: false, policy: defaultPolicy, confirm: async () => true };
+    const base = { conn, plugin: mongoDriver, target, environment: "dev", readOnly: false, policy: defaultEffectivePolicy, confirm: async () => true };
     return { conn, run, target, rows, base, db };
   }
 

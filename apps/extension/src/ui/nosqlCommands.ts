@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { collect, type Connection, type Value } from "@rizomadb/driver-api";
-import { decide, type Policy } from "@rizomadb/core";
+import { decideEffective, type EffectivePolicy } from "@rizomadb/core";
 import { analysisMarkdown, analyzeDocuments, pipelinePrefix, pipelineStages } from "../lib/mongoTools.js";
 import { formatValue } from "../lib/format.js";
 import { commandAt } from "../lib/commandAt.js";
@@ -10,7 +10,7 @@ import type { Node } from "./explorer.js";
 const t = vscode.l10n.t;
 const sig = () => new AbortController().signal;
 
-interface Deps { mgr: ConnectionManager; policy: () => Policy; reg: (id: string, fn: (...a: never[]) => unknown) => void; refresh: () => void; bind: (d: vscode.TextDocument) => Promise<string | undefined> }
+interface Deps { mgr: ConnectionManager; policy: () => EffectivePolicy; reg: (id: string, fn: (...a: never[]) => unknown) => void; refresh: () => void; bind: (d: vscode.TextDocument) => Promise<string | undefined> }
 
 export function registerNoSqlCommands({ mgr, policy, reg, refresh, bind }: Deps) {
   const tableNode = (n?: Node) => (n?.kind === "table" ? n : undefined);
@@ -21,7 +21,7 @@ export function registerNoSqlCommands({ mgr, policy, reg, refresh, bind }: Deps)
   /** Runs a mutating command only after the shared policy and an explicit confirmation. */
   const guarded = async (n: Extract<Node, { kind: "table" }>, command: string, what: string) => {
     const profile = n.profile; const plugin = await mgr.loadDriver(profile.driver);
-    const d = decide(command, { environment: profile.environment, readOnly: mgr.isReadOnly(profile) }, policy(), plugin.assess);
+    const d = decideEffective(command, { environment: profile.environment, readOnly: mgr.isReadOnly(profile) }, policy(), plugin.assess);
     if (!d.allowed) { void vscode.window.showErrorMessage(d.reason ?? t("Blocked by policy")); return false; }
     const ok = await vscode.window.showWarningMessage(t("[{0}] {1}: {2}", profile.environment.toUpperCase(), profile.name, what), { modal: true, detail: command }, t("Run"));
     if (!ok) return false;

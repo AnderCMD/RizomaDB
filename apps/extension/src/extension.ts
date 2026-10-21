@@ -1,6 +1,8 @@
 import * as vscode from "vscode";
 import { join } from "node:path";
-import { applyChanges, defaultPolicy, EditError, generate, type EditTarget, type Policy, type SecretStore } from "@rizomadb/core";
+import { applyChanges, AuditLog, decideEffective, defaultEffectivePolicy, EditError, featureEnabled, generate, type EditTarget, type EffectivePolicy, type SecretStore } from "@rizomadb/core";
+import { loadPolicy } from "./lib/policyFiles.js";
+import { loadCatalog } from "./lib/catalog.js";
 import type { ColumnInfo, Value } from "@rizomadb/driver-api";
 import { ConnectionManager, type DriverRegistry, type TunnelFactory } from "./lib/connections.js";
 import { runStatement, type RunEvent } from "./lib/runner.js";
@@ -29,8 +31,7 @@ import { createWriteStream } from "node:fs";
 import { appendFile, mkdir, readFile } from "node:fs/promises";
 import { homedir } from "node:os";
 import { HostKeyError, formatEntry, openTunnel } from "@rizomadb/network";
-import { exportResult, type ExportFormat } from "@rizomadb/data-tools";
-import { decide } from "@rizomadb/core";
+import { exportResult, maskFor, type ExportFormat } from "@rizomadb/data-tools";
 import { workerDriver } from "./worker/workerDriver.js";
 
 const t = vscode.l10n.t;
@@ -52,15 +53,35 @@ function makeRegistry(workerFile: string): DriverRegistry {
   };
 }
 
-function policy(): Policy {
-  return { ...defaultPolicy, readOnlyEnvironments: cfg().get<boolean>("security.prodReadOnlyByDefault", true) ? ["prod"] : [] };
-}
-
 export async function activate(ctx: vscode.ExtensionContext) {
   const secrets: SecretStore = {
     get: async (k) => ctx.secrets.get(k),
     set: async (k, v) => ctx.secrets.store(k, v),
     delete: async (k) => ctx.secrets.delete(k),
+  };
+  // ---- policy: built-in < team settings < project file (trusted workspaces only) < user file; the strictest layer always wins ----
+  let effective: EffectivePolicy = defaultEffectivePolicy;
+  const policy = () => effective;
+  const policyOutput = vscode.window.createOutputChannel("RizomaDB policy");
+  const reloadPolicy = async () => {
+    const folders = vscode.workspace.workspaceFolders ?? [];
+    const files = [
+      ...(vscode.workspace.isTrusted ? folders.map((f) => ({ label: `project ${f.name}`, path: join(f.uri.fsPath, ".rizomadb", "policy.json") })) : []),
+      { label: "user", path: join(ctx.globalStorageUri.fsPath, "policy.json") },
+    ];
+    const r = await loadPolicy({ builtinProdReadOnly: cfg().get<boolean>("security.prodReadOnlyByDefault", true), files, inline: [{ label: "team (settings)", value: cfg().get("policy.team") }] });
+    effective = r.policy;
+    policyOutput.clear();
+    policyOutput.appendLine(r.loaded.length ? `Policy layers loaded: ${r.loaded.join(", ")}` : "Policy: built-in defaults only.");
+    if (!vscode.workspace.isTrusted && folders.length) policyOutput.appendLine("Workspace is not trusted: project policy and catalog are not loaded.");
+    for (const e of r.errors) policyOutput.appendLine(`ERROR ${e}`);
+    if (r.errors.length) void vscode.window.showErrorMessage(t("RizomaDB policy has errors, so writes are blocked until it is fixed (see the 'RizomaDB policy' output)."), t("Show")).then((a) => { if (a) policyOutput.show(); });
+  };
+  await reloadPolicy();
+  const audit = new AuditLog({ file: cfg().get<string>("audit.path") || join(ctx.globalStorageUri.fsPath, "audit.jsonl"), includeValues: cfg().get<boolean>("audit.includeValues", false) });
+  const approve = async (name: string, reason: string, statement: string) => {
+    const typed = await vscode.window.showInputBox({ title: t("Approval required on {0}", name), prompt: t("{0}\n\n{1}\n\nType the connection name to approve.", reason, statement.slice(0, 300)), ignoreFocusOut: true });
+    return typed?.trim() === name;
   };
   const knownHostsFile = join(ctx.globalStorageUri.fsPath, "known_hosts");
   const tunnelFactory: TunnelFactory = async (ssh, target) => {
@@ -84,7 +105,23 @@ export async function activate(ctx: vscode.ExtensionContext) {
       }
     }
   };
-  const mgr = new ConnectionManager(ctx.globalState, secrets, makeRegistry(vscode.Uri.joinPath(ctx.extensionUri, "dist", "driverWorker.cjs").fsPath), policy, process.env, tunnelFactory);
+  const mgr = new ConnectionManager(ctx.globalState, secrets, makeRegistry(vscode.Uri.joinPath(ctx.extensionUri, "dist", "driverWorker.cjs").fsPath), policy, process.env, tunnelFactory, { ...(cfg().get<boolean>("audit.enabled", true) ? { audit } : {}), approve,
+    promptSecret: async (p, key) => vscode.window.showInputBox({ title: t("{0}: {1}", p.name, key), prompt: t("This shared connection does not store secrets. Your answer stays in your own secure storage."), password: /pass|secret|token|key/i.test(key), ignoreFocusOut: true }) });
+  const reloadCatalog = async () => {
+    const folders = vscode.workspace.workspaceFolders ?? [];
+    const team = cfg().get<string>("catalog.teamFile");
+    const files = [...(team ? [{ source: "team", path: team }] : []), ...(vscode.workspace.isTrusted ? folders.map((f) => ({ source: `project ${f.name}`, path: join(f.uri.fsPath, ".rizomadb", "connections.json") })) : [])];
+    const r = await loadCatalog(files);
+    mgr.setCatalog(r.connections);
+    for (const e of r.errors) policyOutput.appendLine(`CATALOG ${e}`);
+    if (r.errors.length) void vscode.window.showWarningMessage(t("Some shared connections were not loaded (see the 'RizomaDB policy' output)."), t("Show")).then((a) => { if (a) policyOutput.show(); });
+  };
+  await reloadCatalog();
+  ctx.subscriptions.push(watcher2(reloadCatalog));
+  function watcher2(fn: () => Promise<void>) { const w = vscode.workspace.createFileSystemWatcher("**/.rizomadb/connections.json"); w.onDidChange(() => void fn()); w.onDidCreate(() => void fn()); w.onDidDelete(() => void fn()); vscode.workspace.onDidGrantWorkspaceTrust(() => void fn()); return w; }
+  const watcher = vscode.workspace.createFileSystemWatcher("**/.rizomadb/{policy,connections}.json");
+  ctx.subscriptions.push(watcher, watcher.onDidChange(() => void reloadPolicy()), watcher.onDidCreate(() => void reloadPolicy()), watcher.onDidDelete(() => void reloadPolicy()),
+    vscode.workspace.onDidGrantWorkspaceTrust(() => void reloadPolicy()), vscode.workspace.onDidChangeConfiguration((e) => { if (e.affectsConfiguration("rizomadb.security") || e.affectsConfiguration("rizomadb.policy")) void reloadPolicy(); }));
   const history = new History(join(ctx.globalStorageUri.fsPath, "history.jsonl"));
   void history.prune(cfg().get<number>("history.retentionDays", 90));
 
@@ -199,10 +236,11 @@ export async function activate(ctx: vscode.ExtensionContext) {
     cancelItem.show();
     let columnsSeen = false;
     session = undefined;
+    let mask: ((r: Value[]) => Value[]) | undefined;
     const rawRows: Value[][] = []; let cols: ColumnInfo[] = [];
     const emit = (e: RunEvent) => {
-      if (e.type === "start") { columnsSeen = true; cols = e.columns; results.post({ v: 1, type: "start", title, sql: e.sql, columns: e.columns, editable: !!edit }); }
-      else if (e.type === "rows") { if (edit) rawRows.push(...e.rows); results.post({ v: 1, type: "rows", rows: e.rows.map((r) => r.map(formatValue)) }); }
+      if (e.type === "start") { columnsSeen = true; cols = e.columns; mask = maskFor(policy().maskColumns, e.columns.map((c) => c.name)); if (mask) edit = undefined; results.post({ v: 1, type: "start", title, sql: e.sql, columns: e.columns, editable: !!edit }); }
+      else if (e.type === "rows") { const shown = mask ? e.rows.map(mask) : e.rows; if (edit) rawRows.push(...e.rows); results.post({ v: 1, type: "rows", rows: shown.map((r) => r.map(formatValue)) }); }
       else if (e.type === "done") {
         if (!columnsSeen) results.post({ v: 1, type: "start", title, sql: "", columns: [] });
         results.post({ v: 1, ...e });
@@ -268,7 +306,13 @@ export async function activate(ctx: vscode.ExtensionContext) {
     return /^".*"$/s.test(s) ? s.slice(1, -1) : raw;
   };
   const editorDoc = () => vscode.window.activeTextEditor?.document;
-  const reg = (id: string, fn: (...a: never[]) => unknown) => ctx.subscriptions.push(vscode.commands.registerCommand(id, fn as never));
+  // Commands that a policy can switch off for everyone (team/project/user layers are merged; any layer can disable).
+  const FEATURE: Record<string, string> = { "rizomadb.export": "export", "rizomadb.import": "import", "rizomadb.backup": "backup", "rizomadb.restore": "restore", "rizomadb.compareData": "dataSync", "rizomadb.generateData": "dataSync", "rizomadb.designTable": "designer", "rizomadb.admin": "admin", "rizomadb.admin.kill": "admin", "rizomadb.admin.setVariable": "admin", "rizomadb.admin.grant": "admin", "rizomadb.admin.metrics": "admin", "rizomadb.admin.privileges": "admin" };
+  const reg = (id: string, fn: (...a: never[]) => unknown) => ctx.subscriptions.push(vscode.commands.registerCommand(id, ((...a: unknown[]) => {
+    const f = FEATURE[id];
+    if (f && !featureEnabled(policy(), f)) { void vscode.window.showWarningMessage(t("'{0}' is disabled by your organisation's RizomaDB policy.", f)); return undefined; }
+    return (fn as (...x: unknown[]) => unknown)(...a);
+  }) as never));
 
   reg("rizomadb.newConnection", async () => { await newConnectionWizard(mgr); });
   reg("rizomadb.newQuery", async (n?: Node) => {
@@ -335,7 +379,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
     }
     if (!profileId || !sql) return;
     const profile = mgr.get(profileId)!;
-    const d = decide(sql, { environment: profile.environment, readOnly: true }, policy());
+    const d = decideEffective(sql, { environment: profile.environment, readOnly: true }, policy());
     if (!d.allowed) { void vscode.window.showErrorMessage(t("Only read-only statements can be exported.")); return; }
     const fmt = await vscode.window.showQuickPick(["csv", "tsv", "json", "jsonl", "sql", "markdown"].map((label) => ({ label })), { title: t("Export format") });
     if (!fmt) return;
@@ -349,7 +393,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
         token.onCancellationRequested(() => ac.abort());
         let last = 0;
         return exportResult(conn.execute({ sql: sql!, batchSize: 2000 }, ac.signal), createWriteStream(uri.fsPath, { mode: 0o600 }), {
-          format: fmt.label as ExportFormat, signal: ac.signal,
+          format: fmt.label as ExportFormat, signal: ac.signal, mask: policy().maskColumns,
           ...(fmt.label === "sql" ? { sql: { table: quoted ?? plugin.quoteIdent("exported"), quoteIdent: plugin.quoteIdent } } : {}),
           onProgress: (rows) => { progress.report({ message: t("{0} rows", rows), increment: 0 }); last = rows; void last; },
         });
@@ -456,6 +500,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
   reg("rizomadb.disconnect", (n: Node) => { if (n.kind === "connection") return mgr.disconnect(n.profile.id); });
   reg("rizomadb.deleteConnection", async (n: Node) => {
     if (n.kind !== "connection") return;
+    if (mgr.isShared(n.profile.id)) { void vscode.window.showInformationMessage(t("'{0}' comes from the {1} catalog: edit the catalog file to remove it.", n.profile.name, mgr.sourceOf(n.profile.id) ?? "shared")); return; }
     const ok = await vscode.window.showWarningMessage(t("Delete connection '{0}'? Stored secrets are removed too.", n.profile.name), { modal: true }, t("Delete"));
     if (ok) await mgr.remove(n.profile.id);
   });
@@ -463,6 +508,17 @@ export async function activate(ctx: vscode.ExtensionContext) {
   reg("rizomadb.newNotebook", async () => {
     const data = new vscode.NotebookData([new vscode.NotebookCellData(vscode.NotebookCellKind.Code, "SELECT 1;", "sql")]);
     await vscode.window.showNotebookDocument(await vscode.workspace.openNotebookDocument("rizomadb-sql-notebook", data));
+  });
+  reg("rizomadb.openAudit", async () => {
+    const status = await vscode.window.showQuickPick([{ label: t("All"), v: undefined }, { label: t("Blocked by policy"), v: "blocked" as const }, { label: t("Errors"), v: "error" as const }, { label: t("Succeeded"), v: "ok" as const }], { title: t("Audit log: which entries?") }); if (!status) return;
+    const entries = await audit.read({ limit: 2000, ...(status.v ? { status: status.v } : {}) });
+    showTable(t("Audit log"), { columns: ["time", "user", "connection", "environment", "kind", "status", "rows", "ms", "statement", "detail"], rows: entries.map((e) => [e.ts, e.user, e.connection, e.environment, e.kind, e.status, e.rows ?? null, e.durationMs ?? null, e.statement, e.detail ?? null]) });
+  });
+  reg("rizomadb.exportAudit", async () => {
+    const uri = await vscode.window.showSaveDialog({ filters: { JSONL: ["jsonl"] }, defaultUri: vscode.Uri.file("rizomadb-audit.jsonl") }); if (!uri) return;
+    const all = await audit.read({ limit: 1_000_000 });
+    await writeFile(uri.fsPath, all.reverse().map((e) => JSON.stringify(e)).join("\n") + "\n");
+    void vscode.window.showInformationMessage(t("Exported {0} audit entries.", all.length));
   });
   reg("rizomadb.refresh", () => { schemaCache.invalidate(); lang.refreshAll(); explorer.refresh(); });
   reg("rizomadb.explain", async (analyze?: boolean) => {
@@ -475,7 +531,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
     const bound = await promptParameters(id, text); if (!bound) return;
     const conn = await mgr.connect(id);
     if (bound.params?.length) { void vscode.window.showWarningMessage(t("Explain does not support bind parameters; replace them with literal values.")); return; }
-    const d = decide(text, { environment: profile.environment, readOnly: true }, policy());
+    const d = decideEffective(text, { environment: profile.environment, readOnly: true }, policy());
     if (analyze === true) {
       if (profile.driver !== "postgres") { void vscode.window.showWarningMessage(t("EXPLAIN ANALYZE is only available for PostgreSQL.")); return; }
       if (!d.allowed) { void vscode.window.showErrorMessage(t("EXPLAIN ANALYZE executes the statement, so it is limited to read-only statements.")); return; }

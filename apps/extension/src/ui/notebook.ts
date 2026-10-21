@@ -5,12 +5,12 @@ import { splitScript } from "@rizomadb/sql";
 import { formatValue } from "../lib/format.js";
 import { DIALECT_OF } from "../lib/schemaCache.js";
 import type { ConnectionManager } from "../lib/connections.js";
-import type { Policy } from "@rizomadb/core";
+import type { EffectivePolicy } from "@rizomadb/core";
 
 const TYPE = "rizomadb-sql-notebook";
 const t = vscode.l10n.t;
 
-export function registerNotebooks(ctx: vscode.ExtensionContext, mgr: ConnectionManager, policy: () => Policy, cfg: () => vscode.WorkspaceConfiguration, pick: () => Promise<string | undefined>) {
+export function registerNotebooks(ctx: vscode.ExtensionContext, mgr: ConnectionManager, policy: () => EffectivePolicy, cfg: () => vscode.WorkspaceConfiguration, pick: () => Promise<string | undefined>) {
   ctx.subscriptions.push(vscode.workspace.registerNotebookSerializer(TYPE, {
     deserializeNotebook(bytes) {
       const n = parseNotebook(new TextDecoder().decode(bytes));

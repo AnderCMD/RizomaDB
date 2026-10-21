@@ -1,5 +1,5 @@
 import type { Connection, DriverPlugin, Value } from "@rizomadb/driver-api";
-import { applyChanges, defaultPolicy, generate, type Change, type EditTarget, type Policy, type Row } from "@rizomadb/core";
+import { applyChanges, defaultEffectivePolicy, generate, type Change, type EditTarget, type EffectivePolicy, type Row } from "@rizomadb/core";
 
 export type DataDiff =
   | { kind: "only-in-source"; key: Row; row: Row }
@@ -69,9 +69,9 @@ export function syncChanges(diffs: DataDiff[], opts: { deletes?: boolean } = {})
   return out;
 }
 
-export interface ApplySyncOptions { conn: Connection; plugin: DriverPlugin; table: EditTarget; environment: string; readOnly: boolean; policy?: Policy; confirm: (sql: string[]) => Promise<boolean>; signal?: AbortSignal }
+export interface ApplySyncOptions { conn: Connection; plugin: DriverPlugin; table: EditTarget; environment: string; readOnly: boolean; policy?: EffectivePolicy; confirm: (sql: string[]) => Promise<boolean>; signal?: AbortSignal }
 export async function applySync(changes: Change[], o: ApplySyncOptions) {
-  return applyChanges(changes, { conn: o.conn, plugin: o.plugin, target: o.table, environment: o.environment, readOnly: o.readOnly, policy: o.policy ?? defaultPolicy, confirm: async (s) => o.confirm(s.map((x) => x.sql)), ...(o.signal ? { signal: o.signal } : {}) });
+  return applyChanges(changes, { conn: o.conn, plugin: o.plugin, target: o.table, environment: o.environment, readOnly: o.readOnly, policy: o.policy ?? defaultEffectivePolicy, confirm: async (s) => o.confirm(s.map((x) => x.sql)), ...(o.signal ? { signal: o.signal } : {}) });
 }
 
 /** Dialect-correct SQL literal (for review scripts only: execution always uses bound parameters). */

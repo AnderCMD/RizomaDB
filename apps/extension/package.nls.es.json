@@ -51,5 +51,12 @@
   "cmd.adminSet": "Administración: cambiar variable del servidor…",
   "cmd.adminPriv": "Administración: ver privilegios efectivos…",
   "cmd.adminGrant": "Administración: generar GRANT/REVOKE…",
-  "cmd.adminMetrics": "Administración: métricas en vivo"
+  "cmd.adminMetrics": "Administración: métricas en vivo",
+  "cmd.openAudit": "Abrir registro de auditoría",
+  "cmd.exportAudit": "Exportar registro de auditoría…",
+  "cfg.policyTeam": "Capa de política de equipo (mismo formato que `.rizomadb/policy.json`). Despliégala con ajustes gestionados de VS Code; las capas de proyecto y usuario solo pueden endurecerla.",
+  "cfg.catalogTeam": "Ruta de un catálogo compartido de conexiones (sin secretos).",
+  "cfg.auditEnabled": "Escribir un registro de auditoría local de cada sentencia (sin literales).",
+  "cfg.auditPath": "Ruta del archivo de auditoría (por defecto, la carpeta de almacenamiento de la extensión).",
+  "cfg.auditValues": "Conservar los valores literales en la auditoría. Desactivado por defecto para que el registro no contenga datos."
 }

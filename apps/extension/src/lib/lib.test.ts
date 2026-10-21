@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { mkdtempSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { MemorySecretStore, defaultPolicy } from "@rizomadb/core";
+import { MemorySecretStore, defaultEffectivePolicy } from "@rizomadb/core";
 import { sqliteDriver } from "@rizomadb/driver-sqlite";
 import { collect } from "@rizomadb/driver-api";
 import { splitStatements, statementAt } from "./splitter.js";
@@ -60,7 +60,7 @@ describe("history", () => {
 
 describe("connections + runner (SQLite)", () => {
   const setup = async (env: "dev" | "prod" = "dev") => {
-    const mgr = new ConnectionManager(memento(), new MemorySecretStore(), { sqlite: async () => sqliteDriver }, () => defaultPolicy, {});
+    const mgr = new ConnectionManager(memento(), new MemorySecretStore(), { sqlite: async () => sqliteDriver }, () => defaultEffectivePolicy, {});
     await mgr.add({ id: "c1", name: "mem", driver: "sqlite", environment: env, readOnly: false, tags: [], secretKeys: [], values: { path: ":memory:" } });
     return mgr;
   };
@@ -68,7 +68,7 @@ describe("connections + runner (SQLite)", () => {
     const events: RunEvent[] = [];
     const profile = mgr.get("c1")!;
     const outcome = await runStatement({
-      conn: await mgr.connect("c1"), profile, sql, maxRows: 100, signal: new AbortController().signal, policy: defaultPolicy,
+      conn: await mgr.connect("c1"), profile, sql, maxRows: 100, signal: new AbortController().signal, policy: defaultEffectivePolicy,
       readOnly: mgr.isReadOnly(profile), confirmDestructive: true, confirm: async () => true, onEvent: (e) => events.push(e), ...extra,
     });
     return { outcome, events };
@@ -118,7 +118,7 @@ describe("connections + runner (SQLite)", () => {
 
   it("stores no secret values in profiles", async () => {
     const state = memento(); const secrets = new MemorySecretStore();
-    const mgr = new ConnectionManager(state, secrets, {}, () => defaultPolicy, {});
+    const mgr = new ConnectionManager(state, secrets, {}, () => defaultEffectivePolicy, {});
     await mgr.add({ id: "p", name: "pg", driver: "postgres", environment: "dev", readOnly: false, tags: [], secretKeys: ["password"], values: { host: "h", password: "topsecret" } });
     expect(JSON.stringify(state.get("rizomadb.profiles", []))).not.toContain("topsecret");
     expect(await secrets.get("rizomadb/p/password")).toBe("topsecret");
@@ -160,7 +160,7 @@ describe("ssh tunnel integration in ConnectionManager", () => {
     const fake = { id: "fake", displayName: "f", family: "relational", capabilities: {}, connectionSchema: { type: "object", properties: { port: { type: "number", title: "p", default: 5432 } } },
       quoteIdent: (x: string) => x, placeholder: () => "?", selectTop: () => "",
       connect: async (cfg: Record<string, unknown>) => { seen = { ...cfg }; return { serverInfo: { product: "f", version: "1" }, close: async () => {}, ping: async () => {} }; } };
-    const mgr = new ConnectionManager(memento(), new MemorySecretStore(), { fake: async () => fake as never }, () => defaultPolicy, {},
+    const mgr = new ConnectionManager(memento(), new MemorySecretStore(), { fake: async () => fake as never }, () => defaultEffectivePolicy, {},
       async (ssh, target) => { expect(ssh).toMatchObject({ host: "bastion", username: "u", password: "pw" }); expect(target).toEqual({ host: "db.internal", port: 5432 }); return { localPort: 40001, close: async () => { closed = true; } }; });
     await mgr.add({ id: "s", name: "s", driver: "fake", environment: "dev", readOnly: false, tags: [], secretKeys: ["ssh.password"],
       values: { host: "db.internal", "ssh.host": "bastion", "ssh.port": 22, "ssh.username": "u", "ssh.password": "pw" } });
