@@ -1,3 +1,3 @@
 import { defineConfig } from "vitest/config";
-// CockroachDB schema changes take seconds; the conformance kit runs against it too.
-export default defineConfig({ test: { testTimeout: 30_000 } });
+// CockroachDB/YugabyteDB schema changes take seconds, and CI runners are slow.
+export default defineConfig({ test: { testTimeout: 60_000, hookTimeout: 60_000 } });
