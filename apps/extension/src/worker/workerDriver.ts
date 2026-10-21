@@ -107,11 +107,13 @@ class WorkerConnection implements Connection {
   }
 
   introspect(): IntrospectionApi {
-    const call = <T>(method: "listSchemas" | "listTables" | "describeTable", ...args: unknown[]) => this.rpc<T>({ op: "call", target: this.target, method, args });
+    const call = <T>(method: "listSchemas" | "listTables" | "describeTable" | "describeSchema" | "foreignKeys", ...args: unknown[]) => this.rpc<T>({ op: "call", target: this.target, method, args });
     return {
       listSchemas: () => call("listSchemas"),
       listTables: (s) => call("listTables", s),
       describeTable: (r) => call("describeTable", r),
+      describeSchema: (s) => call("describeSchema", s),
+      foreignKeys: (s) => call("foreignKeys", s),
     };
   }
 

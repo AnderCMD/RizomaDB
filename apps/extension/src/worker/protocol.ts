@@ -7,7 +7,7 @@ export type Request =
   | { id: number; op: "execute"; target: number; req: ExecuteRequest }
   | { id: number; op: "next"; rid: number }
   | { op: "abort"; rid: number }
-  | { id: number; op: "call"; target: number; method: "ping" | "close" | "listSchemas" | "listTables" | "describeTable" | "begin" | "commit" | "rollback"; args: unknown[] };
+  | { id: number; op: "call"; target: number; method: "ping" | "close" | "listSchemas" | "listTables" | "describeTable" | "describeSchema" | "foreignKeys" | "begin" | "commit" | "rollback"; args: unknown[] };
 
 export type Response =
   | { id: number; ok: true; result: unknown }

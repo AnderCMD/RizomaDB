@@ -3,7 +3,7 @@ import pg from "pg";
 import Cursor from "pg-cursor";
 import {
   DriverError, type ColumnInfo, type Connection, type DriverPlugin,
-  type ExecuteRequest, type IntrospectionApi, type ResultEvent, type TableInfo, type Transaction, type Value,
+  type ExecuteRequest, type ForeignKey, type IntrospectionApi, type ResultEvent, type TableInfo, type Transaction, type Value,
 } from "@rizomadb/driver-api";
 
 const { Client, types } = pg;
@@ -116,6 +116,31 @@ class PgConnection implements Connection {
   introspect(): IntrospectionApi {
     const q = async (sql: string, p: unknown[] = []) => { try { return (await this.client.query(sql, p)).rows; } catch (e) { throw mapError(e); } };
     return {
+      describeSchema: async (schema) => {
+        const rows = await q(
+          `select c.relname t, c.relkind k, a.attname n, format_type(a.atttypid, a.atttypmod) ty, a.attnotnull nn, pg_get_expr(d.adbin, d.adrelid) def,
+                  coalesce(a.attnum = any(i.indkey), false) pk
+           from pg_class c join pg_namespace s on s.oid = c.relnamespace
+           join pg_attribute a on a.attrelid = c.oid and a.attnum > 0 and not a.attisdropped
+           left join pg_attrdef d on d.adrelid = a.attrelid and d.adnum = a.attnum
+           left join pg_index i on i.indrelid = c.oid and i.indisprimary
+           where c.relkind in ('r','v','m','p') and s.nspname = coalesce($1, current_schema()) order by c.relname, a.attnum`, [schema ?? null]);
+        const out = new Map<string, TableInfo>();
+        for (const r of rows) {
+          const t: TableInfo = out.get(r.t) ?? { ...(schema ? { schema } : {}), name: r.t, kind: r.k === "v" || r.k === "m" ? "view" as const : "table" as const, columns: [] };
+          t.columns!.push({ name: r.n, nativeType: r.ty, nullable: !r.nn, ...(r.def ? { default: r.def } : {}), primaryKey: r.pk });
+          out.set(r.t, t);
+        }
+        return [...out.values()];
+      },
+      foreignKeys: async (schema) => (await q(
+        `select con.conname n, c.relname ft, fs.nspname fsn, rc.relname tt, rs.nspname rsn,
+                (select array_agg(a.attname::text order by u.ord) from unnest(con.conkey) with ordinality u(k, ord) join pg_attribute a on a.attrelid = con.conrelid and a.attnum = u.k) fc,
+                (select array_agg(a.attname::text order by u.ord) from unnest(con.confkey) with ordinality u(k, ord) join pg_attribute a on a.attrelid = con.confrelid and a.attnum = u.k) tc
+         from pg_constraint con join pg_class c on c.oid = con.conrelid join pg_namespace fs on fs.oid = c.relnamespace
+         join pg_class rc on rc.oid = con.confrelid join pg_namespace rs on rs.oid = rc.relnamespace
+         where con.contype = 'f' and fs.nspname = coalesce($1, current_schema())`, [schema ?? null]))
+        .map((r): ForeignKey => ({ name: r.n, from: { schema: r.fsn, table: r.ft, columns: r.fc }, to: { schema: r.rsn, table: r.tt, columns: r.tc } })),
       listSchemas: async () => (await q("select nspname from pg_namespace where nspname not like 'pg\\_%' and nspname <> 'information_schema' order by 1")).map((r) => r.nspname as string),
       listTables: async (schema) => (await q(
         "select table_schema, table_name, table_type from information_schema.tables where table_schema = coalesce($1, current_schema()) order by 2", [schema ?? null]))

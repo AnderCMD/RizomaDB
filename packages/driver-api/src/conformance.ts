@@ -109,6 +109,25 @@ export function runConformance(opts: ConformanceOptions): void {
       expect(t.columns?.find((c) => c.name.toLowerCase() === "name")?.nullable).toBe(false);
     });
 
+    it("bulk-describes schemas and reports foreign keys", async () => {
+      const api = conn.introspect();
+      const exec = (sql: string) => collect(conn.execute({ sql }, new AbortController().signal));
+      await exec("CREATE TABLE conf_p (id INTEGER PRIMARY KEY)");
+      await exec("CREATE TABLE conf_c (id INTEGER PRIMARY KEY, pid INTEGER, FOREIGN KEY (pid) REFERENCES conf_p(id))");
+      if (api.describeSchema) {
+        const all = await api.describeSchema();
+        const c = all.find((t) => t.name.toLowerCase() === "conf_c");
+        expect(c?.columns?.map((x) => x.name.toLowerCase())).toEqual(["id", "pid"]);
+        expect(c?.columns?.find((x) => x.name.toLowerCase() === "id")?.primaryKey).toBe(true);
+      }
+      if (api.foreignKeys) {
+        const fk = (await api.foreignKeys()).find((f) => f.from.table.toLowerCase() === "conf_c");
+        expect(fk?.to.table.toLowerCase()).toBe("conf_p");
+        expect(fk?.from.columns.map((x) => x.toLowerCase())).toEqual(["pid"]);
+        expect(fk?.to.columns.map((x) => x.toLowerCase())).toEqual(["id"]);
+      }
+    });
+
     if (opts.plugin.capabilities.transactions) {
       it("rolls back and commits", async () => {
         const run = (sql: string, tx?: { execute: Connection["execute"] }) =>

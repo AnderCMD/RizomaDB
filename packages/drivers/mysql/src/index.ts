@@ -2,7 +2,7 @@ import { meta, quoteIdent } from "./meta.js";
 import mysql from "mysql2";
 import {
   DriverError, type ColumnInfo, type Connection, type DriverPlugin, type DriverErrorKind,
-  type ExecuteRequest, type IntrospectionApi, type ResultEvent, type TableInfo, type Transaction, type Value,
+  type ExecuteRequest, type ForeignKey, type IntrospectionApi, type ResultEvent, type TableInfo, type Transaction, type Value,
 } from "@rizomadb/driver-api";
 
 
@@ -116,6 +116,31 @@ class MysqlConnection implements Connection {
   introspect(): IntrospectionApi {
     const q = async (sql: string, p: unknown[] = []) => { try { return (await this.conn.promise().query({ sql, values: p, rowsAsArray: false })) [0] as Record<string, unknown>[]; } catch (e) { throw mapError(e); } };
     return {
+      describeSchema: async (schema) => {
+        const rows = await q(
+          `select c.table_name t, t.table_type tt, c.column_name n, c.column_type ty, c.is_nullable nl, c.column_default d, c.column_key k
+           from information_schema.columns c join information_schema.tables t on t.table_schema = c.table_schema and t.table_name = c.table_name
+           where c.table_schema = coalesce(?, database()) order by c.table_name, c.ordinal_position`, [schema ?? null]);
+        const out = new Map<string, TableInfo>();
+        for (const r of rows) {
+          const t = out.get(String(r.t)) ?? { ...(schema ? { schema } : {}), name: String(r.t), kind: r.tt === "VIEW" ? "view" as const : "table" as const, columns: [] };
+          t.columns!.push({ name: String(r.n), nativeType: String(r.ty), nullable: r.nl === "YES", ...(r.d !== null && r.d !== undefined ? { default: String(r.d) } : {}), primaryKey: r.k === "PRI" });
+          out.set(String(r.t), t);
+        }
+        return [...out.values()];
+      },
+      foreignKeys: async (schema) => {
+        const rows = await q(
+          `select constraint_name n, table_schema s, table_name t, column_name c, referenced_table_schema rs, referenced_table_name rt, referenced_column_name rc, ordinal_position o
+           from information_schema.key_column_usage where referenced_table_name is not null and table_schema = coalesce(?, database()) order by constraint_name, ordinal_position`, [schema ?? null]);
+        const out = new Map<string, ForeignKey>();
+        for (const r of rows) {
+          const k = `${r.t}.${r.n}`;
+          const fk = out.get(k) ?? { name: String(r.n), from: { schema: String(r.s), table: String(r.t), columns: [] }, to: { schema: String(r.rs), table: String(r.rt), columns: [] } };
+          fk.from.columns.push(String(r.c)); fk.to.columns.push(String(r.rc)); out.set(k, fk);
+        }
+        return [...out.values()];
+      },
       listSchemas: async () => (await q("select schema_name n from information_schema.schemata where schema_name not in ('mysql','sys','performance_schema','information_schema') order by 1")).map((r) => String(r.n)),
       listTables: async (schema) => (await q(
         "select table_schema s, table_name n, table_type t from information_schema.tables where table_schema = coalesce(?, database()) order by 2", [schema ?? null]))

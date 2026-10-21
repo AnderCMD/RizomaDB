@@ -2,7 +2,7 @@ import { meta, quoteIdent } from "./meta.js";
 import oracledb from "oracledb";
 import {
   DriverError, type ColumnInfo, type Connection, type DriverErrorKind, type DriverPlugin,
-  type ExecuteRequest, type IntrospectionApi, type ResultEvent, type TableInfo, type Transaction, type Value,
+  type ExecuteRequest, type ForeignKey, type IntrospectionApi, type ResultEvent, type TableInfo, type Transaction, type Value,
 } from "@rizomadb/driver-api";
 
 
@@ -109,6 +109,37 @@ class OracleConnection implements Connection {
   }
   introspect(): IntrospectionApi {
     return {
+      describeSchema: async (schema) => {
+        const rows = await this.rows(
+          `select c.table_name t, case when v.view_name is null then 'table' else 'view' end k, c.column_name n,
+                  c.data_type || case when c.data_type in ('VARCHAR2','CHAR','NVARCHAR2') then '(' || c.char_length || ')' else '' end ty, c.nullable nl, c.data_default d,
+                  (select count(*) from all_cons_columns cc join all_constraints k on k.owner = cc.owner and k.constraint_name = cc.constraint_name
+                    where k.constraint_type = 'P' and cc.owner = c.owner and cc.table_name = c.table_name and cc.column_name = c.column_name) pk
+           from all_tab_columns c left join all_views v on v.owner = c.owner and v.view_name = c.table_name
+           where c.owner = coalesce(:s, sys_context('USERENV','CURRENT_SCHEMA')) order by c.table_name, c.column_id`, { s: schema ?? null });
+        const out = new Map<string, TableInfo>();
+        for (const r of rows) {
+          const t = out.get(String(r.T)) ?? { ...(schema ? { schema } : {}), name: String(r.T), kind: r.K === "view" ? "view" as const : "table" as const, columns: [] };
+          t.columns!.push({ name: String(r.N), nativeType: String(r.TY), nullable: r.NL === "Y", ...(r.D ? { default: String(r.D).trim() } : {}), primaryKey: Number(r.PK) > 0 });
+          out.set(String(r.T), t);
+        }
+        return [...out.values()];
+      },
+      foreignKeys: async (schema) => {
+        const rows = await this.rows(
+          `select a.constraint_name n, a.owner fo, a.table_name ft, ac.column_name fc, r.owner ro, r.table_name rt, rc.column_name rcn, ac.position p
+           from all_constraints a join all_cons_columns ac on ac.owner = a.owner and ac.constraint_name = a.constraint_name
+           join all_constraints r on r.owner = a.r_owner and r.constraint_name = a.r_constraint_name
+           join all_cons_columns rc on rc.owner = r.owner and rc.constraint_name = r.constraint_name and rc.position = ac.position
+           where a.constraint_type = 'R' and a.owner = coalesce(:s, sys_context('USERENV','CURRENT_SCHEMA')) order by a.constraint_name, ac.position`, { s: schema ?? null });
+        const out = new Map<string, ForeignKey>();
+        for (const r of rows) {
+          const k = `${r.FT}.${r.N}`;
+          const fk = out.get(k) ?? { name: String(r.N), from: { schema: String(r.FO), table: String(r.FT), columns: [] }, to: { schema: String(r.RO), table: String(r.RT), columns: [] } };
+          fk.from.columns.push(String(r.FC)); fk.to.columns.push(String(r.RCN)); out.set(k, fk);
+        }
+        return [...out.values()];
+      },
       listSchemas: async () => (await this.rows("select username from all_users where oracle_maintained = 'N' order by 1")).map((r) => String(r.USERNAME)),
       listTables: async (schema) => (await this.rows(
         `select owner, table_name n, 'table' k from all_tables where owner = coalesce(:s, sys_context('USERENV','CURRENT_SCHEMA'))

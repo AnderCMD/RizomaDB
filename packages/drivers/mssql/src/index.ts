@@ -4,7 +4,7 @@ import { Connection as Tds, Request, TYPES } from "tedious";
 type ColumnMetaData = { colName: string; type: { name: string } };
 import {
   DriverError, type ColumnInfo, type Connection, type DriverErrorKind, type DriverPlugin,
-  type ExecuteRequest, type IntrospectionApi, type ResultEvent, type TableInfo, type Transaction, type Value,
+  type ExecuteRequest, type ForeignKey, type IntrospectionApi, type ResultEvent, type TableInfo, type Transaction, type Value,
 } from "@rizomadb/driver-api";
 
 
@@ -132,6 +132,39 @@ class MssqlConnection implements Connection {
   }
   introspect(): IntrospectionApi {
     return {
+      describeSchema: async (schema) => {
+        const rows = await this.rows(
+          `select o.name t, o.type k, c.name n, ty.name ty, c.is_nullable nl, dc.definition d,
+                  cast(case when exists (select 1 from sys.index_columns ic join sys.indexes i on i.object_id = ic.object_id and i.index_id = ic.index_id
+                    where i.is_primary_key = 1 and ic.object_id = c.object_id and ic.column_id = c.column_id) then 1 else 0 end as bit) pk
+           from sys.columns c join sys.objects o on o.object_id = c.object_id and o.type in ('U','V') join sys.schemas s on s.schema_id = o.schema_id
+           join sys.types ty on ty.user_type_id = c.user_type_id left join sys.default_constraints dc on dc.object_id = c.default_object_id
+           where s.name = coalesce(@p1, schema_name()) order by o.name, c.column_id`, [schema ?? null]);
+        const out = new Map<string, TableInfo>();
+        for (const r of rows) {
+          const t = out.get(String(r.t)) ?? { ...(schema ? { schema } : {}), name: String(r.t), kind: r.k === "V" ? "view" as const : "table" as const, columns: [] };
+          t.columns!.push({ name: String(r.n), nativeType: String(r.ty), nullable: Boolean(r.nl), ...(r.d ? { default: String(r.d) } : {}), primaryKey: Boolean(r.pk) });
+          out.set(String(r.t), t);
+        }
+        return [...out.values()];
+      },
+      foreignKeys: async (schema) => {
+        const rows = await this.rows(
+          `select fk.name n, fs.name fsn, ft.name ft, fc.name fcn, rs.name rsn, rt.name rt, rc.name rcn, fkc.constraint_column_id o
+           from sys.foreign_keys fk join sys.foreign_key_columns fkc on fkc.constraint_object_id = fk.object_id
+           join sys.tables ft on ft.object_id = fk.parent_object_id join sys.schemas fs on fs.schema_id = ft.schema_id
+           join sys.columns fc on fc.object_id = fkc.parent_object_id and fc.column_id = fkc.parent_column_id
+           join sys.tables rt on rt.object_id = fk.referenced_object_id join sys.schemas rs on rs.schema_id = rt.schema_id
+           join sys.columns rc on rc.object_id = fkc.referenced_object_id and rc.column_id = fkc.referenced_column_id
+           where fs.name = coalesce(@p1, schema_name()) order by fk.name, fkc.constraint_column_id`, [schema ?? null]);
+        const out = new Map<string, ForeignKey>();
+        for (const r of rows) {
+          const k = `${r.ft}.${r.n}`;
+          const fk = out.get(k) ?? { name: String(r.n), from: { schema: String(r.fsn), table: String(r.ft), columns: [] }, to: { schema: String(r.rsn), table: String(r.rt), columns: [] } };
+          fk.from.columns.push(String(r.fcn)); fk.to.columns.push(String(r.rcn)); out.set(k, fk);
+        }
+        return [...out.values()];
+      },
       listSchemas: async () => (await this.rows("select name from sys.schemas where name not in ('sys','INFORMATION_SCHEMA','guest') and name not like 'db[_]%' order by 1")).map((r) => String(r.name)),
       listTables: async (schema) => (await this.rows(
         "select s.name sn, o.name n, o.type t from sys.objects o join sys.schemas s on s.schema_id = o.schema_id where o.type in ('U','V') and s.name = coalesce(@p1, schema_name()) order by 2", [schema ?? null]))

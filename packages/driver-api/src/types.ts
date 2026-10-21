@@ -53,7 +53,16 @@ export interface TableRef { schema?: string; name: string }
 export interface ColumnDef { name: string; nativeType: string; nullable: boolean; default?: string; primaryKey: boolean }
 export interface TableInfo extends TableRef { kind: "table" | "view"; columns?: ColumnDef[] }
 
+export interface ForeignKey {
+  name: string;
+  from: { schema?: string; table: string; columns: string[] };
+  to: { schema?: string; table: string; columns: string[] };
+}
+
 export interface IntrospectionApi {
+  /** Every table/view of the schema with its columns, in one round trip (used by completion). */
+  describeSchema?(schema?: string): Promise<TableInfo[]>;
+  foreignKeys?(schema?: string): Promise<ForeignKey[]>;
   listSchemas(): Promise<string[]>;
   listTables(schema?: string): Promise<TableInfo[]>;
   describeTable(ref: TableRef): Promise<TableInfo>;

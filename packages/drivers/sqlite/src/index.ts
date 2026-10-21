@@ -2,7 +2,7 @@ import { meta, quoteIdent } from "./meta.js";
 import { DatabaseSync, type StatementSync } from "node:sqlite";
 import {
   DriverError, type ColumnInfo, type Connection, type DriverPlugin,
-  type ExecuteRequest, type IntrospectionApi, type ResultEvent, type TableInfo, type Transaction, type Value,
+  type ExecuteRequest, type ForeignKey, type IntrospectionApi, type ResultEvent, type TableInfo, type Transaction, type Value,
 } from "@rizomadb/driver-api";
 
 
@@ -98,7 +98,22 @@ class SqliteConnection implements Connection {
   quoteIdent = quoteIdent;
   introspect(): IntrospectionApi {
     const db = this.db;
+    const tables = () => (db.prepare("select name, type from sqlite_schema where type in ('table','view') and name not like 'sqlite_%' order by name").all() as { name: string; type: string }[]);
     return {
+      describeSchema: async () => tables().map((t): TableInfo => {
+        const rows = db.prepare(`pragma table_info(${quoteIdent(t.name)})`).all() as { name: string; type: string; notnull: number | bigint; dflt_value: string | null; pk: number | bigint }[];
+        return { name: t.name, kind: t.type === "view" ? "view" : "table", columns: rows.map((r) => ({ name: r.name, nativeType: r.type, nullable: !Number(r.notnull) && !Number(r.pk), ...(r.dflt_value !== null ? { default: r.dflt_value } : {}), primaryKey: Number(r.pk) > 0 })) };
+      }),
+      foreignKeys: async () => tables().filter((t) => t.type === "table").flatMap((t) => {
+        const rows = db.prepare(`pragma foreign_key_list(${quoteIdent(t.name)})`).all() as { id: number | bigint; seq: number | bigint; table: string; from: string; to: string }[];
+        const byId = new Map<number, ForeignKey>();
+        for (const r of rows) {
+          const id = Number(r.id);
+          const fk = byId.get(id) ?? { name: `fk_${t.name}_${id}`, from: { table: t.name, columns: [] }, to: { table: r.table, columns: [] } };
+          fk.from.columns.push(r.from); fk.to.columns.push(r.to); byId.set(id, fk);
+        }
+        return [...byId.values()];
+      }),
       listSchemas: async () => ["main"],
       listTables: async () =>
         (db.prepare("select name, type from sqlite_schema where type in ('table','view') and name not like 'sqlite_%' order by name").all() as { name: string; type: string }[])
