@@ -31,7 +31,7 @@ function brandMark(size: number) {
   return svg;
 }
 
-let groups: Group[] = [], language = "", query = "", live: HTMLElement, masonry: HTMLElement;
+let groups: Group[] = [], language = "", query = "", modifiedOnly = false, live: HTMLElement, masonry: HTMLElement;
 const status = (m: string, ok = true) => { if (live) { live.textContent = m; live.className = `chip ${ok ? "ok" : "err"}`; } };
 const send = (m: Record<string, unknown>) => vscode.postMessage({ v: 1, ...m });
 
@@ -44,7 +44,9 @@ function render() {
   live = el("span", { role: "status", class: "chip" });
   const resetAll = iconButton("undo", msg("Reset every setting to its default"), () => { for (const g of groups) for (const it of g.items) if (it.modified) send({ type: "reset", key: it.key }); }, { text: msg("Reset all") });
   resetAll.id = "reset-all";
-  top.append(brand, el("span", { class: "grow" }), live, label, iconButton("external", msg("Open settings.json"), () => send({ type: "json" }), { text: msg("Open settings.json") }), resetAll);
+  const onlyMod = iconButton("filter", msg("Show modified settings only"), () => { modifiedOnly = !modifiedOnly; onlyMod.setAttribute("aria-pressed", String(modifiedOnly)); fill(); }, { text: msg("Modified") });
+  onlyMod.id = "only-modified"; onlyMod.setAttribute("aria-pressed", String(modifiedOnly));
+  top.append(brand, el("span", { class: "grow" }), live, label, onlyMod, iconButton("download", msg("Export settings"), () => send({ type: "export" })), iconButton("upload", msg("Import settings"), () => send({ type: "import" })), iconButton("external", msg("Open settings.json"), () => send({ type: "json" }), { text: msg("Open settings.json") }), resetAll);
   masonry = el("div", { class: "masonry" });
   const main = el("main"); main.append(el("p", { class: "hint intro" }, msg("Changes are saved to your user settings as soon as you make them.")), masonry);
   app.append(top, main);
@@ -92,8 +94,8 @@ function fill() {
   const q = query.trim().toLowerCase();
   let shown = 0;
   for (const g of groups) {
-    const items = g.items.filter((it) => !q || `${it.title} ${it.description} ${it.key} ${g.title}`.toLowerCase().includes(q));
-    const showLang = g.id === "language" && (!q || `${msg("VS Code display language")} ${language}`.toLowerCase().includes(q) || items.length > 0);
+    const items = g.items.filter((it) => (!modifiedOnly || it.modified) && (!q || `${it.title} ${it.description} ${it.key} ${g.title}`.toLowerCase().includes(q)));
+    const showLang = g.id === "language" && !modifiedOnly && (!q || `${msg("VS Code display language")} ${language}`.toLowerCase().includes(q) || items.length > 0);
     if (!items.length && !showLang) continue;
     const card = el("section", { class: "card2", "aria-labelledby": `g-${g.id}` });
     const head = el("div", { class: "card2-head" });

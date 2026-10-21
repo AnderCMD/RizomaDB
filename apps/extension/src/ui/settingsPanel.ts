@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 import { SettingsToHost } from "../settingsMessages.js";
 import { i18nBlock } from "./webviewStrings.js";
 import { t, effectiveLanguage } from "../i18n.js";
+import { buildExport, parseImport } from "../lib/settingsTransfer.js";
 
 let current: vscode.WebviewPanel | undefined;
 
@@ -98,6 +99,7 @@ export function openSettingsScreen(ctx: vscode.ExtensionContext) {
     const m = p.data;
     if (m.type === "ready") { send(); return; }
     if (m.type === "language") { await vscode.commands.executeCommand("workbench.action.configureLocale"); return; }
+    if (m.type === "export" || m.type === "import") { await transfer(m.type, props, (ok, message) => void w.postMessage({ v: 1, type: "saved", key: "", ok, message })); return; }
     if (m.type === "json") { await vscode.commands.executeCommand("workbench.action.openSettingsJson"); return; }
     const prop = props[m.key];
     const reply = (ok: boolean, message: string) => void w.postMessage({ v: 1, type: "saved", key: m.key, ok, message });
@@ -115,4 +117,26 @@ export function openSettingsScreen(ctx: vscode.ExtensionContext) {
     await vscode.workspace.getConfiguration().update(m.key, value, vscode.ConfigurationTarget.Global);
     reply(true, t("Saved."));
   });
+}
+
+/** Writes the modified settings to a JSON file, or applies a previously exported one (each value checked against the manifest). */
+async function transfer(kind: "export" | "import", props: Record<string, Prop>, report: (ok: boolean, message: string) => void) {
+  const cfg = vscode.workspace.getConfiguration();
+  if (kind === "export") {
+    const values: Record<string, unknown> = {};
+    for (const key of Object.keys(props)) { const v = cfg.inspect(key)?.globalValue; if (v !== undefined) values[key] = v; }
+    const target = await vscode.window.showSaveDialog({ defaultUri: vscode.Uri.file("rizomadb-settings.json"), filters: { JSON: ["json"] }, saveLabel: t("Export settings") });
+    if (!target) return;
+    await vscode.workspace.fs.writeFile(target, Buffer.from(`${JSON.stringify(buildExport(values), null, 2)}\n`, "utf8"));
+    return report(true, t("Exported {0} settings.", String(Object.keys(values).length)));
+  }
+  const picked = await vscode.window.showOpenDialog({ canSelectMany: false, filters: { JSON: ["json"] }, openLabel: t("Import settings") });
+  if (!picked?.[0]) return;
+  try {
+    const bytes = await vscode.workspace.fs.readFile(picked[0]);
+    if (bytes.byteLength > 1_000_000) return report(false, t("This is not a RizomaDB settings file."));
+    const { accepted, rejected } = parseImport(Buffer.from(bytes).toString("utf8"), props);
+    for (const [key, value] of Object.entries(accepted)) await cfg.update(key, value, vscode.ConfigurationTarget.Global);
+    report(rejected.length === 0, rejected.length ? t("Imported {0} settings; skipped {1} that are not valid: {2}", String(Object.keys(accepted).length), String(rejected.length), rejected.slice(0, 3).join(", ")) : t("Imported {0} settings.", String(Object.keys(accepted).length)));
+  } catch { report(false, t("This is not a RizomaDB settings file.")); }
 }

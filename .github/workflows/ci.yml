@@ -25,7 +25,7 @@ env:
   RZ_CASSANDRA_PORT: "9042"
   RZ_TIDB_PORT: "4000"
   # Engines whose containers need a custom command (not possible as a job service); they are covered by local compose runs only.
-  RZ_SKIP_ENGINES: "cockroach,yugabyte,firestore,influxdb3,hydradb"
+  RZ_SKIP_ENGINES: "cockroach,yugabyte,firestore,influxdb3,hydradb"   # these five run in the engines-extra job
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -118,6 +118,33 @@ jobs:
       - name: Keep the built extension
         uses: actions/upload-artifact@v7
         with: { name: "rizomadb-vsix-${{ github.sha }}", path: "apps/extension/*.vsix", retention-days: 14, if-no-files-found: error }
+  engines-extra:
+    # Engines whose images need a custom command or token file cannot be job services: they come from the compose file.
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      RZ_REQUIRE_ENGINES: "1"
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with: { node-version: 24, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: docker compose -f test/compose/docker-compose.yml up -d cockroach yugabyte influxdb3 firestore hydradb
+      - name: Wait until every engine answers
+        run: |
+          c="docker compose -f test/compose/docker-compose.yml"
+          wait_for() { for _ in $(seq 1 90); do if eval "$2" >/dev/null 2>&1; then echo "$1: ready"; return 0; fi; sleep 4; done; echo "$1: not ready in time"; $c logs "$1" | tail -30; return 1; }
+          wait_for cockroach "$c exec -T cockroach ./cockroach sql --insecure -e 'select 1'"
+          wait_for yugabyte "$c exec -T yugabyte bin/ysqlsh -h 127.0.0.1 -c 'select 1'"
+          wait_for influxdb3 "curl -sf http://127.0.0.1:18181/health"
+          wait_for firestore "curl -s http://127.0.0.1:18080/"
+          wait_for hydradb "bash -c 'echo > /dev/tcp/127.0.0.1/18443'"
+      - run: pnpm --filter @rizomadb/driver-postgres exec vitest run src/cockroach.test.ts src/yugabyte.test.ts
+      - run: pnpm --filter @rizomadb/driver-influxdb3 exec vitest run
+      - run: pnpm --filter @rizomadb/driver-firestore exec vitest run
+      - run: pnpm --filter @rizomadb/driver-hydradb exec vitest run
   site:
     # The docs site must build on every change; only main deploys it (pages.yml).
     runs-on: ubuntu-latest

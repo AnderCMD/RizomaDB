@@ -99,9 +99,10 @@ async function* run(r: Runner, req: ExecuteRequest, signal: AbortSignal): AsyncG
   } finally {
     finished = true;
     signal.removeEventListener("abort", onAbort);
-    await pending;
     // a dead connection never answers the close request either
     await r.lost.race(new Promise<void>((res) => cursor.close(() => res()))).catch(() => undefined);
+    // Bounded: some wire-compatible servers answer a cancel only once the query is gone.
+    if (pending) await Promise.race([pending, new Promise<void>((res) => setTimeout(res, 1500).unref())]);
   }
 }
 

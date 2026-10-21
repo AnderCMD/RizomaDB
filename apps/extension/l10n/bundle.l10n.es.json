@@ -921,5 +921,12 @@
  "The index name has characters a search path cannot hold": "El nombre del índice tiene caracteres que una ruta de búsqueda no admite",
  "The order must look like field or field:desc": "El orden debe tener la forma campo o campo:desc",
  "This engine has no table filter": "Este motor no tiene filtro de tabla",
- "Experimental": "Experimental"
+ "Experimental": "Experimental",
+ "Show modified settings only": "Mostrar solo los ajustes modificados",
+ "Export settings": "Exportar ajustes",
+ "Import settings": "Importar ajustes",
+ "Exported {0} settings.": "Se exportaron {0} ajustes.",
+ "Imported {0} settings.": "Se importaron {0} ajustes.",
+ "Imported {0} settings; skipped {1} that are not valid: {2}": "Se importaron {0} ajustes; se omitieron {1} no válidos: {2}",
+ "This is not a RizomaDB settings file.": "Este no es un archivo de ajustes de RizomaDB."
 }

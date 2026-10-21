@@ -4,6 +4,7 @@ export const ICONS = {
   up: ["m6 15 6-6 6 6"], down: ["m6 9 6 6 6-6"], left: ["m11 6-6 6 6 6", "M5 12h14"],
   copy: ["M8 8h12v12H8z", "M4 16V4h12"],
   download: ["M12 4v11", "m7 11 5 5 5-5", "M5 20h14"],
+  upload: ["M12 16V5", "m7 9 5-5 5 5", "M5 20h14"],
   rows: ["M4 6h16", "M4 12h16", "M4 18h16"],
   refresh: ["M20 11a8 8 0 1 0-2.3 5.7", "M20 4v7h-7"],
   columns: ["M4 5h16v14H4z", "M9.5 5v14", "M14.5 5v14"],

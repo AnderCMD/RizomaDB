@@ -5,6 +5,8 @@ export const SettingsToHost = z.discriminatedUnion("type", [
   z.object({ v: z.literal(1), type: z.literal("set"), key: z.string().check(z.minLength(1), z.maxLength(100)), value: z.union([z.string().check(z.maxLength(2000)), z.number(), z.boolean()]) }),
   z.object({ v: z.literal(1), type: z.literal("reset"), key: z.string().check(z.minLength(1), z.maxLength(100)) }),
   z.object({ v: z.literal(1), type: z.literal("language") }),
+  z.object({ v: z.literal(1), type: z.literal("export") }),
+  z.object({ v: z.literal(1), type: z.literal("import") }),
   z.object({ v: z.literal(1), type: z.literal("json"), key: z.optional(z.string().check(z.maxLength(100))) }),
 ]);
 
