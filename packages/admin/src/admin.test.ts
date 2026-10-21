@@ -86,7 +86,7 @@ for (const e of engines.filter((q) => q.id !== "sqlite")) {
       expect(row, JSON.stringify(t)).toBeTruthy();
       expect(String(row![col(t, "blocking_id")])).not.toBe(bId);
       expect(String(row![col(t, "blocked_query")] ?? "")).toMatch(/UPDATE/i);
-      for (const stmt of s.admin.killStatements(bId, true)) { try { await x(s.adminConn, stmt); } catch (err) { throw new Error(`kill failed: [${stmt}] ${(err as Error).message}`); } }
+      for (const stmt of s.admin.killStatements(bId, true)) { try { await x(s.adminConn, stmt); } catch (err) { throw new Error(`kill failed: [${stmt}] ${(err as Error).message}`, { cause: err }); } }
       expect(await Promise.race([blocked, new Promise((r) => setTimeout(() => r("still blocked"), 15000))])).toMatch(/^failed/);
       await tx.rollback();
       await s.close();
