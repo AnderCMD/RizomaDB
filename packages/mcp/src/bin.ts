@@ -8,6 +8,7 @@ async function main() {
   if (!file) { process.stderr.write("Usage: rizomadb-mcp --config <path to mcp.json>\n"); process.exit(2); }
   const cfg = await loadMcpConfig(file);
   await serveStdio(createMcpServer({ connections: cfg.connections, audit: cfg.audit }), process.stdin, process.stdout);
+  await cfg.audit.flush();
   await cfg.close();
 }
 main().catch((e: unknown) => { process.stderr.write(`rizomadb-mcp: ${(e as Error).message}\n`); process.exit(1); });

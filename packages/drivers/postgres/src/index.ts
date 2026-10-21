@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 import pg from "pg";
 import Cursor from "pg-cursor";
 import {
-  DriverError, type ColumnInfo, type Connection, type DriverPlugin,
+  ConnectionLoss, DriverError, type ColumnInfo, type Connection, type DriverPlugin,
   type ExecuteRequest, type ForeignKey, type IndexInfo, type IntrospectionApi, type ResultEvent, type TableInfo, type Transaction, type Value,
 } from "@rizomadb/driver-api";
 
@@ -58,7 +58,7 @@ function kindOf(oid: number): ColumnInfo["kind"] {
 const toParam = (v: Value) => (v !== null && typeof v === "object" && !(v instanceof Date) && !(v instanceof Uint8Array) && !Array.isArray(v)
   ? JSON.stringify((v as { json: unknown }).json) : v);
 
-type Runner = { client: pg.Client; cancel: (pid: number) => Promise<void>; pid: number; lost: Promise<never> };
+type Runner = { client: pg.Client; cancel: (pid: number) => Promise<void>; pid: number; lost: ConnectionLoss };
 
 async function* run(r: Runner, req: ExecuteRequest, signal: AbortSignal): AsyncGenerator<ResultEvent> {
   if (signal.aborted) throw new DriverError("cancelled", "Query cancelled");
@@ -74,7 +74,7 @@ async function* run(r: Runner, req: ExecuteRequest, signal: AbortSignal): AsyncG
       const want = Math.min(batch, max - n);
       if (want <= 0) break;
       // pg-cursor never settles when the server terminates the backend mid-read, so race against connection loss.
-      const rows = await Promise.race([cursor.read(want), r.lost]) as unknown as Value[][];
+      const rows = await r.lost.race(cursor.read(want)) as unknown as Value[][];
       if (!sentCols) {
         // pg-cursor exposes fields after the first read
         const fields = (cursor as unknown as { _result: { fields: pg.FieldDef[] } })._result.fields;
@@ -97,20 +97,17 @@ async function* run(r: Runner, req: ExecuteRequest, signal: AbortSignal): AsyncG
   } finally {
     signal.removeEventListener("abort", onAbort);
     // a dead connection never answers the close request either
-    await Promise.race([new Promise<void>((res) => cursor.close(() => res())), r.lost.catch(() => undefined)]);
+    await r.lost.race(new Promise<void>((res) => cursor.close(() => res()))).catch(() => undefined);
   }
 }
 
 class PgConnection implements Connection {
   private cancelClient: pg.Client | undefined;
-  private lost: Promise<never>;
+  private lost = new ConnectionLoss();
   constructor(private client: pg.Client, readonly serverInfo: Connection["serverInfo"], private pid: number, private cfg: pg.ClientConfig) {
-    this.lost = new Promise<never>((_, reject) => {
-      const gone = (e?: Error) => reject(new DriverError("connection", e?.message ?? "The server closed the connection", { cause: e }));
-      client.once("end", () => gone());
-      client.once("error", (e) => gone(e));
-    });
-    this.lost.catch(() => {});
+    const gone = (e?: Error) => this.lost.fire(new DriverError("connection", e?.message ?? "The server closed the connection", { cause: e }));
+    client.once("end", () => gone());
+    client.once("error", (e) => gone(e));
   }
   private runner(): Runner {
     return {

@@ -33,26 +33,42 @@ export interface AuditOptions { file: string; maxBytes?: number; keepFiles?: num
 
 /** Local, append-only JSONL audit trail with size-based rotation. Nothing here ever leaves the machine. */
 export class AuditLog {
+  private buffer: string[] = [];
+  private dropped = 0;
+  private timer: ReturnType<typeof setTimeout> | undefined;
   private chain: Promise<void> = Promise.resolve();
   constructor(private o: AuditOptions) {}
 
+  /** Entries are queued in memory and written in batches, so a burst of statements cannot pile up one pending write each. */
   record(e: Omit<AuditEntry, "ts" | "user" | "statement"> & { statement: string }): Promise<void> {
     const entry: AuditEntry = { ts: (this.o.now?.() ?? new Date()).toISOString(), user: this.o.user?.() ?? userInfo().username, ...e, statement: this.o.includeValues ? e.statement.slice(0, 20000) : stripLiterals(e.statement) };
     if (entry.detail) entry.detail = stripLiterals(entry.detail);
-    // serialize writes so rotation cannot interleave with an append
-    this.chain = this.chain.then(() => this.write(entry)).catch(() => {});
+    // bounded: if the disk cannot keep up, count what was lost instead of growing without limit
+    if (this.buffer.length >= 20_000) this.dropped++; else this.buffer.push(JSON.stringify(entry));
+    this.timer ??= setTimeout(() => { this.timer = undefined; void this.drain(); }, 20);
+    this.timer.unref?.();
+    return this.chain;
+  }
+
+  private drain(): Promise<void> {
+    this.chain = this.chain.then(async () => {
+      if (!this.buffer.length && !this.dropped) return;
+      const lines = this.buffer; this.buffer = [];
+      if (this.dropped) { lines.push(JSON.stringify({ ts: new Date().toISOString(), dropped: this.dropped, note: "audit entries lost because the disk could not keep up" })); this.dropped = 0; }
+      await this.write(lines.join("\n") + "\n");
+    }).catch(() => {});
     return this.chain;
   }
 
   /** Resolves once every entry recorded so far is on disk. */
-  flush(): Promise<void> { return this.chain; }
+  async flush(): Promise<void> { if (this.timer) { clearTimeout(this.timer); this.timer = undefined; } await this.drain(); }
 
-  private async write(entry: AuditEntry) {
+  private async write(text: string) {
     await mkdir(dirname(this.o.file), { recursive: true });
     const max = this.o.maxBytes ?? 5 * 1024 * 1024;
     const size = (await stat(this.o.file).catch(() => undefined))?.size ?? 0;
     if (size >= max) await this.rotate();
-    await appendFile(this.o.file, JSON.stringify(entry) + "\n", { mode: 0o600 });
+    await appendFile(this.o.file, text, { mode: 0o600 });
   }
 
   private async rotate() {

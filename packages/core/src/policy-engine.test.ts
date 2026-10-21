@@ -60,13 +60,15 @@ describe("audit log", () => {
     const dir = mkdtempSync(join(tmpdir(), "rz-audit-")); const file = join(dir, "audit.jsonl");
     let t = 0; const log = new AuditLog({ file, maxBytes: 600, keepFiles: 2, user: () => "ana", now: () => new Date(Date.UTC(2026, 0, 1, 0, 0, t++)) });
     await log.record({ connectionId: "c", connection: "main", environment: "prod", engine: "postgres", kind: "SELECT", statement: "SELECT * FROM users WHERE email = 'ana@example.com' AND id = 42", status: "ok", rows: 1 });
+    await log.flush();
     expect(readFileSync(file, "utf8")).not.toMatch(/ana@example|42/); expect(readFileSync(file, "utf8")).toContain("email = '?' AND id = ?");
-    for (let i = 0; i < 12; i++) await log.record({ connectionId: "c", connection: "main", environment: "prod", engine: "postgres", kind: "UPDATE", statement: `UPDATE t SET a = ${i}`, status: i % 4 === 0 ? "blocked" : "ok" });
+    for (let i = 0; i < 12; i++) { void log.record({ connectionId: "c", connection: "main", environment: "prod", engine: "postgres", kind: "UPDATE", statement: `UPDATE t SET a = ${i}`, status: i % 4 === 0 ? "blocked" : "ok" }); await log.flush(); }
     const files = readdirSync(dir); expect(files.filter((f) => f.startsWith("audit-")).length).toBeLessThanOrEqual(2); expect(files).toContain("audit.jsonl");
     const blocked = await log.read({ status: "blocked" }); expect(blocked.length).toBeGreaterThan(0); expect(blocked.every((e) => e.status === "blocked" && e.user === "ana")).toBe(true);
     expect(stripLiterals("a = 'x''y' AND b = 0xFF AND c = 3.5")).toBe("a = '?' AND b = ? AND c = ?");
     const full = new AuditLog({ file: join(dir, "full.jsonl"), includeValues: true });
     await full.record({ connectionId: "c", connection: "m", environment: "dev", engine: "x", kind: "SELECT", statement: "SELECT 'keep'", status: "ok" });
+    await full.flush();
     expect(readFileSync(join(dir, "full.jsonl"), "utf8")).toContain("keep");
   });
 });

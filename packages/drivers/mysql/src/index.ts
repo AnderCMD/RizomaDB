@@ -2,7 +2,7 @@ import { meta, quoteIdent } from "./meta.js";
 import { readFile } from "node:fs/promises";
 import mysql from "mysql2";
 import {
-  DriverError, type ColumnInfo, type Connection, type DriverPlugin, type DriverErrorKind,
+  ConnectionLoss, DriverError, type ColumnInfo, type Connection, type DriverPlugin, type DriverErrorKind,
   type ExecuteRequest, type ForeignKey, type IndexInfo, type IntrospectionApi, type ResultEvent, type TableInfo, type Transaction, type Value,
 } from "@rizomadb/driver-api";
 
@@ -64,7 +64,7 @@ function kindOf(type: string | undefined): ColumnInfo["kind"] {
 
 const toParam = (v: Value): unknown => (v !== null && typeof v === "object" && !(v instanceof Date) && !(v instanceof Uint8Array) && !Array.isArray(v) ? JSON.stringify((v as { json: unknown }).json) : v);
 
-interface Ctx { conn: mysql.Connection; threadId: number; killer: () => Promise<mysql.Connection>; lost: Promise<never> }
+interface Ctx { conn: mysql.Connection; threadId: number; killer: () => Promise<mysql.Connection>; lost: ConnectionLoss }
 
 async function* run(c: Ctx, req: ExecuteRequest, signal: AbortSignal): AsyncGenerator<ResultEvent> {
   if (signal.aborted) throw new DriverError("cancelled", "Query cancelled");
@@ -90,7 +90,7 @@ async function* run(c: Ctx, req: ExecuteRequest, signal: AbortSignal): AsyncGene
     // A killed or dropped connection can leave the row stream waiting forever, so every read races against connection loss.
     const rows = (stream as AsyncIterable<Value[]>)[Symbol.asyncIterator]();
     for (;;) {
-      const step = await Promise.race([rows.next(), c.lost]);
+      const step = await c.lost.race(rows.next());
       if (step.done) break;
       const row = step.value;
       if (!sentCols && fields) { sentCols = true; yield { type: "columns", columns: colsOf(fields) }; }
@@ -113,13 +113,10 @@ const colsOf = (f: mysql.FieldPacket[]): ColumnInfo[] =>
   f.map((x) => ({ name: x.name, nativeType: String((x as { type?: string }).type ?? x.columnType ?? ""), kind: kindOf((x as { type?: string }).type) }));
 
 class MysqlConnection implements Connection {
-  private lost: Promise<never>;
+  private lost = new ConnectionLoss();
   constructor(private conn: mysql.Connection, readonly serverInfo: Connection["serverInfo"], private threadId: number, private cfg: mysql.ConnectionOptions) {
-    this.lost = new Promise<never>((_, reject) => {
-      const gone = (e?: Error) => reject(new DriverError("connection", e?.message ?? "The server closed the connection", { cause: e }));
-      conn.once("error", gone); conn.once("end", () => gone());
-    });
-    this.lost.catch(() => {});
+    const gone = (e?: Error) => this.lost.fire(new DriverError("connection", e?.message ?? "The server closed the connection", { cause: e }));
+    conn.once("error", gone); conn.once("end", () => gone());
   }
   private ctx(): Ctx {
     return { conn: this.conn, threadId: this.threadId, lost: this.lost, killer: () => new Promise((res, rej) => { const k = mysql.createConnection(this.cfg); k.connect((e) => (e ? rej(e) : res(k))); }) };

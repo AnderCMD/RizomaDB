@@ -81,6 +81,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
   };
   await reloadPolicy();
   const audit = new AuditLog({ file: cfg().get<string>("audit.path") || join(ctx.globalStorageUri.fsPath, "audit.jsonl"), includeValues: cfg().get<boolean>("audit.includeValues", false) });
+  pendingAudit = audit;
   const approve = async (name: string, reason: string, statement: string) => {
     const typed = await vscode.window.showInputBox({ title: t("Approval required on {0}", name), prompt: t("{0}\n\n{1}\n\nType the connection name to approve.", reason, statement.slice(0, 300)), ignoreFocusOut: true });
     return typed?.trim() === name;
@@ -576,4 +577,6 @@ export async function activate(ctx: vscode.ExtensionContext) {
   refreshStatus();
 }
 
-export function deactivate() {}
+let pendingAudit: AuditLog | undefined;
+/** Written audit entries must survive a window close. */
+export async function deactivate() { await pendingAudit?.flush(); }
