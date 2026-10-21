@@ -1,6 +1,6 @@
 # HydraDB
 
-**Level:** 2 · **Versions tested:** `ghcr.io/hydra-db/hydradb:latest` (image built 2026-09-29, HydraDB 0.1.x logs, HTTP query API `v1`), single node, plaintext. Other versions, clusters and TLS deployments are **not tested**.
+**Status:** experimental (shown with an Experimental badge). **Level:** 2 · **Versions tested:** `ghcr.io/hydra-db/hydradb:latest` (image built 2026-09-29, HydraDB 0.1.x logs, HTTP query API `v1`), single node, plaintext. Other versions, clusters and TLS deployments are **not tested**.
 
 HydraDB is a graph database on object storage that speaks OpenCypher over Bolt and over an HTTP query API ([github.com/hydra-db/hydradb](https://github.com/hydra-db/hydradb), AGPL-3.0). Not to be confused with Hydra, the Postgres-based warehouse.
 

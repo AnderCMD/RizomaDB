@@ -24,6 +24,7 @@ import { openHistoryScreen } from "./ui/historyPanel.js";
 import { customEnvironmentPolicy } from "./lib/environments.js";
 import { databaseOf } from "./lib/connectionInfo.js";
 import { friendly, friendlyReasons } from "./ui/driverMessages.js";
+import { buildTableQuery, filterKindOf, FilterError } from "./lib/tableQuery.js";
 import { registerEditorTools } from "./ui/editorTools.js";
 import { statementRanges } from "./lib/statements.js";
 import { openGuide, offerGuideOnce } from "./ui/guidePanel.js";
@@ -167,13 +168,19 @@ export async function activate(ctx: vscode.ExtensionContext) {
   explorer.activeId = activeId;
   let running: AbortController | undefined;
   type TableRef = { schema?: string; name: string; isView?: boolean };
-  let lastRun: { id: string; sql: string; title: string; edit?: { target: EditTarget } | undefined; params?: Value[] | undefined; table?: TableRef | undefined; loaded?: number } | undefined;
+  let lastRun: { id: string; sql: string; title: string; edit?: { target: EditTarget } | undefined; params?: Value[] | undefined; table?: TableRef | undefined; loaded?: number; filter?: { where: string; order: string } | undefined } | undefined;
   let lastRaw: Value[][] = [];
   let session: { s: TableSession; profileId: string; refresh: () => Promise<unknown> } | undefined;
   const results = new ResultsPanel(ctx, (m) => void onWebviewMessage(m));
   const notice = (level: "error" | "info", text: string) => results.post({ v: 1, type: "notice", level, text });
   const pushPending = () => { if (session) results.post({ v: 1, type: "pending", ...session.s.view(), inserts: session.s.view().inserts.map((r) => r.map((x) => ({ set: x !== undefined, text: x ?? null }))) }); };
 
+  /** Pending edits are lost when the grid is replaced: ask first. */
+  const confirmDiscard = async () => {
+    if (!session || session.s.pending.count === 0) return true;
+    const go = t("Discard changes");
+    return (await vscode.window.showWarningMessage(t("You have {0} pending change(s). Discard them and continue?", session.s.pending.count), { modal: true }, go)) === go;
+  };
   async function onWebviewMessage(m: import("./messages.js").WebviewToHost) {
     if (m.type === "cancel") { running?.abort(); return; }
     if (m.type === "openText") {
@@ -201,6 +208,27 @@ export async function activate(ctx: vscode.ExtensionContext) {
       await vscode.commands.executeCommand("rizomadb.openTable", { kind: "table", profile: p, ...(m.schema ? { schema: m.schema } : {}), name: m.name, isView: false });
       return;
     }
+    if (m.type === "filterTable") {
+      const run = lastRun; const p = run && mgr.get(run.id); if (!run?.table || !p) return;
+      if (!(await confirmDiscard())) return;
+      try {
+        const conn = await mgr.connect(run.id);
+        const quoted = run.table.schema ? `${conn.quoteIdent(run.table.schema)}.${conn.quoteIdent(run.table.name)}` : conn.quoteIdent(run.table.name);
+        const limit = Math.min(cfg().get<number>("query.maxRows", 100000), p.driver === "elasticsearch" ? 10000 : Infinity);
+        const sql = buildTableQuery({ driver: p.driver, quoted, schema: run.table.schema, name: run.table.name, where: m.where, order: m.order, limit });
+        await execute(run.id, sql, run.title, run.edit, undefined, run.table, undefined, { where: m.where.trim(), order: m.order.trim() });
+      } catch (e) { notice("error", friendly(e instanceof FilterError ? e.message : (e as Error).message)); }
+      return;
+    }
+    if (m.type === "runSql") {
+      const run = lastRun; const sql = m.sql.trim(); if (!run || !sql) return;
+      if (sql === run.sql.trim()) { await execute(run.id, run.sql, run.title, run.edit, run.params, run.table, run.loaded ? { skip: 0, size: run.loaded } : undefined, run.filter); return; }
+      if (!(await confirmDiscard())) return;
+      const bound = await promptParameters(run.id, sql); if (!bound) return;
+      // Edited text is a new query: it no longer says which table it shows, so the grid is read-only.
+      await execute(run.id, bound.sql, run.title, undefined, bound.params);
+      return;
+    }
     if (m.type === "openSql") {
       if (!lastRun) return;
       const doc = await vscode.workspace.openTextDocument({ language: "sql", content: lastRun.sql });
@@ -208,20 +236,20 @@ export async function activate(ctx: vscode.ExtensionContext) {
       await vscode.window.showTextDocument(doc, { viewColumn: vscode.ViewColumn.One, preserveFocus: false });
       return;
     }
-    if (m.type === "refresh") { if (lastRun) await execute(lastRun.id, lastRun.sql, lastRun.title, lastRun.edit, lastRun.params, lastRun.table, lastRun.loaded ? { skip: 0, size: lastRun.loaded } : undefined); return; }
+    if (m.type === "refresh") { if (lastRun) await execute(lastRun.id, lastRun.sql, lastRun.title, lastRun.edit, lastRun.params, lastRun.table, lastRun.loaded ? { skip: 0, size: lastRun.loaded } : undefined, lastRun.filter); return; }
     if (m.type === "loadMore") {
       const run = lastRun; if (!run) return;
       if (session && session.s.pending.count > 0) { notice("error", t("Apply or discard your changes before loading more rows.")); return; }
       const cap = cfg().get<number>("query.maxRows", 100000), loaded = run.loaded ?? 0;
       const size = m.mode === "all" ? cap - loaded : cfg().get<number>("query.pageSize", 1000);
       if (size <= 0) return;
-      await execute(run.id, run.sql, run.title, run.edit, run.params, run.table, { skip: loaded, size });
+      await execute(run.id, run.sql, run.title, run.edit, run.params, run.table, { skip: loaded, size }, run.filter);
       return;
     }
     if (m.type === "columnAction") {
       const run = lastRun; if (!run?.table) return;
       try {
-        await runColumnAction({ mgr, profileId: run.id, policy, afterApply: async () => { schemaCache.invalidate(run.id); lang.refreshAll(); void vscode.commands.executeCommand("rizomadb.refresh"); await execute(run.id, run.sql, run.title, run.edit, run.params, run.table); } }, run.table, m.action, m.column);
+        await runColumnAction({ mgr, profileId: run.id, policy, afterApply: async () => { schemaCache.invalidate(run.id); lang.refreshAll(); void vscode.commands.executeCommand("rizomadb.refresh"); await execute(run.id, run.sql, run.title, run.edit, run.params, run.table, undefined, run.filter); } }, run.table, m.action, m.column);
       } catch (e) { void vscode.window.showErrorMessage(friendly((e as Error).message)); }
       return;
     }
@@ -323,7 +351,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
     return id;
   }
 
-  async function execute(id: string, sql: string, title: string, edit?: { target: EditTarget }, params?: Value[], tableRef?: TableRef, page?: { skip: number; size: number }): Promise<string | undefined> {
+  async function execute(id: string, sql: string, title: string, edit?: { target: EditTarget }, params?: Value[], tableRef?: TableRef, page?: { skip: number; size: number }, filter?: { where: string; order: string }): Promise<string | undefined> {
     let result: string = "error";
     const profile = mgr.get(id);
     if (!profile) return;
@@ -337,7 +365,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
     session = undefined;
     const skip = page?.skip ?? 0, cap = cfg().get<number>("query.maxRows", 100000), pageSize = cfg().get<number>("query.pageSize", 1000);
     const size = Math.max(1, Math.min(page?.size ?? (tableRef ? cfg().get<number>("table.openRows", 200) : pageSize), cap - skip));
-    lastRun = { id, sql, title, edit, params, table: tableRef, loaded: skip };
+    lastRun = { id, sql, title, edit, params, table: tableRef, loaded: skip, filter };
     const tabIcon = (): { light: vscode.Uri; dark: vscode.Uri } | undefined => {
       const eng = engineOf(profile), logo = eng ? ENGINE_LOGOS[eng.key] : undefined;
       if (!eng || !logo || logo.wordmark) return undefined;
@@ -351,7 +379,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
     let mask: ((r: Value[]) => Value[]) | undefined;
     const rawRows: Value[][] = skip > 0 ? lastRaw : []; lastRaw = rawRows; let cols: ColumnInfo[] = [];
     const emit = (e: RunEvent) => {
-      if (e.type === "start") { columnsSeen = true; cols = e.columns; mask = maskFor(policy().maskColumns, e.columns.map((c) => c.name)); if (mask) edit = undefined; results.describe(tableRef ? `${profile.name}.${tableRef.name}` : `${profile.name} · ${title}`, tabIcon()); results.post({ v: 1, type: "start", title, sql: e.sql, columns: e.columns, editable: !!edit, ...(skip > 0 ? { append: true } : {}), connection: connectionInfo(), ...(edit ? { flags: { pk: edit.target.columns.filter((c) => c.primaryKey).map((c) => c.name), required: edit.target.columns.filter((c) => !c.nullable).map((c) => c.name) } } : {}), ...(tableRef ? { table: { name: tableRef.name, ...(tableRef.schema ? { schema: tableRef.schema } : {}), alter: !tableRef.isView && !mgr.isReadOnly(profile) && profile.driver in DIALECT_OF && ["sqlite", "postgres", "mysql", "mssql", "oracle"].includes(profile.driver) } } : {}) }); }
+      if (e.type === "start") { columnsSeen = true; cols = e.columns; mask = maskFor(policy().maskColumns, e.columns.map((c) => c.name)); if (mask) edit = undefined; results.describe(tableRef ? `${profile.name}.${tableRef.name}` : `${profile.name} · ${title}`, tabIcon()); results.post({ v: 1, type: "start", title, sql: e.sql, columns: e.columns, editable: !!edit, ...(skip > 0 ? { append: true } : {}), connection: connectionInfo(), ...(edit ? { flags: { pk: edit.target.columns.filter((c) => c.primaryKey).map((c) => c.name), required: edit.target.columns.filter((c) => !c.nullable).map((c) => c.name) } } : {}), ...(tableRef ? { table: { name: tableRef.name, ...(tableRef.schema ? { schema: tableRef.schema } : {}), alter: !tableRef.isView && !mgr.isReadOnly(profile) && profile.driver in DIALECT_OF && ["sqlite", "postgres", "mysql", "mssql", "oracle"].includes(profile.driver), ...(filterKindOf(profile.driver) ? { filter: { kind: filterKindOf(profile.driver)!, where: filter?.where ?? "", order: filter?.order ?? "" } } : {}) } } : {}) }); }
       else if (e.type === "rows") { const shown = mask ? e.rows.map(mask) : e.rows; if (edit) rawRows.push(...e.rows); results.post({ v: 1, type: "rows", rows: shown.map((r) => r.map(formatValue)) }); }
       else if (e.type === "done") {
         if (!columnsSeen) results.post({ v: 1, type: "start", title, sql: "", columns: [] });
@@ -380,7 +408,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
       if (out.status === "ok" && /^\s*(create|alter|drop|rename|truncate)\b/i.test(sql)) { schemaCache.invalidate(id); lang.refreshAll(); void vscode.commands.executeCommand("rizomadb.refresh"); }
       if (edit && out.status === "ok") {
         const ts = new TableSession(edit.target, cols, rawRows);
-        session = { s: ts, profileId: id, refresh: () => execute(id, sql, title, edit, undefined, tableRef, lastRun?.loaded ? { skip: 0, size: lastRun.loaded } : undefined) };
+        session = { s: ts, profileId: id, refresh: () => execute(id, sql, title, edit, undefined, tableRef, lastRun?.loaded ? { skip: 0, size: lastRun.loaded } : undefined, filter) };
         pushPending();
       }
       if (cfg().get<boolean>("history.enabled", true) && skip === 0) {
@@ -505,7 +533,8 @@ export async function activate(ctx: vscode.ExtensionContext) {
       const info = await conn.introspect().describeTable({ name: n.name, ...(n.schema ? { schema: n.schema } : {}) });
       if (info.columns?.some((c) => c.primaryKey)) edit = { target: { ...(n.schema ? { schema: n.schema } : {}), table: n.name, columns: info.columns } };
     }
-    const limit = cfg().get<number>("table.openRows", 200);
+    // The statement carries the row cap, not the first page: the runner reads pages of it and "Load more" continues from there.
+    const limit = Math.min(cfg().get<number>("query.maxRows", 100000), profile.driver === "elasticsearch" ? 10000 : Infinity);
     await execute(profile.id, plugin.openCommand ? plugin.openCommand({ ...(n.schema ? { schema: n.schema } : {}), name: n.name }, limit) : plugin.selectTop(name, limit), n.name, edit, undefined, { name: n.name, ...(n.schema ? { schema: n.schema } : {}), isView: !!n.isView });
     if (!edit) notice("info", n.isView ? t("Views are read-only.") : mgr.isReadOnly(profile) ? t("Read-only connection: editing is disabled.") : t("This table has no primary key, so its rows cannot be edited safely."));
   });

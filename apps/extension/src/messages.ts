@@ -8,7 +8,7 @@ const Col = z.object({ name: z.string(), nativeType: z.string(), kind: z.string(
 const Cell = z.nullable(z.string());
 
 export const HostToWebview = z.discriminatedUnion("type", [
-  z.object({ v: z.literal(1), type: z.literal("start"), title: z.string(), sql: z.string(), columns: z.array(Col), editable: z.optional(z.boolean()), append: z.optional(z.boolean()), table: z.optional(z.object({ name: z.string(), schema: z.optional(z.string()), alter: z.boolean() })),
+  z.object({ v: z.literal(1), type: z.literal("start"), title: z.string(), sql: z.string(), columns: z.array(Col), editable: z.optional(z.boolean()), append: z.optional(z.boolean()), table: z.optional(z.object({ name: z.string(), schema: z.optional(z.string()), alter: z.boolean(), filter: z.optional(z.object({ kind: z.enum(["sql", "mongo", "es", "cypher"]), where: z.string(), order: z.string() })) })),
     connection: z.optional(z.object({ name: z.string(), environment: z.string(), key: z.string(), color: z.string(), fg: z.string(), mark: z.string(), logo: z.optional(z.object({ bg: z.string(), vb: z.string().check(z.maxLength(40)), shapes: z.array(Shape).check(z.maxLength(60)), wordmark: z.optional(z.boolean()) })) })),
     flags: z.optional(z.object({ pk: z.array(z.string()), required: z.array(z.string()) })) }),
   z.object({ v: z.literal(1), type: z.literal("rows"), rows: z.array(z.array(Cell)) }),
@@ -39,6 +39,8 @@ export const WebviewToHost = z.discriminatedUnion("type", [
   z.object({ v: z.literal(1), type: z.literal("refresh") }),
   z.object({ v: z.literal(1), type: z.literal("loadMore"), mode: z.enum(["page", "all"]) }),
   z.object({ v: z.literal(1), type: z.literal("openSql") }),
+  z.object({ v: z.literal(1), type: z.literal("filterTable"), where: z.string().check(z.maxLength(2000)), order: z.string().check(z.maxLength(500)) }),
+  z.object({ v: z.literal(1), type: z.literal("runSql"), sql: z.string().check(z.maxLength(200_000)) }),
   z.object({ v: z.literal(1), type: z.literal("openText"), text: z.string().check(z.maxLength(500_000)) }),
   z.object({ v: z.literal(1), type: z.literal("loadProperties") }),
   z.object({ v: z.literal(1), type: z.literal("showEr") }),

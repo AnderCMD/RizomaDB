@@ -28,7 +28,7 @@ export const ConnectToHost = z.discriminatedUnion("type", [
 ]);
 
 export const HostToConnect = z.discriminatedUnion("type", [
-  z.object({ v: z.literal(1), type: z.literal("engines"), engines: z.array(z.object({ key: z.string(), name: z.string(), family: z.string(), color: z.string(), fg: z.string(), mark: z.string(), logo: z.optional(z.object({ bg: z.string(), vb: z.string().check(z.maxLength(40)), shapes: z.array(Shape).check(z.maxLength(60)), wordmark: z.optional(z.boolean()) })) })) }),
+  z.object({ v: z.literal(1), type: z.literal("engines"), engines: z.array(z.object({ key: z.string(), name: z.string(), family: z.string(), color: z.string(), fg: z.string(), mark: z.string(), experimental: z.optional(z.boolean()), logo: z.optional(z.object({ bg: z.string(), vb: z.string().check(z.maxLength(40)), shapes: z.array(Shape).check(z.maxLength(60)), wordmark: z.optional(z.boolean()) })) })) }),
   z.object({ v: z.literal(1), type: z.literal("connections"), items: z.array(z.object({ id: z.string(), name: z.string(), engine: z.string(), environment: z.string(), readOnly: z.boolean(), connected: z.boolean(), shared: z.boolean(), target: z.string(), active: z.boolean(), database: z.string() })) }),
   z.object({ v: z.literal(1), type: z.literal("form"), key: z.string(), fields: z.array(z.object({
     key: z.string(), title: z.string(), description: z.optional(z.string()), kind: z.enum(["text", "number", "boolean"]), required: z.boolean(), secret: z.boolean(),

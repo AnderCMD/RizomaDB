@@ -15,6 +15,8 @@ export interface Engine {
   fg: string;
   mark: string;
   defaults?: Record<string, string | number | boolean>;
+  /** Young or narrow engine: shown with an Experimental badge. */
+  experimental?: boolean;
 }
 
 const W = "#ffffff";
@@ -39,7 +41,7 @@ export const ENGINES: readonly Engine[] = [
   { key: "elasticsearch", driver: "elasticsearch", name: "Elasticsearch", family: "search", color: "#00695C", fg: W, mark: "El", defaults: { host: "localhost", port: 9200 } },
   { key: "opensearch", driver: "elasticsearch", name: "OpenSearch", family: "search", color: "#1565A8", fg: W, mark: "Os", defaults: { host: "localhost", port: 9200, user: "admin" } },
   { key: "neo4j", driver: "neo4j", name: "Neo4j", family: "graph", color: "#176B9B", fg: W, mark: "N4", defaults: { host: "localhost", user: "neo4j", database: "neo4j" } },
-  { key: "hydradb", driver: "hydradb", name: "HydraDB", family: "graph", color: "#0F766E", fg: W, mark: "Hy", defaults: { host: "localhost", port: 8443, graph: "default", cell: "cell-0" } },
+  { key: "hydradb", driver: "hydradb", name: "HydraDB", family: "graph", color: "#0F766E", fg: W, mark: "Hy", experimental: true, defaults: { host: "localhost", port: 8443, graph: "default", cell: "cell-0" } },
   { key: "influxdb", driver: "influxdb", name: "InfluxDB 2", family: "timeseries", color: "#5A2FC2", fg: W, mark: "In", defaults: { host: "localhost", port: 8086 } },
   { key: "influxdb3", driver: "influxdb3", name: "InfluxDB 3", family: "timeseries", color: "#7A27AF", fg: W, mark: "I3", defaults: { host: "localhost", port: 8181 } },
   { key: "cassandra", driver: "cassandra", name: "Apache Cassandra", family: "widecolumn", color: "#0F6F93", fg: W, mark: "Ca", defaults: { host: "localhost", port: 9042, localDataCenter: "datacenter1", user: "cassandra" } },

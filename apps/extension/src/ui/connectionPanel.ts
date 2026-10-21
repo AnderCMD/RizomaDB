@@ -50,7 +50,7 @@ export function openConnectionScreen(ctx: vscode.ExtensionContext, mgr: Connecti
     const msg = p.data;
     if (msg.type === "ready") {
       sendConnections();
-      post({ v: 1, type: "engines", engines: available().map(({ key, name, family, color, fg, mark }) => ({ key, name, family, color, fg, mark, ...(ENGINE_LOGOS[key] ? { logo: ENGINE_LOGOS[key] } : {}) })) });
+      post({ v: 1, type: "engines", engines: available().map(({ key, name, family, color, fg, mark, experimental }) => ({ key, name, family, color, fg, mark, ...(experimental ? { experimental } : {}), ...(ENGINE_LOGOS[key] ? { logo: ENGINE_LOGOS[key] } : {}) })) });
       return;
     }
     if (msg.type === "conn") {

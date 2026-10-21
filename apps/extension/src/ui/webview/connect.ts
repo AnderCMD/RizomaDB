@@ -8,7 +8,7 @@ const app = document.getElementById("app")!;
 enableTips();
 
 type Shape = { t: string; a: Record<string, string>; c?: Shape[] | undefined };
-type EngineInfo = { key: string; name: string; family: string; color: string; fg: string; mark: string; logo?: { bg: string; vb: string; shapes: Shape[]; wordmark?: boolean | undefined } | undefined };
+type EngineInfo = { key: string; name: string; family: string; color: string; fg: string; mark: string; logo?: { bg: string; vb: string; shapes: Shape[]; wordmark?: boolean | undefined } | undefined; experimental?: boolean | undefined };
 
 type Field = { key: string; title: string; description?: string | undefined; kind: "text" | "number" | "boolean"; required: boolean; secret: boolean; value: string | boolean };
 
@@ -97,6 +97,7 @@ function showGrid() {
     const items = list.map((e) => {
       const b = el("button", { type: "button", class: "engine-card" });
       b.append(logo(e, 40), el("span", { class: e.logo?.wordmark ? "sr-only" : "engine-name" }, e.name));
+      if (e.experimental) b.append(el("span", { class: "chip exp" }, msg("Experimental")));
       if (e.logo?.wordmark) b.setAttribute("title", e.name);
       b.addEventListener("click", () => vscode.postMessage({ v: 1, type: "pick", key: e.key }));
       const li = el("li"); li.append(b);

@@ -213,7 +213,7 @@ body.compact .cell, body.compact .gut { font-size: .92em; }
 .conn { display: inline-flex; align-items: center; gap: 8px; } .conn .logo { border-radius: 6px; } .conn .sep { color: var(--rz-muted); }
 .chip.env-prod { background: transparent; color: var(--vscode-foreground); border: 1px solid var(--vscode-inputValidation-errorBorder, #be1100); }
 .chip.env-staging { background: transparent; color: var(--vscode-foreground); border: 1px solid var(--vscode-inputValidation-warningBorder, #b89500); }
-.sqlbar { background: var(--vscode-textCodeBlock-background, var(--rz-surface)); } .sqltext { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: var(--vscode-editor-font-family); }
+.sqlbar { background: var(--vscode-textCodeBlock-background, var(--rz-surface)); } .sqlinput { flex: 1; min-width: 0; resize: none; padding: 5px 10px; border-radius: 8px; border: 1px solid transparent; background: transparent; color: var(--vscode-foreground); font-family: var(--vscode-editor-font-family); font-size: var(--vscode-editor-font-size); line-height: 1.45; } .sqlinput:hover { border-color: var(--rz-border); } .sqlinput:focus { outline: 2px solid var(--vscode-focusBorder); outline-offset: -1px; background: var(--vscode-input-background); }
 .hflags { display: inline-flex; } .hflags .pk { color: var(--vscode-charts-yellow, #cca700); } .req { color: var(--vscode-errorForeground); font-weight: 700; }
 .hfilter { width: 24px; min-width: 24px; height: 24px; padding: 0; opacity: .55; } .hfilter.on { opacity: 1; color: var(--vscode-focusBorder); } .hcell:hover .hfilter { opacity: 1; }
 
@@ -324,3 +324,7 @@ button.engine-card .logo.bare { margin: 0 2px; }
 .guide-progress { width: 140px; height: 6px; border-radius: 999px; background: var(--rz-border); overflow: hidden; } .guide-progress span { display: block; height: 100%; background: var(--vscode-focusBorder); transition: width .2s; }
 @media (max-width: 760px) { .guide { grid-template-columns: 1fr; } }
 @media (prefers-reduced-motion: reduce) { .guide-progress span { transition: none; } }
+
+.filterbar .field-icon input { width: 100%; min-width: 120px; } .filterbar .forder { width: 220px; min-width: 0; } .filterbar .field-icon { height: 30px; }
+
+.chip.exp { margin-left: auto; background: transparent; color: var(--vscode-foreground); border: 1px dashed var(--rz-muted); font-size: .75em; }

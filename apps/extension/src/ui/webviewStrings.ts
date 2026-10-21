@@ -36,6 +36,8 @@ export function webviewStrings(): Record<string, string> {
     "Back": t("Back"), "Finish": t("Finish"), "Next": t("Next"), "Next step": t("Next step"), "Previous step": t("Previous step"), "Progress": t("Progress"), "RizomaDB guide": t("RizomaDB guide"), "Start the guide over": t("Start the guide over"), "Steps": t("Steps"), "Try it": t("Try it"), "{0} of {1} steps seen": t("{0} of {1} steps seen"),
     "Authentication error": t("Authentication error"), "Blocked": t("Blocked"), "Cancelled": t("Cancelled"), "Connection error": t("Connection error"), "Constraint violation": t("Constraint violation"), "Permission denied": t("Permission denied"), "Syntax error": t("Syntax error"), "Timeout": t("Timeout"),
     "avg {0}": t("avg {0}"), "max {0}": t("max {0}"), "min {0}": t("min {0}"),
+    "Apply the filter in the database": t("Apply the filter in the database"), "Clear the filter": t("Clear the filter"), "Filter (Mongo query), e.g. { \"status\": \"A\" }": t("Filter (Mongo query), e.g. { \"status\": \"A\" }"), "Filter (condition on n), e.g. n.age > 30": t("Filter (condition on n), e.g. n.age > 30"), "Filter (search text), e.g. level:error": t("Filter (search text), e.g. level:error"), "Filter in the database": t("Filter in the database"), "Filter rows (SQL condition), e.g. age > 30": t("Filter rows (SQL condition), e.g. age > 30"), "Order by, e.g. n.name": t("Order by, e.g. n.name"), "Order by, e.g. name DESC": t("Order by, e.g. name DESC"), "Query (editable)": t("Query (editable)"), "Run this query (Ctrl/⌘+Enter)": t("Run this query (Ctrl/⌘+Enter)"), "Sort, e.g. timestamp:desc": t("Sort, e.g. timestamp:desc"), "Sort, e.g. { \"total\": -1 }": t("Sort, e.g. { \"total\": -1 }"),
+    "Experimental": t("Experimental"),
   };
 }
 

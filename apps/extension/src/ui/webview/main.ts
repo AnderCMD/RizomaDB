@@ -59,9 +59,16 @@ const cancelBtn = iconButton("stop", tr("Cancel running query"), () => send({ ty
 const header = el("div", { class: "tb hdr" });
 const connBox = el("span", { class: "conn", hidden: "" });
 header.append(connBox, titleEl, statusEl, el("span", { class: "grow" }), cancelBtn);
-const sqlText = el("code", { class: "sqltext" });
+const sqlInput = el("textarea", { class: "sqlinput", rows: "1", spellcheck: "false", "aria-label": tr("Query (editable)") });
+const growSql = () => { sqlInput.style.height = "auto"; sqlInput.style.height = `${Math.min(sqlInput.scrollHeight, 160)}px`; };
+const runEdited = () => send({ type: "runSql", sql: sqlInput.value });
+sqlInput.addEventListener("input", growSql);
+sqlInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); runEdited(); }
+  else if (e.key === "Escape") { sqlInput.value = currentSql; growSql(); }
+});
 const sqlBar = el("div", { class: "tb sqlbar", hidden: "" });
-sqlBar.append(sqlText, iconButton("copy", tr("Copy the query"), () => send({ type: "copy", text: currentSql })), iconButton("external", tr("Open the query in an editor"), () => send({ type: "openSql" })));
+sqlBar.append(sqlInput, iconButton("play", tr("Run this query (Ctrl/⌘+Enter)"), runEdited, { primary: true }), iconButton("copy", tr("Copy the query"), () => send({ type: "copy", text: currentSql })), iconButton("external", tr("Open the query in an editor"), () => send({ type: "openSql" })));
 
 const findInput = el("input", { id: "find", type: "search", placeholder: tr("Find in results"), "aria-label": tr("Find in results") });
 const findCount = el("span", { id: "find-count", role: "status", class: "muted" });
@@ -114,8 +121,30 @@ const tabBtns = TABS.map((x) => {
   });
   tabsBar.append(b); return b;
 });
-app.append(header, tabsBar, sqlBar, tools, editBar, errorBox, split, pane, foot, live);
-const dataParts = [sqlBar, tools, editBar, errorBox, split, foot];
+const filterBar = el("div", { class: "tb filterbar", hidden: "", role: "search", "aria-label": tr("Filter in the database") });
+const whereInput = el("input", { type: "text", class: "fwhere", spellcheck: "false" });
+const orderInput = el("input", { type: "text", class: "forder", spellcheck: "false" });
+const applyFilter = () => send({ type: "filterTable", where: whereInput.value, order: orderInput.value });
+const clearFilter = () => { whereInput.value = ""; orderInput.value = ""; applyFilter(); };
+for (const i of [whereInput, orderInput]) i.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); applyFilter(); } else if (e.key === "Escape") clearFilter(); });
+const whereBox = el("label", { class: "field-icon grow" }); whereBox.append(icon("filter", 14), whereInput);
+const orderBox = el("label", { class: "field-icon" }); orderBox.append(icon("sortAsc", 14), orderInput);
+filterBar.append(whereBox, orderBox, iconButton("check", tr("Apply the filter in the database"), applyFilter, { primary: true }), iconButton("x", tr("Clear the filter"), clearFilter));
+const FILTER_HINTS: Record<string, [string, string]> = {
+  sql: [tr("Filter rows (SQL condition), e.g. age > 30"), tr("Order by, e.g. name DESC")],
+  mongo: [tr('Filter (Mongo query), e.g. { "status": "A" }'), tr('Sort, e.g. { "total": -1 }')],
+  es: [tr("Filter (search text), e.g. level:error"), tr("Sort, e.g. timestamp:desc")],
+  cypher: [tr("Filter (condition on n), e.g. n.age > 30"), tr("Order by, e.g. n.name")],
+};
+function buildFilterBar(f?: { kind: string; where: string; order: string }) {
+  filterBar.hidden = !f;
+  if (!f) return;
+  const [w, o] = FILTER_HINTS[f.kind] ?? FILTER_HINTS["sql"]!;
+  whereInput.placeholder = w; whereInput.setAttribute("aria-label", w); orderInput.placeholder = o; orderInput.setAttribute("aria-label", o);
+  whereInput.value = f.where; orderInput.value = f.order;
+}
+app.append(header, tabsBar, sqlBar, filterBar, tools, editBar, errorBox, split, pane, foot, live);
+const dataParts = [sqlBar, filterBar, tools, editBar, errorBox, split, foot];
 
 const announce = (s: string) => { live.textContent = s; };
 let toastT = 0;
@@ -671,7 +700,8 @@ function onMessage(m: HostToWebview) {
       connBox.append(engineLogo({ key: c.key, color: c.color, fg: c.fg, mark: c.mark, logo: c.logo }, 22), el("strong", {}, c.name), el("span", { class: `chip env-${c.environment}` }, c.environment.toUpperCase()), el("span", { class: "sep", "aria-hidden": "true" }, "›"));
       connBox.hidden = false;
     } else connBox.hidden = true;
-    currentSql = m.sql; sqlText.textContent = m.sql; sqlText.title = m.sql; sqlBar.hidden = !m.sql.trim();
+    currentSql = m.sql; sqlInput.value = m.sql; sqlBar.hidden = !m.sql.trim(); growSql();
+    buildFilterBar(m.table?.filter);
     statusEl.textContent = runText(); cancelBtn.hidden = false;
     props = undefined; tabsBar.hidden = !table;
     resetView(); layout();

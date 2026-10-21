@@ -117,6 +117,12 @@ const RULES: Rule[] = [
   [/^Trino only accepts passwords over TLS: enable "Use TLS"\.$/, () => t("Trino only accepts passwords over TLS: enable \"Use TLS\".")],
   [/^Query timed out$/, () => t("Query timed out")],
   [/^Cancelled: not confirmed$/, () => t("Cancelled: not confirmed")],
+  [/^The (filter|order) cannot contain ";" or comments$/, (m) => t("The {0} cannot contain \";\" or comments", m[1]!)],
+  [/^The (filter|sort) has unbalanced brackets$/, (m) => t("The {0} has unbalanced brackets", m[1]!)],
+  [/^The (filter|sort) has unbalanced brackets or quotes$/, (m) => t("The {0} has unbalanced brackets or quotes", m[1]!)],
+  [/^The index name has characters a search path cannot hold$/, () => t("The index name has characters a search path cannot hold")],
+  [/^The order must look like field or field:desc$/, () => t("The order must look like field or field:desc")],
+  [/^This engine has no table filter$/, () => t("This engine has no table filter")],
 ];
 
 /** The message in the UI language when RizomaDB wrote it; anything else (a server's own text) passes through unchanged. */
