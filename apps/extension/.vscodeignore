@@ -1,5 +1,11 @@
 src/**
+e2e/**
+.turbo/**
 node_modules/**
 **/*.map
+**/*.test.*
 esbuild.mjs
 tsconfig.json
+vitest.config.ts
+.gitignore
+.vscode-test/**

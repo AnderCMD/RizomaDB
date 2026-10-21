@@ -10,10 +10,31 @@ site/.vitepress/cache
 site/content/en/*/
 site/content/es/*/
 .soak
-site/content/en/ci-cd.md
 
 # graphify: keep the report and graph, not the caches or the 2.6 MB html
 graphify-out/cache/
 graphify-out/.graphify_*
 graphify-out/graph.html
 graphify-out/cost.json
+site/content/en/ci-cd.md
+
+# OS, editors, logs, local environment
+.DS_Store
+Thumbs.db
+*.log
+.env
+.env.*
+!.env.example
+.idea/
+*.swp
+.vscode-test/
+.vitest-cache/
+.vite/
+*.tsbuildinfo
+pnpm-debug.log*
+
+# Built site and local packaging output
+site/.vitepress/dist
+*.tgz
+graphify-out/.pending_changes
+graphify-out/manifest.json
