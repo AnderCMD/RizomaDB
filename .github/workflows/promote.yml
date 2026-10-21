@@ -1,0 +1,17 @@
+name: Promote dev to main
+# Opens (or finds) the pull request that brings dev into main, so the release flow starts from a reviewed, CI-checked change.
+on: workflow_dispatch
+permissions: { contents: read, pull-requests: write }
+jobs:
+  open-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { ref: dev, fetch-depth: 0 }
+      - name: Open the pull request
+        env: { GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }
+        run: |
+          if [ "$(git rev-list --count origin/main..origin/dev)" = "0" ]; then echo "dev has nothing that main lacks."; exit 0; fi
+          existing=$(gh pr list --base main --head dev --state open --json number --jq '.[0].number')
+          if [ -n "$existing" ]; then echo "Pull request #$existing already open."; exit 0; fi
+          gh pr create --base main --head dev --title "Promote dev to main" --body "Brings dev into main. CI must pass; merging deploys the docs site. Releases are cut from tags with the Release workflow."

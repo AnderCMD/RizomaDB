@@ -1,8 +1,10 @@
 name: CI
 on:
-  push: { branches: [main] }
-  pull_request:
+  push: { branches: [main, dev] }
+  pull_request: { branches: [main, dev] }
 permissions: { contents: read }
+# A newer push to the same branch or pull request replaces the run in progress.
+concurrency: { group: "ci-${{ github.ref }}", cancel-in-progress: true }
 env:
   RZ_REQUIRE_ENGINES: "1"      # engine suites fail instead of skipping when a service is missing
   RZ_ENGINES: all
@@ -23,7 +25,7 @@ env:
   RZ_CASSANDRA_PORT: "9042"
   RZ_TIDB_PORT: "4000"
   # Engines whose containers need a custom command (not possible as a job service); they are covered by local compose runs only.
-  RZ_SKIP_ENGINES: "cockroach,yugabyte,firestore,influxdb3"
+  RZ_SKIP_ENGINES: "cockroach,yugabyte,firestore,influxdb3,hydradb"
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -111,6 +113,22 @@ jobs:
       - run: pnpm bench
       - run: pnpm --filter rizomadb package
       - run: node scripts/check-vsix-size.mjs apps/extension/*.vsix 8
+      - name: Keep the built extension
+        uses: actions/upload-artifact@v4
+        with: { name: "rizomadb-vsix-${{ github.sha }}", path: "apps/extension/*.vsix", retention-days: 14, if-no-files-found: error }
+  site:
+    # The docs site must build on every change; only main deploys it (pages.yml).
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 24, cache: pnpm }
+      - run: pnpm install --frozen-lockfile --filter @rizomadb/site...
+      - run: node sync-docs.mjs
+        working-directory: site
+      - run: pnpm --filter @rizomadb/site build
+        env: { SITE_BASE: "/${{ github.event.repository.name }}/" }
   secrets:
     runs-on: ubuntu-latest
     steps:

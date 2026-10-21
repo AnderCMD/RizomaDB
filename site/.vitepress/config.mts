@@ -7,7 +7,7 @@ const enSidebar = [
     { text: "Policy", link: "/en/enterprise/policy" }, { text: "Audit", link: "/en/enterprise/audit" },
     { text: "Deployment", link: "/en/enterprise/deployment" }, { text: "Compliance", link: "/en/enterprise/compliance" } ] },
   { text: "Security", items: [{ text: "Threat model", link: "/en/security/threat-model" }, { text: "Dependency policy", link: "/en/security/dependency-policy" }] },
-  { text: "Project", items: [{ text: "Honest comparison", link: "/en/market/honest-comparison" }, { text: "Writing a driver", link: "/en/drivers/authoring" }] },
+  { text: "Project", items: [{ text: "Honest comparison", link: "/en/market/honest-comparison" }, { text: "Writing a driver", link: "/en/drivers/authoring" }, { text: "CI/CD", link: "/en/ci-cd" }] },
 ];
 const esSidebar = [
   { text: "Inicio", items: [{ text: "Resumen", link: "/es/" }] },
@@ -21,6 +21,8 @@ export default defineConfig({
   title: "RizomaDB",
   description: "Free, open-source, no-telemetry multi-engine database client for VS Code",
   srcDir: "content",
+  // GitHub Pages serves a project site under /<repo>/; the Pages workflow sets SITE_BASE, local builds stay at "/".
+  base: process.env.SITE_BASE ?? "/",
   cleanUrls: true,
   // The repo docs link to source files and to each other with repo-relative paths.
   ignoreDeadLinks: true,

@@ -1,0 +1,35 @@
+name: Docs site
+# Builds the VitePress site from docs/ and publishes it to GitHub Pages. Nothing else is published by this workflow.
+on:
+  push:
+    branches: [main]
+    paths: ["docs/**", "site/**", ".github/workflows/pages.yml"]
+  workflow_dispatch:
+permissions: { contents: read }
+concurrency: { group: pages, cancel-in-progress: false }
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 24, cache: pnpm }
+      - run: pnpm install --frozen-lockfile --filter @rizomadb/site...
+      - name: Copy docs into the site
+        working-directory: site
+        run: node sync-docs.mjs
+      - name: Build
+        run: pnpm --filter @rizomadb/site build
+        env: { SITE_BASE: "/${{ github.event.repository.name }}/" }
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: site/.vitepress/dist }
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions: { pages: write, id-token: write }
+    environment: { name: github-pages, url: "${{ steps.deployment.outputs.page_url }}" }
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
