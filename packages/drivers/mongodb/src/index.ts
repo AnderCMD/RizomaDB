@@ -236,7 +236,6 @@ const coll = (t: { schema?: string; table: string }) => `db${t.schema ? `.getSib
 
 export const mongoDriver: DriverPlugin = {
   ...meta,
-  openCommand: (ref, limit) => `db${ref.schema ? `.getSiblingDB(${JSON.stringify(ref.schema)})` : ""}.getCollection(${JSON.stringify(ref.name)}).find({}).limit(${limit})`,
   generateChange(t, c) {
     const lit = (name: string, v: Value) => valueToShell(v, idType(t, name));
     const doc = (o: Record<string, Value>) => `{ ${Object.entries(o).map(([k, v]) => `${JSON.stringify(k)}: ${lit(k, v)}`).join(", ")} }`;

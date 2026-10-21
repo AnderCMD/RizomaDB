@@ -30,3 +30,13 @@ describe("mongo shell-lite parser", () => {
     }), { numRuns: 4000 });
   });
 });
+
+describe("opening a collection from the tree", () => {
+  it("builds a command the shell parser accepts, targeting the collection's database", async () => {
+    const { meta } = await import("./meta.js");
+    const sql = meta.openCommand!({ schema: "shop", name: "or\"ders" }, 200);
+    expect(sql).toBe('db.getSiblingDB("shop").getCollection("or\\"ders").find({}).limit(200)');
+    expect(() => parseMongoCommand(sql)).not.toThrow();
+    expect(() => parseMongoCommand(meta.openCommand!({ name: "plain" }, 5))).not.toThrow();
+  });
+});

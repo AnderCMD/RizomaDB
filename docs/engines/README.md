@@ -13,6 +13,7 @@
 | Elasticsearch / OpenSearch | 2 | [elasticsearch.md](elasticsearch.md) |
 | DuckDB | 2 | [duckdb.md](duckdb.md) |
 | Neo4j | 2 | [neo4j.md](neo4j.md) |
+| HydraDB | 2 | [hydradb.md](hydradb.md) |
 | Amazon DynamoDB | 2 | [dynamodb.md](dynamodb.md) |
 | InfluxDB 2.x | 2 | [influxdb.md](influxdb.md) |
 | InfluxDB 3 | 2 | [influxdb3.md](influxdb3.md) |

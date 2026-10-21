@@ -23,6 +23,8 @@ export const meta: Omit<DriverPlugin, "connect"> = {
   quoteIdent,
   placeholder: () => "?",
   selectTop: (collection: string, n: number) => `db.getCollection(${collection}).find({}).limit(${n})`,
+  // The tree reports a collection as database.collection, so opening one must target that database explicitly (selectTop would build `"db"."coll"`, which is not valid shell syntax).
+  openCommand: (ref, limit) => `db${ref.schema ? `.getSiblingDB(${JSON.stringify(ref.schema)})` : ""}.getCollection(${JSON.stringify(ref.name)}).find({}).limit(${Math.max(1, Math.floor(limit))})`,
   assess: assessMongo,
   connectionSchema: {
     type: "object", required: [],

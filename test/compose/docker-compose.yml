@@ -84,3 +84,13 @@ services:
     image: yugabytedb/yugabyte:2025.2.7.0-b107
     command: ["bin/yugabyted", "start", "--background=false", "--advertise_address=127.0.0.1", "--tserver_flags=memory_limit_hard_bytes=1610612736,pgsql_proxy_bind_address=0.0.0.0:5433", "--master_flags=memory_limit_hard_bytes=536870912"]
     ports: ["15433:5433"]
+  hydradb:
+    image: ghcr.io/hydra-db/hydradb:latest
+    environment:
+      CLOUD_PROVIDER: local
+      LOCAL_PATH: /tmp/graph
+      GRAPH_AUTH_TOKEN_FILE: /run/hydradb-auth-token
+      GRAPH_ALLOW_PLAINTEXT: "true"
+      RUST_MIN_STACK: "33554432"
+    volumes: ["./hydradb-auth-token:/run/hydradb-auth-token:ro"]
+    ports: ["18443:8443", "19090:9090"]
