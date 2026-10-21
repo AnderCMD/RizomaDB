@@ -58,5 +58,16 @@
   "cfg.catalogTeam": "Path of a shared connection catalog file (no secrets).",
   "cfg.auditEnabled": "Write a local audit trail of every statement (literals are removed).",
   "cfg.auditPath": "Audit file path (default: the extension's storage folder).",
-  "cfg.auditValues": "Keep literal values in audit entries. Off by default so the log holds no data."
+  "cfg.auditValues": "Keep literal values in audit entries. Off by default so the log holds no data.",
+  "cmd.ai_explain": "Explain Query With AI",
+  "cmd.ai_optimize": "Optimize Query With AI",
+  "cmd.ai_textToSql": "Text to SQL With AI…",
+  "cmd.ai_describe": "Describe Table With AI",
+  "cmd.ai_setApiKey": "Set AI API Key…",
+  "cmd.mcp_generateConfig": "Generate MCP Server Configuration…",
+  "cfg.aiEnabled": "Turn on AI assistance. Off by default: nothing is sent anywhere until you enable it and confirm each remote request.",
+  "cfg.aiProvider": "API style: `openai-compatible` (Ollama, LM Studio, OpenAI, …) or `anthropic`.",
+  "cfg.aiEndpoint": "Base URL of the model API. Local endpoints (localhost) send nothing off your machine.",
+  "cfg.aiModel": "Model name to request.",
+  "cfg.aiRedact": "Replace literal values in your SQL with `?` before it is included in a request."
 }

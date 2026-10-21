@@ -25,6 +25,7 @@ import { writeFile } from "node:fs/promises";
 import { registerDataCommands } from "./ui/dataCommands.js";
 import { registerNoSqlCommands } from "./ui/nosqlCommands.js";
 import { registerAdminCommands } from "./ui/adminCommands.js";
+import { registerAiCommands } from "./ui/aiCommands.js";
 import { SchemaCache, DIALECT_OF } from "./lib/schemaCache.js";
 import { bindParameters, explain, findParameters } from "@rizomadb/sql";
 import { createWriteStream } from "node:fs";
@@ -307,7 +308,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
   };
   const editorDoc = () => vscode.window.activeTextEditor?.document;
   // Commands that a policy can switch off for everyone (team/project/user layers are merged; any layer can disable).
-  const FEATURE: Record<string, string> = { "rizomadb.export": "export", "rizomadb.import": "import", "rizomadb.backup": "backup", "rizomadb.restore": "restore", "rizomadb.compareData": "dataSync", "rizomadb.generateData": "dataSync", "rizomadb.designTable": "designer", "rizomadb.admin": "admin", "rizomadb.admin.kill": "admin", "rizomadb.admin.setVariable": "admin", "rizomadb.admin.grant": "admin", "rizomadb.admin.metrics": "admin", "rizomadb.admin.privileges": "admin" };
+  const FEATURE: Record<string, string> = { "rizomadb.export": "export", "rizomadb.import": "import", "rizomadb.backup": "backup", "rizomadb.restore": "restore", "rizomadb.compareData": "dataSync", "rizomadb.generateData": "dataSync", "rizomadb.designTable": "designer", "rizomadb.admin": "admin", "rizomadb.admin.kill": "admin", "rizomadb.admin.setVariable": "admin", "rizomadb.admin.grant": "admin", "rizomadb.admin.metrics": "admin", "rizomadb.admin.privileges": "admin", "rizomadb.ai.explain": "ai", "rizomadb.ai.optimize": "ai", "rizomadb.ai.textToSql": "ai", "rizomadb.ai.describe": "ai", "rizomadb.mcp.generateConfig": "ai" };
   const reg = (id: string, fn: (...a: never[]) => unknown) => ctx.subscriptions.push(vscode.commands.registerCommand(id, ((...a: unknown[]) => {
     const f = FEATURE[id];
     if (f && !featureEnabled(policy(), f)) { void vscode.window.showWarningMessage(t("'{0}' is disabled by your organisation's RizomaDB policy.", f)); return undefined; }
@@ -488,6 +489,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
     results.post({ v: 1, type: "done", rowCount: table.rows.length, durationMs: 0, truncated: false });
   };
   registerAdminCommands({ ctx, mgr, policy, pick: () => pickConnection(), reg, show: showTable });
+  registerAiCommands({ ctx, mgr, cache: schemaCache, reg, pick: () => pickConnection(), bind });
   registerNoSqlCommands({ mgr, policy, reg, refresh: () => explorer.refresh(), bind });
   registerDataCommands({ ctx, mgr, policy, pick: () => pickConnection(), reg, refresh: () => explorer.refresh() });
   reg("rizomadb.reviewPendingChanges", () => reviewChanges());

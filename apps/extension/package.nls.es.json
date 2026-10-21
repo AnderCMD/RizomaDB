@@ -58,5 +58,16 @@
   "cfg.catalogTeam": "Ruta de un catálogo compartido de conexiones (sin secretos).",
   "cfg.auditEnabled": "Escribir un registro de auditoría local de cada sentencia (sin literales).",
   "cfg.auditPath": "Ruta del archivo de auditoría (por defecto, la carpeta de almacenamiento de la extensión).",
-  "cfg.auditValues": "Conservar los valores literales en la auditoría. Desactivado por defecto para que el registro no contenga datos."
+  "cfg.auditValues": "Conservar los valores literales en la auditoría. Desactivado por defecto para que el registro no contenga datos.",
+  "cmd.ai_explain": "Explicar consulta con IA",
+  "cmd.ai_optimize": "Optimizar consulta con IA",
+  "cmd.ai_textToSql": "Texto a SQL con IA…",
+  "cmd.ai_describe": "Describir tabla con IA",
+  "cmd.ai_setApiKey": "Definir clave de API de IA…",
+  "cmd.mcp_generateConfig": "Generar configuración del servidor MCP…",
+  "cfg.aiEnabled": "Activa la asistencia con IA. Desactivada por defecto: no se envía nada hasta que la actives y confirmes cada petición remota.",
+  "cfg.aiProvider": "Estilo de API: `openai-compatible` (Ollama, LM Studio, OpenAI, …) o `anthropic`.",
+  "cfg.aiEndpoint": "URL base de la API del modelo. Los endpoints locales (localhost) no sacan nada de tu equipo.",
+  "cfg.aiModel": "Nombre del modelo a solicitar.",
+  "cfg.aiRedact": "Sustituye los valores literales de tu SQL por `?` antes de incluirlo en una petición."
 }

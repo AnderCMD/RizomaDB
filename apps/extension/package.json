@@ -287,6 +287,36 @@
         "command": "rizomadb.exportAudit",
         "title": "%cmd.exportAudit%",
         "category": "RizomaDB"
+      },
+      {
+        "command": "rizomadb.ai.explain",
+        "title": "%cmd.ai_explain%",
+        "category": "RizomaDB"
+      },
+      {
+        "command": "rizomadb.ai.optimize",
+        "title": "%cmd.ai_optimize%",
+        "category": "RizomaDB"
+      },
+      {
+        "command": "rizomadb.ai.textToSql",
+        "title": "%cmd.ai_textToSql%",
+        "category": "RizomaDB"
+      },
+      {
+        "command": "rizomadb.ai.describe",
+        "title": "%cmd.ai_describe%",
+        "category": "RizomaDB"
+      },
+      {
+        "command": "rizomadb.ai.setApiKey",
+        "title": "%cmd.ai_setApiKey%",
+        "category": "RizomaDB"
+      },
+      {
+        "command": "rizomadb.mcp.generateConfig",
+        "title": "%cmd.mcp_generateConfig%",
+        "category": "RizomaDB"
       }
     ],
     "menus": {
@@ -426,6 +456,11 @@
           "command": "rizomadb.admin",
           "when": "view == rizomadb.connections && viewItem == connection",
           "group": "admin"
+        },
+        {
+          "command": "rizomadb.ai.describe",
+          "when": "view == rizomadb.connections && viewItem == table",
+          "group": "ai"
         }
       ],
       "editor/title": [
@@ -533,6 +568,35 @@
           "type": "boolean",
           "default": false,
           "markdownDescription": "%cfg.auditValues%"
+        },
+        "rizomadb.ai.enabled": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "%cfg.aiEnabled%"
+        },
+        "rizomadb.ai.provider": {
+          "type": "string",
+          "enum": [
+            "openai-compatible",
+            "anthropic"
+          ],
+          "default": "openai-compatible",
+          "markdownDescription": "%cfg.aiProvider%"
+        },
+        "rizomadb.ai.endpoint": {
+          "type": "string",
+          "default": "http://localhost:11434/v1",
+          "markdownDescription": "%cfg.aiEndpoint%"
+        },
+        "rizomadb.ai.model": {
+          "type": "string",
+          "default": "llama3.1",
+          "markdownDescription": "%cfg.aiModel%"
+        },
+        "rizomadb.ai.redactLiterals": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "%cfg.aiRedact%"
         }
       }
     },
@@ -623,7 +687,8 @@
     "@rizomadb/driver-clickhouse": "workspace:*",
     "@rizomadb/driver-elasticsearch": "workspace:*",
     "@rizomadb/driver-duckdb": "workspace:*",
-    "@rizomadb/admin": "workspace:*"
+    "@rizomadb/admin": "workspace:*",
+    "@rizomadb/ai": "workspace:*"
   },
   "devDependencies": {
     "@types/vscode": "1.100.0",

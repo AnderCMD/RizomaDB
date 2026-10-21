@@ -11,6 +11,8 @@ await build({
   ...common, entryPoints: ["src/worker/driverWorker.ts"], outfile: "dist/driverWorker.cjs",
   platform: "node", format: "cjs", target: "node22", external: ["pg-native", "@duckdb/node-api", "@duckdb/node-bindings"],
 });
+// MCP server: an opt-in standalone process the user wires into an MCP client (never started by the extension).
+await build({ ...common, entryPoints: ["../../packages/mcp/src/bin.ts"], outfile: "dist/mcp-server.cjs", platform: "node", format: "cjs", target: "node22", external: ["pg-native", "oracledb"] });
 // Webview script runs in the browser sandbox: no Node APIs, no eval.
 await build({
   ...common, entryPoints: ["src/ui/webview/main.ts"], outfile: "dist/webview.js",

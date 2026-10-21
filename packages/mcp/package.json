@@ -1,0 +1,32 @@
+{
+  "name": "@rizomadb/mcp",
+  "version": "0.0.0",
+  "license": "Apache-2.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@rizomadb/core": "workspace:*",
+    "@rizomadb/driver-api": "workspace:*",
+    "@rizomadb/sql": "workspace:*",
+    "@rizomadb/data-tools": "workspace:*",
+    "@rizomadb/driver-sqlite": "workspace:*",
+    "@rizomadb/driver-postgres": "workspace:*",
+    "@rizomadb/driver-mysql": "workspace:*",
+    "@rizomadb/driver-mssql": "workspace:*",
+    "@rizomadb/driver-oracle": "workspace:*",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2",
+    "fast-check": "4.10.2"
+  },
+  "bin": {
+    "rizomadb-mcp": "dist/bin.js"
+  }
+}
