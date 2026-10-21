@@ -325,5 +325,7 @@
  "{0} tables, {1} relationships": "{0} tablas, {1} relaciones",
  "Table with {0} columns. Press Enter to highlight its relations.": "Tabla con {0} columnas. Pulsa Intro para resaltar sus relaciones.",
  "{0} and its relations highlighted": "{0} y sus relaciones resaltadas",
- "Selection cleared": "Selección borrada"
+ "Selection cleared": "Selección borrada",
+ "RizomaDB MCP server": "Servidor MCP de RizomaDB",
+ "Password for {0} (use a read-only database account; it is kept only in the server process)": "Contraseña para {0} (usa una cuenta de solo lectura; solo se conserva en el proceso del servidor)"
 }

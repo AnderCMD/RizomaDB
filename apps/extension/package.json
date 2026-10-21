@@ -34,6 +34,12 @@
     }
   },
   "contributes": {
+    "mcpServerDefinitionProviders": [
+      {
+        "id": "rizomadb.mcp",
+        "label": "RizomaDB (read-only)"
+      }
+    ],
     "viewsContainers": {
       "activitybar": [
         {
@@ -578,6 +584,11 @@
           "type": "boolean",
           "default": false,
           "markdownDescription": "%cfg.auditValues%"
+        },
+        "rizomadb.mcp.autoRegister": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "%cfg.mcpAutoRegister%"
         },
         "rizomadb.ai.enabled": {
           "type": "boolean",

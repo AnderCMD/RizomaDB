@@ -70,5 +70,6 @@
   "cfg.aiEndpoint": "Base URL of the model API. Local endpoints (localhost) send nothing off your machine.",
   "cfg.aiModel": "Model name to request.",
   "cfg.aiRedact": "Replace literal values in your SQL with `?` before it is included in a request.",
-  "cmd.importConnections": "Import Connections From Other Tools…"
+  "cmd.importConnections": "Import Connections From Other Tools…",
+  "cfg.mcpAutoRegister": "Offer the read-only RizomaDB MCP server to VS Code's MCP client when a folder has `.rizomadb/mcp.json` (made by *RizomaDB: Generate MCP Configuration*). Off by default; the database password is asked when the server starts."
 }
