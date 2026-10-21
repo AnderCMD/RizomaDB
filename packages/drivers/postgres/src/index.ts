@@ -57,7 +57,7 @@ function kindOf(oid: number): ColumnInfo["kind"] {
 const toParam = (v: Value) => (v !== null && typeof v === "object" && !(v instanceof Date) && !(v instanceof Uint8Array) && !Array.isArray(v)
   ? JSON.stringify((v as { json: unknown }).json) : v);
 
-type Runner = { client: pg.Client; cancel: (pid: number) => Promise<void>; pid: number };
+type Runner = { client: pg.Client; cancel: (pid: number) => Promise<void>; pid: number; lost: Promise<never> };
 
 async function* run(r: Runner, req: ExecuteRequest, signal: AbortSignal): AsyncGenerator<ResultEvent> {
   if (signal.aborted) throw new DriverError("cancelled", "Query cancelled");
@@ -72,7 +72,8 @@ async function* run(r: Runner, req: ExecuteRequest, signal: AbortSignal): AsyncG
     for (;;) {
       const want = Math.min(batch, max - n);
       if (want <= 0) break;
-      const rows = await cursor.read(want) as unknown as Value[][];
+      // pg-cursor never settles when the server terminates the backend mid-read, so race against connection loss.
+      const rows = await Promise.race([cursor.read(want), r.lost]) as unknown as Value[][];
       if (!sentCols) {
         // pg-cursor exposes fields after the first read
         const fields = (cursor as unknown as { _result: { fields: pg.FieldDef[] } })._result.fields;
@@ -94,16 +95,25 @@ async function* run(r: Runner, req: ExecuteRequest, signal: AbortSignal): AsyncG
     throw signal.aborted ? new DriverError("cancelled", "Query cancelled", { cause: e }) : mapError(e);
   } finally {
     signal.removeEventListener("abort", onAbort);
-    await new Promise<void>((res) => cursor.close(() => res()));
+    // a dead connection never answers the close request either
+    await Promise.race([new Promise<void>((res) => cursor.close(() => res())), r.lost.catch(() => undefined)]);
   }
 }
 
 class PgConnection implements Connection {
   private cancelClient: pg.Client | undefined;
-  constructor(private client: pg.Client, readonly serverInfo: Connection["serverInfo"], private pid: number, private cfg: pg.ClientConfig) {}
+  private lost: Promise<never>;
+  constructor(private client: pg.Client, readonly serverInfo: Connection["serverInfo"], private pid: number, private cfg: pg.ClientConfig) {
+    this.lost = new Promise<never>((_, reject) => {
+      const gone = (e?: Error) => reject(new DriverError("connection", e?.message ?? "The server closed the connection", { cause: e }));
+      client.once("end", () => gone());
+      client.once("error", (e) => gone(e));
+    });
+    this.lost.catch(() => {});
+  }
   private runner(): Runner {
     return {
-      client: this.client, pid: this.pid,
+      client: this.client, pid: this.pid, lost: this.lost,
       cancel: async (pid) => {
         const c = new Client(this.cfg);
         await c.connect();

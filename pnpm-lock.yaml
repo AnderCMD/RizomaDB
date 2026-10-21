@@ -273,6 +273,16 @@ importers:
         specifier: 0.28.2
         version: 0.28.2
 
+  packages/admin:
+    dependencies:
+      '@rizomadb/driver-api':
+        specifier: workspace:*
+        version: link:../driver-api
+    devDependencies:
+      '@rizomadb/test-engines':
+        specifier: workspace:*
+        version: link:../test-engines
+
   packages/core:
     dependencies:
       '@rizomadb/driver-api':
