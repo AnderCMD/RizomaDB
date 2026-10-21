@@ -29,8 +29,7 @@ export class History {
   }
 
   async list(opts: { limit?: number; search?: string } = {}): Promise<HistoryEntry[]> {
-    let text = "";
-    try { text = await readFile(this.file, "utf8"); } catch { return []; }
+    const text = await readFile(this.file, "utf8").catch(() => "");
     const q = opts.search?.toLowerCase();
     const out: HistoryEntry[] = [];
     for (const line of text.split("\n").reverse()) {
@@ -45,8 +44,8 @@ export class History {
   }
 
   async prune(retentionDays: number): Promise<void> {
-    let text = "";
-    try { text = await readFile(this.file, "utf8"); } catch { return; }
+    const text = await readFile(this.file, "utf8").catch(() => undefined);
+    if (text === undefined) return;
     const cutoff = this.now().getTime() - retentionDays * 86_400_000;
     const keep = text.split("\n").filter((l) => {
       if (!l) return false;

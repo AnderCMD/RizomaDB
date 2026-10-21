@@ -145,6 +145,7 @@ export const sqliteDriver: DriverPlugin = {
   displayName: "SQLite",
   family: "relational",
   capabilities,
+  quoteIdent,
   connectionSchema: {
     type: "object", required: ["path"],
     properties: {

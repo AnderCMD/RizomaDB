@@ -162,6 +162,7 @@ export const postgresDriver: DriverPlugin = {
   displayName: "PostgreSQL",
   family: "relational",
   capabilities,
+  quoteIdent,
   connectionSchema: {
     type: "object", required: ["host", "database", "user"],
     properties: {

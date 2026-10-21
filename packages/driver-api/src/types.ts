@@ -95,5 +95,7 @@ export interface DriverPlugin {
   readonly family: EngineFamily;
   readonly capabilities: Capabilities;
   readonly connectionSchema: JsonSchema;
+  /** Dialect identifier quoting; pure, usable without a connection. */
+  quoteIdent(name: string): string;
   connect(cfg: ResolvedConnectionConfig, ctx: DriverContext): Promise<Connection>;
 }

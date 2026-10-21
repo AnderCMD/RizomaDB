@@ -6,6 +6,11 @@ await build({
   ...common, entryPoints: ["src/extension.ts"], outfile: "dist/extension.js",
   platform: "node", format: "cjs", target: "node22", external: ["vscode", "pg-native"],
 });
+// Driver child process: runs drivers outside the extension host.
+await build({
+  ...common, entryPoints: ["src/worker/driverWorker.ts"], outfile: "dist/driverWorker.cjs",
+  platform: "node", format: "cjs", target: "node22", external: ["pg-native"],
+});
 // Webview script runs in the browser sandbox: no Node APIs, no eval.
 await build({
   ...common, entryPoints: ["src/ui/webview/main.ts"], outfile: "dist/webview.js",

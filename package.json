@@ -11,13 +11,17 @@
     "build:brand": "node scripts/build-brand.mjs"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@fontsource/inter": "^5.3.0",
     "@resvg/resvg-js": "^2.6.2",
     "@types/node": "26.6.5",
+    "eslint": "^10.13.0",
     "opentype.js": "^2.0.0",
+    "prettier": "^3.9.10",
     "svgo": "^4.1.0",
     "turbo": "2.11.10",
-    "typescript": "7.0.2",
+    "typescript": "6.0.3",
+    "typescript-eslint": "^8.72.0",
     "vitest": "5.0.5"
   }
 }

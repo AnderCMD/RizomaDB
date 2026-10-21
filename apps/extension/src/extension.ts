@@ -9,15 +9,18 @@ import { formatValue } from "./lib/format.js";
 import { Explorer, type Node } from "./ui/explorer.js";
 import { ResultsPanel } from "./ui/resultsPanel.js";
 import { newConnectionWizard } from "./ui/wizard.js";
+import { workerDriver } from "./worker/workerDriver.js";
 
 const t = vscode.l10n.t;
 const cfg = () => vscode.workspace.getConfiguration("rizomadb");
 
 // Drivers load lazily so activation stays cheap.
-const registry: DriverRegistry = {
-  sqlite: async () => (await import("@rizomadb/driver-sqlite")).sqliteDriver,
-  postgres: async () => (await import("@rizomadb/driver-postgres")).postgresDriver,
-};
+function makeRegistry(workerFile: string): DriverRegistry {
+  return {
+    sqlite: async () => workerDriver((await import("@rizomadb/driver-sqlite")).sqliteDriver, workerFile),
+    postgres: async () => workerDriver((await import("@rizomadb/driver-postgres")).postgresDriver, workerFile),
+  };
+}
 
 function policy(): Policy {
   return { ...defaultPolicy, readOnlyEnvironments: cfg().get<boolean>("security.prodReadOnlyByDefault", true) ? ["prod"] : [] };
@@ -29,7 +32,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
     set: async (k, v) => ctx.secrets.store(k, v),
     delete: async (k) => ctx.secrets.delete(k),
   };
-  const mgr = new ConnectionManager(ctx.globalState, secrets, registry, policy);
+  const mgr = new ConnectionManager(ctx.globalState, secrets, makeRegistry(vscode.Uri.joinPath(ctx.extensionUri, "dist", "driverWorker.cjs").fsPath), policy);
   const history = new History(join(ctx.globalStorageUri.fsPath, "history.jsonl"));
   void history.prune(cfg().get<number>("history.retentionDays", 90));
 
