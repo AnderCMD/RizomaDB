@@ -13,7 +13,7 @@ Leyenda: ✅ cumplido y verificado · 🟡 parcial · ❌ no hecho
 | Política/auditoría en un único punto | ✅ | `guardConnection`, `policy-paths.test.ts` |
 | Accesibilidad WCAG 2.2 AA | 🟡 | axe: 0 violaciones en 5 vistas; SIN revisión manual con lector de pantalla |
 | UI es/en | ✅ | Prueba contra deriva de textos |
-| Probado en un VS Code real | ❌ | Solo stubs, arnés de navegador y motores reales |
+| Probado en un VS Code real | 🟡 | `pnpm --filter rizomadb test:e2e`: VS Code 1.142 (Node 24.21, Electron 43.7) activa la extensión, registra los 52 comandos y `node:sqlite` existe. Sin recorrido manual de la interfaz |
 | Prueba de resistencia 8 h | ❌ | `pnpm soak`: solo 2 min ejecutados, sin crecimiento sostenido tras corregir dos fugas |
 | CI y release ejecutados en GitHub | ❌ | Flujos escritos, nunca ejecutados |
 | Tamaño del VSIX / arranque | 🟡 | Comprobación de tamaño en pruebas; sin medida de arranque en VS Code real |
