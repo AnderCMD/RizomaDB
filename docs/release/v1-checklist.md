@@ -1,0 +1,25 @@
+# Lista de aceptación v1.0 — estado real (2026-10-20)
+
+**Veredicto: v1.0 NO está lista.** Nada se ha publicado en Marketplace, Open VSX ni npm.
+
+Leyenda: ✅ cumplido y verificado · 🟡 parcial · ❌ no hecho
+
+| Criterio | Estado | Evidencia / límite |
+|---|---|---|
+| Tier 1 (PG, MySQL/MariaDB, SQLite, SQL Server, Oracle, MongoDB, Redis/Valkey) con pruebas contra motor real | ✅ | Kit de conformidad + pruebas por motor (contenedores Docker) |
+| Tier 2 completo | 🟡 | ClickHouse, Elasticsearch/OpenSearch, DuckDB, CockroachDB-por-PG: ver docs/engines. Faltan Cassandra, DynamoDB, Neo4j, Firestore, InfluxDB, Trino, Redshift probado |
+| Cero telemetría | ✅ | Prueba de activación sin sockets |
+| Secretos solo en SecretStorage | ✅ | Pruebas de depuración de secretos y auto-auditoría |
+| Política/auditoría en un único punto | ✅ | `guardConnection`, `policy-paths.test.ts` |
+| Accesibilidad WCAG 2.2 AA | 🟡 | axe: 0 violaciones en 5 vistas; SIN revisión manual con lector de pantalla |
+| UI es/en | ✅ | Prueba contra deriva de textos |
+| Probado en un VS Code real | ❌ | Solo stubs, arnés de navegador y motores reales |
+| Prueba de resistencia 8 h | ❌ | `pnpm soak`: solo 2 min ejecutados, sin crecimiento sostenido tras corregir dos fugas |
+| CI y release ejecutados en GitHub | ❌ | Flujos escritos, nunca ejecutados |
+| Tamaño del VSIX / arranque | 🟡 | Comprobación de tamaño en pruebas; sin medida de arranque en VS Code real |
+| Licencias y SBOM | ✅ | `pnpm audit:licenses`, `pnpm sbom:generate` |
+| Proxy HTTP/SOCKS | ❌ | No implementado |
+| VSIX por plataforma (DuckDB) | ❌ | Módulo nativo fuera del VSIX |
+| Sitio de documentación es/en publicado | ❌ | Documentos en `docs/`; sin sitio |
+| Firma de artefactos | ❌ | Prevista atestación de procedencia de GitHub |
+| Publicación | ❌ | Requiere confirmación explícita de la persona responsable |

@@ -28,3 +28,9 @@ Cómo retomar: `pnpm install && docker compose -f test/compose/docker-compose.ym
 ## Estado al cortarse la sesión (2026-10-21) — LÍMITE DE USO ALCANZADO
 Hecho y comprobado (ver secciones anteriores): Fases 0–9 y gran parte de la 10: pruebas de seguridad de webviews/host, depuración de secretos, fuzzing, importadores de conexiones (URI, pgpass, my.cnf, DBeaver, SQLTools), accesibilidad con axe (0 violaciones en las 5 vistas, temas oscuro y claro), UI en español (host y webviews) con pruebas contra deriva.
 PENDIENTE para cerrar la Fase 10 / v1.0 (no hecho): ejecutar la suite completa tras los últimos cambios de i18n y confirmar en verde; revisión manual con lector de pantalla y teclado; prueba de resistencia de 8 h (solo existe el plan); sitio de documentación es/en publicado, guías de migración y comparativa honesta, README final; lista de aceptación v1.0 con estado real; probar la extensión en un VS Code real (hasta ahora solo stubs, arnés de navegador y motores reales); CI/release nunca ejecutados en GitHub; Cassandra/Neo4j/DynamoDB/InfluxDB/Firestore sin implementar; proxies HTTP/SOCKS; VSIX por plataforma (DuckDB); firma de artefactos. La v1.0 NO está lista.
+
+## Actualización (2026-10-20, tras la reanudación)
+- Fugas de memoria encontradas con `pnpm soak` y corregidas: cola de escritura de auditoría sin límite (ahora por lotes, acotada, con `flush()` y vaciado en `deactivate`) y `Promise.race` contra una promesa de larga vida en PG/MySQL (`ConnectionLoss`). Resultado de 2 min: heap 10.1 MB (0.06 MB/min), sin crecimiento sostenido. La prueba de 8 h NO se ha ejecutado.
+- Suite completa con `RZ_ENGINES=sqlite`: 40/40 tareas verdes. Los drivers de motores en contenedor no se han vuelto a ejecutar tras el cambio de `ConnectionLoss` salvo PostgreSQL (16/16).
+- Documentos nuevos: `docs/guides/migration.md`, `docs/market/honest-comparison.md`, `docs/release/v1-checklist.md` (v1.0 NO lista).
+- Sin push ni publicación desde `4b90488`.
