@@ -87,7 +87,8 @@ async function* run(tds: Tds, readOnly: boolean, req: ExecuteRequest, signal: Ab
   });
   const onAbort = () => { tds.cancel(); };
   signal.addEventListener("abort", onAbort, { once: true });
-  tds.execSql(r);
+  // Plain batches (no parameters) run as real SQL batches so session-level SET options such as SHOWPLAN_ALL stick; sp_executesql would scope them to itself.
+  if (req.params?.length) tds.execSql(r); else tds.execSqlBatch(r);
   const batch = req.batchSize ?? 500, max = req.maxRows ?? Infinity;
   let buf: Value[][] = [], n = 0, ended: number | undefined, stopped = false;
   try {
