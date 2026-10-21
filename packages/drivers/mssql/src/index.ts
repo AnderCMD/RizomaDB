@@ -134,7 +134,7 @@ class MssqlConnection implements Connection {
     return {
       describeSchema: async (schema) => {
         const rows = await this.rows(
-          `select o.name t, o.type k, c.name n, ty.name ty, c.is_nullable nl, dc.definition d,
+          `select o.name t, o.type k, c.name n, ty.name + case when ty.name in ('varchar','char','varbinary','binary') then '(' + case when c.max_length = -1 then 'max' else cast(c.max_length as varchar(10)) end + ')' when ty.name in ('nvarchar','nchar') then '(' + case when c.max_length = -1 then 'max' else cast(c.max_length/2 as varchar(10)) end + ')' when ty.name in ('decimal','numeric') then '(' + cast(c.precision as varchar(5)) + ',' + cast(c.scale as varchar(5)) + ')' else '' end ty, c.is_nullable nl, dc.definition d,
                   cast(case when exists (select 1 from sys.index_columns ic join sys.indexes i on i.object_id = ic.object_id and i.index_id = ic.index_id
                     where i.is_primary_key = 1 and ic.object_id = c.object_id and ic.column_id = c.column_id) then 1 else 0 end as bit) pk
            from sys.columns c join sys.objects o on o.object_id = c.object_id and o.type in ('U','V') join sys.schemas s on s.schema_id = o.schema_id
@@ -186,7 +186,7 @@ class MssqlConnection implements Connection {
         .map((r): TableInfo => ({ schema: String(r.sn), name: String(r.n), kind: r.t === "V" ? "view" : "table" })),
       describeTable: async (ref) => {
         const rows = await this.rows(
-          `select c.name n, ty.name t, c.max_length ml, c.is_nullable nl, dc.definition d,
+          `select c.name n, ty.name + case when ty.name in ('varchar','char','varbinary','binary') then '(' + case when c.max_length = -1 then 'max' else cast(c.max_length as varchar(10)) end + ')' when ty.name in ('nvarchar','nchar') then '(' + case when c.max_length = -1 then 'max' else cast(c.max_length/2 as varchar(10)) end + ')' when ty.name in ('decimal','numeric') then '(' + cast(c.precision as varchar(5)) + ',' + cast(c.scale as varchar(5)) + ')' else '' end t, c.max_length ml, c.is_nullable nl, dc.definition d,
                   cast(case when exists (select 1 from sys.index_columns ic join sys.indexes i on i.object_id = ic.object_id and i.index_id = ic.index_id
                     where i.is_primary_key = 1 and ic.object_id = c.object_id and ic.column_id = c.column_id) then 1 else 0 end as bit) pk
            from sys.columns c join sys.objects o on o.object_id = c.object_id join sys.schemas s on s.schema_id = o.schema_id

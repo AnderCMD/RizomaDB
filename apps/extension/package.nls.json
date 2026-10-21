@@ -27,5 +27,11 @@
   "cmd.export": "Export Data…",
   "cmd.explain": "Explain Query Plan",
   "cmd.newNotebook": "New SQL Notebook",
-  "cmd.pin": "Pin Results Tab"
+  "cmd.pin": "Pin Results Tab",
+  "cmd.er": "Show ER Diagram",
+  "cmd.design": "Design Table",
+  "cmd.snapshot": "Export Schema Snapshot",
+  "cmd.compare": "Compare Schemas",
+  "cmd.docs": "Generate Schema Documentation",
+  "cmd.suggest": "Suggest Missing Foreign-Key Indexes"
 }

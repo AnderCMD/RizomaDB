@@ -37,3 +37,17 @@ button:focus-visible, #grid:focus-visible { outline: 2px solid var(--vscode-focu
 li.slow > .node { background: var(--vscode-inputValidation-warningBackground, rgba(255,200,0,.15)); border-left: 3px solid var(--vscode-inputValidation-warningBorder, #cca700); }
 li.slow > .node .fill { background: var(--vscode-charts-orange, #d18616); }
 details { padding: 0 12px 12px; } pre#raw { overflow: auto; max-height: 40vh; }
+/* ER viewer */
+#svg { width: 100%; height: calc(100vh - 80px); display: block; touch-action: none; cursor: grab; }
+.tbl { cursor: pointer; } .tbl:focus-visible { outline: 2px solid var(--vscode-focusBorder); }
+.tbl .box { fill: var(--vscode-editor-background); stroke: var(--vscode-foreground); stroke-width: 1.2; }
+.tbl .hd { fill: var(--vscode-editorGroupHeader-tabsBackground, var(--vscode-sideBar-background)); stroke: var(--vscode-foreground); stroke-width: 1.2; }
+.tbl .name { fill: var(--vscode-foreground); font-weight: 600; font-size: 13px; }
+.tbl .col { fill: var(--vscode-foreground); font-size: 12px; }
+/* designer */
+form.designer { padding: 10px 14px; display: grid; gap: 12px; }
+.designer table { border-collapse: collapse; width: 100%; } .designer th, .designer td { border: 1px solid var(--vscode-panel-border); padding: 2px 4px; text-align: left; }
+.designer input[type=text] { width: 100%; box-sizing: border-box; color: var(--vscode-input-foreground); background: var(--vscode-input-background); border: 1px solid var(--vscode-input-border, transparent); }
+.designer input:focus-visible, .designer select:focus-visible { outline: 2px solid var(--vscode-focusBorder); }
+#ddl { white-space: pre-wrap; padding: 8px; border: 1px solid var(--vscode-panel-border); max-height: 35vh; overflow: auto; font-family: var(--vscode-editor-font-family); }
+#warn { color: var(--vscode-editorWarning-foreground); }

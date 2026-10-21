@@ -1,0 +1,20 @@
+{
+  "name": "@rizomadb/schema-tools",
+  "version": "0.0.0",
+  "license": "Apache-2.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@rizomadb/driver-api": "workspace:*",
+    "@rizomadb/sql": "workspace:*"
+  },
+  "devDependencies": {
+    "@rizomadb/test-engines": "workspace:*"
+  }
+}

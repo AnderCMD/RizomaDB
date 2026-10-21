@@ -112,7 +112,7 @@ class OracleConnection implements Connection {
       describeSchema: async (schema) => {
         const rows = await this.rows(
           `select c.table_name t, case when v.view_name is null then 'table' else 'view' end k, c.column_name n,
-                  c.data_type || case when c.data_type in ('VARCHAR2','CHAR','NVARCHAR2') then '(' || c.char_length || ')' else '' end ty, c.nullable nl, c.data_default d,
+                  c.data_type || case when c.data_type in ('VARCHAR2','CHAR','NVARCHAR2') then '(' || c.char_length || ')' when c.data_type = 'NUMBER' and c.data_precision is not null then '(' || c.data_precision || case when c.data_scale is not null and c.data_scale <> 0 then ',' || c.data_scale else '' end || ')' else '' end ty, c.nullable nl, c.data_default d,
                   (select count(*) from all_cons_columns cc join all_constraints k on k.owner = cc.owner and k.constraint_name = cc.constraint_name
                     where k.constraint_type = 'P' and cc.owner = c.owner and cc.table_name = c.table_name and cc.column_name = c.column_name) pk
            from all_tab_columns c left join all_views v on v.owner = c.owner and v.view_name = c.table_name
@@ -161,7 +161,7 @@ class OracleConnection implements Connection {
         .map((r): TableInfo => ({ schema: String(r.OWNER), name: String(r.N), kind: r.K === "view" ? "view" : "table" })),
       describeTable: async (ref) => {
         const rows = await this.rows(
-          `select c.column_name n, c.data_type || case when c.data_type in ('VARCHAR2','CHAR','NVARCHAR2') then '(' || c.char_length || ')' else '' end t,
+          `select c.column_name n, c.data_type || case when c.data_type in ('VARCHAR2','CHAR','NVARCHAR2') then '(' || c.char_length || ')' when c.data_type = 'NUMBER' and c.data_precision is not null then '(' || c.data_precision || case when c.data_scale is not null and c.data_scale <> 0 then ',' || c.data_scale else '' end || ')' else '' end t,
                   c.nullable nl, c.data_default d,
                   (select count(*) from all_cons_columns cc join all_constraints k on k.owner = cc.owner and k.constraint_name = cc.constraint_name
                     where k.constraint_type = 'P' and cc.owner = c.owner and cc.table_name = c.table_name and cc.column_name = c.column_name) pk

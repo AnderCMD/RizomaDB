@@ -14,6 +14,11 @@ import { newConnectionWizard } from "./ui/wizard.js";
 import { registerLanguage } from "./ui/language.js";
 import { PlanPanel } from "./ui/planPanel.js";
 import { registerNotebooks } from "./ui/notebook.js";
+import { showEr } from "./ui/erPanel.js";
+import { openDesigner } from "./ui/designerPanel.js";
+import { loadModel, missingFkIndexes, describeChanges } from "./lib/schemaModel.js";
+import { diffModels, migrationStatements, toHtml, toMarkdown, toMigration, createIndex, renderScript, type MigrationFormat, type SchemaModel } from "@rizomadb/schema-tools";
+import { writeFile } from "node:fs/promises";
 import { SchemaCache, DIALECT_OF } from "./lib/schemaCache.js";
 import { bindParameters, explain, findParameters } from "@rizomadb/sql";
 import { createWriteStream } from "node:fs";
@@ -336,6 +341,77 @@ export async function activate(ctx: vscode.ExtensionContext) {
     } catch (e) {
       if ((e as Error).name !== "AbortError") void vscode.window.showErrorMessage(t("Export failed: {0}", (e as Error).message));
     }
+  });
+  const connOf = async (n?: Node) => (n && "profile" in n ? n.profile.id : await pickConnection());
+  const doc = async (content: string, language = "sql") => vscode.window.showTextDocument(await vscode.workspace.openTextDocument({ language, content }), { preview: false });
+
+  reg("rizomadb.showER", async (n?: Node) => {
+    const id = await connOf(n); if (!id) return;
+    try {
+      const model = await vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: t("Reading schema…") }, () => loadModel(mgr, id));
+      const only = n?.kind === "table" ? new Set([n.name.toLowerCase(), ...model.tables.flatMap((x) => x.foreignKeys.flatMap((f) => (x.name.toLowerCase() === n.name.toLowerCase() ? [f.refTable.toLowerCase()] : f.refTable.toLowerCase() === n.name.toLowerCase() ? [x.name.toLowerCase()] : [])))]) : undefined;
+      showEr(ctx, mgr.get(id)!.name, model, only);
+    } catch (e) { void vscode.window.showErrorMessage(t("Could not build the diagram: {0}", (e as Error).message)); }
+  });
+  reg("rizomadb.designTable", async (n?: Node) => {
+    const id = await connOf(n); if (!id) return;
+    const profile = mgr.get(id)!;
+    const plugin = await mgr.loadDriver(profile.driver);
+    if (!plugin.capabilities.ddlGeneration) { void vscode.window.showWarningMessage(t("This engine does not support the table designer.")); return; }
+    try {
+      const model = await loadModel(mgr, id);
+      openDesigner(ctx, mgr, policy, id, model, n?.kind === "table" ? n.name : undefined, () => { schemaCache.invalidate(id); explorer.refresh(); });
+    } catch (e) { void vscode.window.showErrorMessage(t("Could not open the designer: {0}", (e as Error).message)); }
+  });
+  reg("rizomadb.exportSchemaSnapshot", async (n?: Node) => {
+    const id = await connOf(n); if (!id) return;
+    const model = await loadModel(mgr, id);
+    const uri = await vscode.window.showSaveDialog({ filters: { JSON: ["json"] }, defaultUri: vscode.Uri.file(`${mgr.get(id)!.name}.schema.json`) });
+    if (uri) await writeFile(uri.fsPath, JSON.stringify({ version: 1, model }, null, 2) + "\n");
+  });
+  reg("rizomadb.compareSchemas", async (n?: Node) => {
+    const targetId = await connOf(n); if (!targetId) return;
+    const target = mgr.get(targetId)!;
+    const srcKind = await vscode.window.showQuickPick([{ label: t("Another connection"), k: "conn" }, { label: t("A schema snapshot file (.json)"), k: "file" }], { title: t("Make {0} match…", target.name) });
+    if (!srcKind) return;
+    let source: SchemaModel;
+    if (srcKind.k === "conn") {
+      const others = mgr.list().filter((p) => p.id !== targetId && p.driver === target.driver);
+      const pick = await vscode.window.showQuickPick(others.map((p) => ({ label: p.name, description: `[${p.environment}]`, id: p.id })), { title: t("Source connection (same engine as the target)") });
+      if (!pick) return;
+      source = await loadModel(mgr, pick.id);
+    } else {
+      const f = await vscode.window.showOpenDialog({ filters: { JSON: ["json"] }, canSelectMany: false }); if (!f?.[0]) return;
+      const j = JSON.parse(await (await import("node:fs/promises")).readFile(f[0].fsPath, "utf8")) as { version?: number; model?: SchemaModel };
+      if (j.version !== 1 || !j.model?.tables || j.model.dialect !== target.driver) { void vscode.window.showErrorMessage(t("Snapshot is invalid or was taken from a different engine.")); return; }
+      source = j.model;
+    }
+    const current = await loadModel(mgr, targetId);
+    const plan = diffModels(current, source);
+    if (plan.identical) { void vscode.window.showInformationMessage(t("Schemas are identical.")); return; }
+    const summary = describeChanges(current, source);
+    const picked = await vscode.window.showQuickPick(summary.map((label, i) => ({ label, picked: true, i })), { canPickMany: true, title: t("{0} difference(s): choose what to include", summary.length) });
+    if (!picked?.length) return;
+    const chosen = plan.changes.filter((_, i) => picked.some((p) => p.i === i));
+    const fmt = await vscode.window.showQuickPick([{ label: "Plain SQL", f: "plain" }, { label: "Flyway (V…__.sql)", f: "flyway" }, { label: "Liquibase (formatted SQL)", f: "liquibase" }], { title: t("Migration format") });
+    if (!fmt) return;
+    const mig = toMigration(fmt.f as MigrationFormat, "sync schema", migrationStatements(target.driver as never, chosen));
+    await doc(`-- ${mig.fileName}\n${mig.content}`);
+  });
+  reg("rizomadb.generateDocs", async (n?: Node) => {
+    const id = await connOf(n); if (!id) return;
+    const model = await loadModel(mgr, id); const name = mgr.get(id)!.name;
+    const fmt = await vscode.window.showQuickPick([{ label: "Markdown", e: "md" }, { label: "HTML", e: "html" }], { title: t("Documentation format") }); if (!fmt) return;
+    const uri = await vscode.window.showSaveDialog({ filters: { [fmt.label]: [fmt.e] }, defaultUri: vscode.Uri.file(`${name}-schema.${fmt.e}`) }); if (!uri) return;
+    await writeFile(uri.fsPath, fmt.e === "md" ? toMarkdown(model, name) : toHtml(model, name));
+    void vscode.window.showInformationMessage(t("Documentation written to {0}", uri.fsPath));
+  });
+  reg("rizomadb.suggestIndexes", async (n?: Node) => {
+    const id = await connOf(n); if (!id) return;
+    const model = await loadModel(mgr, id); const missing = missingFkIndexes(model);
+    if (!missing.length) { void vscode.window.showInformationMessage(t("Every foreign key is covered by an index.")); return; }
+    const lines = missing.map((m) => { const tb = model.tables.find((x) => x.name === m.table)!; return `-- ${m.table}.${m.fk}: joins and cascades on ${m.columns.join(", ")} scan the whole table\n${renderScript([{ sql: createIndex(model.dialect, tb, { name: `ix_${m.table}_${m.columns.join("_")}`.slice(0, 60), columns: m.columns, unique: false }) }]).trim()}`; });
+    await doc(`-- ${t("Suggested indexes (review before running)")}\n\n${lines.join("\n\n")}\n`);
   });
   reg("rizomadb.reviewPendingChanges", () => reviewChanges());
   reg("rizomadb.applyChanges", () => applyPending());

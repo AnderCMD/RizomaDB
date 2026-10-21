@@ -232,6 +232,9 @@ importers:
       '@rizomadb/network':
         specifier: workspace:*
         version: link:../../packages/network
+      '@rizomadb/schema-tools':
+        specifier: workspace:*
+        version: link:../../packages/schema-tools
       '@rizomadb/sql':
         specifier: workspace:*
         version: link:../../packages/sql
@@ -375,6 +378,19 @@ importers:
         specifier: 1.15.6
         version: 1.15.6
 
+  packages/schema-tools:
+    dependencies:
+      '@rizomadb/driver-api':
+        specifier: workspace:*
+        version: link:../driver-api
+      '@rizomadb/sql':
+        specifier: workspace:*
+        version: link:../sql
+    devDependencies:
+      '@rizomadb/test-engines':
+        specifier: workspace:*
+        version: link:../test-engines
+
   packages/sql:
     dependencies:
       '@rizomadb/driver-api':
@@ -414,6 +430,46 @@ importers:
       tedious:
         specifier: 20.3.8
         version: 20.3.8
+
+  packages/test-engines:
+    dependencies:
+      '@rizomadb/driver-api':
+        specifier: workspace:*
+        version: link:../driver-api
+      '@rizomadb/driver-mssql':
+        specifier: workspace:*
+        version: link:../drivers/mssql
+      '@rizomadb/driver-mysql':
+        specifier: workspace:*
+        version: link:../drivers/mysql
+      '@rizomadb/driver-oracle':
+        specifier: workspace:*
+        version: link:../drivers/oracle
+      '@rizomadb/driver-postgres':
+        specifier: workspace:*
+        version: link:../drivers/postgres
+      '@rizomadb/driver-sqlite':
+        specifier: workspace:*
+        version: link:../drivers/sqlite
+      mysql2:
+        specifier: 3.24.6
+        version: 3.24.6(@types/node@26.6.5)
+      oracledb:
+        specifier: 26.0.0
+        version: 26.0.0
+      pg:
+        specifier: 8.23.1
+        version: 8.23.1
+      tedious:
+        specifier: 20.3.8
+        version: 20.3.8
+    devDependencies:
+      '@types/oracledb':
+        specifier: 7.0.3
+        version: 7.0.3
+      '@types/pg':
+        specifier: 8.23.1
+        version: 8.23.1
 
 packages:
 

@@ -27,5 +27,11 @@
   "cmd.export": "Exportar datos…",
   "cmd.explain": "Explicar plan de ejecución",
   "cmd.newNotebook": "Nuevo cuaderno SQL",
-  "cmd.pin": "Fijar pestaña de resultados"
+  "cmd.pin": "Fijar pestaña de resultados",
+  "cmd.er": "Mostrar diagrama ER",
+  "cmd.design": "Diseñar tabla",
+  "cmd.snapshot": "Exportar instantánea del esquema",
+  "cmd.compare": "Comparar esquemas",
+  "cmd.docs": "Generar documentación del esquema",
+  "cmd.suggest": "Sugerir índices de claves foráneas faltantes"
 }

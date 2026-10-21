@@ -157,6 +157,36 @@
         "command": "rizomadb.pinResults",
         "title": "%cmd.pin%",
         "category": "RizomaDB"
+      },
+      {
+        "command": "rizomadb.showER",
+        "title": "%cmd.er%",
+        "category": "RizomaDB"
+      },
+      {
+        "command": "rizomadb.designTable",
+        "title": "%cmd.design%",
+        "category": "RizomaDB"
+      },
+      {
+        "command": "rizomadb.exportSchemaSnapshot",
+        "title": "%cmd.snapshot%",
+        "category": "RizomaDB"
+      },
+      {
+        "command": "rizomadb.compareSchemas",
+        "title": "%cmd.compare%",
+        "category": "RizomaDB"
+      },
+      {
+        "command": "rizomadb.generateDocs",
+        "title": "%cmd.docs%",
+        "category": "RizomaDB"
+      },
+      {
+        "command": "rizomadb.suggestIndexes",
+        "title": "%cmd.suggest%",
+        "category": "RizomaDB"
       }
     ],
     "menus": {
@@ -196,6 +226,46 @@
         {
           "command": "rizomadb.export",
           "when": "view == rizomadb.connections && viewItem == table"
+        },
+        {
+          "command": "rizomadb.showER",
+          "when": "view == rizomadb.connections && viewItem == connection",
+          "group": "schema"
+        },
+        {
+          "command": "rizomadb.designTable",
+          "when": "view == rizomadb.connections && viewItem == connection",
+          "group": "schema"
+        },
+        {
+          "command": "rizomadb.compareSchemas",
+          "when": "view == rizomadb.connections && viewItem == connection",
+          "group": "schema"
+        },
+        {
+          "command": "rizomadb.generateDocs",
+          "when": "view == rizomadb.connections && viewItem == connection",
+          "group": "schema"
+        },
+        {
+          "command": "rizomadb.suggestIndexes",
+          "when": "view == rizomadb.connections && viewItem == connection",
+          "group": "schema"
+        },
+        {
+          "command": "rizomadb.exportSchemaSnapshot",
+          "when": "view == rizomadb.connections && viewItem == connection",
+          "group": "schema"
+        },
+        {
+          "command": "rizomadb.showER",
+          "when": "view == rizomadb.connections && viewItem == table",
+          "group": "schema"
+        },
+        {
+          "command": "rizomadb.designTable",
+          "when": "view == rizomadb.connections && viewItem == table",
+          "group": "schema"
         }
       ],
       "editor/title": [
@@ -304,7 +374,8 @@
     "@rizomadb/driver-oracle": "workspace:*",
     "@rizomadb/network": "workspace:*",
     "@rizomadb/data-tools": "workspace:*",
-    "@rizomadb/sql": "workspace:*"
+    "@rizomadb/sql": "workspace:*",
+    "@rizomadb/schema-tools": "workspace:*"
   },
   "devDependencies": {
     "@types/vscode": "1.100.0",
