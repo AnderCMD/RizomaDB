@@ -32,7 +32,7 @@ code --install-extension apps/extension/rizomadb-0.0.1.vsix
 Then click the RizomaDB icon, or run **RizomaDB: Open the Guide**. Full walk-through: [Getting started](docs/guides/getting-started.md).
 
 ## Documentation
-[Getting started](docs/guides/getting-started.md) · [Connections](docs/guides/connections.md) · [The query editor](docs/guides/query-editor.md) · [The results grid](docs/guides/results-grid.md) · [Editing data](docs/guides/editing-data.md) · [Language and settings](docs/guides/language-and-settings.md) · [Troubleshooting](docs/guides/troubleshooting.md) · [Settings](docs/reference/settings.md) and [commands](docs/reference/commands.md) reference · [Policies](docs/enterprise/policy.md) · [Threat model](docs/security/threat-model.md) · [CI/CD](docs/ci-cd.md) · [Writing a driver](docs/drivers/authoring.md)
+[Getting started](docs/guides/getting-started.md) · [Connections](docs/guides/connections.md) · [The query editor](docs/guides/query-editor.md) · [The results grid](docs/guides/results-grid.md) · [Editing data](docs/guides/editing-data.md) · [Language and settings](docs/guides/language-and-settings.md) · [Troubleshooting](docs/guides/troubleshooting.md) · [Settings](docs/reference/settings.md) and [commands](docs/reference/commands.md) reference · [Policies](docs/enterprise/policy.md) · [Threat model](docs/security/threat-model.md) · [CI/CD](docs/ci-cd.md) · [Design guide](docs/design/design-guide.md) · [AGENTS.md](AGENTS.md) · [Writing a driver](docs/drivers/authoring.md)
 
 ## Development
 ```bash

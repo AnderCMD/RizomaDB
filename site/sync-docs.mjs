@@ -2,7 +2,7 @@
 import { cpSync, mkdirSync, rmSync } from "node:fs";
 const copy = (from, to) => { rmSync(to, { recursive: true, force: true }); mkdirSync(to, { recursive: true }); cpSync(from, to, { recursive: true }); };
 // English
-for (const d of ["guides", "engines", "enterprise", "security", "market", "drivers", "reference"]) copy(`../docs/${d}`, `content/en/${d}`);
+for (const d of ["guides", "engines", "enterprise", "security", "market", "drivers", "reference", "design"]) copy(`../docs/${d}`, `content/en/${d}`);
 cpSync("../docs/ci-cd.md", "content/en/ci-cd.md");
 // Spanish: the user guides and references are translated; the rest of the technical pages stay in English
 copy("../docs/es/guias", "content/es/guias");

@@ -10,3 +10,5 @@
 8. Important technical decisions: add an ADR in `docs/adr/`.
 
 Contribution license: Apache-2.0.
+
+AI agents: read [AGENTS.md](AGENTS.md) first; UI work follows the [design guide](docs/design/design-guide.md). `graphify-out/GRAPH_REPORT.md` is a map of the code.

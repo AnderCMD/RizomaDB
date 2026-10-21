@@ -14,7 +14,7 @@ const enSidebar = [
     { text: "Policy", link: "/en/enterprise/policy" }, { text: "Audit", link: "/en/enterprise/audit" },
     { text: "Deployment", link: "/en/enterprise/deployment" }, { text: "Compliance", link: "/en/enterprise/compliance" } ] },
   { text: "Security", items: [{ text: "Threat model", link: "/en/security/threat-model" }, { text: "Dependency policy", link: "/en/security/dependency-policy" }] },
-  { text: "Project", items: [{ text: "Honest comparison", link: "/en/market/honest-comparison" }, { text: "Writing a driver", link: "/en/drivers/authoring" }, { text: "CI/CD", link: "/en/ci-cd" }] },
+  { text: "Project", items: [{ text: "Honest comparison", link: "/en/market/honest-comparison" }, { text: "Writing a driver", link: "/en/drivers/authoring" }, { text: "Design guide", link: "/en/design/design-guide" }, { text: "CI/CD", link: "/en/ci-cd" }] },
 ];
 const esSidebar = [
   { text: "Inicio", items: [{ text: "Resumen", link: "/es/" }, { text: "Primeros pasos", link: "/es/guias/primeros-pasos" }, { text: "Solución de problemas", link: "/es/guias/solucion-de-problemas" }] },

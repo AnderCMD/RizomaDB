@@ -32,7 +32,7 @@ code --install-extension apps/extension/rizomadb-0.0.1.vsix
 Luego haz clic en el icono de RizomaDB, o ejecuta **RizomaDB: Abrir la guía**. Recorrido completo: [Primeros pasos](docs/es/guias/primeros-pasos.md).
 
 ## Documentación
-[Primeros pasos](docs/es/guias/primeros-pasos.md) · [Conexiones](docs/es/guias/conexiones.md) · [El editor de consultas](docs/es/guias/editor-de-consultas.md) · [La rejilla de resultados](docs/es/guias/rejilla-de-resultados.md) · [Edición de datos](docs/es/guias/edicion-de-datos.md) · [Idioma y ajustes](docs/es/guias/idioma-y-ajustes.md) · [Solución de problemas](docs/es/guias/solucion-de-problemas.md) · Referencia de [ajustes](docs/es/referencia/ajustes.md) y de [comandos](docs/es/referencia/comandos.md) · [Políticas](docs/enterprise/policy.md) · [Modelo de amenazas](docs/security/threat-model.md) · [CI/CD](docs/ci-cd.md)
+[Primeros pasos](docs/es/guias/primeros-pasos.md) · [Conexiones](docs/es/guias/conexiones.md) · [El editor de consultas](docs/es/guias/editor-de-consultas.md) · [La rejilla de resultados](docs/es/guias/rejilla-de-resultados.md) · [Edición de datos](docs/es/guias/edicion-de-datos.md) · [Idioma y ajustes](docs/es/guias/idioma-y-ajustes.md) · [Solución de problemas](docs/es/guias/solucion-de-problemas.md) · Referencia de [ajustes](docs/es/referencia/ajustes.md) y de [comandos](docs/es/referencia/comandos.md) · [Políticas](docs/enterprise/policy.md) · [Modelo de amenazas](docs/security/threat-model.md) · [CI/CD](docs/ci-cd.md) · [Guía de diseño](docs/design/design-guide.md) (en inglés) · [AGENTS.md](AGENTS.md)
 
 ## Desarrollo
 ```bash

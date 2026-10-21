@@ -11,3 +11,9 @@ site/content/en/*/
 site/content/es/*/
 .soak
 site/content/en/ci-cd.md
+
+# graphify: keep the report and graph, not the caches or the 2.6 MB html
+graphify-out/cache/
+graphify-out/.graphify_*
+graphify-out/graph.html
+graphify-out/cost.json
