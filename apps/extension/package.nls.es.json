@@ -33,5 +33,10 @@
   "cmd.snapshot": "Exportar instantánea del esquema",
   "cmd.compare": "Comparar esquemas",
   "cmd.docs": "Generar documentación del esquema",
-  "cmd.suggest": "Sugerir índices de claves foráneas faltantes"
+  "cmd.suggest": "Sugerir índices de claves foráneas faltantes",
+  "cmd.import": "Importar datos…",
+  "cmd.backup": "Copia de seguridad…",
+  "cmd.restore": "Restaurar base de datos…",
+  "cmd.compareData": "Comparar datos con otra tabla…",
+  "cmd.generateData": "Generar datos de prueba…"
 }

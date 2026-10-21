@@ -187,6 +187,31 @@
         "command": "rizomadb.suggestIndexes",
         "title": "%cmd.suggest%",
         "category": "RizomaDB"
+      },
+      {
+        "command": "rizomadb.import",
+        "title": "%cmd.import%",
+        "category": "RizomaDB"
+      },
+      {
+        "command": "rizomadb.backup",
+        "title": "%cmd.backup%",
+        "category": "RizomaDB"
+      },
+      {
+        "command": "rizomadb.restore",
+        "title": "%cmd.restore%",
+        "category": "RizomaDB"
+      },
+      {
+        "command": "rizomadb.compareData",
+        "title": "%cmd.compareData%",
+        "category": "RizomaDB"
+      },
+      {
+        "command": "rizomadb.generateData",
+        "title": "%cmd.generateData%",
+        "category": "RizomaDB"
       }
     ],
     "menus": {
@@ -266,6 +291,31 @@
           "command": "rizomadb.designTable",
           "when": "view == rizomadb.connections && viewItem == table",
           "group": "schema"
+        },
+        {
+          "command": "rizomadb.import",
+          "when": "view == rizomadb.connections && viewItem == table",
+          "group": "data"
+        },
+        {
+          "command": "rizomadb.compareData",
+          "when": "view == rizomadb.connections && viewItem == table",
+          "group": "data"
+        },
+        {
+          "command": "rizomadb.generateData",
+          "when": "view == rizomadb.connections && viewItem == table",
+          "group": "data"
+        },
+        {
+          "command": "rizomadb.backup",
+          "when": "view == rizomadb.connections && viewItem == connection",
+          "group": "data"
+        },
+        {
+          "command": "rizomadb.restore",
+          "when": "view == rizomadb.connections && viewItem == connection",
+          "group": "data"
         }
       ],
       "editor/title": [

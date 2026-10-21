@@ -297,13 +297,25 @@ importers:
 
   packages/data-tools:
     dependencies:
+      '@rizomadb/core':
+        specifier: workspace:*
+        version: link:../core
       '@rizomadb/driver-api':
         specifier: workspace:*
         version: link:../driver-api
     devDependencies:
+      '@rizomadb/driver-postgres':
+        specifier: workspace:*
+        version: link:../drivers/postgres
       '@rizomadb/driver-sqlite':
         specifier: workspace:*
         version: link:../drivers/sqlite
+      '@rizomadb/test-engines':
+        specifier: workspace:*
+        version: link:../test-engines
+      fast-check:
+        specifier: 4.10.2
+        version: 4.10.2
 
   packages/driver-api:
     dependencies:

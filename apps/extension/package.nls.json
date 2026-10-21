@@ -33,5 +33,10 @@
   "cmd.snapshot": "Export Schema Snapshot",
   "cmd.compare": "Compare Schemas",
   "cmd.docs": "Generate Schema Documentation",
-  "cmd.suggest": "Suggest Missing Foreign-Key Indexes"
+  "cmd.suggest": "Suggest Missing Foreign-Key Indexes",
+  "cmd.import": "Import Data…",
+  "cmd.backup": "Back Up Database…",
+  "cmd.restore": "Restore Database…",
+  "cmd.compareData": "Compare Data With Another Table…",
+  "cmd.generateData": "Generate Test Data…"
 }

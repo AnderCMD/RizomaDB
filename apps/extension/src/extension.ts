@@ -19,6 +19,7 @@ import { openDesigner } from "./ui/designerPanel.js";
 import { loadModel, missingFkIndexes, describeChanges } from "./lib/schemaModel.js";
 import { diffModels, migrationStatements, toHtml, toMarkdown, toMigration, createIndex, renderScript, type MigrationFormat, type SchemaModel } from "@rizomadb/schema-tools";
 import { writeFile } from "node:fs/promises";
+import { registerDataCommands } from "./ui/dataCommands.js";
 import { SchemaCache, DIALECT_OF } from "./lib/schemaCache.js";
 import { bindParameters, explain, findParameters } from "@rizomadb/sql";
 import { createWriteStream } from "node:fs";
@@ -413,6 +414,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
     const lines = missing.map((m) => { const tb = model.tables.find((x) => x.name === m.table)!; return `-- ${m.table}.${m.fk}: joins and cascades on ${m.columns.join(", ")} scan the whole table\n${renderScript([{ sql: createIndex(model.dialect, tb, { name: `ix_${m.table}_${m.columns.join("_")}`.slice(0, 60), columns: m.columns, unique: false }) }]).trim()}`; });
     await doc(`-- ${t("Suggested indexes (review before running)")}\n\n${lines.join("\n\n")}\n`);
   });
+  registerDataCommands({ ctx, mgr, policy, pick: () => pickConnection(), reg, refresh: () => explorer.refresh() });
   reg("rizomadb.reviewPendingChanges", () => reviewChanges());
   reg("rizomadb.applyChanges", () => applyPending());
   reg("rizomadb.discardChanges", () => { session?.s.pending.clear(); pushPending(); });
