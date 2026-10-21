@@ -52,6 +52,7 @@ function makeRegistry(workerFile: string): DriverRegistry {
     redis: async () => workerDriver((await import("@rizomadb/driver-redis/meta")).meta, workerFile),
     clickhouse: async () => workerDriver((await import("@rizomadb/driver-clickhouse/meta")).meta, workerFile),
     elasticsearch: async () => workerDriver((await import("@rizomadb/driver-elasticsearch/meta")).meta, workerFile),
+    firestore: async () => workerDriver((await import("@rizomadb/driver-firestore/meta")).meta, workerFile),
     cassandra: async () => workerDriver((await import("@rizomadb/driver-cassandra/meta")).meta, workerFile),
     influxdb: async () => workerDriver((await import("@rizomadb/driver-influxdb/meta")).meta, workerFile),
     dynamodb: async () => workerDriver((await import("@rizomadb/driver-dynamodb/meta")).meta, workerFile),
@@ -327,7 +328,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
     const id = n && "profile" in n ? n.profile.id : await pickConnection();
     const plugin = id ? await mgr.loadDriver(mgr.get(id)!.driver) : undefined;
     const language = plugin?.language === "mongo" ? "rizomadb-mongo" : plugin?.language === "redis" ? "rizomadb-redis" : plugin?.language === "json" ? "rizomadb-es" : plugin?.language === "cypher" ? "rizomadb-cypher" : "sql";
-    const sample = language === "rizomadb-es" ? "GET /_cluster/health\n" : language === "rizomadb-cypher" ? "// run with Ctrl/Cmd+Enter; end statements with ;\nMATCH (n) RETURN n LIMIT 25;\n" : language === "rizomadb-mongo" ? "db.getCollection(\"collection\").find({}).limit(20)\n" : language === "rizomadb-redis" ? "# one command per line; run with Ctrl/Cmd+Enter\nSCAN 0 MATCH * COUNT 100\n" : "";
+    const sample = language === "rizomadb-es" ? (plugin?.id === "firestore" ? "{ \"from\": \"collection\", \"limit\": 20 }\n" : "GET /_cluster/health\n") : language === "rizomadb-cypher" ? "// run with Ctrl/Cmd+Enter; end statements with ;\nMATCH (n) RETURN n LIMIT 25;\n" : language === "rizomadb-mongo" ? "db.getCollection(\"collection\").find({}).limit(20)\n" : language === "rizomadb-redis" ? "# one command per line; run with Ctrl/Cmd+Enter\nSCAN 0 MATCH * COUNT 100\n" : "";
     const doc = await vscode.workspace.openTextDocument({ language, content: sample });
     await vscode.window.showTextDocument(doc);
     if (id) await ctx.workspaceState.update(`doc:${doc.uri.toString()}`, id);

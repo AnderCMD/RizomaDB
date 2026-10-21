@@ -717,6 +717,7 @@
     "@rizomadb/driver-elasticsearch": "workspace:*",
     "@rizomadb/driver-cassandra": "workspace:*",
     "@rizomadb/driver-dynamodb": "workspace:*",
+    "@rizomadb/driver-firestore": "workspace:*",
     "@rizomadb/driver-influxdb": "workspace:*",
     "@rizomadb/driver-neo4j": "workspace:*",
     "@rizomadb/driver-mongodb": "workspace:*",

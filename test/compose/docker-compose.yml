@@ -58,3 +58,7 @@ services:
     image: cassandra:5.0
     environment: { MAX_HEAP_SIZE: 512M, HEAP_NEWSIZE: 128M, CASSANDRA_DC: dc1 }
     ports: ["19042:9042"]
+  firestore:
+    image: gcr.io/google.com/cloudsdktool/google-cloud-cli:emulators
+    command: ["gcloud", "emulators", "firestore", "start", "--host-port=0.0.0.0:8080", "--project=rizoma-test"]
+    ports: ["18080:8080"]
