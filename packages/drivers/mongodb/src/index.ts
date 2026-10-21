@@ -109,7 +109,7 @@ async function* docsToEvents(docs: AsyncIterable<unknown> | unknown[], req: Exec
   while (head.length < 100 && more) { const r = await iter.next(); if (r.done) more = false; else head.push(r.value as Document); }
   const names: string[] = [];
   for (const d of head) for (const k of Object.keys(d)) if (!names.includes(k)) names.push(k);
-  if (names.includes("_id")) names.splice(names.indexOf("_id"), 1), names.unshift("_id");
+  if (names.includes("_id")) { names.splice(names.indexOf("_id"), 1); names.unshift("_id"); }
   const kindOf = (n: string) => { for (const d of head) { const x = d[n]; if (x !== null && x !== undefined) return { kind: kindOfValue(x), type: bsonTypeName(x) }; } return { kind: "other" as const, type: "null" }; };
   const cols = names.map((n): ColumnInfo => { const k = kindOf(n); return { name: n, nativeType: k.type, kind: k.kind }; });
   yield { type: "columns", columns: cols };

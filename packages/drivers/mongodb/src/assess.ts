@@ -1,4 +1,4 @@
-import { MongoSyntaxError, parseMongoCommand } from "./parser.js";
+import { MongoSyntaxError, parseCommandWith, plainFactory } from "./parserCore.js";
 
 export type Risk = "none" | "write" | "destructive";
 export interface Assessment { risk: Risk; reasons: string[] }
@@ -14,7 +14,7 @@ const hasOut = (pipeline: unknown) => Array.isArray(pipeline) && pipeline.some((
 /** Classifies a shell-lite command. Unparseable text is never executed (it fails with a syntax error), so it carries no risk. */
 export function assessMongo(text: string): Assessment {
   let c;
-  try { c = parseMongoCommand(text); } catch (e) { if (e instanceof MongoSyntaxError) return { risk: "none", reasons: [] }; throw e; }
+  try { c = parseCommandWith(text, plainFactory); } catch (e) { if (e instanceof MongoSyntaxError) return { risk: "none", reasons: [] }; throw e; }
   const reasons: string[] = [];
   const m = c.method;
   if (c.target === "db") {

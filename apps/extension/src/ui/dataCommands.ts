@@ -23,6 +23,11 @@ export function registerDataCommands({ mgr, policy, pick, reg, refresh }: Deps) 
     const strong = profile.environment === "prod" || profile.environment === "staging";
     return (await vscode.window.showWarningMessage(t("[{0}] {1}: {2}", profile.environment.toUpperCase(), profile.name, what), { modal: true, ...(detail ? { detail } : {}) }, strong ? t("Yes, on {0}", profile.environment.toUpperCase()) : t("Continue"))) !== undefined;
   };
+  const needSql = async (profile: { driver: string }) => {
+    const p = await mgr.loadDriver(profile.driver);
+    if (!p.capabilities.sql) { void vscode.window.showInformationMessage(t("{0} is not a SQL engine: this tool is not available for it.", p.displayName)); return false; }
+    return true;
+  };
   const describe = async (n: Extract<Node, { kind: "table" }>) => {
     const conn = await mgr.connect(n.profile.id);
     const info = await conn.introspect().describeTable({ name: n.name, ...(n.schema ? { schema: n.schema } : {}) });
@@ -33,6 +38,7 @@ export function registerDataCommands({ mgr, policy, pick, reg, refresh }: Deps) 
   reg("rizomadb.import", async (n?: Node) => {
     const tb = tableOf(n); if (!tb) { void vscode.window.showInformationMessage(t("Right-click a table and choose Import Data.")); return; }
     const profile = tb.profile;
+    if (!(await needSql(profile))) return;
     if (!ensureWritable(profile, "INSERT INTO t VALUES (1)")) return;
     const f = await vscode.window.showOpenDialog({ canSelectMany: false, filters: { Data: ["csv", "tsv", "json", "jsonl", "ndjson", "txt"] } }); if (!f?.[0]) return;
     try {
@@ -65,8 +71,8 @@ export function registerDataCommands({ mgr, policy, pick, reg, refresh }: Deps) 
   reg("rizomadb.backup", async (n?: Node) => {
     const id = n && "profile" in n ? n.profile.id : await pick(); if (!id) return;
     const profile = mgr.get(id)!;
-    const ext = profile.driver === "postgres" ? "dump" : profile.driver === "mysql" ? "sql" : "db";
-    if (!["postgres", "mysql", "sqlite"].includes(profile.driver)) { void vscode.window.showWarningMessage(t("No supported native backup tool for this engine; use the vendor's tool.")); return; }
+    const ext = profile.driver === "postgres" ? "dump" : profile.driver === "mysql" ? "sql" : profile.driver === "mongodb" ? "archive.gz" : "db";
+    if (!["postgres", "mysql", "sqlite", "mongodb"].includes(profile.driver)) { void vscode.window.showWarningMessage(t("No supported native backup tool for this engine; use the vendor's tool.")); return; }
     const uri = await vscode.window.showSaveDialog({ defaultUri: vscode.Uri.file(join(homedir(), `${profile.name}.${ext}`)) }); if (!uri) return;
     try {
       const { resolveConfig } = await import("@rizomadb/core");
@@ -74,11 +80,11 @@ export function registerDataCommands({ mgr, policy, pick, reg, refresh }: Deps) 
         const ac = new AbortController(); token.onCancellationRequested(() => ac.abort());
         if (profile.driver === "sqlite") { await backupSqlite(await mgr.connect(id), uri.fsPath, ac.signal); return { code: 0, stderr: "" }; }
         const cfg = await resolveConfig(profile, mgrSecrets(), process.env);
-        return runTool(await backupSpec(profile.driver as "postgres" | "mysql", cfg, uri.fsPath), { signal: ac.signal, onOutput: (l) => progress.report({ message: l.slice(0, 80) }) });
+        return runTool(await backupSpec(profile.driver as "postgres" | "mysql" | "mongodb", cfg, uri.fsPath), { signal: ac.signal, onOutput: (l) => progress.report({ message: l.slice(0, 80) }) });
       };
       const r = await vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: t("Backing up {0}", profile.name), cancellable: true }, run);
       if (r.code !== 0) { void vscode.window.showErrorMessage(t("Backup tool failed: {0}", r.stderr.slice(0, 400))); return; }
-      const v = await verifyBackup(profile.driver as "postgres" | "mysql" | "sqlite", uri.fsPath);
+      const v = await verifyBackup(profile.driver as "postgres" | "mysql" | "mongodb" | "sqlite", uri.fsPath);
       void (v.ok ? vscode.window.showInformationMessage(t("Backup written and verified: {0}", v.detail)) : vscode.window.showErrorMessage(t("Backup written but NOT verified: {0}", v.detail)));
     } catch (e) { void vscode.window.showErrorMessage(t("Backup failed: {0}", (e as Error).message)); }
   });
@@ -86,7 +92,7 @@ export function registerDataCommands({ mgr, policy, pick, reg, refresh }: Deps) 
   reg("rizomadb.restore", async (n?: Node) => {
     const id = n && "profile" in n ? n.profile.id : await pick(); if (!id) return;
     const profile = mgr.get(id)!;
-    if (!["postgres", "mysql"].includes(profile.driver)) { void vscode.window.showWarningMessage(t("Restore is supported for PostgreSQL and MySQL/MariaDB. For SQLite, replace the database file.")); return; }
+    if (!["postgres", "mysql", "mongodb"].includes(profile.driver)) { void vscode.window.showWarningMessage(t("Restore is supported for PostgreSQL, MySQL/MariaDB and MongoDB. For SQLite, replace the database file.")); return; }
     if (!ensureWritable(profile, "DROP TABLE x")) return;
     const f = await vscode.window.showOpenDialog({ canSelectMany: false }); if (!f?.[0]) return;
     if (!(await confirmEnv(profile, t("restore {0} from this file? Existing objects with the same names are replaced.", profile.name), f[0].fsPath))) return;
@@ -95,7 +101,7 @@ export function registerDataCommands({ mgr, policy, pick, reg, refresh }: Deps) 
       const cfg = await resolveConfig(profile, mgrSecrets(), process.env);
       const r = await vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: t("Restoring {0}", profile.name), cancellable: true }, async (progress, token) => {
         const ac = new AbortController(); token.onCancellationRequested(() => ac.abort());
-        return runTool(await restoreSpec(profile.driver as "postgres" | "mysql", cfg, f[0]!.fsPath), { signal: ac.signal, onOutput: (l) => progress.report({ message: l.slice(0, 80) }) });
+        return runTool(await restoreSpec(profile.driver as "postgres" | "mysql" | "mongodb", cfg, f[0]!.fsPath), { signal: ac.signal, onOutput: (l) => progress.report({ message: l.slice(0, 80) }) });
       });
       void (r.code === 0 ? vscode.window.showInformationMessage(t("Restore completed.")) : vscode.window.showErrorMessage(t("Restore reported errors: {0}", r.stderr.slice(0, 400))));
       refresh();
@@ -104,7 +110,8 @@ export function registerDataCommands({ mgr, policy, pick, reg, refresh }: Deps) 
 
   reg("rizomadb.compareData", async (n?: Node) => {
     const tb = tableOf(n); if (!tb) { void vscode.window.showInformationMessage(t("Right-click a table and choose Compare Data.")); return; }
-    const others = mgr.list();
+    if (!(await needSql(tb.profile))) return;
+    const others = mgr.list().filter((p) => p.driver !== "mongodb" && p.driver !== "redis");
     const pickT = await vscode.window.showQuickPick(others.map((p) => ({ label: p.name, description: `[${p.environment}] ${p.driver}`, id: p.id })), { title: t("Target connection (will be made to match {0})", tb.name) });
     if (!pickT) return;
     const tProfile = mgr.get(pickT.id)!;
@@ -146,6 +153,7 @@ export function registerDataCommands({ mgr, policy, pick, reg, refresh }: Deps) 
   reg("rizomadb.generateData", async (n?: Node) => {
     const tb = tableOf(n); if (!tb) { void vscode.window.showInformationMessage(t("Right-click a table and choose Generate Test Data.")); return; }
     const profile = tb.profile;
+    if (!(await needSql(profile))) return;
     if (profile.environment === "prod") { void vscode.window.showErrorMessage(t("Test data generation is disabled on prod connections.")); return; }
     if (!ensureWritable(profile, "INSERT INTO t VALUES (1)")) return;
     const count = await vscode.window.showInputBox({ title: t("How many rows?"), value: "1000", validateInput: (v) => (/^\d+$/.test(v) && Number(v) >= 1 && Number(v) <= 5_000_000 ? undefined : t("Enter a number from 1 to 5,000,000")) }); if (!count) return;

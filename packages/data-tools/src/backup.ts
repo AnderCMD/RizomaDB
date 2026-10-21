@@ -27,9 +27,26 @@ async function mysqlDefaults(cfg: ResolvedConnectionConfig) {
   return { file, cleanup: () => rm(dir, { recursive: true, force: true }) };
 }
 
-export type BackupEngine = "postgres" | "mysql";
+export type BackupEngine = "postgres" | "mysql" | "mongodb";
+
+/** mongodump/mongorestore read the URI (which may hold the password) from a 0600 config file, not argv. */
+async function mongoConfig(cfg: ResolvedConnectionConfig) {
+  const dir = await mkdtemp(join(tmpdir(), "rz-mongo-"));
+  const file = join(dir, "tool.yaml");
+  const uri = cfg.uri ? String(cfg.uri) : (() => {
+    const auth = cfg.user ? `${encodeURIComponent(String(cfg.user))}:${encodeURIComponent(String(cfg.password ?? ""))}@` : "";
+    return `mongodb://${auth}${str(cfg.host, "localhost")}:${Number(cfg.port ?? 27017)}/${cfg.user ? `?authSource=${encodeURIComponent(str(cfg.authSource, "admin"))}` : ""}`;
+  })();
+  await writeFile(file, `uri: ${JSON.stringify(uri)}\n`, { mode: 0o600 });
+  return { file, cleanup: () => rm(dir, { recursive: true, force: true }) };
+}
 
 export async function backupSpec(engine: BackupEngine, cfg: ResolvedConnectionConfig, file: string, tools: Partial<Record<string, string>> = {}): Promise<ToolSpec> {
+  if (engine === "mongodb") {
+    const cmd = tools.mongodump ?? findTool("mongodump"); if (!cmd) throw new Error("mongodump was not found on PATH. Install the MongoDB Database Tools.");
+    const c = await mongoConfig(cfg);
+    return { command: cmd, args: [`--config=${c.file}`, `--archive=${file}`, "--gzip", ...(cfg.database ? [`--db=${str(cfg.database)}`] : [])], env: {}, cleanup: c.cleanup };
+  }
   if (engine === "postgres") {
     const cmd = tools.pg_dump ?? findTool("pg_dump"); if (!cmd) throw new Error("pg_dump was not found on PATH. Install the PostgreSQL client tools.");
     return { command: cmd, args: ["-Fc", "-h", str(cfg.host, "localhost"), "-p", String(cfg.port ?? 5432), "-U", str(cfg.user), "-d", str(cfg.database), "-f", file, "--no-password"], env: pgEnv(cfg), cleanup: async () => {} };
@@ -40,6 +57,11 @@ export async function backupSpec(engine: BackupEngine, cfg: ResolvedConnectionCo
 }
 
 export async function restoreSpec(engine: BackupEngine, cfg: ResolvedConnectionConfig, file: string, tools: Partial<Record<string, string>> = {}): Promise<ToolSpec> {
+  if (engine === "mongodb") {
+    const cmd = tools.mongorestore ?? findTool("mongorestore"); if (!cmd) throw new Error("mongorestore was not found on PATH. Install the MongoDB Database Tools.");
+    const c = await mongoConfig(cfg);
+    return { command: cmd, args: [`--config=${c.file}`, `--archive=${file}`, "--gzip", "--drop", ...(cfg.database ? [`--nsInclude=${str(cfg.database)}.*`] : [])], env: {}, cleanup: c.cleanup };
+  }
   if (engine === "postgres") {
     const cmd = tools.pg_restore ?? findTool("pg_restore"); if (!cmd) throw new Error("pg_restore was not found on PATH. Install the PostgreSQL client tools.");
     return { command: cmd, args: ["--clean", "--if-exists", "--no-owner", "-h", str(cfg.host, "localhost"), "-p", String(cfg.port ?? 5432), "-U", str(cfg.user), "-d", str(cfg.database), "--no-password", file], env: pgEnv(cfg), cleanup: async () => {} };
@@ -78,6 +100,7 @@ export async function verifyBackup(engine: BackupEngine | "sqlite", file: string
     const r = await runTool({ command: cmd, args: ["--list", file], env: {}, stdoutFile: undefined, cleanup: async () => {} });
     return r.code === 0 ? { ok: true, detail: `${size} bytes, readable by pg_restore` } : { ok: false, detail: `pg_restore cannot read the file: ${r.stderr.slice(0, 300)}` };
   }
+  if (engine === "mongodb") return { ok: true, detail: `${size} bytes written (gzip archive; restore it into a scratch server to validate)` };
   if (engine === "mysql") {
     const tail = (await readFile(file)).subarray(-300).toString();
     return /Dump completed/.test(tail) ? { ok: true, detail: `${size} bytes, dump completed` } : { ok: false, detail: "The dump does not end with 'Dump completed' (it may be truncated)" };

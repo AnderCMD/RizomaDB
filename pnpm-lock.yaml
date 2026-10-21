@@ -214,6 +214,9 @@ importers:
       '@rizomadb/driver-api':
         specifier: workspace:*
         version: link:../../packages/driver-api
+      '@rizomadb/driver-mongodb':
+        specifier: workspace:*
+        version: link:../../packages/drivers/mongodb
       '@rizomadb/driver-mssql':
         specifier: workspace:*
         version: link:../../packages/drivers/mssql
@@ -226,6 +229,9 @@ importers:
       '@rizomadb/driver-postgres':
         specifier: workspace:*
         version: link:../../packages/drivers/postgres
+      '@rizomadb/driver-redis':
+        specifier: workspace:*
+        version: link:../../packages/drivers/redis
       '@rizomadb/driver-sqlite':
         specifier: workspace:*
         version: link:../../packages/drivers/sqlite
@@ -322,6 +328,9 @@ importers:
       fast-check:
         specifier: 4.10.2
         version: 4.10.2
+      mongodb:
+        specifier: 7.7.0
+        version: 7.7.0
 
   packages/driver-api:
     dependencies:

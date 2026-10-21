@@ -186,3 +186,21 @@ describe("notebook format", () => {
     expect(h).not.toContain("<script>"); expect(h).toContain("&lt;script&gt;"); expect(h).toContain("<i>NULL</i>");
   });
 });
+
+import { analysisMarkdown, analyzeDocuments, pipelinePrefix, pipelineStages } from "./mongoTools.js";
+describe("mongo tools", () => {
+  it("analyzes sampled documents: presence, types, nesting and arrays of documents", () => {
+    const a = analyzeDocuments([{ a: 1, b: { c: "x" }, t: [{ k: 1 }] }, { a: "two", b: { c: "y", d: null }, t: [{ k: 2 }, { k: 3 }] }, { a: 3 }]);
+    const f = Object.fromEntries(a.fields.map((x) => [x.path, x]));
+    expect(f.a!.present).toBe(3); expect(f.a!.types).toEqual({ int: 2, string: 1 }); expect(f["b.c"]!.present).toBe(2); expect(f["b.d"]!.types).toEqual({ null: 1 });
+    expect(f["t[].k"]!.present).toBe(2); expect(f["t[].k"]!.types.int).toBe(3);
+    expect(analysisMarkdown("c", a)).toContain("| `a` | 100% | int (2), string (1) |");
+  });
+  it("splits pipelines into stages respecting nesting and strings", () => {
+    const cmd = `db.orders.aggregate([ { $match: { s: "a,]b" } }, { $group: { _id: "$c", n: { $sum: 1 } } }, { $sort: { n: -1 } } ])`;
+    const p = pipelineStages(cmd)!;
+    expect(p.stages).toEqual([`{ $match: { s: "a,]b" } }`, `{ $group: { _id: "$c", n: { $sum: 1 } } }`, `{ $sort: { n: -1 } }`]);
+    expect(pipelinePrefix(p.head, p.stages, 2, 5)).toBe(`db.orders.aggregate([{ $match: { s: "a,]b" } }, { $group: { _id: "$c", n: { $sum: 1 } } }, { "$limit": 5 }])`);
+    expect(pipelineStages("db.a.find({})")).toBeUndefined();
+  });
+});

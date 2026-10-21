@@ -1,0 +1,1 @@
+{ "scopeName": "source.rizomadb-mongo", "name": "RizomaDB Mongo", "patterns": [ { "include": "source.js" } ] }

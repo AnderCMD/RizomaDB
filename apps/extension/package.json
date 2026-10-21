@@ -212,6 +212,41 @@
         "command": "rizomadb.generateData",
         "title": "%cmd.generateData%",
         "category": "RizomaDB"
+      },
+      {
+        "command": "rizomadb.mongo.analyzeSchema",
+        "title": "%cmd.mongo_analyzeSchema%",
+        "category": "RizomaDB"
+      },
+      {
+        "command": "rizomadb.mongo.previewPipeline",
+        "title": "%cmd.mongo_previewPipeline%",
+        "category": "RizomaDB"
+      },
+      {
+        "command": "rizomadb.mongo.createIndex",
+        "title": "%cmd.mongo_createIndex%",
+        "category": "RizomaDB"
+      },
+      {
+        "command": "rizomadb.mongo.dropIndex",
+        "title": "%cmd.mongo_dropIndex%",
+        "category": "RizomaDB"
+      },
+      {
+        "command": "rizomadb.redis.deleteKey",
+        "title": "%cmd.redis_deleteKey%",
+        "category": "RizomaDB"
+      },
+      {
+        "command": "rizomadb.redis.setTtl",
+        "title": "%cmd.redis_setTtl%",
+        "category": "RizomaDB"
+      },
+      {
+        "command": "rizomadb.redis.renameKey",
+        "title": "%cmd.redis_renameKey%",
+        "category": "RizomaDB"
       }
     ],
     "menus": {
@@ -246,11 +281,11 @@
         },
         {
           "command": "rizomadb.openTable",
-          "when": "view == rizomadb.connections && viewItem == table"
+          "when": "view == rizomadb.connections && viewItem =~ /^table/"
         },
         {
           "command": "rizomadb.export",
-          "when": "view == rizomadb.connections && viewItem == table"
+          "when": "view == rizomadb.connections && viewItem =~ /^table/"
         },
         {
           "command": "rizomadb.showER",
@@ -284,27 +319,27 @@
         },
         {
           "command": "rizomadb.showER",
-          "when": "view == rizomadb.connections && viewItem == table",
+          "when": "view == rizomadb.connections && viewItem =~ /^table/",
           "group": "schema"
         },
         {
           "command": "rizomadb.designTable",
-          "when": "view == rizomadb.connections && viewItem == table",
+          "when": "view == rizomadb.connections && viewItem =~ /^table/",
           "group": "schema"
         },
         {
           "command": "rizomadb.import",
-          "when": "view == rizomadb.connections && viewItem == table",
+          "when": "view == rizomadb.connections && viewItem =~ /^table/",
           "group": "data"
         },
         {
           "command": "rizomadb.compareData",
-          "when": "view == rizomadb.connections && viewItem == table",
+          "when": "view == rizomadb.connections && viewItem =~ /^table/",
           "group": "data"
         },
         {
           "command": "rizomadb.generateData",
-          "when": "view == rizomadb.connections && viewItem == table",
+          "when": "view == rizomadb.connections && viewItem =~ /^table/",
           "group": "data"
         },
         {
@@ -316,23 +351,58 @@
           "command": "rizomadb.restore",
           "when": "view == rizomadb.connections && viewItem == connection",
           "group": "data"
+        },
+        {
+          "command": "rizomadb.mongo.analyzeSchema",
+          "when": "view == rizomadb.connections && viewItem == table.mongodb",
+          "group": "nosql"
+        },
+        {
+          "command": "rizomadb.mongo.createIndex",
+          "when": "view == rizomadb.connections && viewItem == table.mongodb",
+          "group": "nosql"
+        },
+        {
+          "command": "rizomadb.mongo.dropIndex",
+          "when": "view == rizomadb.connections && viewItem == table.mongodb",
+          "group": "nosql"
+        },
+        {
+          "command": "rizomadb.redis.deleteKey",
+          "when": "view == rizomadb.connections && viewItem == table.redis",
+          "group": "nosql"
+        },
+        {
+          "command": "rizomadb.redis.setTtl",
+          "when": "view == rizomadb.connections && viewItem == table.redis",
+          "group": "nosql"
+        },
+        {
+          "command": "rizomadb.redis.renameKey",
+          "when": "view == rizomadb.connections && viewItem == table.redis",
+          "group": "nosql"
         }
       ],
       "editor/title": [
         {
           "command": "rizomadb.runQuery",
-          "when": "editorLangId == sql",
+          "when": "editorLangId =~ /^(sql|rizomadb-mongo|rizomadb-redis)$/",
           "group": "navigation"
         },
         {
           "command": "rizomadb.cancelQuery",
-          "when": "editorLangId == sql && rizomadb.running",
+          "when": "editorLangId =~ /^(sql|rizomadb-mongo|rizomadb-redis)$/ && rizomadb.running",
           "group": "navigation"
         },
         {
           "command": "rizomadb.explain",
-          "when": "editorLangId == sql",
+          "when": "editorLangId =~ /^(sql|rizomadb-mongo|rizomadb-redis)$/",
           "group": "navigation@2"
+        },
+        {
+          "command": "rizomadb.mongo.previewPipeline",
+          "when": "editorLangId == rizomadb-mongo",
+          "group": "navigation@3"
         }
       ]
     },
@@ -341,13 +411,13 @@
         "command": "rizomadb.runQuery",
         "key": "ctrl+enter",
         "mac": "cmd+enter",
-        "when": "editorLangId == sql && editorTextFocus"
+        "when": "editorLangId =~ /^(sql|rizomadb-mongo|rizomadb-redis)$/ && editorTextFocus"
       },
       {
         "command": "rizomadb.runSelection",
         "key": "ctrl+shift+enter",
         "mac": "cmd+shift+enter",
-        "when": "editorLangId == sql && editorTextFocus"
+        "when": "editorLangId =~ /^(sql|rizomadb-mongo|rizomadb-redis)$/ && editorTextFocus"
       }
     ],
     "configuration": {
@@ -404,6 +474,40 @@
           }
         ]
       }
+    ],
+    "languages": [
+      {
+        "id": "rizomadb-mongo",
+        "aliases": [
+          "RizomaDB Mongo"
+        ],
+        "extensions": [
+          ".mongo"
+        ],
+        "configuration": "./syntaxes/language-configuration.json"
+      },
+      {
+        "id": "rizomadb-redis",
+        "aliases": [
+          "RizomaDB Redis"
+        ],
+        "extensions": [
+          ".redis"
+        ],
+        "configuration": "./syntaxes/redis-language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "rizomadb-mongo",
+        "scopeName": "source.rizomadb-mongo",
+        "path": "./syntaxes/mongo.tmLanguage.json"
+      },
+      {
+        "language": "rizomadb-redis",
+        "scopeName": "source.rizomadb-redis",
+        "path": "./syntaxes/redis.tmLanguage.json"
+      }
     ]
   },
   "scripts": {
@@ -425,12 +529,18 @@
     "@rizomadb/network": "workspace:*",
     "@rizomadb/data-tools": "workspace:*",
     "@rizomadb/sql": "workspace:*",
-    "@rizomadb/schema-tools": "workspace:*"
+    "@rizomadb/schema-tools": "workspace:*",
+    "@rizomadb/driver-mongodb": "workspace:*",
+    "@rizomadb/driver-redis": "workspace:*"
   },
   "devDependencies": {
     "@types/vscode": "1.100.0",
     "esbuild": "0.28.2",
     "@vscode/vsce": "4.0.0",
     "@types/pg": "8.23.1"
-  }
+  },
+  "activationEvents": [
+    "onLanguage:rizomadb-mongo",
+    "onLanguage:rizomadb-redis"
+  ]
 }

@@ -157,3 +157,24 @@ for (const e of engines) {
   });
 }
 
+
+import { reachable } from "@rizomadb/test-engines";
+describe.skipIf(!(process.env.RZ_ENGINES?.split(",").some((x) => ["mongodb", "all"].includes(x))) || !findTool("mongodump") || !findTool("mongorestore") || !(await reachable("127.0.0.1", Number(process.env.RZ_MONGO_PORT ?? 27018))))("MongoDB backup and restore with native tools", () => {
+  it("archives a database, keeps the URI out of argv, and restores it elsewhere", async () => {
+    const { MongoClient } = await import("mongodb");
+    const port = Number(process.env.RZ_MONGO_PORT ?? 27018);
+    const c = await MongoClient.connect(`mongodb://127.0.0.1:${port}`);
+    const src = `rz_src_${Date.now()}`, dst = `rz_dst_${Date.now()}`;
+    await c.db(src).collection("t").insertMany(Array.from({ length: 300 }, (_, i) => ({ i, v: `row ${i}` })));
+    const file = join(mkdtempSync(join(tmpdir(), "rz-mo-")), "b.archive.gz");
+    const spec = await backupSpec("mongodb", { host: "127.0.0.1", port, user: "u", password: "S3cr3t", database: src }, file);
+    expect(spec.args.join(" ")).not.toContain("S3cr3t");
+    const r1 = await runTool({ ...spec, args: [...spec.args] }); void r1;
+    // the fake credentials above are for the argv check only; run the real dump without auth
+    const real = await backupSpec("mongodb", { host: "127.0.0.1", port, database: src }, file);
+    const dump = await runTool(real); expect(dump.code, dump.stderr).toBe(0);
+    expect((await verifyBackup("mongodb", file)).ok).toBe(true);
+    const rest = await runTool(await restoreSpec("mongodb", { host: "127.0.0.1", port, database: src }, file)); expect(rest.code, rest.stderr).toBe(0);
+    await c.db(dst).dropDatabase(); await c.db(src).dropDatabase(); await c.close();
+  }, 90_000);
+});

@@ -5,7 +5,7 @@ import { assessMongo } from "./assess.js";
 export const capabilities: Capabilities = {
   sql: false,
   // Multi-document transactions need a replica set; edits are applied sequentially with per-document concurrency checks.
-  transactions: false, savepoints: false, multiDatabase: true, schemas: false, routines: false, triggers: false,
+  transactions: false, savepoints: false, multiDatabase: true, schemas: true, routines: false, triggers: false,
   cancelQuery: true, streamingResults: true, explain: "json", ddlGeneration: false, rowEditing: "documentId",
   // The driver rejects write commands on read-only connections; for a server-enforced guarantee use a read-only MongoDB user.
   readOnlyEnforcement: "client",

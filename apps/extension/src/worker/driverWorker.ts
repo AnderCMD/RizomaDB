@@ -4,9 +4,11 @@ import { postgresDriver } from "@rizomadb/driver-postgres";
 import { mysqlDriver } from "@rizomadb/driver-mysql";
 import { mssqlDriver } from "@rizomadb/driver-mssql";
 import { oracleDriver } from "@rizomadb/driver-oracle";
+import { mongoDriver } from "@rizomadb/driver-mongodb";
+import { redisDriver } from "@rizomadb/driver-redis";
 import type { Request, Response, WireError } from "./protocol.js";
 
-const drivers: Record<string, DriverPlugin> = { sqlite: sqliteDriver, postgres: postgresDriver, mysql: mysqlDriver, mssql: mssqlDriver, oracle: oracleDriver };
+const drivers: Record<string, DriverPlugin> = { sqlite: sqliteDriver, postgres: postgresDriver, mysql: mysqlDriver, mssql: mssqlDriver, oracle: oracleDriver, mongodb: mongoDriver, redis: redisDriver };
 type Target = Connection | Transaction;
 const targets = new Map<number, Target>();
 const iters = new Map<number, { it: AsyncIterator<unknown>; ac: AbortController }>();

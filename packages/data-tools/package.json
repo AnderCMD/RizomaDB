@@ -18,6 +18,7 @@
     "@rizomadb/driver-sqlite": "workspace:*",
     "@rizomadb/test-engines": "workspace:*",
     "fast-check": "4.10.2",
-    "@rizomadb/driver-postgres": "workspace:*"
+    "@rizomadb/driver-postgres": "workspace:*",
+    "mongodb": "7.7.0"
   }
 }

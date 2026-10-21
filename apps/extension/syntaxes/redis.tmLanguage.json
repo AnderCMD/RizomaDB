@@ -1,0 +1,10 @@
+{
+  "scopeName": "source.rizomadb-redis", "name": "RizomaDB Redis",
+  "patterns": [
+    { "match": "^\\s*#.*$", "name": "comment.line.rizomadb-redis" },
+    { "match": "^\\s*([A-Za-z][A-Za-z0-9._-]*)", "captures": { "1": { "name": "keyword.control.rizomadb-redis" } } },
+    { "begin": "\"", "end": "\"", "name": "string.quoted.double.rizomadb-redis", "patterns": [ { "match": "\\\\.", "name": "constant.character.escape.rizomadb-redis" } ] },
+    { "begin": "'", "end": "'", "name": "string.quoted.single.rizomadb-redis" },
+    { "match": "\\b-?\\d+(\\.\\d+)?\\b", "name": "constant.numeric.rizomadb-redis" }
+  ]
+}

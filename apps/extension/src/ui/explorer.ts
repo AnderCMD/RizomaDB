@@ -33,7 +33,7 @@ export class Explorer implements vscode.TreeDataProvider<Node> {
     }
     if (n.kind === "table") {
       const it = new vscode.TreeItem(n.name, vscode.TreeItemCollapsibleState.Collapsed);
-      it.iconPath = new vscode.ThemeIcon(n.isView ? "eye" : "table"); it.contextValue = "table";
+      it.iconPath = new vscode.ThemeIcon(n.isView ? "eye" : n.profile.driver === "redis" ? "key" : n.profile.driver === "mongodb" ? "json" : "table"); it.contextValue = n.profile.driver === "redis" || n.profile.driver === "mongodb" ? `table.${n.profile.driver}` : "table";
       it.description = n.isView ? vscode.l10n.t("view") : undefined;
       it.command = { command: "rizomadb.openTable", title: "Open", arguments: [n] };
       return it;

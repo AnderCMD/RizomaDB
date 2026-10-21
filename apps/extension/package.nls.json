@@ -38,5 +38,12 @@
   "cmd.backup": "Back Up Database…",
   "cmd.restore": "Restore Database…",
   "cmd.compareData": "Compare Data With Another Table…",
-  "cmd.generateData": "Generate Test Data…"
+  "cmd.generateData": "Generate Test Data…",
+  "cmd.mongo_analyzeSchema": "Analyze Collection Schema",
+  "cmd.mongo_previewPipeline": "Preview Aggregation Pipeline by Stage",
+  "cmd.mongo_createIndex": "Create Index…",
+  "cmd.mongo_dropIndex": "Drop Index…",
+  "cmd.redis_deleteKey": "Delete Key",
+  "cmd.redis_setTtl": "Set Key Expiry…",
+  "cmd.redis_renameKey": "Rename Key…"
 }
