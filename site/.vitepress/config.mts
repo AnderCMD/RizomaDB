@@ -1,8 +1,15 @@
 import { defineConfig } from "vitepress";
 
+const engines = ["postgres", "mysql", "sqlite", "mssql", "oracle", "mongodb", "redis", "clickhouse", "elasticsearch", "duckdb", "neo4j", "hydradb", "dynamodb", "firestore", "influxdb", "influxdb3", "cassandra", "trino"];
+const engineName: Record<string, string> = { postgres: "PostgreSQL", mysql: "MySQL / MariaDB", sqlite: "SQLite", mssql: "SQL Server", oracle: "Oracle", mongodb: "MongoDB", redis: "Redis / Valkey", clickhouse: "ClickHouse", elasticsearch: "Elasticsearch / OpenSearch", duckdb: "DuckDB", neo4j: "Neo4j", hydradb: "HydraDB (experimental)", dynamodb: "DynamoDB", firestore: "Firestore", influxdb: "InfluxDB 2", influxdb3: "InfluxDB 3", cassandra: "Cassandra / ScyllaDB", trino: "Trino" };
+
 const enSidebar = [
-  { text: "Start", items: [{ text: "Overview", link: "/en/" }, { text: "Migrating to RizomaDB", link: "/en/guides/migration" }] },
-  { text: "Engines", items: [{ text: "Support matrix", link: "/en/engines/README" }] },
+  { text: "Start", items: [{ text: "Getting started", link: "/en/guides/getting-started" }, { text: "Migrating to RizomaDB", link: "/en/guides/migration" }, { text: "Troubleshooting", link: "/en/guides/troubleshooting" }] },
+  { text: "Using RizomaDB", items: [
+    { text: "Connections", link: "/en/guides/connections" }, { text: "The query editor", link: "/en/guides/query-editor" }, { text: "The results grid", link: "/en/guides/results-grid" },
+    { text: "Editing data", link: "/en/guides/editing-data" }, { text: "Language and settings", link: "/en/guides/language-and-settings" } ] },
+  { text: "Reference", items: [{ text: "Settings", link: "/en/reference/settings" }, { text: "Commands", link: "/en/reference/commands" }, { text: "Engine capability matrix", link: "/en/reference/engine-matrix" }] },
+  { text: "Engines", collapsed: true, items: [{ text: "Support overview", link: "/en/engines/README" }, ...engines.map((e) => ({ text: engineName[e]!, link: `/en/engines/${e}` }))] },
   { text: "Enterprise", items: [
     { text: "Policy", link: "/en/enterprise/policy" }, { text: "Audit", link: "/en/enterprise/audit" },
     { text: "Deployment", link: "/en/enterprise/deployment" }, { text: "Compliance", link: "/en/enterprise/compliance" } ] },
@@ -10,10 +17,19 @@ const enSidebar = [
   { text: "Project", items: [{ text: "Honest comparison", link: "/en/market/honest-comparison" }, { text: "Writing a driver", link: "/en/drivers/authoring" }, { text: "CI/CD", link: "/en/ci-cd" }] },
 ];
 const esSidebar = [
-  { text: "Inicio", items: [{ text: "Resumen", link: "/es/" }] },
-  { text: "Proyecto", items: [{ text: "Lista de aceptación v1.0", link: "/es/release/v1-checklist" }] },
-  { text: "Decisiones (ADR)", items: [
+  { text: "Inicio", items: [{ text: "Resumen", link: "/es/" }, { text: "Primeros pasos", link: "/es/guias/primeros-pasos" }, { text: "Solución de problemas", link: "/es/guias/solucion-de-problemas" }] },
+  { text: "Usar RizomaDB", items: [
+    { text: "Conexiones", link: "/es/guias/conexiones" }, { text: "El editor de consultas", link: "/es/guias/editor-de-consultas" }, { text: "La rejilla de resultados", link: "/es/guias/rejilla-de-resultados" },
+    { text: "Edición de datos", link: "/es/guias/edicion-de-datos" }, { text: "Idioma y ajustes", link: "/es/guias/idioma-y-ajustes" } ] },
+  { text: "Referencia", items: [{ text: "Ajustes", link: "/es/referencia/ajustes" }, { text: "Comandos", link: "/es/referencia/comandos" }, { text: "Matriz de capacidades", link: "/es/referencia/matriz-de-motores" }] },
+  { text: "Proyecto", items: [{ text: "Lista de aceptación v1.0", link: "/es/release/v1-checklist" }, { text: "Comparación honesta (en)", link: "/en/market/honest-comparison" }, { text: "CI/CD (en)", link: "/en/ci-cd" }] },
+  { text: "Decisiones (ADR)", collapsed: true, items: [
     { text: "Nombre y marca", link: "/es/adr/0001-nombre-y-riesgo-de-marca" }, { text: "Stack y versiones", link: "/es/adr/0002-stack-y-versiones" },
+    { text: "Monorepo y empaquetado", link: "/es/adr/0003-monorepo-empaquetado" }, { text: "Estrategia de drivers", link: "/es/adr/0004-estrategia-de-drivers" },
+    { text: "Editor SQL nativo", link: "/es/adr/0005-editor-sql-nativo-y-lsp" }, { text: "Análisis de SQL", link: "/es/adr/0006-analisis-de-sql" },
+    { text: "Rejilla de resultados", link: "/es/adr/0007-rejilla-de-resultados" }, { text: "Protocolo host-webview", link: "/es/adr/0008-protocolo-host-webview" },
+    { text: "Versión mínima de VS Code", link: "/es/adr/0009-version-minima-vscode" }, { text: "Rejilla vanilla", link: "/es/adr/0010-rejilla-vanilla-fase1" },
+    { text: "Análisis SQL sin LSP", link: "/es/adr/0011-analisis-sql-sin-lsp-separado" }, { text: "Presupuesto de tamaño", link: "/es/adr/0012-presupuesto-de-tamano" },
     { text: "Política y conexión protegida", link: "/es/adr/0013-politica-y-conexion-protegida" } ] },
 ];
 
@@ -21,13 +37,19 @@ export default defineConfig({
   title: "RizomaDB",
   description: "Free, open-source, no-telemetry multi-engine database client for VS Code",
   srcDir: "content",
+  cleanUrls: true,
   // GitHub Pages serves a project site under /<repo>/; the Pages workflow sets SITE_BASE, local builds stay at "/".
   base: process.env.SITE_BASE ?? "/",
-  cleanUrls: true,
+  head: [["link", { rel: "icon", href: `${process.env.SITE_BASE ?? "/"}favicon.svg` }]],
   // The repo docs link to source files and to each other with repo-relative paths.
   ignoreDeadLinks: true,
+  themeConfig: {
+    logo: "/logo.svg",
+    socialLinks: [{ icon: "github", link: "https://github.com/AnderCMD/RizomaDB" }],
+    search: { provider: "local" },
+  },
   locales: {
-    root: { label: "English", lang: "en", link: "/en/", themeConfig: { sidebar: enSidebar, nav: [{ text: "Docs", link: "/en/" }] } },
-    es: { label: "Español", lang: "es", link: "/es/", themeConfig: { sidebar: esSidebar, nav: [{ text: "Documentación", link: "/es/" }] } },
+    root: { label: "English", lang: "en", link: "/en/", themeConfig: { sidebar: enSidebar, nav: [{ text: "Guide", link: "/en/guides/getting-started" }, { text: "Reference", link: "/en/reference/settings" }, { text: "Engines", link: "/en/reference/engine-matrix" }] } },
+    es: { label: "Español", lang: "es", link: "/es/", themeConfig: { sidebar: esSidebar, nav: [{ text: "Guía", link: "/es/guias/primeros-pasos" }, { text: "Referencia", link: "/es/referencia/ajustes" }, { text: "Motores", link: "/es/referencia/matriz-de-motores" }] } },
   },
 });

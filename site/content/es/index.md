@@ -1,13 +1,29 @@
-# RizomaDB
+---
+layout: home
+hero:
+  name: RizomaDB
+  text: Todas tus bases de datos, un solo lugar.
+  tagline: Un cliente de bases de datos gratuito, de código abierto y sin telemetría para VS Code. 24 motores, una rejilla de resultados, seguro por defecto.
+  image: { src: /logo.svg, alt: RizomaDB }
+  actions:
+    - { theme: brand, text: Primeros pasos, link: /es/guias/primeros-pasos }
+    - { theme: alt, text: Motores, link: /es/referencia/matriz-de-motores }
+    - { theme: alt, text: GitHub, link: "https://github.com/AnderCMD/RizomaDB" }
+features:
+  - { icon: "🔌", title: "Conecta desde una pantalla de logos", details: "Elige tu motor; el host, puerto y usuario ya vienen rellenados. Entornos con protección, túneles SSH, proxies y secretos solo en el almacén de VS Code.", link: /es/guias/conexiones }
+  - { icon: "▶️", title: "Un botón Ejecutar sobre cada sentencia", details: "Ejecutar, Explicar, Ejecutar todo, parámetros, historial con buscador y notebooks, en el lenguaje de cada motor.", link: /es/guias/editor-de-consultas }
+  - { icon: "🗂️", title: "Una rejilla hecha para explorar", details: "Ordena, filtra en las filas o en la base de datos, cambia anchos, oculta, panel de registro, copia como CSV/JSON/Markdown y Cargar más en todos los motores.", link: /es/guias/rejilla-de-resultados }
+  - { icon: "✏️", title: "Edita en el sitio, con seguridad", details: "Doble clic en una celda. Los cambios esperan como pendientes; revisa el SQL y aplícalos en una transacción, con detección de conflictos.", link: /es/guias/edicion-de-datos }
+  - { icon: "🛡️", title: "Seguro por defecto", details: "Políticas en capas donde gana la más estricta, un único punto de auditoría para toda escritura, producción de solo lectura, enmascarado de columnas.", link: /en/enterprise/policy }
+  - { icon: "🌍", title: "Español e inglés", details: "Cambia el idioma dentro de la extensión y sigue la guía integrada que te lleva de la mano.", link: /es/guias/idioma-y-ajustes }
+---
 
-Cliente de bases de datos gratuito (Apache-2.0) para VS Code, VSCodium, Cursor y Windsurf. Sin telemetría y sin niveles de pago.
+::: warning Pre-lanzamiento
+RizomaDB aún no está publicado en ningún marketplace y la v1.0 no está lista. La [lista de aceptación](/es/release/v1-checklist) y la [comparación honesta](/en/market/honest-comparison) (en inglés) dicen exactamente qué está y qué no está verificado.
+:::
 
-> **Estado: previo a 1.0.** Aún no se ha publicado nada. La [lista de aceptación](/es/release/v1-checklist) detalla qué está hecho y qué no.
-
-## Qué funciona hoy
-- Motores probados contra servidores reales: SQLite, PostgreSQL, MySQL/MariaDB, SQL Server, Oracle, MongoDB, Redis/Valkey, ClickHouse, Elasticsearch/OpenSearch, DuckDB.
-- Edición por cola de cambios, diseñador y comparación de esquemas, diagramas ER, importación/exportación, comparación y sincronización de datos.
-- Controles empresariales: política en capas, auditoría local, catálogos compartidos sin secretos.
-- IA opcional (solo esquema) y servidor MCP de solo lectura.
-
-La documentación técnica detallada está en inglés en la sección English; las decisiones de arquitectura (ADR) están en español.
+## Por dónde empezar
+- Si eres nuevo: [Primeros pasos](/es/guias/primeros-pasos) y luego [Conexiones](/es/guias/conexiones).
+- Si buscas un motor: la [matriz de capacidades](/es/referencia/matriz-de-motores) y las [páginas de motores](/en/engines/README) (en inglés).
+- Si lo vas a desplegar en un equipo: [Políticas](/en/enterprise/policy), [Despliegue](/en/enterprise/deployment) y [Cumplimiento](/en/enterprise/compliance) (en inglés).
+- Si algo falla: [Solución de problemas](/es/guias/solucion-de-problemas).

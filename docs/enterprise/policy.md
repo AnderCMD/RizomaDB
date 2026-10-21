@@ -11,6 +11,9 @@ RizomaDB merges policy layers and the **strictest result always wins**: a projec
 
 A policy file that cannot be read or validated makes everything read-only until it is fixed (fail closed) and shows the error in the *RizomaDB policy* output channel.
 
+## Custom environments
+Besides `dev`, `staging` and `prod` a person can add environments in the connection form (**New environment…**) or in the `rizomadb.environments` setting: `{ "name": "qa", "protection": "confirm" }` where protection is `none`, `confirm` (ask before every write) or `readOnly` (block writes). Those become an extra policy layer, so they can only add strictness; the `environments` section of a policy file below can describe the same name in more detail and the strictest result wins.
+
 ## Format (`version: 1`)
 ```json
 {

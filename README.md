@@ -5,26 +5,43 @@
   </picture>
 </p>
 
-**Todas tus bases de datos, un solo lugar. Gratis.** · *All your databases, one place. Free.*
+**All your databases, one place. Free.** · *Todas tus bases de datos, un solo lugar. Gratis.*
 
-Cliente de bases de datos para VS Code: Apache-2.0, sin telemetría, sin cuentas, sin funciones bloqueadas.
+A multi-engine database client for VS Code (and VSCodium, Cursor, Windsurf): Apache-2.0, no telemetry, no accounts, no locked features. [Leer en español](README.es.md) · [Documentation site](https://andercmd.github.io/RizomaDB/)
 
-> **Estado: Fase 1 (cimientos), pre-alfa.** La extensión aún no está publicada ni empaquetada.
+> **Status: pre-release.** Nothing is published to the Marketplace, Open VSX or npm yet, and v1.0 is **not** ready: see the honest [acceptance checklist](docs/release/v1-checklist.md). The extension builds, installs and passes its tests against real engines, but no human has done a full screen-reader pass.
 
-## Qué existe hoy
-| Componente | Estado |
-|---|---|
-| `driver-api` + kit de conformidad | Hecho |
-| Driver SQLite (`node:sqlite`) | Hecho; sin cancelación mientras corra en el hilo principal |
-| Driver PostgreSQL | Hecho; probado contra PostgreSQL 17 |
-| `core` (perfiles, secretos, redacción, políticas) | Hecho |
-| Extensión de VS Code (explorador, editor, rejilla) | Pendiente |
+## What it does
+- **Connect** to 24 engines from a screen of logos, with the usual host, port and user already filled in; environments (`dev`, `staging`, `prod` or your own) with protection; SSH tunnels and HTTP/SOCKS5 proxies; secrets only in VS Code's secret storage. Connections are grouped by type in the tree, with the active one and its database in the status bar.
+- **Query** in each engine's language with a Run button above every statement, Run all, Explain, parameters, a searchable history screen and notebooks.
+- **Explore and edit** in a results grid built for it: sort, filter (in the rows or in the database), resize, hide, record panel, copy/save as CSV/TSV/JSON/Markdown, paging with *Load more*, an editable query line, and **editing a cell in place** with pending changes you review and apply in one transaction. Rename, retype or drop a column from its menu.
+- **Design and move data**: table designer, ER diagrams, schema compare and docs, import/export, backup/restore, data compare/sync and test-data generation.
+- **Govern**: layered policies where the strictest wins, one policy and audit point for every write path, column masking, shared catalogs without secrets.
+- **Optional extras**: an AI assistant (off by default, schema only) and a read-only MCP server with guardrails.
+- **English and Spanish**, switchable inside the extension, and an interactive **guide** that walks you through it.
 
-## Desarrollo
+## Engines
+Tested against real servers: PostgreSQL (and CockroachDB, YugabyteDB), MySQL/MariaDB (and TiDB), SQL Server, Oracle, SQLite, MongoDB, Redis/Valkey, ClickHouse, Elasticsearch/OpenSearch, DuckDB, Neo4j, DynamoDB (Local), InfluxDB 2 and 3, Cassandra/ScyllaDB, Firestore (emulator), Trino, and **HydraDB (experimental)**. What each one supports is in the [capability matrix](docs/reference/engine-matrix.md); limits are on each engine's page in [docs/engines](docs/engines/README.md). Not tested: real AWS or Google Cloud services, Redshift.
+
+## Install
 ```bash
 pnpm install
-docker compose -f test/compose/docker-compose.yml up -d   # PostgreSQL para las pruebas
-pnpm test
-pnpm build:brand                                          # regenera el logotipo
+pnpm --filter rizomadb package
+code --install-extension apps/extension/rizomadb-0.0.1.vsix
 ```
-Ver [docs/ai/STATE.md](docs/ai/STATE.md) y [docs/adr](docs/adr).
+Then click the RizomaDB icon, or run **RizomaDB: Open the Guide**. Full walk-through: [Getting started](docs/guides/getting-started.md).
+
+## Documentation
+[Getting started](docs/guides/getting-started.md) · [Connections](docs/guides/connections.md) · [The query editor](docs/guides/query-editor.md) · [The results grid](docs/guides/results-grid.md) · [Editing data](docs/guides/editing-data.md) · [Language and settings](docs/guides/language-and-settings.md) · [Troubleshooting](docs/guides/troubleshooting.md) · [Settings](docs/reference/settings.md) and [commands](docs/reference/commands.md) reference · [Policies](docs/enterprise/policy.md) · [Threat model](docs/security/threat-model.md) · [CI/CD](docs/ci-cd.md) · [Writing a driver](docs/drivers/authoring.md)
+
+## Development
+```bash
+pnpm install
+docker compose -f test/compose/docker-compose.yml up -d postgres   # or any engine you want to test
+pnpm lint && pnpm build && pnpm typecheck && pnpm test
+node scripts/gen-reference.mjs        # regenerates the settings/commands/engine reference pages
+```
+`dev` is the integration branch and `main` is what is deployed (the docs site); CI runs on both. See [CONTRIBUTING.md](CONTRIBUTING.md), [docs/ci-cd.md](docs/ci-cd.md), the decision records in [docs/adr](docs/adr) and the running log in [docs/ai/STATE.md](docs/ai/STATE.md).
+
+## License
+Apache-2.0. Third-party licenses: [docs/legal/third-party-licenses.md](docs/legal/third-party-licenses.md). Engine logos are used only to identify each engine and belong to their owners ([details](docs/legal/brand-logos.md)).

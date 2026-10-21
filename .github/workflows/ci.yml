@@ -102,6 +102,8 @@ jobs:
       - run: pnpm build
       - run: pnpm typecheck
       - run: pnpm audit:licenses --check
+      - name: Reference pages are current
+        run: node scripts/gen-reference.mjs --check
       - name: PostgreSQL 17 client tools (pg_dump must not be older than the server)
         run: |
           sudo apt-get install -y postgresql-common

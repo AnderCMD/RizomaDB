@@ -1,5 +1,7 @@
 # Engines
 
+What each engine supports at a glance: the [capability matrix](../reference/engine-matrix.md) (generated from the code). Limits, versions tested and test instructions are on each engine's page.
+
 | Engine | Level | Doc |
 |---|---|---|
 | PostgreSQL (and CockroachDB, YugabyteDB, tested) | 1 | [postgres.md](postgres.md) |
@@ -20,5 +22,7 @@
 | Apache Cassandra (and ScyllaDB, tested) | 2 | [cassandra.md](cassandra.md) |
 | Google Cloud Firestore | 2 | [firestore.md](firestore.md) |
 | Trino | 2 | [trino.md](trino.md) |
+
+HydraDB is **experimental**: a young engine with a narrow Cypher subset, kept small and not extended.
 
 Not implemented: Redshift, Other PostgreSQL/MySQL-protocol engines (compatibility is not claimed unless listed above), and all Level 3 engines. The JDBC/ODBC bridge is not implemented.
