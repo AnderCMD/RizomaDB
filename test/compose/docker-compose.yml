@@ -54,3 +54,7 @@ services:
     image: influxdb:2.7
     environment: { DOCKER_INFLUXDB_INIT_MODE: setup, DOCKER_INFLUXDB_INIT_USERNAME: rizoma, DOCKER_INFLUXDB_INIT_PASSWORD: rizoma-test-pw, DOCKER_INFLUXDB_INIT_ORG: rizoma, DOCKER_INFLUXDB_INIT_BUCKET: test, DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: rizoma-test-token }
     ports: ["18086:8086"]
+  cassandra:
+    image: cassandra:5.0
+    environment: { MAX_HEAP_SIZE: 512M, HEAP_NEWSIZE: 128M, CASSANDRA_DC: dc1 }
+    ports: ["19042:9042"]
