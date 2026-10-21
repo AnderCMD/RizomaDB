@@ -4,7 +4,7 @@ import { cpSync } from "node:fs";
 const common = { bundle: true, minify: false, sourcemap: true, logLevel: "info" };
 await build({
   ...common, entryPoints: ["src/extension.ts"], outfile: "dist/extension.js",
-  platform: "node", format: "cjs", target: "node22", external: ["vscode", "pg-native"],
+  platform: "node", format: "cjs", target: "node22", external: ["vscode", "pg-native", "cpu-features"],
 });
 // Driver child process: runs drivers outside the extension host.
 await build({
