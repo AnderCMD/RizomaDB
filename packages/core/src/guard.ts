@@ -14,6 +14,8 @@ export interface GuardContext {
   audit?: AuditLog;
   /** Called for statements the policy lets through but that need approval; return false to refuse. Default: refuse. */
   approve?: (reason: string, statement: string) => Promise<boolean>;
+  /** Removes secrets from messages before they reach the audit trail or the UI. */
+  redact?: (text: string) => string;
 }
 
 /**
@@ -41,8 +43,12 @@ export function guardConnection(inner: Connection, g: GuardContext): Connection 
       void g.audit?.record({ ...base, status: "ok", rows, durationMs: Math.round(performance.now() - t0) });
     } catch (e) {
       const cancelled = e instanceof DriverError && e.kind === "cancelled";
-      void g.audit?.record({ ...base, status: cancelled ? "cancelled" : "error", durationMs: Math.round(performance.now() - t0), detail: (e as Error).message });
-      throw timeout?.aborted && cancelled ? new DriverError("timeout", `Query exceeded the ${d.timeoutSeconds}s limit set by policy`, { cause: e }) : e;
+      const scrub = (s: string) => (g.redact ? g.redact(s) : s);
+      void g.audit?.record({ ...base, status: cancelled ? "cancelled" : "error", durationMs: Math.round(performance.now() - t0), detail: scrub((e as Error).message) });
+      if (timeout?.aborted && cancelled) throw new DriverError("timeout", `Query exceeded the ${d.timeoutSeconds}s limit set by policy`, { cause: e });
+      // a driver error may echo a connection string or password: rebuild it from the scrubbed message (the original is not kept as `cause`)
+      if (g.redact && e instanceof DriverError && scrub(e.message) !== e.message) throw new DriverError(e.kind, scrub(e.message), { ...(e.position !== undefined ? { position: e.position } : {}), ...(e.code ? { code: e.code } : {}) });
+      throw e;
     }
   }
 

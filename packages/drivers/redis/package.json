@@ -1,7 +1,25 @@
 {
-  "name": "@rizomadb/driver-redis", "version": "0.0.0", "license": "Apache-2.0", "type": "module",
-  "main": "dist/index.js", "types": "dist/index.d.ts",
-  "exports": { ".": "./dist/index.js", "./meta": "./dist/meta.js", "./parser": "./dist/parser.js" },
-  "scripts": { "build": "tsc -p tsconfig.json", "typecheck": "tsc -p tsconfig.json --noEmit", "test": "vitest run" },
-  "dependencies": { "@rizomadb/driver-api": "workspace:*", "ioredis": "6.0.0" }
+  "name": "@rizomadb/driver-redis",
+  "version": "0.0.0",
+  "license": "Apache-2.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./meta": "./dist/meta.js",
+    "./parser": "./dist/parser.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@rizomadb/driver-api": "workspace:*",
+    "ioredis": "6.0.0"
+  },
+  "devDependencies": {
+    "fast-check": "4.10.2"
+  }
 }

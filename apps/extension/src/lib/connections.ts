@@ -1,5 +1,5 @@
 import type { Connection, DriverPlugin } from "@rizomadb/driver-api";
-import { guardConnection, parseProfile, resolveConfig, ruleFor, saveSecrets, type AuditLog, type ConnectionProfile, type EffectivePolicy, type SecretStore } from "@rizomadb/core";
+import { guardConnection, parseProfile, redactString, resolveConfig, ruleFor, saveSecrets, type AuditLog, type ConnectionProfile, type EffectivePolicy, type SecretStore } from "@rizomadb/core";
 
 export interface Memento {
   get<T>(key: string, fallback: T): T;
@@ -21,6 +21,8 @@ export class ConnectionManager {
   private catalog: CatalogProfile[] = [];
   private open = new Map<string, Promise<Connection>>();
   private tunnels = new Map<string, OpenTunnel>();
+  /** Secret values seen while connecting, per connection, so messages can be scrubbed. */
+  private known = new Map<string, string[]>();
   private listeners = new Set<() => void>();
 
   constructor(
@@ -105,6 +107,7 @@ export class ConnectionManager {
         await saveSecrets(this.secrets, p.id, [k], { [k]: v });
       }
       const cfg = await resolveConfig({ ...p, readOnly: this.isReadOnly(p) }, this.secrets, this.env, vars);
+      this.known.set(id, Object.entries(cfg).filter(([k, v]) => typeof v === "string" && v.length >= 4 && (p.secretKeys.includes(k) || /pass|secret|token|key|uri/i.test(k))).map(([, v]) => v as string));
       const ssh = takeSsh(cfg);
       if (ssh) {
         if (!this.openSsh) throw new Error("SSH tunnels are not available in this environment");
@@ -119,7 +122,7 @@ export class ConnectionManager {
         // Every feature receives this guarded connection: one policy check and one audit trail for all of them.
         return guardConnection(raw, {
           plugin: driver, connectionId: id, connectionName: p.name, environment: p.environment,
-          readOnly: () => this.isReadOnly(this.get(id) ?? p), policy: this.getPolicy, ...(this.hooks.audit ? { audit: this.hooks.audit } : {}),
+          readOnly: () => this.isReadOnly(this.get(id) ?? p), policy: this.getPolicy, redact: (s: string) => redactString(s, this.known.get(id) ?? []), ...(this.hooks.audit ? { audit: this.hooks.audit } : {}),
           ...(this.hooks.approve ? { approve: (reason: string, statement: string) => this.hooks.approve!(p.name, reason, statement) } : {}),
         });
       }

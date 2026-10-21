@@ -98,3 +98,14 @@ for (const [name, port] of [["elasticsearch", 19200], ["opensearch", 19201]] as 
     });
   });
 }
+
+import fc from "fast-check";
+describe("console parser robustness (fuzz)", () => {
+  it("parseConsole only throws ConsoleSyntaxError and assessConsole never throws", () => {
+    const frag = fc.constantFrom("GET", "POST", "DELETE", " /", "/idx/_search", "\n", "{", "}", "[", "]", ",", ":", '"a"', "//", "/*", "*/", "1", "é", "\\", '"');
+    fc.assert(fc.property(fc.array(frag, { maxLength: 30 }).map((a) => a.join("")), (s) => {
+      try { parseConsole(s); } catch (e) { expect(e).toBeInstanceOf(ConsoleSyntaxError); }
+      expect(["none", "write", "destructive"]).toContain(assessConsole(s).risk);
+    }), { numRuns: 3000 });
+  });
+});

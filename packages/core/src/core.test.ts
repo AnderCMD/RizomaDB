@@ -52,3 +52,14 @@ describe("statement classification (default-deny)", () => {
       expect(assessStatement(sql).risk, sql).not.toBe("none");
   });
 });
+
+import fc from "fast-check";
+describe("classifier robustness (fuzz)", () => {
+  it("assessStatement and decide never throw and always return a valid risk", () => {
+    const frag = fc.constantFrom("select", "insert", "delete", "update", "drop", "from", "where", "--", "/*", "*/", "'", '"', ";", " ", "\n", "with", "into", "pragma", "é", "set", "(", ")");
+    fc.assert(fc.property(fc.array(frag, { maxLength: 40 }).map((a) => a.join(" ")), (s) => {
+      expect(["none", "write", "destructive"]).toContain(assessStatement(s).risk);
+      expect(typeof decide(s, { environment: "prod", readOnly: false }).allowed).toBe("boolean");
+    }), { numRuns: 4000 });
+  });
+});

@@ -115,3 +115,22 @@ describe("guarded connection", () => {
     expect((await run(g, "SELECT 1")).rows[0]![0]).toBe(1);
   });
 });
+
+describe("secret scrubbing", () => {
+  it("removes passwords and connection strings from driver errors before the UI or the audit trail see them", async () => {
+    const leaky: Connection = {
+      serverInfo: { product: "x", version: "1" }, quoteIdent: (n) => n, introspect: () => ({ listSchemas: async () => [], listTables: async () => [], describeTable: async () => ({ name: "t", kind: "table" }) }),
+      ping: async () => {}, close: async () => {},
+      // eslint-disable-next-line require-yield
+      async *execute() { throw new DriverError("connection", "could not connect to postgres://app:hunter2@db.internal/prod (password=hunter2, token S3CR3T-TOKEN)"); },
+    };
+    const dir = mkdtempSync(join(tmpdir(), "rz-scrub-")); const audit = new AuditLog({ file: join(dir, "a.jsonl") });
+    const { redactString } = await import("./redact.js");
+    const g = guardConnection(leaky, { plugin: sqliteDriver, connectionId: "c", connectionName: "n", environment: "dev", readOnly: () => false, policy: () => mergePolicies(builtInPolicy), audit, redact: (s) => redactString(s, ["S3CR3T-TOKEN"]) });
+    const err = await collect(g.execute({ sql: "SELECT 1" }, sig())).catch((e: unknown) => e) as DriverError;
+    expect(err).toBeInstanceOf(DriverError); expect(err.kind).toBe("connection");
+    expect(err.message).not.toMatch(/hunter2|S3CR3T/); expect(err.cause).toBeUndefined();
+    await audit.flush();
+    expect(readFileSync(join(dir, "a.jsonl"), "utf8")).not.toMatch(/hunter2|S3CR3T/);
+  });
+});

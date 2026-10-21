@@ -105,3 +105,14 @@ for (const [name, port] of targets) {
     });
   });
 }
+
+import fc from "fast-check";
+describe("parser robustness (fuzz)", () => {
+  it("parseCommandLine only ever throws RedisSyntaxError, and assessRedis never throws", () => {
+    const frag = fc.constantFrom("SET", "GET", " ", '"', "'", "\\", "\\x4", "\\x41", "\n", "é", "🌱", "FLUSHALL", "DEL", "a b", "\t");
+    fc.assert(fc.property(fc.array(frag, { maxLength: 30 }).map((a) => a.join("")), (s) => {
+      try { parseCommandLine(s); } catch (e) { expect(e).toBeInstanceOf(RedisSyntaxError); }
+      expect(["none", "write", "destructive"]).toContain(assessRedis(s).risk);
+    }), { numRuns: 3000 });
+  });
+});

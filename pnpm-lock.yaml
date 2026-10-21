@@ -395,6 +395,10 @@ importers:
       '@rizomadb/driver-api':
         specifier: workspace:*
         version: link:../../driver-api
+    devDependencies:
+      fast-check:
+        specifier: 4.10.2
+        version: 4.10.2
 
   packages/drivers/mongodb:
     dependencies:
@@ -468,6 +472,10 @@ importers:
       ioredis:
         specifier: 6.0.0
         version: 6.0.0
+    devDependencies:
+      fast-check:
+        specifier: 4.10.2
+        version: 4.10.2
 
   packages/drivers/sqlite:
     dependencies:
