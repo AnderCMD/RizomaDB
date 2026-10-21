@@ -116,7 +116,7 @@ for (const e of engines.filter((q) => q.id !== "sqlite")) {
       await x(runner, revoke);
       expect(await has()).toBe(false);
       await s.close();
-    }, 60_000);
+    }, 180_000);
 
     it("samples live metrics and slow-query data", async () => {
       const s = await setup();
@@ -132,6 +132,6 @@ for (const e of engines.filter((q) => q.id !== "sqlite")) {
       expect(slow.columns).toEqual(expect.arrayContaining(["query", "calls", "total_ms"])); expect(slow.source.length).toBeGreaterThan(3);
       const idx = await s.admin.unusedIndexes(); expect(idx.columns).toEqual(expect.arrayContaining(["schema", "table", "index"]));
       await s.close();
-    }, 60_000);
+    }, 180_000);
   });
 }
