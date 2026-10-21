@@ -1,4 +1,5 @@
 import { HostToDesigner, type DesignTable } from "../../designMessages.js";
+import { tr as msg } from "./i18n.js";
 
 declare function acquireVsCodeApi(): { postMessage(m: unknown): void };
 const vscode = acquireVsCodeApi();
@@ -19,19 +20,19 @@ const cell = (...c: Node[]) => { const td = el("td"); td.append(...c); return td
 
 function colRow(c: { name: string; type: string; nullable: boolean; default?: string; identity?: boolean }, pk: boolean) {
   const tr = el("tr");
-  const rm = el("button", { type: "button", "aria-label": "Remove column" }, "✕");
+  const rm = el("button", { type: "button", "aria-label": msg("Remove column") }, "✕");
   rm.addEventListener("click", () => tr.remove());
-  tr.append(cell(input(c.name, "Column name", "c-name")), cell(input(c.type, "Type", "c-type")), cell(check(!c.nullable, "NOT NULL")), cell(check(pk, "Primary key")), cell(input(c.default ?? "", "Default (SQL expression)", "c-def")), cell(check(!!c.identity, "Auto-increment")), cell(rm));
+  tr.append(cell(input(c.name, msg("Column name"), "c-name")), cell(input(c.type, "Type", "c-type")), cell(check(!c.nullable, "NOT NULL")), cell(check(pk, msg("Primary key"))), cell(input(c.default ?? "", msg("Default (SQL expression)"), "c-def")), cell(check(!!c.identity, msg("Auto-increment"))), cell(rm));
   (tr.querySelectorAll("input[type=text]")[1] as HTMLInputElement).setAttribute("list", "types");
   return tr;
 }
 function idxRow(i: { name: string; columns: string[]; unique: boolean }) {
-  const tr = el("tr"); const rm = el("button", { type: "button", "aria-label": "Remove index" }, "✕"); rm.addEventListener("click", () => tr.remove());
-  tr.append(cell(input(i.name, "Index name")), cell(input(i.columns.join(", "), "Index columns, comma separated")), cell(check(i.unique, "Unique")), cell(rm)); return tr;
+  const tr = el("tr"); const rm = el("button", { type: "button", "aria-label": msg("Remove index") }, "✕"); rm.addEventListener("click", () => tr.remove());
+  tr.append(cell(input(i.name, msg("Index name"))), cell(input(i.columns.join(", "), msg("Index columns, comma separated"))), cell(check(i.unique, "Unique")), cell(rm)); return tr;
 }
 function fkRow(f: { name: string; columns: string[]; refTable: string; refColumns: string[] }) {
-  const tr = el("tr"); const rm = el("button", { type: "button", "aria-label": "Remove foreign key" }, "✕"); rm.addEventListener("click", () => tr.remove());
-  tr.append(cell(input(f.name, "Constraint name")), cell(input(f.columns.join(", "), "Columns")), cell(input(f.refTable, "Referenced table")), cell(input(f.refColumns.join(", "), "Referenced columns")), cell(rm)); return tr;
+  const tr = el("tr"); const rm = el("button", { type: "button", "aria-label": msg("Remove foreign key") }, "✕"); rm.addEventListener("click", () => tr.remove());
+  tr.append(cell(input(f.name, msg("Constraint name"))), cell(input(f.columns.join(", "), "Columns")), cell(input(f.refTable, msg("Referenced table"))), cell(input(f.refColumns.join(", "), "Referenced columns")), cell(rm)); return tr;
 }
 
 function collect(): DesignTable {
@@ -55,14 +56,14 @@ window.addEventListener("message", (e) => {
   const m = p.data;
   if (m.type === "load") {
     engine = m.engine; existing = m.existing;
-    $("heading").textContent = existing ? `Edit table ${m.table.name} (${engine})` : `New table (${engine})`;
+    $("heading").textContent = existing ? msg("Edit table {0} ({1})", m.table.name, engine) : msg("New table ({0})", engine);
     $<HTMLInputElement>("tname").value = m.table.name; $<HTMLInputElement>("tname").disabled = existing;
     $("types").replaceChildren(...m.types.map((t) => el("option", { value: t })));
     $("cols").replaceChildren(...m.table.columns.map((c) => colRow(c, m.table.primaryKey.some((p) => p.toLowerCase() === c.name.toLowerCase()))));
     $("idx").replaceChildren(...m.table.indexes.map(idxRow)); $("fks").replaceChildren(...m.table.foreignKeys.map(fkRow));
   } else if (m.type === "ddl") {
-    $("ddl").textContent = m.error ? m.error : m.statements.length ? m.statements.map((s) => `${s.manual ? `-- MANUAL: ${s.manual}\n` : ""}${s.destructive ? `-- DESTRUCTIVE: ${s.destructive}\n` : ""}${s.sql};`).join("\n\n") : "-- No changes";
-    $("warn").textContent = m.statements.some((s) => s.destructive) ? "This change is destructive and cannot be undone automatically." : "";
+    $("ddl").textContent = m.error ? m.error : m.statements.length ? m.statements.map((s) => `${s.manual ? `-- MANUAL: ${s.manual}\n` : ""}${s.destructive ? `-- DESTRUCTIVE: ${s.destructive}\n` : ""}${s.sql};`).join("\n\n") : "-- " + msg("No changes");
+    $("warn").textContent = m.statements.some((s) => s.destructive) ? msg("This change is destructive and cannot be undone automatically.") : "";
     $("ddl").focus();
   } else {
     $("status").textContent = m.message;

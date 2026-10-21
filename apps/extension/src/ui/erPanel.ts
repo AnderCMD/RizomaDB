@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { randomBytes } from "node:crypto";
 import { writeFile } from "node:fs/promises";
+import { i18nBlock } from "./webviewStrings.js";
 import { layoutEr, toMermaid, toPlantUml, toSvg, type SchemaModel } from "@rizomadb/schema-tools";
 import * as z from "zod/mini";
 
@@ -21,7 +22,7 @@ export function showEr(ctx: vscode.ExtensionContext, title: string, model: Schem
 <button id="x-svg">SVG</button><button id="x-png">PNG</button><button id="x-mermaid">Mermaid</button><button id="x-plantuml">PlantUML</button></header>
 <main><svg id="svg" role="group" aria-label="${t("Entity-relationship diagram")}"><defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs><g id="viewport"></g></svg>
 <div id="live" class="sr-only" aria-live="polite"></div></main>
-<script nonce="${nonce}" src="${w.asWebviewUri(vscode.Uri.joinPath(root, "er.js"))}"></script></body></html>`;
+${i18nBlock()}<script nonce="${nonce}" src="${w.asWebviewUri(vscode.Uri.joinPath(root, "er.js"))}"></script></body></html>`;
   const L = layoutEr(model, only);
   const pk = (n: string, t: SchemaModel["tables"][number]) => t.primaryKey.some((p) => p.toLowerCase() === n.toLowerCase());
   void w.postMessage({ v: 1, type: "er", title, width: L.width, height: L.height,

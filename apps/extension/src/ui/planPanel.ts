@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { randomBytes } from "node:crypto";
+import { i18nBlock } from "./webviewStrings.js";
 import { slowNodes, type Plan, type PlanNode } from "@rizomadb/sql";
 
 export class PlanPanel {
@@ -19,7 +20,7 @@ export class PlanPanel {
 <body><header><h1 id="title">Plan</h1><span id="summary" role="status"></span></header>
 <main><ul id="tree" role="tree" aria-label="${vscode.l10n.t("Execution plan")}"></ul>
 <details><summary>${vscode.l10n.t("Raw plan")}</summary><pre id="raw"></pre></details></main>
-<script nonce="${nonce}" src="${w.asWebviewUri(vscode.Uri.joinPath(root, "plan.js"))}"></script></body></html>`;
+${i18nBlock()}<script nonce="${nonce}" src="${w.asWebviewUri(vscode.Uri.joinPath(root, "plan.js"))}"></script></body></html>`;
       p.onDidDispose(() => { this.panel = undefined; });
       this.panel = p;
     }

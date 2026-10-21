@@ -1,4 +1,5 @@
 import { HostToWebview } from "../../messages.js";
+import { tr } from "./i18n.js";
 
 declare function acquireVsCodeApi(): { postMessage(m: unknown): void };
 const vscode = acquireVsCodeApi();
@@ -60,7 +61,7 @@ function renderBody() {
     row.className = "row" + (deletes.has(r) ? " deleted" : "") + (isNew ? " inserted" : "");
     row.style.top = `${r * ROW_H}px`;
     row.setAttribute("role", "row"); row.setAttribute("aria-rowindex", String(r + 2));
-    if (deletes.has(r)) row.setAttribute("aria-description", "marked for deletion");
+    if (deletes.has(r)) row.setAttribute("aria-description", tr("marked for deletion"));
     for (let c = 0; c < columns.length; c++) {
       const { text: v, unset } = cellText(r, c);
       const d = document.createElement("div");
@@ -70,7 +71,7 @@ function renderBody() {
       d.dataset.r = String(r); d.dataset.c = String(c);
       d.textContent = unset ? "DEFAULT" : v === null ? "NULL" : v;
       if (unset) d.classList.add("null");
-      if (changed) d.setAttribute("aria-description", "pending change");
+      if (changed) d.setAttribute("aria-description", tr("pending change"));
       if (v !== null && !unset) d.title = v.length > 200 ? v.slice(0, 200) + "…" : v;
       row.append(d);
     }
@@ -99,7 +100,7 @@ function move(dr: number, dc: number) {
   sel.c = Math.min(columns.length - 1, Math.max(0, sel.c + dc));
   reveal(); renderBody();
   const { text } = cellText(sel.r, sel.c);
-  announce(`${columns[sel.c]!.name}, row ${sel.r + 1}: ${text === null ? "NULL" : text}`);
+  announce(tr("{0}, row {1}: {2}", columns[sel.c]!.name, sel.r + 1, text === null ? "NULL" : text));
 }
 
 function beginEdit() {
@@ -110,7 +111,7 @@ function beginEdit() {
   if (!target) { editing = undefined; return; }
   const { text } = cellText(sel.r, sel.c);
   const input = document.createElement("input");
-  input.value = text ?? ""; input.setAttribute("aria-label", `Edit ${columns[sel.c]!.name}, row ${sel.r + 1}`);
+  input.value = text ?? ""; input.setAttribute("aria-label", tr("Edit {0}, row {1}", columns[sel.c]!.name, sel.r + 1));
   input.className = "editor";
   target.replaceChildren(input);
   input.focus(); input.select();
@@ -166,7 +167,7 @@ function setToolbar(count: number, canUndo: boolean, canRedo: boolean) {
   $<HTMLButtonElement>("btn-undo").disabled = !canUndo;
   $<HTMLButtonElement>("btn-redo").disabled = !canRedo;
   for (const id of ["btn-review", "btn-apply", "btn-discard"]) $<HTMLButtonElement>(id).disabled = count === 0;
-  $("pending-count").textContent = count ? `${count} pending change${count === 1 ? "" : "s"}` : "No pending changes";
+  $("pending-count").textContent = count ? tr("{0} pending change(s)", count) : tr("No pending changes");
 }
 
 window.addEventListener("message", (ev) => {
@@ -180,19 +181,19 @@ window.addEventListener("message", (ev) => {
     grid.setAttribute("aria-colcount", String(columns.length));
     grid.setAttribute("aria-rowcount", "1");
     $("title").textContent = m.title;
-    status.textContent = "Running…"; $("cancel").hidden = false;
+    status.textContent = tr("Running…"); $("cancel").hidden = false;
     setToolbar(0, false, false);
     renderHead(); renderBody();
   } else if (m.type === "rows") {
     for (const r of m.rows) rows.push(r);
     grid.setAttribute("aria-rowcount", String(rows.length + 1));
-    status.textContent = `${rows.length.toLocaleString()} rows…`;
+    status.textContent = tr("{0} rows…", rows.length.toLocaleString());
     schedule();
   } else if (m.type === "done") {
     $("cancel").hidden = true;
     const ms = Math.round(m.durationMs);
-    const parts = [m.affectedRows !== undefined ? `${m.affectedRows} rows affected` : `${m.rowCount.toLocaleString()} rows`, `${ms} ms`];
-    if (m.truncated) parts.push("truncated at the row limit (rizomadb.query.maxRows)");
+    const parts = [m.affectedRows !== undefined ? tr("{0} rows affected", m.affectedRows) : tr("{0} rows", m.rowCount.toLocaleString()), tr("{0} ms", ms)];
+    if (m.truncated) parts.push(tr("truncated at the row limit (rizomadb.query.maxRows)"));
     status.textContent = parts.join(" · ");
     announce(status.textContent);
     if (columns.length === 0) { renderHead(); renderBody(); }
@@ -201,14 +202,14 @@ window.addEventListener("message", (ev) => {
     $("cancel").hidden = true;
     errorBox.hidden = false;
     errorBox.textContent = `${m.kind}: ${m.message}`;
-    status.textContent = "Failed";
-    announce(`Error: ${m.message}`);
+    status.textContent = tr("Failed");
+    announce(tr("Error: {0}", m.message));
   } else if (m.type === "pending") {
     sets = new Map(m.sets.map((s) => [`${s.row}:${s.col}`, s.text]));
     deletes = new Set(m.deletes); inserts = m.inserts;
     grid.setAttribute("aria-rowcount", String(totalRows() + 1));
     setToolbar(m.count, m.canUndo, m.canRedo);
-    announce(m.count ? `${m.count} pending changes` : "No pending changes");
+    announce(m.count ? tr("{0} pending change(s)", m.count) : tr("No pending changes"));
     renderBody();
   } else if (m.type === "notice") {
     errorBox.hidden = m.text === "";

@@ -3,6 +3,7 @@ import { randomBytes } from "node:crypto";
 import { collect } from "@rizomadb/driver-api";
 import { decideEffective, type EffectivePolicy } from "@rizomadb/core";
 import { createScript, diffModels, migrationStatements, type ColumnM, type Dialect, type SchemaModel, type Statement, type TableM } from "@rizomadb/schema-tools";
+import { i18nBlock } from "./webviewStrings.js";
 import { DesignerToHost, type DesignTable } from "../designMessages.js";
 import type { ConnectionManager } from "../lib/connections.js";
 
@@ -37,7 +38,7 @@ export function openDesigner(ctx: vscode.ExtensionContext, mgr: ConnectionManage
 <datalist id="types"></datalist>
 <div><button type="button" id="btn-preview">${t("Preview DDL")}</button> <button type="button" id="btn-apply">${t("Apply…")}</button> <span id="status"></span></div>
 <div id="warn" role="status"></div><pre id="ddl" tabindex="0" aria-label="${t("Generated DDL")}"></pre></form></main>
-<script nonce="${nonce}" src="${w.asWebviewUri(vscode.Uri.joinPath(root, "designer.js"))}"></script></body></html>`;
+${i18nBlock()}<script nonce="${nonce}" src="${w.asWebviewUri(vscode.Uri.joinPath(root, "designer.js"))}"></script></body></html>`;
 
   const existing = existingName ? current.tables.find((x) => x.name.toLowerCase() === existingName.toLowerCase()) : undefined;
   const initial = existing ?? { name: "", columns: [{ name: "id", type: TYPES[dialect]![0]!, nullable: false }], primaryKey: ["id"], indexes: [], foreignKeys: [] } as TableM;

@@ -3,6 +3,7 @@ import { randomBytes } from "node:crypto";
 import { collect } from "@rizomadb/driver-api";
 import { decideEffective, type EffectivePolicy } from "@rizomadb/core";
 import { Admin, MetricSampler, grantStatement, providers, snapshotToRecord, type Engine, type Table } from "@rizomadb/admin";
+import { i18nBlock } from "./webviewStrings.js";
 import type { ConnectionManager } from "../lib/connections.js";
 import type { Node } from "./explorer.js";
 
@@ -102,7 +103,7 @@ export function registerAdminCommands({ ctx, mgr, policy, pick, reg, show }: Dep
     w.html = `<!doctype html><html lang="${vscode.env.language}"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${w.cspSource}; script-src 'nonce-${nonce}';">
 <link rel="stylesheet" href="${w.asWebviewUri(vscode.Uri.joinPath(root, "webview.css"))}"><title>Metrics</title></head>
 <body><header><h1 id="title"></h1></header><main><div id="charts"></div><div id="live" class="sr-only" aria-live="polite"></div></main>
-<script nonce="${nonce}" src="${w.asWebviewUri(vscode.Uri.joinPath(root, "metrics.js"))}"></script></body></html>`;
+${i18nBlock()}<script nonce="${nonce}" src="${w.asWebviewUri(vscode.Uri.joinPath(root, "metrics.js"))}"></script></body></html>`;
     const defs = providers[x.profile.driver as Engine].metricDefs, sampler = new MetricSampler(defs);
     let busy = false;
     const tick = async () => {

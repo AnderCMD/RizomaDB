@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { randomBytes } from "node:crypto";
+import { i18nBlock } from "./webviewStrings.js";
 import { WebviewToHost, type HostToWebview } from "../messages.js";
 
 /** One reusable results tab. The webview only receives validated, string-typed messages. */
@@ -39,6 +40,7 @@ export class ResultsPanel {
 <div id="grid" role="grid" tabindex="0" aria-label="${vscode.l10n.t("Query results")}"></div>
 <div id="live" class="sr-only" aria-live="polite"></div>
 </main>
+${i18nBlock()}
 <script nonce="${nonce}" src="${w.asWebviewUri(vscode.Uri.joinPath(root, "webview.js"))}"></script></body></html>`;
     w.onDidReceiveMessage((raw: unknown) => {
       const p = WebviewToHost.safeParse(raw);

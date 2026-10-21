@@ -1,3 +1,5 @@
+import { tr } from "./i18n.js";
+
 declare function acquireVsCodeApi(): { postMessage(m: unknown): void };
 
 interface Node { label: string; detail?: string; rows?: number; actualRows?: number; cost?: number; timeMs?: number; children: Node[]; slow?: boolean }
@@ -14,8 +16,8 @@ function render(n: Node, maxCost: number, level: number): HTMLElement {
   li.setAttribute("role", "treeitem"); li.setAttribute("aria-level", String(level)); li.setAttribute("aria-expanded", "true");
   if (n.slow) li.classList.add("slow");
   const row = el("div", "node"); row.tabIndex = -1;
-  row.append(el("span", "label", n.label + (n.slow ? " — slow" : "")));
-  const meta = [n.cost !== undefined ? `cost ${fmt(n.cost)}` : "", n.rows !== undefined ? `est. rows ${fmt(n.rows)}` : "", n.actualRows !== undefined ? `actual rows ${fmt(n.actualRows)}` : "", n.timeMs !== undefined ? `${fmt(n.timeMs)} ms` : ""].filter(Boolean).join(" · ");
+  row.append(el("span", "label", n.slow ? tr("{0} — slow", n.label) : n.label));
+  const meta = [n.cost !== undefined ? tr("cost {0}", fmt(n.cost)) : "", n.rows !== undefined ? tr("est. rows {0}", fmt(n.rows)) : "", n.actualRows !== undefined ? tr("actual rows {0}", fmt(n.actualRows)) : "", n.timeMs !== undefined ? tr("{0} ms", fmt(n.timeMs)) : ""].filter(Boolean).join(" · ");
   if (meta) row.append(el("span", "meta", meta));
   if (n.detail) row.append(el("div", "detail", n.detail));
   if (n.cost !== undefined && maxCost > 0) { const bar = el("div", "bar"); const f = el("div", "fill"); f.style.width = `${Math.min(100, (n.cost / maxCost) * 100)}%`; bar.append(f); row.append(bar); }
@@ -30,7 +32,7 @@ window.addEventListener("message", (e) => {
   if (!isMsg(e.data)) return;
   const m = e.data;
   document.getElementById("title")!.textContent = m.title;
-  document.getElementById("summary")!.textContent = [m.analyzed ? "EXPLAIN ANALYZE" : "EXPLAIN", m.totalCost !== undefined ? `total cost ${fmt(m.totalCost)}` : "", m.executionMs !== undefined ? `execution ${fmt(m.executionMs)} ms` : ""].filter(Boolean).join(" · ");
+  document.getElementById("summary")!.textContent = [m.analyzed ? "EXPLAIN ANALYZE" : "EXPLAIN", m.totalCost !== undefined ? tr("total cost {0}", fmt(m.totalCost)) : "", m.executionMs !== undefined ? tr("execution {0} ms", fmt(m.executionMs)) : ""].filter(Boolean).join(" · ");
   const tree = document.getElementById("tree")!;
   tree.replaceChildren(...m.root.map((n) => render(n, maxOf(m.root), 1)));
   document.getElementById("raw")!.textContent = m.raw;
