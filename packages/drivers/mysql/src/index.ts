@@ -79,10 +79,13 @@ async function* run(c: Ctx, req: ExecuteRequest, signal: AbortSignal): AsyncGene
   q.on("result", (r: unknown) => { if (r && !Array.isArray(r) && typeof r === "object" && "affectedRows" in r) header = r as { affectedRows: number }; });
   const stream = q.stream({ highWaterMark: 64 });
   stream.on("error", (e: unknown) => { failure = e; });
+  // The abort can arrive just as this statement ends (the caller stops reading at a row limit). KILL QUERY targets the connection, not the
+  // statement, so a late kill would hit the NEXT statement on it: only kill while this one is still running.
+  let finished = false;
   const onAbort = () => {
     void (async () => {
       const k = await c.killer();
-      try { await k.promise().query(`KILL QUERY ${c.threadId}`); } finally { k.destroy(); }
+      try { if (!finished) await k.promise().query(`KILL QUERY ${c.threadId}`); } finally { k.destroy(); }
     })().catch(() => {});
   };
   signal.addEventListener("abort", onAbort, { once: true });
@@ -108,7 +111,7 @@ async function* run(c: Ctx, req: ExecuteRequest, signal: AbortSignal): AsyncGene
     yield { type: "done", rowCount: n, durationMs: performance.now() - t0, ...(header && !(fields && fields.length) ? { affectedRows: header.affectedRows ?? 0 } : {}) };
   } catch (e) {
     throw signal.aborted && !(e instanceof DriverError && e.kind !== "cancelled") ? new DriverError("cancelled", "Query cancelled", { cause: e }) : mapError(e);
-  } finally { signal.removeEventListener("abort", onAbort); }
+  } finally { finished = true; signal.removeEventListener("abort", onAbort); }
 }
 
 const colsOf = (f: mysql.FieldPacket[]): ColumnInfo[] =>

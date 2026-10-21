@@ -28,6 +28,17 @@ exports.run = async function run() {
   const mlenses = await vscode.commands.executeCommand("vscode.executeCodeLensProvider", mongo.uri);
   assert.strictEqual(mlenses.filter((l) => l.command?.command === "rizomadb.runAt").length, 2, "Mongo blocks get lenses too");
   assert.ok(mlenses.every((l) => l.command?.command !== "rizomadb.explainAt"), "no Explain lens outside SQL");
+  // Every screen opens as a real webview tab (CSP, nonce and the bundled scripts load without throwing).
+  const opened = async (cmd, title) => {
+    await vscode.commands.executeCommand(cmd);
+    await new Promise((r) => setTimeout(r, 600));
+    const tabs = vscode.window.tabGroups.all.flatMap((g) => g.tabs);
+    assert.ok(tabs.some((t) => t.input && t.input.viewType && String(t.input.viewType).includes(title)), `${cmd} opens a ${title} tab`);
+  };
+  await opened("rizomadb.openSettings", "rizomadb.settings");
+  await opened("rizomadb.newConnection", "rizomadb.connect");
+  await opened("rizomadb.openGuide", "rizomadb.guide");
+  await opened("rizomadb.openHistory", "rizomadb.history");
   console.log(`host node ${process.versions.node}, electron ${process.versions.electron}`);
   let sqliteOk = true; try { require("node:sqlite"); } catch { sqliteOk = false; }
   console.log(`node:sqlite available in this host: ${sqliteOk}`);
