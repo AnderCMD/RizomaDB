@@ -7,7 +7,7 @@ Leyenda: ✅ cumplido y verificado · 🟡 parcial · ❌ no hecho
 | Criterio | Estado | Evidencia / límite |
 |---|---|---|
 | Tier 1 (PG, MySQL/MariaDB, SQLite, SQL Server, Oracle, MongoDB, Redis/Valkey) con pruebas contra motor real | ✅ | Kit de conformidad + pruebas por motor (contenedores Docker) |
-| Tier 2 completo | 🟡 | ClickHouse, Elasticsearch/OpenSearch, DuckDB, CockroachDB-por-PG: ver docs/engines. Neo4j 5.26 añadido (HTTP Query API, 14 pruebas contra motor real). DynamoDB Local 2.5.2 añadido (PartiQL + SigV4, 12 pruebas; AWS real NO probado). InfluxDB 2.7 añadido (Flux, 10 pruebas). Cassandra 5.0 añadido (10 pruebas). Firestore (emulador) añadido (14 pruebas; Google Cloud real NO probado). CockroachDB 24.3.4 probado con el kit completo (15/15). Tier 2 pendiente: InfluxDB 3, ScyllaDB probado, Trino, Redshift, TiDB/YugabyteDB probados, Trino, Redshift probado |
+| Tier 2 completo | 🟡 | ClickHouse, Elasticsearch/OpenSearch, DuckDB, CockroachDB-por-PG: ver docs/engines. Neo4j 5.26 añadido (HTTP Query API, 14 pruebas contra motor real). DynamoDB Local 2.5.2 añadido (PartiQL + SigV4, 12 pruebas; AWS real NO probado). InfluxDB 2.7 añadido (Flux, 10 pruebas). Cassandra 5.0 añadido (10 pruebas). Firestore (emulador) añadido (14 pruebas; Google Cloud real NO probado). CockroachDB 24.3.4 probado con el kit completo (15/15). TiDB 8.5.1 probado con el kit completo (15/15; solo lectura aplicada en el cliente). Tier 2 pendiente: InfluxDB 3, ScyllaDB probado, Trino, Redshift, YugabyteDB probado, Trino, Redshift probado |
 | Cero telemetría | ✅ | Prueba de activación sin sockets |
 | Secretos solo en SecretStorage | ✅ | Pruebas de depuración de secretos y auto-auditoría |
 | Política/auditoría en un único punto | ✅ | `guardConnection`, `policy-paths.test.ts` |

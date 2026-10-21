@@ -1,3 +1,4 @@
+import { isReadOnlyStatement } from "./readonly.js";
 import { meta, quoteIdent } from "./meta.js";
 import { readFile } from "node:fs/promises";
 import mysql from "mysql2";
@@ -64,10 +65,11 @@ function kindOf(type: string | undefined): ColumnInfo["kind"] {
 
 const toParam = (v: Value): unknown => (v !== null && typeof v === "object" && !(v instanceof Date) && !(v instanceof Uint8Array) && !Array.isArray(v) ? JSON.stringify((v as { json: unknown }).json) : v);
 
-interface Ctx { conn: mysql.Connection; threadId: number; killer: () => Promise<mysql.Connection>; lost: ConnectionLoss }
+interface Ctx { conn: mysql.Connection; threadId: number; killer: () => Promise<mysql.Connection>; lost: ConnectionLoss; clientReadOnly?: boolean }
 
 async function* run(c: Ctx, req: ExecuteRequest, signal: AbortSignal): AsyncGenerator<ResultEvent> {
   if (signal.aborted) throw new DriverError("cancelled", "Query cancelled");
+  if (c.clientReadOnly && !isReadOnlyStatement(req.sql)) throw new DriverError("permission", "Connection is read-only: statement rejected");
   const t0 = performance.now();
   const q = c.conn.query({ sql: req.sql, values: (req.params ?? []).map(toParam), rowsAsArray: true, typeCast: typeCast as never });
   let fields: mysql.FieldPacket[] | undefined;
@@ -114,12 +116,12 @@ const colsOf = (f: mysql.FieldPacket[]): ColumnInfo[] =>
 
 class MysqlConnection implements Connection {
   private lost = new ConnectionLoss();
-  constructor(private conn: mysql.Connection, readonly serverInfo: Connection["serverInfo"], private threadId: number, private cfg: mysql.ConnectionOptions) {
+  constructor(private conn: mysql.Connection, readonly serverInfo: Connection["serverInfo"], private threadId: number, private cfg: mysql.ConnectionOptions, private clientReadOnly = false) {
     const gone = (e?: Error) => this.lost.fire(new DriverError("connection", e?.message ?? "The server closed the connection", { cause: e }));
     conn.once("error", gone); conn.once("end", () => gone());
   }
   private ctx(): Ctx {
-    return { conn: this.conn, threadId: this.threadId, lost: this.lost, killer: () => new Promise((res, rej) => { const k = mysql.createConnection(this.cfg); k.connect((e) => (e ? rej(e) : res(k))); }) };
+    return { conn: this.conn, threadId: this.threadId, lost: this.lost, clientReadOnly: this.clientReadOnly, killer: () => new Promise((res, rej) => { const k = mysql.createConnection(this.cfg); k.connect((e) => (e ? rej(e) : res(k))); }) };
   }
   execute(req: ExecuteRequest, signal: AbortSignal) { return run(this.ctx(), req, signal); }
   quoteIdent = quoteIdent;
@@ -207,9 +209,11 @@ export const mysqlDriver: DriverPlugin = {
       await new Promise<void>((res, rej) => conn.connect((e) => (e ? rej(e) : res())));
       conn.on("error", () => {});
       const p = conn.promise();
-      if (cfg.readOnly) await p.query("SET SESSION TRANSACTION READ ONLY");
       const [rows] = await p.query({ sql: "select version() v, connection_id() id", rowsAsArray: false }) as unknown as [{ v: string; id: number }[]];
-      return new MysqlConnection(conn, { product: /mariadb/i.test(rows[0]!.v) ? "MariaDB" : "MySQL", version: rows[0]!.v }, rows[0]!.id, options);
+      // TiDB only has a no-op READ ONLY session: enforce read-only in the driver instead of pretending the server does.
+      const tidb = /-TiDB-/i.test(rows[0]!.v);
+      if (cfg.readOnly && !tidb) await p.query("SET SESSION TRANSACTION READ ONLY");
+      return new MysqlConnection(conn, { product: tidb ? "TiDB" : /mariadb/i.test(rows[0]!.v) ? "MariaDB" : "MySQL", version: tidb ? (/-TiDB-v([\d.]+)/i.exec(rows[0]!.v)?.[1] ?? rows[0]!.v) : rows[0]!.v }, rows[0]!.id, options, !!cfg.readOnly && tidb);
     } catch (e) { conn.destroy(); throw mapError(e); }
   },
 };

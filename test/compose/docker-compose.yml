@@ -66,3 +66,6 @@ services:
     image: cockroachdb/cockroach:v24.3.4
     command: ["start-single-node", "--insecure"]
     ports: ["26257:26257"]
+  tidb:
+    image: pingcap/tidb:v8.5.1
+    ports: ["14000:4000"]
