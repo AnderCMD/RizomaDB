@@ -1,0 +1,9 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>grid</title><link rel="stylesheet" href="webview.css"><link rel="stylesheet" id="theme" href="theme-dark.css"></head><body>
+<header><h1 id="title">RizomaDB</h1><span id="status" role="status">No results yet</span><button id="cancel" hidden>Cancel</button></header>
+<main><div id="toolbar" hidden role="toolbar" aria-label="Edit actions"><button id="btn-insert">Add row</button><button id="btn-delete">Delete/restore row</button><button id="btn-undo">Undo</button><button id="btn-redo">Redo</button><button id="btn-review">Review SQL</button><button id="btn-apply">Apply</button><button id="btn-discard">Discard</button><span id="pending-count" role="status"></span></div>
+<div id="error" role="alert" hidden></div><div id="grid" role="grid" tabindex="0" aria-label="Query results"></div><div id="live" class="sr-only" aria-live="polite"></div></main>
+<script>window.acquireVsCodeApi=()=>({postMessage(){}})</script><script src="webview.js"></script>
+<script>const post=m=>window.dispatchEvent(new MessageEvent('message',{data:m}));
+post({v:1,type:'start',title:'people',sql:'',editable:true,columns:[{name:'id',nativeType:'int',kind:'integer'},{name:'name',nativeType:'text',kind:'text'},{name:'note',nativeType:'text',kind:'text'}]});
+post({v:1,type:'rows',rows:[['1','Ada',null],['2','Linus','x'],['3','Grace','y']]});post({v:1,type:'done',rowCount:3,durationMs:5,truncated:false});
+post({v:1,type:'pending',sets:[{row:0,col:1,text:'Ada L.'}],deletes:[2],inserts:[[{set:true,text:'9'},{set:false,text:null},{set:false,text:null}]],count:3,canUndo:true,canRedo:false});</script></body></html>

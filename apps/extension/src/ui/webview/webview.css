@@ -1,4 +1,6 @@
 :root { color-scheme: light dark; }
+header h1, h1#title { font-size: inherit; margin: 0; display: inline; }
+main { display: flex; flex-direction: column; flex: 1; min-height: 0; }
 body { margin: 0; padding: 0; font: var(--vscode-font-size) var(--vscode-font-family); color: var(--vscode-foreground); background: var(--vscode-editor-background); height: 100vh; display: flex; flex-direction: column; }
 header { padding: 6px 10px; border-bottom: 1px solid var(--vscode-panel-border); display: flex; gap: 12px; align-items: center; }
 #status { flex: 1; }
@@ -10,16 +12,18 @@ button:focus-visible, #grid:focus-visible { outline: 2px solid var(--vscode-focu
 .row { display: flex; position: absolute; left: 0; height: 24px; line-height: 24px; white-space: nowrap; }
 .cell { box-sizing: border-box; width: 180px; padding: 0 8px; overflow: hidden; text-overflow: ellipsis; border-right: 1px solid var(--vscode-panel-border); border-bottom: 1px solid var(--vscode-panel-border); flex: none; }
 .head { position: sticky; top: 0; z-index: 2; background: var(--vscode-editorGroupHeader-tabsBackground, var(--vscode-editor-background)); font-weight: 600; display: flex; height: 26px; line-height: 26px; width: max-content; }
-.head .cell small { opacity: .7; font-weight: 400; margin-left: 6px; }
-.null { opacity: .6; font-style: italic; }
+.head .cell small { font-weight: 400; font-style: italic; margin-left: 6px; }
+.null { font-style: italic; }
+/* the muted colour is only safe on the plain background; tinted rows keep the normal text colour */
+.row:not(.inserted):not(.deleted) .cell.null:not(.sel):not(.changed) { color: var(--vscode-descriptionForeground, var(--vscode-foreground)); }
 .sel { outline: 2px solid var(--vscode-focusBorder); outline-offset: -2px; background: var(--vscode-list-activeSelectionBackground); color: var(--vscode-list-activeSelectionForeground); }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
 #toolbar { padding: 4px 10px; border-bottom: 1px solid var(--vscode-panel-border); display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
 #toolbar[hidden] { display: none; }
 #toolbar button:disabled { opacity: .5; cursor: default; }
-#pending-count { margin-left: 8px; opacity: .85; }
-.row.deleted .cell { text-decoration: line-through; opacity: .6; background: var(--vscode-diffEditor-removedTextBackground, rgba(255,0,0,.15)); }
+#pending-count { margin-left: 8px; }
+.row.deleted .cell { text-decoration: line-through; color: var(--vscode-foreground); background: var(--vscode-diffEditor-removedTextBackground, rgba(255,0,0,.15)); }
 .row.inserted .cell { background: var(--vscode-diffEditor-insertedTextBackground, rgba(0,255,0,.12)); }
 .cell.changed { background: var(--vscode-diffEditor-insertedTextBackground, rgba(0,255,0,.18)); border-bottom: 2px solid var(--vscode-gitDecoration-modifiedResourceForeground, #e2c08d); }
 .editor { box-sizing: border-box; width: 100%; height: 22px; color: var(--vscode-input-foreground); background: var(--vscode-input-background); border: 1px solid var(--vscode-focusBorder); }
@@ -30,8 +34,8 @@ button:focus-visible, #grid:focus-visible { outline: 2px solid var(--vscode-focu
 .node { padding: 3px 6px; border-radius: 3px; }
 .node:focus-visible { outline: 2px solid var(--vscode-focusBorder); }
 .node .label { font-weight: 600; }
-.node .meta { margin-left: 10px; opacity: .8; }
-.node .detail { opacity: .75; font-size: .92em; }
+.node .meta { margin-left: 10px; font-style: italic; }
+.node .detail { font-size: .92em; }
 .bar { height: 4px; background: var(--vscode-panel-border); margin-top: 3px; max-width: 320px; }
 .fill { height: 100%; background: var(--vscode-charts-blue, #3794ff); }
 li.slow > .node { background: var(--vscode-inputValidation-warningBackground, rgba(255,200,0,.15)); border-left: 3px solid var(--vscode-inputValidation-warningBorder, #cca700); }

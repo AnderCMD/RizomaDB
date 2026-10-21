@@ -204,3 +204,39 @@ describe("mongo tools", () => {
     expect(pipelineStages("db.a.find({})")).toBeUndefined();
   });
 });
+
+import { parseConnectionUri, parseDBeaver, parseMyCnf, parsePgpass, parseSqlTools } from "./importers.js";
+describe("connection importers", () => {
+  it("parses URIs for every supported scheme and keeps secrets apart", () => {
+    const pg = parseConnectionUri("postgres://app:p%40ss%3Aw%2Frd@db.example.com:6432/shop?sslmode=require");
+    expect(pg).toMatchObject({ driver: "postgres", options: { host: "db.example.com", port: 6432, user: "app", database: "shop", ssl: true }, secrets: { password: "p@ss:w/rd" } });
+    expect(JSON.stringify(pg.options)).not.toContain("p@ss");
+    expect(parseConnectionUri("mysql://root@localhost/test")).toMatchObject({ driver: "mysql", options: { port: 3306, ssl: false }, secrets: {} });
+    expect(parseConnectionUri("postgresql://u@[::1]:5432/db").options.host).toBe("::1");
+    expect(parseConnectionUri("rediss://:secret@cache:6380/2")).toMatchObject({ driver: "redis", options: { ssl: true, port: 6380, database: 2 }, secrets: { password: "secret" } });
+    const mongo = parseConnectionUri("mongodb+srv://u:pw@cluster0.abc.mongodb.net/app?retryWrites=true");
+    expect(mongo.secrets.uri).toContain("cluster0"); expect(JSON.stringify(mongo.options)).not.toContain("pw");
+    expect(parseConnectionUri("sqlite:///tmp/a.db")).toMatchObject({ driver: "sqlite", options: { path: "/tmp/a.db" } });
+    expect(parseConnectionUri("jdbc:postgresql://h:5433/d").options).toMatchObject({ host: "h", port: 5433 });
+    expect(parseConnectionUri("oracle://u:p@h:1521/FREEPDB1").options).toMatchObject({ service: "FREEPDB1" });
+    expect(() => parseConnectionUri("ftp://x")).toThrow(/Unsupported/); expect(() => parseConnectionUri("nonsense")).toThrow();
+  });
+  it("parses .pgpass with escapes and skips wildcard hosts", () => {
+    const r = parsePgpass("# c\nlocalhost:5432:shop:app:pa\\:ss\\\\x\n*:*:*:any:pw\nhost2:*:*:u2:p2\nbroken:line\n");
+    expect(r).toHaveLength(2); expect(r[0]).toMatchObject({ options: { host: "localhost", port: 5432, database: "shop", user: "app" }, secrets: { password: "pa:ss\\x" } });
+    expect(r[1]!.options.database).toBeUndefined();
+  });
+  it("parses [client] from my.cnf", () => {
+    const r = parseMyCnf("[client]\nuser = root\npassword=\"s3\"\nhost=db1\nport=3307\n[mysqld]\nport=1\n");
+    expect(r).toHaveLength(1); expect(r[0]).toMatchObject({ driver: "mysql", options: { host: "db1", port: 3307, user: "root" }, secrets: { password: "s3" } });
+  });
+  it("parses DBeaver data sources without touching credentials", () => {
+    const r = parseDBeaver({ connections: { a: { name: "Prod PG", driver: "postgres-jdbc", configuration: { host: "pg", port: "5432", database: "app" } }, b: { name: "Lite", driver: "sqlite_jdbc", configuration: { database: "/x/y.db" } }, c: { name: "Odd", driver: "someunknown", configuration: {} } } });
+    expect(r.map((x) => x.name)).toEqual(["Prod PG", "Lite"]); expect(r[0]!.secrets).toEqual({}); expect(r[0]!.notes[0]).toMatch(/encrypted/);
+  });
+  it("parses SQLTools settings with comments and flags plain-text passwords", () => {
+    const r = parseSqlTools('{\n // my dbs\n "sqltools.connections": [ { "name": "Dev", "driver": "PostgreSQL", "server": "localhost", "port": 5432, "database": "d", "username": "u", "password": "pw", }, { "name": "Lite", "driver": "SQLite", "database": "/a.db" } ] }');
+    expect(r).toHaveLength(2); expect(r[0]).toMatchObject({ secrets: { password: "pw" }, options: { user: "u" } }); expect(r[0]!.notes[0]).toMatch(/plain text/); expect(r[1]!.options.path).toBe("/a.db");
+    expect(() => parseSqlTools("{ nope")).toThrow(/could not be read/);
+  });
+});

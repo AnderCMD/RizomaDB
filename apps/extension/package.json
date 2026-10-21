@@ -317,6 +317,11 @@
         "command": "rizomadb.mcp.generateConfig",
         "title": "%cmd.mcp_generateConfig%",
         "category": "RizomaDB"
+      },
+      {
+        "command": "rizomadb.importConnections",
+        "title": "%cmd.importConnections%",
+        "category": "RizomaDB"
       }
     ],
     "menus": {
@@ -330,6 +335,11 @@
           "command": "rizomadb.refresh",
           "when": "view == rizomadb.connections",
           "group": "navigation"
+        },
+        {
+          "command": "rizomadb.importConnections",
+          "when": "view == rizomadb.connections",
+          "group": "navigation@3"
         }
       ],
       "view/item/context": [

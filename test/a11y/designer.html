@@ -1,0 +1,11 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>designer</title><link rel="stylesheet" href="webview.css"><link rel="stylesheet" id="theme" href="theme-dark.css"></head><body>
+<main><form class="designer" onsubmit="return false"><h1 id="heading"></h1>
+<label>Table name <input type="text" id="tname"></label>
+<table><caption>Columns</caption><thead><tr><th scope="col">Name</th><th scope="col">Type</th><th scope="col">NOT NULL</th><th scope="col">PK</th><th scope="col">Default</th><th scope="col">Auto-increment</th><th scope="col"><span class="sr-only">Remove</span></th></tr></thead><tbody id="cols"></tbody></table><button type="button" id="add-col">Add column</button>
+<table><caption>Indexes</caption><thead><tr><th scope="col">Name</th><th scope="col">Columns</th><th scope="col">Unique</th><th scope="col"><span class="sr-only">Remove</span></th></tr></thead><tbody id="idx"></tbody></table><button type="button" id="add-idx">Add index</button>
+<table><caption>Foreign keys</caption><thead><tr><th scope="col">Name</th><th scope="col">Columns</th><th scope="col">References</th><th scope="col">Referenced columns</th><th scope="col"><span class="sr-only">Remove</span></th></tr></thead><tbody id="fks"></tbody></table><button type="button" id="add-fk">Add foreign key</button>
+<datalist id="types"></datalist><div><button type="button" id="btn-preview">Preview DDL</button> <button type="button" id="btn-apply">Apply…</button> <span id="status"></span></div>
+<div id="warn" role="status"></div><pre id="ddl" tabindex="0" aria-label="Generated DDL"></pre></form></main>
+<script>window.acquireVsCodeApi=()=>({postMessage(){}})</script><script src="designer.js"></script>
+<script>window.dispatchEvent(new MessageEvent('message',{data:{v:1,type:'load',engine:'postgres',types:['integer','text'],existing:false,table:{name:'people',columns:[{name:'id',type:'integer',nullable:false},{name:'name',type:'text',nullable:true}],primaryKey:['id'],indexes:[{name:'ix_name',columns:['name'],unique:false}],foreignKeys:[{name:'fk_x',columns:['id'],refTable:'other',refColumns:['id']}]}}}));
+window.dispatchEvent(new MessageEvent('message',{data:{v:1,type:'ddl',statements:[{sql:'CREATE TABLE people (id integer)',destructive:'drops a thing'}]}}));</script></body></html>

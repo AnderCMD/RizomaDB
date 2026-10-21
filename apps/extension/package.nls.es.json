@@ -69,5 +69,6 @@
   "cfg.aiProvider": "Estilo de API: `openai-compatible` (Ollama, LM Studio, OpenAI, …) o `anthropic`.",
   "cfg.aiEndpoint": "URL base de la API del modelo. Los endpoints locales (localhost) no sacan nada de tu equipo.",
   "cfg.aiModel": "Nombre del modelo a solicitar.",
-  "cfg.aiRedact": "Sustituye los valores literales de tu SQL por `?` antes de incluirlo en una petición."
+  "cfg.aiRedact": "Sustituye los valores literales de tu SQL por `?` antes de incluirlo en una petición.",
+  "cmd.importConnections": "Importar conexiones de otras herramientas…"
 }

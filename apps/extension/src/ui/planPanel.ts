@@ -16,9 +16,9 @@ export class PlanPanel {
       w.html = `<!doctype html><html lang="${vscode.env.language}"><head><meta charset="utf-8">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${w.cspSource}; script-src 'nonce-${nonce}';">
 <link rel="stylesheet" href="${w.asWebviewUri(vscode.Uri.joinPath(root, "webview.css"))}"><title>Query Plan</title></head>
-<body><header><strong id="title">Plan</strong><span id="summary" role="status"></span></header>
-<ul id="tree" role="tree" aria-label="${vscode.l10n.t("Execution plan")}"></ul>
-<details><summary>${vscode.l10n.t("Raw plan")}</summary><pre id="raw"></pre></details>
+<body><header><h1 id="title">Plan</h1><span id="summary" role="status"></span></header>
+<main><ul id="tree" role="tree" aria-label="${vscode.l10n.t("Execution plan")}"></ul>
+<details><summary>${vscode.l10n.t("Raw plan")}</summary><pre id="raw"></pre></details></main>
 <script nonce="${nonce}" src="${w.asWebviewUri(vscode.Uri.joinPath(root, "plan.js"))}"></script></body></html>`;
       p.onDidDispose(() => { this.panel = undefined; });
       this.panel = p;

@@ -5,3 +5,4 @@ dist
 coverage
 assets/brand/_proof
 sbom.cdx.json
+test/a11y/out

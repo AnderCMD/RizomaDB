@@ -26,6 +26,7 @@ import { registerDataCommands } from "./ui/dataCommands.js";
 import { registerNoSqlCommands } from "./ui/nosqlCommands.js";
 import { registerAdminCommands } from "./ui/adminCommands.js";
 import { registerAiCommands } from "./ui/aiCommands.js";
+import { registerImportWizard } from "./ui/importWizard.js";
 import { SchemaCache, DIALECT_OF } from "./lib/schemaCache.js";
 import { bindParameters, explain, findParameters } from "@rizomadb/sql";
 import { createWriteStream } from "node:fs";
@@ -489,6 +490,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
     results.post({ v: 1, type: "done", rowCount: table.rows.length, durationMs: 0, truncated: false });
   };
   registerAdminCommands({ ctx, mgr, policy, pick: () => pickConnection(), reg, show: showTable });
+  registerImportWizard(mgr, reg, () => explorer.refresh());
   registerAiCommands({ ctx, mgr, cache: schemaCache, reg, pick: () => pickConnection(), bind });
   registerNoSqlCommands({ mgr, policy, reg, refresh: () => explorer.refresh(), bind });
   registerDataCommands({ ctx, mgr, policy, pick: () => pickConnection(), reg, refresh: () => explorer.refresh() });

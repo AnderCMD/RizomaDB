@@ -29,14 +29,14 @@ export function openDesigner(ctx: vscode.ExtensionContext, mgr: ConnectionManage
   w.html = `<!doctype html><html lang="${vscode.env.language}"><head><meta charset="utf-8">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${w.cspSource}; script-src 'nonce-${nonce}';">
 <link rel="stylesheet" href="${w.asWebviewUri(vscode.Uri.joinPath(root, "webview.css"))}"><title>Designer</title></head>
-<body><form class="designer" onsubmit="return false"><h1 id="heading"></h1>
+<body><main><form class="designer" onsubmit="return false"><h1 id="heading"></h1>
 <label>${t("Table name")} <input type="text" id="tname"></label>
 <table><caption>${t("Columns")}</caption><thead><tr><th scope="col">${t("Name")}</th><th scope="col">${t("Type")}</th><th scope="col">NOT NULL</th><th scope="col">PK</th><th scope="col">${t("Default")}</th><th scope="col">${t("Auto-increment")}</th><th scope="col"><span class="sr-only">${t("Remove")}</span></th></tr></thead><tbody id="cols"></tbody></table><button type="button" id="add-col">${t("Add column")}</button>
 <table><caption>${t("Indexes")}</caption><thead><tr><th scope="col">${t("Name")}</th><th scope="col">${t("Columns")}</th><th scope="col">${t("Unique")}</th><th scope="col"><span class="sr-only">${t("Remove")}</span></th></tr></thead><tbody id="idx"></tbody></table><button type="button" id="add-idx">${t("Add index")}</button>
 <table><caption>${t("Foreign keys")}</caption><thead><tr><th scope="col">${t("Name")}</th><th scope="col">${t("Columns")}</th><th scope="col">${t("References")}</th><th scope="col">${t("Referenced columns")}</th><th scope="col"><span class="sr-only">${t("Remove")}</span></th></tr></thead><tbody id="fks"></tbody></table><button type="button" id="add-fk">${t("Add foreign key")}</button>
 <datalist id="types"></datalist>
 <div><button type="button" id="btn-preview">${t("Preview DDL")}</button> <button type="button" id="btn-apply">${t("Apply…")}</button> <span id="status"></span></div>
-<div id="warn" role="status"></div><pre id="ddl" tabindex="0" aria-label="${t("Generated DDL")}"></pre></form>
+<div id="warn" role="status"></div><pre id="ddl" tabindex="0" aria-label="${t("Generated DDL")}"></pre></form></main>
 <script nonce="${nonce}" src="${w.asWebviewUri(vscode.Uri.joinPath(root, "designer.js"))}"></script></body></html>`;
 
   const existing = existingName ? current.tables.find((x) => x.name.toLowerCase() === existingName.toLowerCase()) : undefined;

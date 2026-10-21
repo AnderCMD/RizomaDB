@@ -40,7 +40,7 @@ function draw(m: Msg, focus?: string) {
     vp.append(p);
   }
   for (const n of m.nodes) {
-    const g = mk("g", { tabindex: 0, role: "button", "aria-label": `Table ${n.name}, ${n.cols.length} columns`, opacity: focus && !related.has(n.name.toLowerCase()) ? 0.25 : 1 });
+    const g = mk("g", { tabindex: 0, role: "button", "aria-description": `Table with ${n.cols.length} columns. Press Enter to highlight its relations.`, opacity: focus && !related.has(n.name.toLowerCase()) ? 0.25 : 1 });
     g.setAttribute("class", "tbl");
     g.append(mk("rect", { x: n.x, y: n.y, width: n.w, height: n.h, rx: 6, class: "box" }), mk("rect", { x: n.x, y: n.y, width: n.w, height: HEAD, rx: 6, class: "hd" }), mk("text", { x: n.x + 10, y: n.y + 17, class: "name" }, n.name));
     n.cols.forEach((c, i) => g.append(mk("text", { x: n.x + 10, y: n.y + HEAD + 14 + i * ROW, class: "col" }, `${c.pk ? "🔑 " : c.fk ? "↗ " : ""}${c.name}  ${c.type}${c.nullable ? "" : " *"}`)));
