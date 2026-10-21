@@ -2,7 +2,7 @@
 
 | Engine | Level | Doc |
 |---|---|---|
-| PostgreSQL (and CockroachDB, tested) | 1 | [postgres.md](postgres.md) |
+| PostgreSQL (and CockroachDB, YugabyteDB, tested) | 1 | [postgres.md](postgres.md) |
 | MySQL / MariaDB (and TiDB, tested) | 1 | [mysql.md](mysql.md) |
 | SQL Server | 1 | [mssql.md](mssql.md) |
 | Oracle Database | 1 | [oracle.md](oracle.md) |
@@ -20,4 +20,4 @@
 | Google Cloud Firestore | 2 | [firestore.md](firestore.md) |
 | Trino | 2 | [trino.md](trino.md) |
 
-Not implemented: Redshift, YugabyteDB (protocol-compatible with the PostgreSQL/MySQL drivers but **not tested**, so compatibility is not claimed), and all Level 3 engines. The JDBC/ODBC bridge is not implemented.
+Not implemented: Redshift, Other PostgreSQL/MySQL-protocol engines (compatibility is not claimed unless listed above), and all Level 3 engines. The JDBC/ODBC bridge is not implemented.

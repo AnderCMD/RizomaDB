@@ -217,7 +217,8 @@ export const postgresDriver: DriverPlugin = {
         if (!/^[0-9a-f]+$/.test(sid)) throw new DriverError("unknown", "Unexpected CockroachDB session id");
         return new PgConnection(client, { product: "CockroachDB", version: /v(\d+\.\d+\.\d+)/.exec(String(v.rows[0].full))?.[1] ?? v.rows[0].v }, v.rows[0].pid, config, sid);
       }
-      return new PgConnection(client, { product: "PostgreSQL", version: v.rows[0].v }, v.rows[0].pid, config);
+      const yb = /-YB-/.test(String(v.rows[0].full));
+      return new PgConnection(client, { product: yb ? "YugabyteDB" : "PostgreSQL", version: yb ? (/-YB-([\d.]+)/.exec(String(v.rows[0].full))?.[1] ?? v.rows[0].v) : v.rows[0].v }, v.rows[0].pid, config);
     } catch (e) {
       await client.end().catch(() => {});
       throw mapError(e);

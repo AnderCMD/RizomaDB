@@ -25,3 +25,6 @@ pg (MIT), pg-cursor (MIT)
 
 ## CockroachDB
 The PostgreSQL driver passes the full conformance kit (15/15, including query cancellation) against CockroachDB v24.3.4, single node, insecure mode (`RZ_COCKROACH_PORT`, default 26257; `docker compose ... up -d cockroach`). The server is detected from `version()` and queries are cancelled through `CANCEL QUERIES` for the session instead of `pg_cancel_backend`. Not tested: secure clusters with client certificates, multi-node clusters, CockroachDB Cloud, serializable-retry (40001) handling beyond reporting the error, and Cockroach-specific DDL (the schema designer targets PostgreSQL syntax). Schema changes take seconds on CockroachDB.
+
+## YugabyteDB
+The PostgreSQL driver passes the full conformance kit (15/15, including cancellation) against YugabyteDB 2025.2.7 (YSQL, single node, `yugabyted`; `RZ_YUGABYTE_PORT`, default 15433; `docker compose ... up -d yugabyte`, needs about 2 GB of RAM). The server is recognised from `version()` (`-YB-`). Not tested: multi-node or geo-distributed clusters, YugabyteDB Aeon (cloud), YCQL (use the Cassandra driver at your own risk: untested), TLS, and transaction-retry errors beyond reporting them. Schema changes are slow on YugabyteDB.
