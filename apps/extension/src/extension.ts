@@ -25,11 +25,11 @@ const cfg = () => vscode.workspace.getConfiguration("rizomadb");
 // Drivers load lazily so activation stays cheap.
 function makeRegistry(workerFile: string): DriverRegistry {
   return {
-    sqlite: async () => workerDriver((await import("@rizomadb/driver-sqlite")).sqliteDriver, workerFile),
-    postgres: async () => workerDriver((await import("@rizomadb/driver-postgres")).postgresDriver, workerFile),
-    mysql: async () => workerDriver((await import("@rizomadb/driver-mysql")).mysqlDriver, workerFile),
-    mssql: async () => workerDriver((await import("@rizomadb/driver-mssql")).mssqlDriver, workerFile),
-    oracle: async () => workerDriver((await import("@rizomadb/driver-oracle")).oracleDriver, workerFile),
+    sqlite: async () => workerDriver((await import("@rizomadb/driver-sqlite/meta")).meta, workerFile),
+    postgres: async () => workerDriver((await import("@rizomadb/driver-postgres/meta")).meta, workerFile),
+    mysql: async () => workerDriver((await import("@rizomadb/driver-mysql/meta")).meta, workerFile),
+    mssql: async () => workerDriver((await import("@rizomadb/driver-mssql/meta")).meta, workerFile),
+    oracle: async () => workerDriver((await import("@rizomadb/driver-oracle/meta")).meta, workerFile),
   };
 }
 

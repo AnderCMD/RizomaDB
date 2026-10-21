@@ -10,6 +10,8 @@ const KILL_AFTER_MS = 400;
 
 type Distribute<T> = T extends unknown ? Omit<T, "id"> : never;
 
+type Meta = Omit<DriverPlugin, "connect">;
+
 class WorkerConnection implements Connection {
   private worker!: ChildProcess;
   private nextId = 1;
@@ -18,7 +20,7 @@ class WorkerConnection implements Connection {
   serverInfo!: ServerInfo;
   quoteIdent: (n: string) => string;
 
-  constructor(private plugin: DriverPlugin, private workerFile: string, private cfg: ResolvedConnectionConfig, private killOnCancel: boolean) {
+  constructor(private plugin: Meta, private workerFile: string, private cfg: ResolvedConnectionConfig, private killOnCancel: boolean) {
     this.quoteIdent = plugin.quoteIdent;
   }
 
@@ -137,7 +139,7 @@ const toError = (e: WireError) =>
  * blocked synchronous driver cannot freeze the extension host. Drivers without
  * server-side cancel are cancelled by terminating and recreating the worker.
  */
-export function workerDriver(plugin: DriverPlugin, workerFile: string): DriverPlugin {
+export function workerDriver(plugin: Omit<DriverPlugin, "connect">, workerFile: string): DriverPlugin {
   const killOnCancel = !plugin.capabilities.cancelQuery;
   return {
     ...plugin,

@@ -1,17 +1,11 @@
+import { meta, quoteIdent } from "./meta.js";
 import mysql from "mysql2";
 import {
   DriverError, type Capabilities, type ColumnInfo, type Connection, type DriverPlugin, type DriverErrorKind,
   type ExecuteRequest, type IntrospectionApi, type ResultEvent, type TableInfo, type Transaction, type Value,
 } from "@rizomadb/driver-api";
 
-const capabilities: Capabilities = {
-  sql: true, transactions: true, savepoints: true, multiDatabase: true, schemas: true,
-  routines: true, triggers: true, cancelQuery: true, streamingResults: true,
-  explain: "json", ddlGeneration: true, rowEditing: "primaryKey", readOnlyEnforcement: "server",
-  objectTypes: ["database", "table", "view", "index", "column"],
-};
 
-export const quoteIdent = (n: string) => `\`${n.replaceAll("`", "``")}\``;
 
 const SAFE_MAX = BigInt(Number.MAX_SAFE_INTEGER), SAFE_MIN = BigInt(Number.MIN_SAFE_INTEGER);
 
@@ -152,26 +146,7 @@ class MysqlConnection implements Connection {
 }
 
 export const mysqlDriver: DriverPlugin = {
-  id: "mysql",
-  displayName: "MySQL / MariaDB",
-  family: "relational",
-  capabilities,
-  quoteIdent,
-  selectTop: (t: string, n: number) => `SELECT * FROM ${t} LIMIT ${n}`,
-  placeholder: () => "?",
-  connectionSchema: {
-    type: "object", required: ["host", "user"],
-    properties: {
-      host: { type: "string", title: "Host", default: "localhost" },
-      port: { type: "number", title: "Port", default: 3306 },
-      database: { type: "string", title: "Database" },
-      user: { type: "string", title: "User" },
-      password: { type: "string", title: "Password", secret: true },
-      ssl: { type: "boolean", title: "Use TLS", default: true },
-      sslVerify: { type: "boolean", title: "Verify server certificate", default: true },
-      readOnly: { type: "boolean", title: "Read-only", default: false },
-    },
-  },
+  ...meta,
   async connect(cfg) {
     const options: mysql.ConnectionOptions = {
       host: cfg.host as string, port: (cfg.port as number | undefined) ?? 3306, user: cfg.user as string,
@@ -191,3 +166,5 @@ export const mysqlDriver: DriverPlugin = {
     } catch (e) { conn.destroy(); throw mapError(e); }
   },
 };
+
+export { quoteIdent };

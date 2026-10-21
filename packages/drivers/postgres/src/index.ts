@@ -1,3 +1,4 @@
+import { meta, quoteIdent } from "./meta.js";
 import pg from "pg";
 import Cursor from "pg-cursor";
 import {
@@ -7,14 +8,7 @@ import {
 
 const { Client, types } = pg;
 
-const capabilities: Capabilities = {
-  sql: true, transactions: true, savepoints: true, multiDatabase: true, schemas: true,
-  routines: true, triggers: true, cancelQuery: true, streamingResults: true,
-  explain: "json", ddlGeneration: true, rowEditing: "primaryKey", readOnlyEnforcement: "server",
-  objectTypes: ["database", "schema", "table", "view", "index", "column"],
-};
 
-export const quoteIdent = (n: string) => `"${n.replaceAll('"', '""')}"`;
 
 const SAFE_MIN = BigInt(Number.MIN_SAFE_INTEGER), SAFE_MAX = BigInt(Number.MAX_SAFE_INTEGER);
 const typeParser = {
@@ -158,26 +152,7 @@ class PgConnection implements Connection {
 }
 
 export const postgresDriver: DriverPlugin = {
-  id: "postgres",
-  displayName: "PostgreSQL",
-  family: "relational",
-  capabilities,
-  quoteIdent,
-  selectTop: (t: string, n: number) => `SELECT * FROM ${t} LIMIT ${n}`,
-  placeholder: (i: number) => `$${i}`,
-  connectionSchema: {
-    type: "object", required: ["host", "database", "user"],
-    properties: {
-      host: { type: "string", title: "Host", default: "localhost" },
-      port: { type: "number", title: "Port", default: 5432 },
-      database: { type: "string", title: "Database" },
-      user: { type: "string", title: "User" },
-      password: { type: "string", title: "Password", secret: true },
-      ssl: { type: "boolean", title: "Use TLS", default: true, description: "Certificate verification is always on unless sslVerify is disabled." },
-      sslVerify: { type: "boolean", title: "Verify server certificate", default: true },
-      readOnly: { type: "boolean", title: "Read-only", default: false },
-    },
-  },
+  ...meta,
   async connect(cfg) {
     const ssl = cfg.ssl ? { rejectUnauthorized: cfg.sslVerify !== false } : false;
     const config: pg.ClientConfig = {
@@ -199,3 +174,5 @@ export const postgresDriver: DriverPlugin = {
     }
   },
 };
+
+export { quoteIdent };

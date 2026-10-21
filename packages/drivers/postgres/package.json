@@ -1,7 +1,25 @@
 {
-  "name": "@rizomadb/driver-postgres", "version": "0.0.0", "license": "Apache-2.0", "type": "module",
-  "main": "dist/index.js", "types": "dist/index.d.ts",
-  "scripts": { "build": "tsc -p tsconfig.json", "typecheck": "tsc -p tsconfig.json --noEmit", "test": "vitest run" },
-  "devDependencies": { "@types/pg": "8.23.1" },
-  "dependencies": { "@rizomadb/driver-api": "workspace:*", "pg": "8.23.1", "pg-cursor": "2.22.1" }
+  "name": "@rizomadb/driver-postgres",
+  "version": "0.0.0",
+  "license": "Apache-2.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@types/pg": "8.23.1"
+  },
+  "dependencies": {
+    "@rizomadb/driver-api": "workspace:*",
+    "pg": "8.23.1",
+    "pg-cursor": "2.22.1"
+  },
+  "exports": {
+    ".": "./dist/index.js",
+    "./meta": "./dist/meta.js"
+  }
 }

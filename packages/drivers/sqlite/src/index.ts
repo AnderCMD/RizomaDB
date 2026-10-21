@@ -1,21 +1,11 @@
+import { meta, quoteIdent } from "./meta.js";
 import { DatabaseSync, type StatementSync } from "node:sqlite";
 import {
   DriverError, type Capabilities, type ColumnInfo, type Connection, type DriverPlugin,
   type ExecuteRequest, type IntrospectionApi, type ResultEvent, type TableInfo, type Transaction, type Value,
 } from "@rizomadb/driver-api";
 
-const capabilities: Capabilities = {
-  sql: true, transactions: true, savepoints: true, multiDatabase: false, schemas: false,
-  routines: false, triggers: true,
-  // node:sqlite is synchronous: a running statement cannot be interrupted until
-  // the driver runs in a worker (planned). Reported honestly here.
-  cancelQuery: false,
-  streamingResults: true, explain: "text", ddlGeneration: true,
-  rowEditing: "primaryKey", readOnlyEnforcement: "server",
-  objectTypes: ["table", "view", "index", "column"],
-};
 
-export const quoteIdent = (n: string) => `"${n.replaceAll('"', '""')}"`;
 
 function mapError(e: unknown): DriverError {
   if (e instanceof DriverError) return e;
@@ -141,20 +131,7 @@ class SqliteConnection implements Connection {
 }
 
 export const sqliteDriver: DriverPlugin = {
-  id: "sqlite",
-  displayName: "SQLite",
-  family: "relational",
-  capabilities,
-  quoteIdent,
-  selectTop: (t: string, n: number) => `SELECT * FROM ${t} LIMIT ${n}`,
-  placeholder: () => "?",
-  connectionSchema: {
-    type: "object", required: ["path"],
-    properties: {
-      path: { type: "string", title: "Database file", description: "File path, or :memory:" },
-      readOnly: { type: "boolean", title: "Read-only", default: false },
-    },
-  },
+  ...meta,
   async connect(cfg) {
     const path = cfg.path;
     if (typeof path !== "string" || !path) throw new DriverError("connection", "SQLite: 'path' is required");
@@ -165,3 +142,5 @@ export const sqliteDriver: DriverPlugin = {
     } catch (e) { throw new DriverError("connection", (e as Error).message, { cause: e }); }
   },
 };
+
+export { quoteIdent };

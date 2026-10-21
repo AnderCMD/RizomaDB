@@ -1,6 +1,21 @@
 {
-  "name": "@rizomadb/driver-mssql", "version": "0.0.0", "license": "Apache-2.0", "type": "module",
-  "main": "dist/index.js", "types": "dist/index.d.ts",
-  "scripts": { "build": "tsc -p tsconfig.json", "typecheck": "tsc -p tsconfig.json --noEmit", "test": "vitest run" },
-  "dependencies": { "@rizomadb/driver-api": "workspace:*", "tedious": "20.3.8" }
+  "name": "@rizomadb/driver-mssql",
+  "version": "0.0.0",
+  "license": "Apache-2.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@rizomadb/driver-api": "workspace:*",
+    "tedious": "20.3.8"
+  },
+  "exports": {
+    ".": "./dist/index.js",
+    "./meta": "./dist/meta.js"
+  }
 }

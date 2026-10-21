@@ -16,5 +16,9 @@
   },
   "devDependencies": {
     "@types/oracledb": "7.0.3"
+  },
+  "exports": {
+    ".": "./dist/index.js",
+    "./meta": "./dist/meta.js"
   }
 }
