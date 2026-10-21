@@ -6,7 +6,7 @@ import { mysqlDriver } from "./index.js";
 // TiDB speaks the MySQL protocol; this runs the same conformance kit to see what actually works.
 const port = Number(process.env.RZ_TIDB_PORT ?? 14000);
 const base = { host: "127.0.0.1", port, user: "root", password: "", ssl: false };
-const enabled = await engineUp("127.0.0.1", port);
+const enabled = await engineUp("127.0.0.1", port, "tidb");
 
 async function freshDb() {
   const name = `rz_${randomBytes(6).toString("hex")}`;

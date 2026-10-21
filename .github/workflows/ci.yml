@@ -16,6 +16,14 @@ env:
   RZ_CLICKHOUSE_PORT: "8123"
   RZ_ELASTICSEARCH_PORT: "9200"
   RZ_OPENSEARCH_PORT: "9201"
+  RZ_NEO4J_PORT: "7474"
+  RZ_DYNAMODB_PORT: "8000"
+  RZ_INFLUXDB_PORT: "8086"
+  RZ_TRINO_PORT: "8080"
+  RZ_CASSANDRA_PORT: "9042"
+  RZ_TIDB_PORT: "4000"
+  # Engines whose containers need a custom command (not possible as a job service); they are covered by local compose runs only.
+  RZ_SKIP_ENGINES: "cockroach,yugabyte,firestore,influxdb3"
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -61,6 +69,27 @@ jobs:
         image: opensearchproject/opensearch:2.17.1
         env: { discovery.type: single-node, DISABLE_SECURITY_PLUGIN: "true", DISABLE_INSTALL_DEMO_CONFIG: "true", OPENSEARCH_JAVA_OPTS: "-Xms512m -Xmx512m" }
         ports: ["9201:9200"]
+      neo4j:
+        image: neo4j:5.26
+        env: { NEO4J_AUTH: "neo4j/rizoma-test-pw", NEO4J_server_memory_heap_max__size: 512m, NEO4J_server_memory_pagecache_size: 128m }
+        ports: ["7474:7474"]
+      dynamodb:
+        image: amazon/dynamodb-local:2.5.2
+        ports: ["8000:8000"]
+      influxdb:
+        image: influxdb:2.7
+        env: { DOCKER_INFLUXDB_INIT_MODE: setup, DOCKER_INFLUXDB_INIT_USERNAME: rizoma, DOCKER_INFLUXDB_INIT_PASSWORD: rizoma-test-pw, DOCKER_INFLUXDB_INIT_ORG: rizoma, DOCKER_INFLUXDB_INIT_BUCKET: test, DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: rizoma-test-token }
+        ports: ["8086:8086"]
+      trino:
+        image: trinodb/trino:470
+        ports: ["8080:8080"]
+      cassandra:
+        image: cassandra:5.0
+        env: { MAX_HEAP_SIZE: 512M, HEAP_NEWSIZE: 128M, CASSANDRA_DC: datacenter1 }
+        ports: ["9042:9042"]
+      tidb:
+        image: pingcap/tidb:v8.5.1
+        ports: ["4000:4000"]
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -71,6 +100,7 @@ jobs:
       - run: pnpm build
       - run: pnpm typecheck
       - run: pnpm audit:licenses --check
+      - run: node scripts/wait-engines.mjs
       - run: pnpm test
       - run: pnpm bench
       - run: pnpm --filter rizomadb package

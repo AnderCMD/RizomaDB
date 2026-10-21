@@ -41,7 +41,7 @@ describe("value mapping", () => {
 });
 
 const port = Number(process.env.RZ_FIRESTORE_PORT ?? 18080);
-const up = await engineUp("127.0.0.1", port);
+const up = await engineUp("127.0.0.1", port, "firestore");
 const cfg = { projectId: "rizoma-test", host: "127.0.0.1", port, ssl: false };
 
 describe.skipIf(!up)("firestore driver (emulator)", () => {

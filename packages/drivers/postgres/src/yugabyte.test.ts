@@ -6,7 +6,7 @@ import { postgresDriver } from "./index.js";
 // YugabyteDB's YSQL is PostgreSQL-compatible; this runs the same conformance kit to see what actually works.
 const port = Number(process.env.RZ_YUGABYTE_PORT ?? 15433);
 const base = { host: "localhost", port, user: "yugabyte", password: "yugabyte", ssl: false };
-const enabled = await engineUp("localhost", port);
+const enabled = await engineUp("localhost", port, "yugabyte");
 
 async function freshDb() {
   const name = `rz_${randomBytes(6).toString("hex")}`;

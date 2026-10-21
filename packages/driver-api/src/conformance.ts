@@ -13,10 +13,14 @@ export function reachable(host: string, port: number, timeoutMs = 1000): Promise
   });
 }
 
-/** Engine suites skip when the engine is down locally, but fail in CI (RZ_REQUIRE_ENGINES=1). */
-export async function engineUp(host: string, port: number): Promise<boolean> {
+/**
+ * Engine suites skip when the engine is down locally, but fail in CI (RZ_REQUIRE_ENGINES=1).
+ * An engine named in RZ_SKIP_ENGINES (comma-separated) is never required: CI lists the engines it cannot provision as services.
+ */
+export async function engineUp(host: string, port: number, name?: string): Promise<boolean> {
   const up = await reachable(host, port);
-  if (!up && process.env.RZ_REQUIRE_ENGINES) throw new Error(`Engine required but unreachable at ${host}:${port}`);
+  const skipped = name !== undefined && (process.env.RZ_SKIP_ENGINES ?? "").split(",").map((x) => x.trim()).includes(name);
+  if (!up && process.env.RZ_REQUIRE_ENGINES && !skipped) throw new Error(`Engine required but unreachable at ${host}:${port}`);
   return up;
 }
 

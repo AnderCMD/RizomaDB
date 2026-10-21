@@ -6,7 +6,7 @@ import { postgresDriver } from "./index.js";
 // CockroachDB speaks the PostgreSQL protocol; this runs the same conformance kit to see what actually works.
 const port = Number(process.env.RZ_COCKROACH_PORT ?? 26257);
 const base = { host: "localhost", port, user: "root", ssl: false };
-const enabled = await engineUp("localhost", port);
+const enabled = await engineUp("localhost", port, "cockroach");
 
 async function freshDb() {
   const name = `rz_${randomBytes(6).toString("hex")}`;

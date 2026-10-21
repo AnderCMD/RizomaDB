@@ -5,7 +5,7 @@ import { engineUp } from "@rizomadb/driver-api/conformance";
 import { influxdb3Driver } from "./index.js";
 
 const port = Number(process.env.RZ_INFLUXDB3_PORT ?? 18181);
-const up = await engineUp("127.0.0.1", port);
+const up = await engineUp("127.0.0.1", port, "influxdb3");
 const db = `rz_${randomBytes(4).toString("hex")}`;
 const cfg = { host: "127.0.0.1", port, database: db };
 
