@@ -8,6 +8,10 @@ export interface ConformanceOptions {
   config: () => Promise<ResolvedConnectionConfig> | ResolvedConnectionConfig;
   /** SQL that blocks for ~seconds, to exercise cancellation. */
   slowSql: string;
+  /** CREATE TABLE conf_t(id integer primary key, name text not null) in the dialect. */
+  createTableSql?: string;
+  /** Expression yielding the BIGINT 9223372036854775807 (dialects differ on literals/casts). */
+  bigintSql?: string;
   /** Two-parameter query returning (a, b), in the dialect's placeholder syntax. */
   paramSql: string;
   /** Config that must fail to authenticate/connect. */
@@ -37,7 +41,7 @@ export function runConformance(opts: ConformanceOptions): void {
     });
 
     it("keeps 64-bit integers lossless", async () => {
-      const r = await collect(conn.execute({ sql: "SELECT 9223372036854775807 AS big" }, new AbortController().signal));
+      const r = await collect(conn.execute({ sql: opts.bigintSql ?? "SELECT 9223372036854775807 AS big" }, new AbortController().signal));
       expect(String(r.rows[0]![0])).toBe("9223372036854775807");
     });
 
@@ -76,12 +80,13 @@ export function runConformance(opts: ConformanceOptions): void {
     }
 
     it("introspects created tables", async () => {
-      await collect(conn.execute({ sql: "CREATE TABLE conf_t (id INTEGER PRIMARY KEY, name TEXT NOT NULL)" }, new AbortController().signal));
+      await collect(conn.execute({ sql: opts.createTableSql ?? "CREATE TABLE conf_t (id INTEGER PRIMARY KEY, name TEXT NOT NULL)" }, new AbortController().signal));
       const tables = await conn.introspect().listTables();
-      expect(tables.map((t) => t.name)).toContain("conf_t");
-      const t = await conn.introspect().describeTable({ name: "conf_t" });
-      expect(t.columns?.find((c) => c.name === "id")?.primaryKey).toBe(true);
-      expect(t.columns?.find((c) => c.name === "name")?.nullable).toBe(false);
+      const found = tables.find((t) => t.name.toLowerCase() === "conf_t");
+      expect(found, "table listed").toBeTruthy();
+      const t = await conn.introspect().describeTable({ name: found!.name, ...(found!.schema ? { schema: found!.schema } : {}) });
+      expect(t.columns?.find((c) => c.name.toLowerCase() === "id")?.primaryKey).toBe(true);
+      expect(t.columns?.find((c) => c.name.toLowerCase() === "name")?.nullable).toBe(false);
     });
 
     if (opts.plugin.capabilities.transactions) {

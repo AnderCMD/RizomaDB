@@ -3,3 +3,20 @@ services:
     image: postgres:17
     environment: { POSTGRES_PASSWORD: rizoma_test, POSTGRES_DB: rizoma }
     ports: ["54329:5432"]
+  mysql:
+    image: mysql:8.4
+    environment: { MYSQL_ROOT_PASSWORD: rizoma_test }
+    ports: ["33069:3306"]
+  mariadb:
+    image: mariadb:11
+    environment: { MARIADB_ROOT_PASSWORD: rizoma_test }
+    ports: ["33070:3306"]
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    platform: linux/amd64
+    environment: { ACCEPT_EULA: "Y", MSSQL_SA_PASSWORD: "Rizoma_test1" , MSSQL_MEMORY_LIMIT_MB: "1536" }
+    ports: ["14339:1433"]
+  oracle:
+    image: gvenzl/oracle-free:23-slim-faststart
+    environment: { ORACLE_PASSWORD: rizoma_test }
+    ports: ["15219:1521"]

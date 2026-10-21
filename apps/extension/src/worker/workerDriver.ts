@@ -30,7 +30,7 @@ class WorkerConnection implements Connection {
       const p = this.pending.get(m.id);
       if (!p) return;
       this.pending.delete(m.id);
-      m.ok ? p.resolve(m.result) : p.reject(toError(m.error));
+      if (m.ok) p.resolve(m.result); else p.reject(toError(m.error));
     });
     const dead = (e: unknown) => {
       for (const p of this.pending.values()) p.reject(new DriverError("connection", `Driver worker stopped: ${(e as Error)?.message ?? "exited"}`));
