@@ -64,7 +64,9 @@ async function* run(r: Runner, req: ExecuteRequest, signal: AbortSignal): AsyncG
   if (signal.aborted) throw new DriverError("cancelled", "Query cancelled");
   const t0 = performance.now();
   const cursor = r.client.query(new Cursor(req.sql, (req.params ?? []).map(toParam) as unknown[], { rowMode: "array", types: typeParser }));
-  const onAbort = () => { void r.cancel(r.pid).catch(() => {}); };
+  // A cancel still in flight when the cursor closes would hit whatever statement runs next on this backend, so it is awaited below.
+  let pending: Promise<void> | undefined, finished = false;
+  const onAbort = () => { if (!finished) pending = r.cancel(r.pid).catch(() => {}); };
   signal.addEventListener("abort", onAbort, { once: true });
   const batch = req.batchSize ?? 500;
   const max = req.maxRows ?? Infinity;
@@ -95,7 +97,9 @@ async function* run(r: Runner, req: ExecuteRequest, signal: AbortSignal): AsyncG
   } catch (e) {
     throw signal.aborted ? new DriverError("cancelled", "Query cancelled", { cause: e }) : mapError(e);
   } finally {
+    finished = true;
     signal.removeEventListener("abort", onAbort);
+    await pending;
     // a dead connection never answers the close request either
     await r.lost.race(new Promise<void>((res) => cursor.close(() => res()))).catch(() => undefined);
   }
