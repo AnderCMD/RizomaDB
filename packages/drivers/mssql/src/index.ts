@@ -3,7 +3,7 @@ import { Connection as Tds, Request, TYPES } from "tedious";
 
 type ColumnMetaData = { colName: string; type: { name: string } };
 import {
-  DriverError, type Capabilities, type ColumnInfo, type Connection, type DriverErrorKind, type DriverPlugin,
+  DriverError, type ColumnInfo, type Connection, type DriverErrorKind, type DriverPlugin,
   type ExecuteRequest, type IntrospectionApi, type ResultEvent, type TableInfo, type Transaction, type Value,
 } from "@rizomadb/driver-api";
 

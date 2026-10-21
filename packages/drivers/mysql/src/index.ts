@@ -1,7 +1,7 @@
 import { meta, quoteIdent } from "./meta.js";
 import mysql from "mysql2";
 import {
-  DriverError, type Capabilities, type ColumnInfo, type Connection, type DriverPlugin, type DriverErrorKind,
+  DriverError, type ColumnInfo, type Connection, type DriverPlugin, type DriverErrorKind,
   type ExecuteRequest, type IntrospectionApi, type ResultEvent, type TableInfo, type Transaction, type Value,
 } from "@rizomadb/driver-api";
 
