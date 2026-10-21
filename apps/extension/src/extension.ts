@@ -52,6 +52,7 @@ function makeRegistry(workerFile: string): DriverRegistry {
     redis: async () => workerDriver((await import("@rizomadb/driver-redis/meta")).meta, workerFile),
     clickhouse: async () => workerDriver((await import("@rizomadb/driver-clickhouse/meta")).meta, workerFile),
     elasticsearch: async () => workerDriver((await import("@rizomadb/driver-elasticsearch/meta")).meta, workerFile),
+    influxdb3: async () => workerDriver((await import("@rizomadb/driver-influxdb3/meta")).meta, workerFile),
     trino: async () => workerDriver((await import("@rizomadb/driver-trino/meta")).meta, workerFile),
     firestore: async () => workerDriver((await import("@rizomadb/driver-firestore/meta")).meta, workerFile),
     cassandra: async () => workerDriver((await import("@rizomadb/driver-cassandra/meta")).meta, workerFile),

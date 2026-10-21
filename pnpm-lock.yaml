@@ -244,6 +244,9 @@ importers:
       '@rizomadb/driver-influxdb':
         specifier: workspace:*
         version: link:../../packages/drivers/influxdb
+      '@rizomadb/driver-influxdb3':
+        specifier: workspace:*
+        version: link:../../packages/drivers/influxdb3
       '@rizomadb/driver-mongodb':
         specifier: workspace:*
         version: link:../../packages/drivers/mongodb
@@ -458,6 +461,16 @@ importers:
         version: 4.10.2
 
   packages/drivers/influxdb:
+    dependencies:
+      '@rizomadb/driver-api':
+        specifier: workspace:*
+        version: link:../../driver-api
+    devDependencies:
+      fast-check:
+        specifier: 4.10.2
+        version: 4.10.2
+
+  packages/drivers/influxdb3:
     dependencies:
       '@rizomadb/driver-api':
         specifier: workspace:*

@@ -15,6 +15,7 @@
 | Neo4j | 2 | [neo4j.md](neo4j.md) |
 | Amazon DynamoDB | 2 | [dynamodb.md](dynamodb.md) |
 | InfluxDB 2.x | 2 | [influxdb.md](influxdb.md) |
+| InfluxDB 3 | 2 | [influxdb3.md](influxdb3.md) |
 | Apache Cassandra (and ScyllaDB, tested) | 2 | [cassandra.md](cassandra.md) |
 | Google Cloud Firestore | 2 | [firestore.md](firestore.md) |
 | Trino | 2 | [trino.md](trino.md) |

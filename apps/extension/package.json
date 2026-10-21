@@ -719,6 +719,7 @@
     "@rizomadb/driver-dynamodb": "workspace:*",
     "@rizomadb/driver-firestore": "workspace:*",
     "@rizomadb/driver-influxdb": "workspace:*",
+    "@rizomadb/driver-influxdb3": "workspace:*",
     "@rizomadb/driver-neo4j": "workspace:*",
     "@rizomadb/driver-trino": "workspace:*",
     "@rizomadb/driver-mongodb": "workspace:*",

@@ -76,3 +76,7 @@ services:
     image: scylladb/scylla:6.2
     command: ["--smp", "1", "--memory", "750M", "--overprovisioned", "1", "--developer-mode", "1", "--skip-wait-for-gossip-to-settle", "0"]
     ports: ["19043:9042"]
+  influxdb3:
+    image: influxdb:3-core
+    command: ["influxdb3", "serve", "--node-id", "node0", "--object-store", "file", "--data-dir", "/var/lib/influxdb3", "--without-auth"]
+    ports: ["18181:8181"]
