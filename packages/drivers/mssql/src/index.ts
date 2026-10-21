@@ -4,7 +4,7 @@ import { Connection as Tds, Request, TYPES } from "tedious";
 type ColumnMetaData = { colName: string; type: { name: string } };
 import {
   DriverError, type ColumnInfo, type Connection, type DriverErrorKind, type DriverPlugin,
-  type ExecuteRequest, type ForeignKey, type IntrospectionApi, type ResultEvent, type TableInfo, type Transaction, type Value,
+  type ExecuteRequest, type ForeignKey, type IndexInfo, type IntrospectionApi, type ResultEvent, type TableInfo, type Transaction, type Value,
 } from "@rizomadb/driver-api";
 
 
@@ -162,6 +162,21 @@ class MssqlConnection implements Connection {
           const k = `${r.ft}.${r.n}`;
           const fk = out.get(k) ?? { name: String(r.n), from: { schema: String(r.fsn), table: String(r.ft), columns: [] }, to: { schema: String(r.rsn), table: String(r.rt), columns: [] } };
           fk.from.columns.push(String(r.fcn)); fk.to.columns.push(String(r.rcn)); out.set(k, fk);
+        }
+        return [...out.values()];
+      },
+      indexes: async (schema) => {
+        const rows = await this.rows(
+          `select i.name n, t.name t, c.name c, i.is_unique u, i.is_primary_key p, ic.key_ordinal o
+           from sys.indexes i join sys.tables t on t.object_id = i.object_id join sys.schemas s on s.schema_id = t.schema_id
+           join sys.index_columns ic on ic.object_id = i.object_id and ic.index_id = i.index_id and ic.is_included_column = 0
+           join sys.columns c on c.object_id = ic.object_id and c.column_id = ic.column_id
+           where i.name is not null and s.name = coalesce(@p1, schema_name()) order by t.name, i.name, ic.key_ordinal`, [schema ?? null]);
+        const out = new Map<string, IndexInfo>();
+        for (const r of rows) {
+          const k = `${r.t}.${r.n}`;
+          const i = out.get(k) ?? { name: String(r.n), ...(schema ? { schema } : {}), table: String(r.t), columns: [], unique: Boolean(r.u), primary: Boolean(r.p) };
+          i.columns.push(String(r.c)); out.set(k, i);
         }
         return [...out.values()];
       },

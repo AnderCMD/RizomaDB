@@ -2,7 +2,7 @@ import { meta, quoteIdent } from "./meta.js";
 import oracledb from "oracledb";
 import {
   DriverError, type ColumnInfo, type Connection, type DriverErrorKind, type DriverPlugin,
-  type ExecuteRequest, type ForeignKey, type IntrospectionApi, type ResultEvent, type TableInfo, type Transaction, type Value,
+  type ExecuteRequest, type ForeignKey, type IndexInfo, type IntrospectionApi, type ResultEvent, type TableInfo, type Transaction, type Value,
 } from "@rizomadb/driver-api";
 
 
@@ -137,6 +137,20 @@ class OracleConnection implements Connection {
           const k = `${r.FT}.${r.N}`;
           const fk = out.get(k) ?? { name: String(r.N), from: { schema: String(r.FO), table: String(r.FT), columns: [] }, to: { schema: String(r.RO), table: String(r.RT), columns: [] } };
           fk.from.columns.push(String(r.FC)); fk.to.columns.push(String(r.RCN)); out.set(k, fk);
+        }
+        return [...out.values()];
+      },
+      indexes: async (schema) => {
+        const rows = await this.rows(
+          `select i.index_name n, i.table_name t, c.column_name col, i.uniqueness u, c.column_position o,
+                  (select count(*) from all_constraints k where k.constraint_type = 'P' and k.owner = i.table_owner and k.index_name = i.index_name) pk
+           from all_indexes i join all_ind_columns c on c.index_owner = i.owner and c.index_name = i.index_name
+           where i.table_owner = coalesce(:s, sys_context('USERENV','CURRENT_SCHEMA')) order by i.table_name, i.index_name, c.column_position`, { s: schema ?? null });
+        const out = new Map<string, IndexInfo>();
+        for (const r of rows) {
+          const k = `${r.T}.${r.N}`;
+          const i = out.get(k) ?? { name: String(r.N), ...(schema ? { schema } : {}), table: String(r.T), columns: [], unique: r.U === "UNIQUE", primary: Number(r.PK) > 0 };
+          i.columns.push(String(r.COL)); out.set(k, i);
         }
         return [...out.values()];
       },

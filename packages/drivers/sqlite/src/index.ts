@@ -2,7 +2,7 @@ import { meta, quoteIdent } from "./meta.js";
 import { DatabaseSync, type StatementSync } from "node:sqlite";
 import {
   DriverError, type ColumnInfo, type Connection, type DriverPlugin,
-  type ExecuteRequest, type ForeignKey, type IntrospectionApi, type ResultEvent, type TableInfo, type Transaction, type Value,
+  type ExecuteRequest, type ForeignKey, type IndexInfo, type IntrospectionApi, type ResultEvent, type TableInfo, type Transaction, type Value,
 } from "@rizomadb/driver-api";
 
 
@@ -113,6 +113,19 @@ class SqliteConnection implements Connection {
           fk.from.columns.push(r.from); fk.to.columns.push(r.to); byId.set(id, fk);
         }
         return [...byId.values()];
+      }),
+      indexes: async () => tables().filter((t) => t.type === "table").flatMap((t) => {
+        const list = db.prepare(`pragma index_list(${quoteIdent(t.name)})`).all() as { name: string; unique: number | bigint; origin: string }[];
+        const out = list.map((i): IndexInfo => ({
+          name: i.name, table: t.name, unique: Number(i.unique) > 0, primary: i.origin === "pk",
+          columns: (db.prepare(`pragma index_info(${quoteIdent(i.name)})`).all() as { name: string; seqno: number | bigint }[]).sort((a, b) => Number(a.seqno) - Number(b.seqno)).map((c) => c.name),
+        }));
+        // INTEGER PRIMARY KEY is the rowid itself and has no index entry: report it as the primary index.
+        if (!out.some((i) => i.primary)) {
+          const pk = (db.prepare(`pragma table_info(${quoteIdent(t.name)})`).all() as { name: string; pk: number | bigint }[]).filter((c) => Number(c.pk) > 0).sort((a, b) => Number(a.pk) - Number(b.pk));
+          if (pk.length) out.unshift({ name: "PRIMARY", table: t.name, columns: pk.map((c) => c.name), unique: true, primary: true });
+        }
+        return out;
       }),
       listSchemas: async () => ["main"],
       listTables: async () =>

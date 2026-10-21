@@ -2,7 +2,7 @@ import { meta, quoteIdent } from "./meta.js";
 import mysql from "mysql2";
 import {
   DriverError, type ColumnInfo, type Connection, type DriverPlugin, type DriverErrorKind,
-  type ExecuteRequest, type ForeignKey, type IntrospectionApi, type ResultEvent, type TableInfo, type Transaction, type Value,
+  type ExecuteRequest, type ForeignKey, type IndexInfo, type IntrospectionApi, type ResultEvent, type TableInfo, type Transaction, type Value,
 } from "@rizomadb/driver-api";
 
 
@@ -138,6 +138,18 @@ class MysqlConnection implements Connection {
           const k = `${r.t}.${r.n}`;
           const fk = out.get(k) ?? { name: String(r.n), from: { schema: String(r.s), table: String(r.t), columns: [] }, to: { schema: String(r.rs), table: String(r.rt), columns: [] } };
           fk.from.columns.push(String(r.c)); fk.to.columns.push(String(r.rc)); out.set(k, fk);
+        }
+        return [...out.values()];
+      },
+      indexes: async (schema) => {
+        const rows = await q(
+          `select index_name n, table_name t, column_name c, non_unique nu, seq_in_index o from information_schema.statistics
+           where table_schema = coalesce(?, database()) and index_type <> 'FULLTEXT' order by table_name, index_name, seq_in_index`, [schema ?? null]);
+        const out = new Map<string, IndexInfo>();
+        for (const r of rows) {
+          const k = `${r.t}.${r.n}`;
+          const i = out.get(k) ?? { name: String(r.n), ...(schema ? { schema } : {}), table: String(r.t), columns: [], unique: Number(r.nu) === 0, primary: r.n === "PRIMARY" };
+          i.columns.push(String(r.c)); out.set(k, i);
         }
         return [...out.values()];
       },

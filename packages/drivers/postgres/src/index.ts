@@ -3,7 +3,7 @@ import pg from "pg";
 import Cursor from "pg-cursor";
 import {
   DriverError, type ColumnInfo, type Connection, type DriverPlugin,
-  type ExecuteRequest, type ForeignKey, type IntrospectionApi, type ResultEvent, type TableInfo, type Transaction, type Value,
+  type ExecuteRequest, type ForeignKey, type IndexInfo, type IntrospectionApi, type ResultEvent, type TableInfo, type Transaction, type Value,
 } from "@rizomadb/driver-api";
 
 const { Client, types } = pg;
@@ -141,6 +141,12 @@ class PgConnection implements Connection {
          join pg_class rc on rc.oid = con.confrelid join pg_namespace rs on rs.oid = rc.relnamespace
          where con.contype = 'f' and fs.nspname = coalesce($1, current_schema())`, [schema ?? null]))
         .map((r): ForeignKey => ({ name: r.n, from: { schema: r.fsn, table: r.ft, columns: r.fc }, to: { schema: r.rsn, table: r.tt, columns: r.tc } })),
+      indexes: async (schema) => (await q(
+        `select i.relname n, t.relname tn, ix.indisunique u, ix.indisprimary p,
+                (select array_agg(a.attname::text order by k.ord) from unnest(ix.indkey::int2[]) with ordinality k(attnum, ord) join pg_attribute a on a.attrelid = t.oid and a.attnum = k.attnum where k.attnum > 0) cols
+         from pg_index ix join pg_class i on i.oid = ix.indexrelid join pg_class t on t.oid = ix.indrelid join pg_namespace s on s.oid = t.relnamespace
+         where s.nspname = coalesce($1, current_schema()) and t.relkind in ('r','p') order by t.relname, i.relname`, [schema ?? null]))
+        .map((r): IndexInfo => ({ name: r.n, ...(schema ? { schema } : {}), table: r.tn, columns: r.cols ?? [], unique: r.u, primary: r.p })),
       listSchemas: async () => (await q("select nspname from pg_namespace where nspname not like 'pg\\_%' and nspname <> 'information_schema' order by 1")).map((r) => r.nspname as string),
       listTables: async (schema) => (await q(
         "select table_schema, table_name, table_type from information_schema.tables where table_schema = coalesce($1, current_schema()) order by 2", [schema ?? null]))

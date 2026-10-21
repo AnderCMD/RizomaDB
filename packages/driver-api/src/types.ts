@@ -59,7 +59,18 @@ export interface ForeignKey {
   to: { schema?: string; table: string; columns: string[] };
 }
 
+export interface IndexInfo {
+  name: string;
+  schema?: string;
+  table: string;
+  columns: string[];
+  unique: boolean;
+  primary: boolean;
+}
+
 export interface IntrospectionApi {
+  /** Indexes of the schema (primary-key indexes included, flagged `primary`). */
+  indexes?(schema?: string): Promise<IndexInfo[]>;
   /** Every table/view of the schema with its columns, in one round trip (used by completion). */
   describeSchema?(schema?: string): Promise<TableInfo[]>;
   foreignKeys?(schema?: string): Promise<ForeignKey[]>;

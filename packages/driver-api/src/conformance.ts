@@ -128,6 +128,21 @@ export function runConformance(opts: ConformanceOptions): void {
       }
     });
 
+    it("lists indexes with ordered columns and primary/unique flags", async () => {
+      const api = conn.introspect();
+      if (!api.indexes) return;
+      const exec = (sql: string) => collect(conn.execute({ sql }, new AbortController().signal));
+      await exec("CREATE TABLE conf_i (a INTEGER NOT NULL, b INTEGER NOT NULL, c INTEGER, PRIMARY KEY (a))");
+      await exec("CREATE UNIQUE INDEX conf_i_bc ON conf_i (b, c)");
+      await exec("CREATE INDEX conf_i_c ON conf_i (c)");
+      const all = (await api.indexes()).filter((i) => i.table.toLowerCase() === "conf_i");
+      const by = (n: string) => all.find((i) => i.name.toLowerCase() === n);
+      expect(by("conf_i_bc")).toMatchObject({ unique: true, primary: false });
+      expect(by("conf_i_bc")!.columns.map((x) => x.toLowerCase())).toEqual(["b", "c"]);
+      expect(by("conf_i_c")).toMatchObject({ unique: false });
+      expect(all.some((i) => i.primary && i.columns.map((x) => x.toLowerCase()).join() === "a")).toBe(true);
+    });
+
     if (opts.plugin.capabilities.transactions) {
       it("rolls back and commits", async () => {
         const run = (sql: string, tx?: { execute: Connection["execute"] }) =>
