@@ -94,3 +94,11 @@ services:
       RUST_MIN_STACK: "33554432"
     volumes: ["./hydradb-auth-token:/run/hydradb-auth-token:ro"]
     ports: ["18443:8443", "19090:9090"]
+  squid:
+    image: ubuntu/squid:latest
+    volumes: ["./squid.conf:/etc/squid/squid.conf:ro", "./squid.passwd:/etc/squid/squid.passwd:ro"]
+    ports: ["13128:3128", "13129:3129"]
+  socks5:
+    image: serjs/go-socks5-proxy
+    environment: { PROXY_USER: rizoma, PROXY_PASSWORD: rizoma_test }
+    ports: ["11080:1080"]

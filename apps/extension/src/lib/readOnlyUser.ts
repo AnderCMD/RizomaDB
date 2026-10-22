@@ -13,6 +13,7 @@ export class ReadOnlyUserError extends Error {}
 const NAME = /^[A-Za-z_][A-Za-z0-9_]{0,62}$/;
 const dq = (s: string) => `"${s.replaceAll('"', '""')}"`;
 const bq = (s: string) => `\`${s.replaceAll("`", "``")}\``;
+const hasControl = (s: string) => [...s].some((ch) => ch.charCodeAt(0) < 32);
 const sq = (s: string) => `'${s.replaceAll("'", "''")}'`;
 
 export interface ReadOnlyUserOptions { user: string; database?: string; schema?: string }
@@ -21,9 +22,9 @@ export interface ReadOnlyUserOptions { user: string; database?: string; schema?:
 export function readOnlyUserStatements(engine: ReadOnlyUserEngine, o: ReadOnlyUserOptions): string[] {
   if (!NAME.test(o.user)) throw new ReadOnlyUserError("user");
   const db = o.database?.trim() ?? "";
-  if (/[\u0000-\u001f]/.test(db) || (engine !== "redis" && !db)) throw new ReadOnlyUserError("database");
+  if (hasControl(db) || (engine !== "redis" && !db)) throw new ReadOnlyUserError("database");
   const schema = o.schema?.trim() || "public";
-  if (/[\u0000-\u001f]/.test(schema)) throw new ReadOnlyUserError("schema");
+  if (hasControl(schema)) throw new ReadOnlyUserError("schema");
   const pw = PASSWORD_PLACEHOLDER;
   switch (engine) {
     case "postgres": return [

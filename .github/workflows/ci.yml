@@ -25,7 +25,7 @@ env:
   RZ_CASSANDRA_PORT: "9042"
   RZ_TIDB_PORT: "4000"
   # Engines whose containers need a custom command (not possible as a job service); they are covered by local compose runs only.
-  RZ_SKIP_ENGINES: "cockroach,yugabyte,firestore,influxdb3,hydradb"   # these five run in the engines-extra job
+  RZ_SKIP_ENGINES: "cockroach,yugabyte,firestore,influxdb3,hydradb,proxies"   # these run in the engines-extra job
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -124,6 +124,7 @@ jobs:
     timeout-minutes: 30
     env:
       RZ_REQUIRE_ENGINES: "1"
+      RZ_SKIP_ENGINES: ""   # nothing is optional here
     steps:
       - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v6
@@ -131,7 +132,7 @@ jobs:
         with: { node-version: 24, cache: pnpm }
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
-      - run: docker compose -f test/compose/docker-compose.yml up -d cockroach yugabyte influxdb3 firestore hydradb
+      - run: docker compose -f test/compose/docker-compose.yml up -d postgres squid socks5 cockroach yugabyte influxdb3 firestore hydradb
       - name: Wait until every engine answers
         run: |
           c="docker compose -f test/compose/docker-compose.yml"
@@ -141,10 +142,14 @@ jobs:
           wait_for influxdb3 "curl -sf http://127.0.0.1:18181/health"
           wait_for firestore "curl -s http://127.0.0.1:18080/"
           wait_for hydradb "bash -c 'echo > /dev/tcp/127.0.0.1/18443'"
+          wait_for postgres "$c exec -T postgres pg_isready -U postgres"
+          wait_for squid "bash -c 'echo > /dev/tcp/127.0.0.1/13129'"
+          wait_for socks5 "bash -c 'echo > /dev/tcp/127.0.0.1/11080'"
       - run: pnpm --filter @rizomadb/driver-postgres exec vitest run src/cockroach.test.ts src/yugabyte.test.ts
       - run: pnpm --filter @rizomadb/driver-influxdb3 exec vitest run
       - run: pnpm --filter @rizomadb/driver-firestore exec vitest run
       - run: pnpm --filter @rizomadb/driver-hydradb exec vitest run
+      - run: pnpm --filter @rizomadb/network exec vitest run src/proxy.real.test.ts
   site:
     # The docs site must build on every change; only main deploys it (pages.yml).
     runs-on: ubuntu-latest

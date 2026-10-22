@@ -10,7 +10,7 @@
 * **Dev Containers / Codespaces:** añade el id de la extensión a `devcontainer.json`; las conexiones se hacen desde el lado remoto, así que la base de datos debe ser alcanzable desde el contenedor.
 
 ## Proxies y certificados internos
-* Las conexiones a bases de datos pueden pasar por un túnel SSH (host bastión), un **proxy HTTP CONNECT** o un **proxy SOCKS5**, que se elige por conexión en *Ruta de red* (una conexión usa un túnel *o* un proxy). El código de proxies está probado contra servidores proxy falsos locales; **no** se ha probado contra un Squid o Dante reales ni contra proxies que exijan NTLM/Kerberos.
+* Las conexiones a bases de datos pueden pasar por un túnel SSH (host bastión), un **proxy HTTP CONNECT** o un **proxy SOCKS5**, que se elige por conexión en *Ruta de red* (una conexión usa un túnel *o* un proxy). El código de proxies está probado contra servidores proxy falsos locales y, en CI, contra un **Squid 6** real (HTTP CONNECT, con y sin autenticación básica) y un servidor SOCKS5 real (`go-socks5-proxy`, usuario/contraseña) que llegan a un PostgreSQL real. **No** se ha probado contra Dante ni otros productos de proxy, ni contra proxies que exijan NTLM/Kerberos.
 * Las llamadas de IA de la propia extensión (desactivadas por defecto) y nada más son el único tráfico que no va a una base de datos que hayas configurado.
 * CA internas: PostgreSQL y MySQL aceptan un archivo de CA por conexión (`sslCaFile`); para todo lo demás define `NODE_EXTRA_CA_CERTS` para VS Code. La verificación TLS está activada por defecto y desactivarla muestra un aviso modal.
 

@@ -10,7 +10,7 @@
 * **Dev Containers / Codespaces:** add the extension id to `devcontainer.json`; connections are made from the remote side, so the database must be reachable from the container.
 
 ## Proxies and internal certificates
-* Database connections can go through an SSH tunnel (bastion host), an **HTTP CONNECT proxy** or a **SOCKS5 proxy**, chosen per connection under *Network path* (a connection uses a tunnel *or* a proxy). The proxy code is tested against local fake proxy servers; it has **not** been tested against a real Squid or Dante, or against proxies that require NTLM/Kerberos.
+* Database connections can go through an SSH tunnel (bastion host), an **HTTP CONNECT proxy** or a **SOCKS5 proxy**, chosen per connection under *Network path* (a connection uses a tunnel *or* a proxy). The proxy code is tested against local fake proxy servers and, in CI, against a real **Squid 6** (HTTP CONNECT, with and without basic authentication) and a real SOCKS5 server (`go-socks5-proxy`, username/password) reaching a real PostgreSQL. It has **not** been tested against Dante or other proxy products, or against proxies that require NTLM/Kerberos.
 * The extension's own AI calls (off by default) and nothing else are the only traffic that does not go to a database you configured.
 * Internal CAs: PostgreSQL and MySQL accept a CA file per connection (`sslCaFile`); for everything else set `NODE_EXTRA_CA_CERTS` for VS Code. TLS verification is on by default and disabling it shows a modal warning.
 
