@@ -588,7 +588,9 @@
           "enum": [
             "auto",
             "en",
-            "es"
+            "es",
+            "pt",
+            "fr"
           ],
           "default": "auto",
           "description": "%cfg.language%"

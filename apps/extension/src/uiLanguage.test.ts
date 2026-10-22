@@ -23,6 +23,19 @@ describe("extension language override", () => {
     const m = await import("./i18n.js"); m.initI18n(ctx);
     expect(m.t("Saved {0}", "x")).toBe("x guardado"); expect(m.effectiveLanguage()).toBe("es");
   });
+  it("forces Portuguese (Brazil) and French from their bundles", async () => {
+    configured = "pt";
+    let m = await import("./i18n.js"); m.initI18n(ctx);
+    expect(m.t("{0} rows", 3)).toBe("3 linhas"); expect(m.effectiveLanguage()).toBe("pt");
+    vi.resetModules(); configured = "fr";
+    m = await import("./i18n.js"); m.initI18n(ctx);
+    expect(m.t("{0} rows", 3)).toBe("3 lignes"); expect(m.effectiveLanguage()).toBe("fr");
+  });
+  it("falls back to auto for a language it does not ship", async () => {
+    configured = "de";
+    const m = await import("./i18n.js"); m.initI18n(ctx);
+    expect(m.t("Saved {0}", "x")).toBe("vscode:Saved x");
+  });
   it("keeps placeholders that have no argument yet (webview templates)", async () => {
     configured = "es";
     const m = await import("./i18n.js"); m.initI18n(ctx);

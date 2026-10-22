@@ -4,7 +4,7 @@ Every setting of the extension. Open the settings screen with **RizomaDB: Open S
 
 | Setting | Type | Default | What it does |
 |---|---|---|---|
-| `rizomadb.language` | string (`auto`, `en`, `es`) | `auto` | Language of the RizomaDB screens and messages: `auto` follows the VS Code display language, or force `en` / `es`. Command and setting names always follow VS Code. |
+| `rizomadb.language` | string (`auto`, `en`, `es`, `pt`, `fr`) | `auto` | Language of the RizomaDB screens and messages: `auto` follows the VS Code display language, or force `en`, `es`, `pt` (Português, Brasil) or `fr`. Command and setting names always follow VS Code. |
 | `rizomadb.environments` | list | `[]` | Extra environments next to dev, staging and prod, e.g. `{ "name": "qa", "protection": "confirm" }`. Protection: `none`, `confirm` (ask before every write) or `readOnly` (block writes). Add one from the New connection screen too. |
 | `rizomadb.editor.codeLens` | boolean | `true` | Show Run and Explain buttons above each statement in query editors, plus Run all and the connection in use. |
 | `rizomadb.editor.highlightStatement` | boolean | `true` | Highlight the statement under the cursor in query editors. |

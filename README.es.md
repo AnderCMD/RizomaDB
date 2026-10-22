@@ -18,7 +18,7 @@ Un cliente de bases de datos multimotor para VS Code (y VSCodium, Cursor, Windsu
 - **Diseña y mueve datos**: diseñador de tablas, diagramas ER, comparación y documentación de esquemas, importar/exportar, copia y restauración, comparación y sincronización de datos y generación de datos de prueba.
 - **Gobierna**: políticas en capas donde gana la más estricta, un único punto de política y auditoría para toda escritura, enmascarado de columnas, catálogos compartidos sin secretos.
 - **Extras opcionales**: un asistente de IA (apagado por defecto, solo con el esquema) y un servidor MCP de solo lectura con restricciones.
-- **Español e inglés**, intercambiables dentro de la extensión, y una **guía** interactiva que te lleva de la mano.
+- **Español, inglés, portugués (Brasil) y francés** (los dos últimos con ayuda de IA, sin revisión nativa todavía), intercambiables dentro de la extensión, y una **guía** interactiva que te lleva de la mano.
 
 ## Motores
 Probados contra servidores reales: PostgreSQL (y CockroachDB, YugabyteDB), MySQL/MariaDB (y TiDB), SQL Server, Oracle, SQLite, MongoDB, Redis/Valkey, ClickHouse, Elasticsearch/OpenSearch, DuckDB, Neo4j, DynamoDB (Local), InfluxDB 2 y 3, Cassandra/ScyllaDB, Firestore (emulador), Trino y **HydraDB (experimental)**. Lo que admite cada uno está en la [matriz de capacidades](docs/es/referencia/matriz-de-motores.md); los límites están en la página de cada motor en [docs/es/motores](docs/es/motores/README.md). Sin probar: servicios reales de AWS o Google Cloud, Redshift.

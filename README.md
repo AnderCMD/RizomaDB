@@ -18,7 +18,7 @@ A multi-engine database client for VS Code (and VSCodium, Cursor, Windsurf): Apa
 - **Design and move data**: table designer, ER diagrams, schema compare and docs, import/export, backup/restore, data compare/sync and test-data generation.
 - **Govern**: layered policies where the strictest wins, one policy and audit point for every write path, column masking, shared catalogs without secrets.
 - **Optional extras**: an AI assistant (off by default, schema only) and a read-only MCP server with guardrails.
-- **English and Spanish**, switchable inside the extension, and an interactive **guide** that walks you through it.
+- **English, Spanish, Portuguese (Brazil) and French** (the last two machine-assisted, not yet reviewed by native speakers), switchable inside the extension, and an interactive **guide** that walks you through it.
 
 ## Engines
 Tested against real servers: PostgreSQL (and CockroachDB, YugabyteDB), MySQL/MariaDB (and TiDB), SQL Server, Oracle, SQLite, MongoDB, Redis/Valkey, ClickHouse, Elasticsearch/OpenSearch, DuckDB, Neo4j, DynamoDB (Local), InfluxDB 2 and 3, Cassandra/ScyllaDB, Firestore (emulator), Trino, and **HydraDB (experimental)**. What each one supports is in the [capability matrix](docs/reference/engine-matrix.md); limits are on each engine's page in [docs/engines](docs/engines/README.md). Not tested: real AWS or Google Cloud services, Redshift.

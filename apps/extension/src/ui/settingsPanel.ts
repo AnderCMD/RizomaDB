@@ -47,7 +47,8 @@ const GROUPS: Record<string, () => string> = {
 
 function nls(ctx: vscode.ExtensionContext): Record<string, string> {
   const read = (f: string) => { try { return JSON.parse(readFileSync(vscode.Uri.joinPath(ctx.extensionUri, f).fsPath, "utf8")) as Record<string, string>; } catch { return {}; } };
-  return { ...read("package.nls.json"), ...(effectiveLanguage().startsWith("es") ? read("package.nls.es.json") : {}) };
+  const lang = effectiveLanguage().toLowerCase(), file = lang.startsWith("es") ? "package.nls.es.json" : lang.startsWith("pt") ? "package.nls.pt-br.json" : lang.startsWith("fr") ? "package.nls.fr.json" : "";
+  return { ...read("package.nls.json"), ...(file ? read(file) : {}) };
 }
 
 function contributed(ctx: vscode.ExtensionContext): Record<string, Prop> {

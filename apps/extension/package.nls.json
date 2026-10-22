@@ -74,7 +74,7 @@
   "cmd.importConnections": "Import Connections From Other Tools…",
   "cfg.mcpAutoRegister": "Offer the read-only RizomaDB MCP server to VS Code's MCP client when a folder has `.rizomadb/mcp.json` (made by *RizomaDB: Generate MCP Configuration*). Off by default; the database password is asked when the server starts.",
   "cmd.openSettings": "Open Settings",
-  "cfg.language": "Language of the RizomaDB screens and messages: `auto` follows the VS Code display language, or force `en` / `es`. Command and setting names always follow VS Code.",
+  "cfg.language": "Language of the RizomaDB screens and messages: `auto` follows the VS Code display language, or force `en`, `es`, `pt` (Português, Brasil) or `fr`. Command and setting names always follow VS Code.",
   "cfg.resultsLocation": "Where query results and opened tables appear: `bottom` (lower half under the editor, default), `full` (the whole editor area) or `beside` (next to the editor).",
   "cfg.groupByFamily": "Group the connections in the tree by engine type (relational, document, key-value…).",
   "cfg.environments": "Extra environments next to dev, staging and prod, e.g. `{ \"name\": \"qa\", \"protection\": \"confirm\" }`. Protection: `none`, `confirm` (ask before every write) or `readOnly` (block writes). Add one from the New connection screen too.",
