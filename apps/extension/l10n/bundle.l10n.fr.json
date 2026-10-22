@@ -960,5 +960,6 @@
  "This key has no elements.": "Cette clé n'a aucun élément.",
  "Field to edit": "Champ à modifier",
  "List element to edit": "Élément de la liste à modifier",
- "edit the value of {0}?": "modifier la valeur de {0} ?"
+ "edit the value of {0}?": "modifier la valeur de {0} ?",
+ "Member to edit": "Membre à modifier"
 }

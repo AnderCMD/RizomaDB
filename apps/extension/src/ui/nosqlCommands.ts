@@ -8,7 +8,7 @@ import type { ConnectionManager } from "../lib/connections.js";
 import type { Node } from "./explorer.js";
 import { t } from "../i18n.js";
 import { friendly } from "./driverMessages.js";
-import { isEditableRedisType, readCommand, writeCommand } from "../lib/redisEdit.js";
+import { isEditableRedisType, readCommand, writeCommands } from "../lib/redisEdit.js";
 
 const sig = () => new AbortController().signal;
 
@@ -97,12 +97,20 @@ export function registerNoSqlCommands({ mgr, policy, reg, refresh, bind }: Deps)
     if (type === "string") current = String(read[0]?.[0] ?? "");
     else {
       if (!read.length) { void vscode.window.showInformationMessage(t("This key has no elements.")); return; }
-      const pick = await vscode.window.showQuickPick(read.map((r) => ({ label: String(r[0]), description: String(r[1] ?? "").slice(0, 80), value: String(r[1] ?? "") })), { title: type === "hash" ? t("Field to edit") : t("List element to edit"), matchOnDescription: true });
+      const items = type === "set" ? read.slice(0, 1000).map((r) => r[1] ?? r[0]).map((m) => ({ label: String(m), description: "", value: String(m) }))
+        : read.map((r) => ({ label: String(r[0]), description: String(r[1] ?? "").slice(0, 80), value: String(r[1] ?? "") }));
+      const pick = await vscode.window.showQuickPick(items, { title: type === "hash" ? t("Field to edit") : type === "list" ? t("List element to edit") : t("Member to edit"), matchOnDescription: true });
       if (!pick) return;
-      target = type === "list" ? Number(pick.label) : pick.label; current = pick.value;
+      target = type === "list" ? Number(pick.label) : pick.label; current = type === "set" ? pick.label : pick.value;
     }
     const value = await vscode.window.showInputBox({ title: t("New value for {0}", target === undefined ? key : `${key} → ${String(target)}`), value: current, ignoreFocusOut: true }); if (value === undefined) return;
-    await guarded(tb, writeCommand(type, key, target, value), t("edit the value of {0}?", key));
+    let cmds: string[];
+    try { cmds = writeCommands(type, key, target, value); } catch (e) { void vscode.window.showErrorMessage(t("Invalid value.")); void e; return; }
+    if (!cmds.length) return;
+    if (!(await guarded(tb, cmds[0]!, t("edit the value of {0}?", key)))) return;
+    for (const extra of cmds.slice(1)) {
+      try { await exec(conn, extra); refresh(); } catch (e) { void vscode.window.showErrorMessage(t("Command failed: {0}", friendly((e as Error).message))); return; }
+    }
   });
   void formatValue;
 }

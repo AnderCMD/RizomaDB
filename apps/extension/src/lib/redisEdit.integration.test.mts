@@ -3,7 +3,7 @@ import { randomBytes } from "node:crypto";
 import { collect, type Connection } from "@rizomadb/driver-api";
 import { engineUp } from "@rizomadb/driver-api/conformance";
 import { redisDriver } from "@rizomadb/driver-redis";
-import { isEditableRedisType, readCommand, writeCommand } from "./redisEdit.js";
+import { isEditableRedisType, readCommand, writeCommand, writeCommands } from "./redisEdit.js";
 
 const port = Number(process.env.RZ_REDIS_PORT ?? 63799);
 const up = await engineUp("localhost", port, "redis");
@@ -13,7 +13,7 @@ const key = (k: string) => `rz:edit:${randomBytes(4).toString("hex")}:${k}`;
 
 describe("Redis value edits (command text)", () => {
   it("knows which types it can edit and refuses a bad target", () => {
-    expect(["string", "hash", "list", "set", "zset", "stream"].filter(isEditableRedisType)).toEqual(["string", "hash", "list"]);
+    expect(["string", "hash", "list", "set", "zset", "stream"].filter(isEditableRedisType)).toEqual(["string", "hash", "list", "set", "zset"]);
     expect(() => writeCommand("hash", "k", undefined, "v")).toThrow();
     expect(() => writeCommand("list", "k", "x", "v")).toThrow();
     expect(readCommand("list", "k")).toBe('LRANGE "k" 0 999');
@@ -48,5 +48,24 @@ describe.skipIf(!up)("Redis value edits against a real server", () => {
     await run(c, writeCommand("list", k, 1, awkward));
     expect((await rows(c, readCommand("list", k))).map((r) => r[1])).toEqual(["x", awkward, "z"]);
     await expect(run(c, writeCommand("list", k, 9, "nope"))).rejects.toBeDefined();   // out of range is the server's error, not a silent append
+  });
+});
+
+describe.skipIf(!up)("Redis set and sorted set edits against a real server", () => {
+  it("renames a set member without losing it, and changes a sorted-set score", async () => {
+    const c = await redisDriver.connect({ host: "localhost", port }, { log() {} });
+    const s = key("set"), z = key("z");
+    try {
+      await run(c, `SADD ${JSON.stringify(s)} a b`);
+      for (const cmd of writeCommands("set", s, "a", "a2 \"x\"")) await run(c, cmd);
+      expect((await rows(c, readCommand("set", s))).map((r) => r[1]).sort()).toEqual(['a2 "x"', "b"]);
+      expect(writeCommands("set", s, "b", "b")).toEqual([]);
+      await run(c, `ZADD ${JSON.stringify(z)} 1.5 m1 2 m2`);
+      for (const cmd of writeCommands("zset", z, "m1", "9")) await run(c, cmd);
+      expect(Object.fromEntries((await rows(c, readCommand("zset", z))) as [string, number][])).toEqual({ m1: 9, m2: 2 });
+      expect(() => writeCommands("zset", z, "m1", "abc")).toThrow();
+      await run(c, writeCommands("zset", z, "ghost", "5")[0]!);   // XX: a member that does not exist is not created
+      expect((await rows(c, readCommand("zset", z))).length).toBe(2);
+    } finally { await run(c, `DEL ${JSON.stringify(s)} ${JSON.stringify(z)}`).catch(() => undefined); await c.close(); }
   });
 });
