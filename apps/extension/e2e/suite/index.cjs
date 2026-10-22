@@ -9,9 +9,9 @@ exports.run = async function run() {
   await ext.activate();
   const activationMs = Math.round(performance.now() - started);
   assert.ok(ext.isActive, "extension activates");
-  // Activation does no network and loads no driver; a generous budget still catches an accidental heavy import.
+  // Activation does no network and loads no driver (measured ~100 ms on a laptop, also with the CPUs busy); 1 s still leaves room for a slow CI machine and catches an accidental heavy import.
   console.log(`RizomaDB activation: ${activationMs} ms`);
-  assert.ok(activationMs < 3000, `activation took ${activationMs} ms (budget 3000 ms)`);
+  assert.ok(activationMs < 1000, `activation took ${activationMs} ms (budget 1000 ms)`);
   const declared = ext.packageJSON.contributes.commands.map((c) => c.command);
   const registered = new Set(await vscode.commands.getCommands(true));
   const missing = declared.filter((c) => !registered.has(c));

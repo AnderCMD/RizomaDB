@@ -284,6 +284,7 @@ function toggleFilters(force?: boolean) {
 }
 
 // ---- view (filter + sort) ----
+const COLLATOR = new Intl.Collator(undefined, { numeric: true });
 function rebuildView() {
   const fs = filters.map((f, i) => [i, f.trim().toLowerCase()] as const).filter((x) => x[1]);
   if (!fs.length && !sort) view = undefined;
@@ -292,11 +293,14 @@ function rebuildView() {
     if (fs.length) idx = idx.filter((i) => fs.every(([c, q]) => { const v = rows[i]![c]!; return (v === null ? "null" : v.toLowerCase()).includes(q); }));
     if (sort) {
       const { col, dir } = sort;
+      // Parse each cell once, not once per comparison, and reuse one collator: sorting 100,000 text rows took seconds otherwise.
+      const num = new Float64Array(rows.length).fill(NaN);
+      for (const i of idx) { const v = rows[i]![col]; if (v !== null && v !== undefined && v.trim() !== "") { const n = Number(v); if (Number.isFinite(n)) num[i] = n; } }
       idx.sort((a, b) => {
         const x = rows[a]![col]!, y = rows[b]![col]!;
         if (x === null || y === null) return x === y ? a - b : x === null ? 1 : -1;
-        const nx = x.trim() !== "" && Number.isFinite(Number(x)), ny = y.trim() !== "" && Number.isFinite(Number(y));
-        const d = nx && ny ? Number(x) - Number(y) : x.localeCompare(y, undefined, { numeric: true });
+        const nx = num[a]!, ny = num[b]!;
+        const d = !Number.isNaN(nx) && !Number.isNaN(ny) ? nx - ny : COLLATOR.compare(x, y);
         return d === 0 ? a - b : d * dir;
       });
     }
@@ -472,7 +476,9 @@ function step(dir: 1 | -1) {
   const i = matches.findIndex((x) => x.r === sel.r && x.c === sel.c);
   goTo(matches[i < 0 ? (dir === 1 ? 0 : matches.length - 1) : (i + dir + matches.length) % matches.length]!);
 }
-findInput.addEventListener("input", () => { findQuery = findInput.value; findAll(true); });
+let findTimer = 0;
+// Searching 100,000 rows takes a noticeable moment: wait for a pause in typing on big results.
+findInput.addEventListener("input", () => { findQuery = findInput.value; clearTimeout(findTimer); if (rows.length > 20000) findTimer = window.setTimeout(() => findAll(true), 150); else findAll(true); });
 findInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter") { e.preventDefault(); step(e.shiftKey ? -1 : 1); }
   else if (e.key === "Escape") { findInput.value = ""; findQuery = ""; findAll(false); grid.focus(); }
