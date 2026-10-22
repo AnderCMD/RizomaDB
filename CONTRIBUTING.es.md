@@ -18,6 +18,6 @@
 7. Después de cambiar ajustes o comandos ejecuta `node scripts/gen-reference.mjs` para refrescar las páginas de referencia (el CI comprueba que estén al día).
 8. La documentación existe en inglés y español. Cuando cambies una página de `docs/`, actualiza su equivalente en `docs/es/` (o di en el pull request que aún falta). `node scripts/check-docs-parity.mjs` lista las páginas que faltan.
 
-Licencia de las contribuciones: Apache-2.0.
+Licencia de las contribuciones: Apache-2.0. Cómo se hace un release está en [docs/es/ci-cd.md](docs/es/ci-cd.md#hacer-un-release).
 
 Agentes de IA: lee primero [AGENTS.md](AGENTS.md) (en inglés); el trabajo de interfaz sigue la [guía de diseño](docs/es/design/guia-de-diseno.md). `graphify-out/GRAPH_REPORT.md` es un mapa del código.

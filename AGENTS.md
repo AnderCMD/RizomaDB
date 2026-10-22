@@ -17,7 +17,7 @@ A free (Apache-2.0), no-telemetry, multi-engine database client for VS Code. pnp
 | `packages/core` | Profiles, secrets, policy, guard, audit, editing |
 | `packages/{schema-tools,data-tools,sql,admin,network,ai,mcp}` | Feature libraries |
 | `docs/` | Guides (`guides/`, `es/guias/`), references (generated), engines, enterprise, security |
-| `site/` | VitePress site (copies `docs/` via `sync-docs.mjs`) |
+| `site/` | VitePress site (copies `docs/` via `sync-docs.mjs`; its favicon, logo and share images live in `site/content/public/`, because VitePress serves `<srcDir>/public`) |
 | `test/compose` | Docker services for the engine tests; `test/a11y` axe harness pages |
 
 ## Commands

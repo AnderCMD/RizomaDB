@@ -7,6 +7,8 @@
 
 **Todas tus bases de datos, un solo lugar. Gratis.**
 
+[![VS Code Marketplace](https://img.shields.io/visual-studio-marketplace/v/AnderCMD.rizomadb?label=VS%20Code%20Marketplace)](https://marketplace.visualstudio.com/items?itemName=AnderCMD.rizomadb) [![Installs](https://img.shields.io/visual-studio-marketplace/i/AnderCMD.rizomadb)](https://marketplace.visualstudio.com/items?itemName=AnderCMD.rizomadb) [![License](https://img.shields.io/github/license/AnderCMD/RizomaDB)](LICENSE)
+
 [English](README.md) · Español
 
 Un cliente de bases de datos multimotor para VS Code (y VSCodium, Cursor, Windsurf): Apache-2.0, sin telemetría, sin cuentas, sin funciones bloqueadas. [Sitio de documentación](https://andercmd.github.io/RizomaDB/es/)

@@ -18,6 +18,6 @@ English · [Español](CONTRIBUTING.es.md)
 7. After changing settings or commands run `node scripts/gen-reference.mjs` to refresh the reference pages (CI checks they are current).
 8. Documentation exists in English and Spanish. When you change a page in `docs/`, update its counterpart in `docs/es/` (or say in the pull request that it still needs it). `node scripts/check-docs-parity.mjs` lists missing pages.
 
-Contribution license: Apache-2.0.
+Contribution license: Apache-2.0. How a release is made is in [docs/ci-cd.md](docs/ci-cd.md#making-a-release).
 
 AI agents: read [AGENTS.md](AGENTS.md) first; UI work follows the [design guide](docs/design/design-guide.md). `graphify-out/GRAPH_REPORT.md` is a map of the code.

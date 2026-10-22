@@ -55,7 +55,7 @@ export default defineConfig({
     search: { provider: "local" },
   },
   locales: {
-    root: { label: "English", lang: "en", link: "/en/", themeConfig: { sidebar: enSidebar, nav: [{ text: "Guide", link: "/en/guides/getting-started" }, { text: "Reference", link: "/en/reference/settings" }, { text: "Engines", link: "/en/reference/engine-matrix" }] } },
-    es: { label: "Español", lang: "es", link: "/es/", themeConfig: { sidebar: esSidebar, nav: [{ text: "Guía", link: "/es/guias/primeros-pasos" }, { text: "Referencia", link: "/es/referencia/ajustes" }, { text: "Motores", link: "/es/referencia/matriz-de-motores" }] } },
+    root: { label: "English", lang: "en", link: "/en/", themeConfig: { sidebar: enSidebar, nav: [{ text: "Guide", link: "/en/guides/getting-started" }, { text: "Reference", link: "/en/reference/settings" }, { text: "Engines", link: "/en/reference/engine-matrix" }, { text: "Marketplace", link: "https://marketplace.visualstudio.com/items?itemName=AnderCMD.rizomadb" }, { text: "Releases", link: "https://github.com/AnderCMD/RizomaDB/releases" }] } },
+    es: { label: "Español", lang: "es", link: "/es/", themeConfig: { sidebar: esSidebar, nav: [{ text: "Guía", link: "/es/guias/primeros-pasos" }, { text: "Referencia", link: "/es/referencia/ajustes" }, { text: "Motores", link: "/es/referencia/matriz-de-motores" }, { text: "Marketplace", link: "https://marketplace.visualstudio.com/items?itemName=AnderCMD.rizomadb" }, { text: "Releases", link: "https://github.com/AnderCMD/RizomaDB/releases" }] } },
   },
 });

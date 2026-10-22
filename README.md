@@ -7,6 +7,8 @@
 
 **All your databases, one place. Free.**
 
+[![VS Code Marketplace](https://img.shields.io/visual-studio-marketplace/v/AnderCMD.rizomadb?label=VS%20Code%20Marketplace)](https://marketplace.visualstudio.com/items?itemName=AnderCMD.rizomadb) [![Installs](https://img.shields.io/visual-studio-marketplace/i/AnderCMD.rizomadb)](https://marketplace.visualstudio.com/items?itemName=AnderCMD.rizomadb) [![License](https://img.shields.io/github/license/AnderCMD/RizomaDB)](LICENSE)
+
 English · [Español](README.es.md)
 
 A multi-engine database client for VS Code (and VSCodium, Cursor, Windsurf): Apache-2.0, no telemetry, no accounts, no locked features. [Documentation site](https://andercmd.github.io/RizomaDB/en/)

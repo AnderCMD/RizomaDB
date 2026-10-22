@@ -28,6 +28,13 @@ Not enabled: letting GitHub Actions create pull requests (Settings → Actions �
 ## Local equivalents
 `pnpm lint && pnpm build && pnpm typecheck && pnpm test`, then `node scripts/gen-reference.mjs --check` (or without `--check` to refresh the reference pages), then `pnpm --filter rizomadb package`. For the site: `cd site && node sync-docs.mjs && cd .. && pnpm --filter @rizomadb/site build`. Engines that need containers start with `docker compose -f test/compose/docker-compose.yml up -d <engine>`.
 
+## Making a release
+1. Bump `version` in `apps/extension/package.json` and add a `## [x.y.z] — date` section to `CHANGELOG.md` and `CHANGELOG.es.md` (the GitHub release notes are taken from the English one).
+2. With CI green on `main`, tag it: `git tag -a vX.Y.Z -m "RizomaDB X.Y.Z" && git push origin vX.Y.Z`. The *Release* workflow builds the universal VSIX and the six per-platform ones and attaches them, with `SHA256SUMS`, the SBOM and the build-provenance attestation, to the GitHub release.
+3. Download `rizomadb-X.Y.Z.vsix` from the release and check it (`shasum -a 256 -c SHA256SUMS --ignore-missing` and `gh attestation verify rizomadb-X.Y.Z.vsix --repo AnderCMD/RizomaDB`).
+4. Upload that file by hand at https://marketplace.visualstudio.com/manage (*New extension → Visual Studio Code* the first time; for a new version use the extension's ⋯ menu → *Update*). Verification takes a few minutes. Publishing is manual because automated publishing is not available to the owner.
+5. Open VSX is not published yet.
+
 ## Verifying a release package
 Each VSIX in a release comes with `SHA256SUMS`, an SBOM (`sbom.cdx.json`) and a GitHub build-provenance attestation. To check a download:
 
