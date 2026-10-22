@@ -1,16 +1,16 @@
 # Graph Report - RizomaDB  (2026-10-22)
 
 ## Corpus Check
-- 508 files · ~283,330 words
+- 551 files · ~304,824 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 4243 nodes · 6540 edges · 324 communities (274 shown, 50 thin omitted)
-- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 118 edges (avg confidence: 0.64)
+- 4474 nodes · 6848 edges · 348 communities (298 shown, 50 thin omitted)
+- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 117 edges (avg confidence: 0.64)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `0e3aaec5`
+- Built from commit: `8e9839bc`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -40,7 +40,7 @@
 - postgres/src/index.ts
 - trino/src/index.ts
 - server.ts
-- connectionPanel.ts
+- extension.ts
 - influxdb3/src/index.ts
 - ai/src/index.ts
 - connect.ts
@@ -48,17 +48,17 @@
 - effective-policy.ts
 - README.es.md
 - build-brand.mjs
-- soak.mjs
+- nosqlCommands.ts
 - export.ts
 - duckdb/src/index.ts
-- nosqlCommands.ts
+- Value
 - import.test.ts
-- environments.ts
+- AGENTS.md
 - postgres/package.json
 - iconButton
 - redis/package.json
 - core/src/index.ts
-- extension.ts
+- queryBuilder.ts
 - tools.test.ts
 - mongodb/package.json
 - cassandra/package.json
@@ -69,7 +69,7 @@
 - @rizomadb/core
 - webview/history.ts
 - plan.ts
-- connections.ts
+- README.fr.md
 - dynamodb/package.json
 - elasticsearch/package.json
 - firestore/package.json
@@ -91,7 +91,7 @@
 - statements.ts
 - driver-api/package.json
 - sqlite/package.json
-- logoSvg.ts
+- connectionPanel.ts
 - conformance.ts
 - tasks
 - gen-logos.mjs
@@ -105,13 +105,14 @@
 - designer.ts
 - policyFiles.test.ts
 - compilerOptions
-- explain.ts
+- .execute
 - editing.ts
 - parse.ts
 - mysql/src/index.ts
-- Value
+- oracle/src/index.ts
 - engines.integration.test.mts
 - webview/er.ts
+- README.pt-br.md
 - AuditLog
 - Favorites
 - site/package.json
@@ -125,6 +126,7 @@
 - ai/tsconfig.json
 - core/tsconfig.json
 - data-tools/tsconfig.json
+- Connexions
 - driver-api/tsconfig.json
 - cassandra/tsconfig.json
 - clickhouse/tsconfig.json
@@ -158,6 +160,7 @@
 - rizomadb.results.location
 - PostgreSQL
 - Design guide
+- soak.mjs
 - rizomadb.ai.provider
 - Apache Cassandra / ScyllaDB
 - IntrospectionApi
@@ -189,6 +192,7 @@
 - rizomadb.ai.model
 - rizomadb.ai.redactLiterals
 - properties
+- parserCore.ts
 - rizomadb.audit.path
 - rizomadb.edit.applyImmediately
 - hydradb.test.ts
@@ -208,6 +212,7 @@
 - readOnlyUser.integration.test.mts
 - La rejilla de resultados
 - The results grid
+- Utiliser RizomaDB au clavier
 - ClickHouse
 - encryptedCatalog.ts
 - DuckDB
@@ -222,7 +227,7 @@
 - Primeros pasos
 - rizomadb.editor.codeLens
 - Connections
-- Getting started
+- Conexões
 - Marca RizomaDB
 - El editor de consultas
 - check-vsix-size.mjs
@@ -230,21 +235,24 @@
 - prepare.mjs
 - The query editor
 - smoke-vsix-duckdb.mjs
-- tableProperties
+- MongoConnection
 - Estado del proyecto RizomaDB
 - Deployment
 - Usar RizomaDB con el teclado
 - columnStats
 - ADR 0001 — Nombre: RizomaDB
 - Análisis competitivo (Fase 0) — verificado 2026-10-20
-- Política de seguridad / Security policy
+- SECURITY.md
 - ADR 0002 — Stack, monorepo y versiones de referencia
 - Data handling and compliance notes
-- connections.md
+- P
 - Idioma y ajustes
 - index.cjs
+- La grille de résultats
 - Honest comparison
-- Changelog
+- A grade de resultados
+- STATE.md
+- assess.ts
 - PostgreSQL
 - extension/README.md
 - CODE_OF_CONDUCT.md
@@ -268,11 +276,13 @@
 - es/index.md
 - Using RizomaDB with the keyboard
 - Amazon DynamoDB
+- Premiers pas
 - Google Cloud Firestore
 - HydraDB
 - Editing data
 - motores/README.md
 - InfluxDB 2.x
+- L'éditeur de requêtes
 - InfluxDB 3 (Core / Enterprise)
 - MySQL / MariaDB
 - Neo4j
@@ -284,24 +294,38 @@
 - Oracle Database
 - Redis / Valkey
 - SQLite
-- DriverPlugin
+- Primeiros passos
 - Despliegue
 - Provider
 - engines/README.md
 - Language and settings
+- O editor de consultas
 - Tratamiento de datos y notas de cumplimiento
 - Migrar a RizomaDB
 - CI/CD
 - rizomadb.query.keysetPaging
+- constructors
 - t
+- Langue et paramètres
+- pt-br/guides/language-and-settings.md
+- DriverError
+- MssqlConnection
 - ExecuteRequest
-- pg
+- Edición de datos
+- Modification des données
+- Edição de dados
+- pt-br/guides/connections.md
+- Usar o RizomaDB com o teclado
+- Ayuda a probar RizomaDB
+- Ajude a testar o RizomaDB
+- Politique de sécurité
 - @rizomadb/admin
 - rizomadb.security.prodReadOnlyByDefault
-- crear-un-driver.md
+- pt-br/reference/engine-matrix.md
 - auditoria.md
 - politica-de-dependencias.md
 - @rizomadb/driver-cassandra
+- @rizomadb/network
 - MysqlConnection
 - tidb.test.ts
 - @rizomadb/driver-mssql
@@ -314,13 +338,15 @@
 3. `tr()` - 50 edges
 4. `ConnectionManager` - 42 edges
 5. `iconButton()` - 25 edges
-6. `k()` - 24 edges
-7. `openConnectionScreen()` - 24 edges
-8. `onMessage()` - 24 edges
-9. `el()` - 24 edges
-10. `vscode` - 24 edges
+6. `openConnectionScreen()` - 24 edges
+7. `onMessage()` - 24 edges
+8. `el()` - 24 edges
+9. `vscode` - 24 edges
+10. `Value` - 24 edges
 
 ## Surprising Connections (you probably didn't know these)
+- `analysisMarkdown()` --references--> `L`  [EXTRACTED]
+  apps/extension/src/lib/mongoTools.ts → scripts/gen-reference.mjs
 - `resolveConfig()` --indirect_call--> `k()`  [INFERRED]
   packages/core/src/secrets.ts → apps/extension/src/lib/keysetPaging.test.ts
 - `saveSecrets()` --indirect_call--> `k()`  [INFERRED]
@@ -329,17 +355,15 @@
   packages/drivers/elasticsearch/src/index.ts → apps/extension/src/lib/keysetPaging.test.ts
 - `docsToEvents()` --indirect_call--> `k()`  [INFERRED]
   packages/drivers/mongodb/src/index.ts → apps/extension/src/lib/keysetPaging.test.ts
-- `complete()` --indirect_call--> `k()`  [INFERRED]
-  packages/sql/src/completion.ts → apps/extension/src/lib/keysetPaging.test.ts
 
 ## Import Cycles
 - None detected.
 
-## Communities (324 total, 50 thin omitted)
+## Communities (348 total, 50 thin omitted)
 
 ### Community 0 - "main.ts"
-Cohesion: 0.02
-Nodes (88): parsePasted(), api, applyFilter(), body, btnApply, btnColumns, btnCopy, btnDelete (+80 more)
+Cohesion: 0.03
+Nodes (83): parsePasted(), api, applyFilter(), body, btnApply, btnColumns, btnCopy, btnDelete (+75 more)
 
 ### Community 1 - "completion.ts"
 Cohesion: 0.05
@@ -350,8 +374,8 @@ Cohesion: 0.07
 Nodes (63): ColumnOp, columnStatements(), lc(), addFk(), assertFragment(), assertIdentifier(), columnDef(), createIndex() (+55 more)
 
 ### Community 3 - "mongodb/src/index.ts"
-Cohesion: 0.05
-Nodes (41): Assessment, assessMongo(), DESTRUCTIVE, hasOut(), isEmpty(), READ_COLLECTION, READ_COMMANDS, READ_DB (+33 more)
+Cohesion: 0.13
+Nodes (15): bsonTypeName(), docsToEvents(), jsonToShell(), kindOfValue(), mongoDriver, plain(), SAFE_MAX, SAFE_MIN (+7 more)
 
 ### Community 4 - "PendingEdits"
 Cohesion: 0.13
@@ -366,12 +390,12 @@ Cohesion: 0.06
 Nodes (48): checkHostKey(), createHmacless(), entriesFor(), fingerprint(), formatEntry(), glob(), HostKeyDecision, HostKeyEntry (+40 more)
 
 ### Community 7 - "activate"
-Cohesion: 0.14
-Nodes (12): activate(), ConnectionManager, Memento, takeProxy(), takeSsh(), loadModel(), openConnectionScreen(), engineOf() (+4 more)
+Cohesion: 0.13
+Nodes (16): activate(), ConnectionManager, Memento, takeProxy(), takeSsh(), fieldText(), TEXT, loadModel() (+8 more)
 
 ### Community 8 - "tr"
-Cohesion: 0.13
-Nodes (53): tr(), announce(), autosize(), beginEdit(), buildFilterBar(), cellMenu(), chipNode(), columnsMenu() (+45 more)
+Cohesion: 0.12
+Nodes (51): tr(), announce(), autosize(), beginEdit(), buildFilterBar(), cellMenu(), COLLATOR, columnsMenu() (+43 more)
 
 ### Community 9 - "firestore/src/index.ts"
 Cohesion: 0.06
@@ -383,7 +407,7 @@ Nodes (41): axe-core, eslint, @eslint/js, @fontsource/inter, opentype.js, devDep
 
 ### Community 11 - "workerDriver.ts"
 Cohesion: 0.08
-Nodes (20): drivers, iters, Target, targets, ConnectResult, NextResult, Request, Response (+12 more)
+Nodes (22): makeRegistry(), drivers, iters, Target, targets, ConnectResult, NextResult, Request (+14 more)
 
 ### Community 12 - "devDependencies"
 Cohesion: 0.05
@@ -391,7 +415,7 @@ Nodes (40): dependencies, @rizomadb/driver-api, zod, devDependencies, fast-check
 
 ### Community 13 - "dynamodb/src/index.ts"
 Cohesion: 0.06
-Nodes (37): AwsKeys, awsKeysFromEnv(), AwsProfileError, Ini, loadAwsProfile(), parseIni(), env, files (+29 more)
+Nodes (36): AwsKeys, awsKeysFromEnv(), AwsProfileError, Ini, loadAwsProfile(), parseIni(), env, files (+28 more)
 
 ### Community 14 - "clickhouse/src/index.ts"
 Cohesion: 0.07
@@ -418,8 +442,8 @@ Cohesion: 0.05
 Nodes (36): dependencies, @rizomadb/driver-api, sql-formatter, devDependencies, fast-check, mysql2, oracledb, pg (+28 more)
 
 ### Community 20 - "ui.ts"
-Cohesion: 0.09
-Nodes (26): HostToGuide, esc(), iconBtn(), iconSvg(), api, done, go(), ic() (+18 more)
+Cohesion: 0.08
+Nodes (30): HostToGuide, api, done, go(), ic(), postMessage(), render(), send() (+22 more)
 
 ### Community 21 - "elasticsearch/src/index.ts"
 Cohesion: 0.10
@@ -431,15 +455,15 @@ Nodes (18): base, port, kindOf(), mapError(), PgConnection, postgresDriver, run(
 
 ### Community 23 - "trino/src/index.ts"
 Cohesion: 0.10
-Nodes (20): base(), Client, convert(), HttpError, kindOf(), literal(), mapError(), queryError() (+12 more)
+Nodes (21): base(), Client, convert(), HttpError, kindOf(), literal(), makeClient(), mapError() (+13 more)
 
 ### Community 24 - "server.ts"
 Cohesion: 0.10
 Nodes (22): main(), loaders, loadMcpConfig(), Mask, McpConfig, formatValue(), checkAgentQuery(), defaultRule() (+14 more)
 
-### Community 25 - "connectionPanel.ts"
-Cohesion: 0.07
-Nodes (33): ConnectToHost, Engine, EngineFamily, ENGINES, FAMILY_ORDER, contrast(), lum(), ENGINE_LOGOS (+25 more)
+### Community 25 - "extension.ts"
+Cohesion: 0.08
+Nodes (33): DesignerToHost, cfg(), CatalogProfile, DriverRegistry, OpenTunnel, SshSettings, TunnelFactory, DIALECT_OF (+25 more)
 
 ### Community 26 - "influxdb3/src/index.ts"
 Cohesion: 0.11
@@ -463,15 +487,15 @@ Nodes (21): decideEffective(), EffectiveDecision, EffectivePolicy, EnvRule, inte
 
 ### Community 31 - "README.es.md"
 Cohesion: 0.08
-Nodes (19): Ajustes recomendados del repositorio, CI/CD, Equivalentes locales, Verificar un paquete de una versión, Entornos personalizados, Formato (`version: 1`), Políticas, Qué se garantiza y cómo (+11 more)
+Nodes (18): Escribir un driver, Entornos personalizados, Formato (`version: 1`), Políticas, Qué se garantiza y cómo, Solución de problemas, Referencia de ajustes, Referencia de comandos (+10 more)
 
 ### Community 32 - "build-brand.mjs"
 Cohesion: 0.10
 Nodes (22): C, files, font, glyph(), horizontal(), lum(), markMono, markTile (+14 more)
 
-### Community 33 - "soak.mjs"
-Cohesion: 0.10
-Nodes (23): EditableRedisType, port, rows(), run(), isEditableRedisType(), isStreamEntryId(), q(), readCommand() (+15 more)
+### Community 33 - "nosqlCommands.ts"
+Cohesion: 0.14
+Nodes (24): AnalysisLabels, analysisMarkdown(), analyzeDocuments(), EN, FieldStat, pipelinePrefix(), pipelineStages(), typeOf() (+16 more)
 
 ### Community 34 - "export.ts"
 Cohesion: 0.17
@@ -481,17 +505,17 @@ Nodes (18): csvCell(), decrypt(), ExportFormat, ExportOptions, exportResult(), h
 Cohesion: 0.14
 Nodes (13): convert(), DuckConnection, duckdbDriver, isReadOnlySafe(), kindOf(), mapError(), run(), SAFE_MAX (+5 more)
 
-### Community 36 - "nosqlCommands.ts"
-Cohesion: 0.16
-Nodes (17): commandAt(), cypherStatementAt(), isQueryLanguage(), QUERY_LANGUAGES, AnalysisLabels, analysisMarkdown(), analyzeDocuments(), EN (+9 more)
+### Community 36 - "Value"
+Cohesion: 0.14
+Nodes (16): Value, cfg, port, assessCql(), stripCql(), CassandraConnection, cassandraDriver, jsonable() (+8 more)
 
 ### Community 37 - "import.test.ts"
 Cohesion: 0.13
 Nodes (16): batchLimits(), ConversionError, convertCell(), convertNonString(), ConvertOptions, DEFAULT_FALSE, DEFAULT_TRUE, ImportMapping (+8 more)
 
-### Community 38 - "environments.ts"
-Cohesion: 0.43
-Nodes (5): BUILTIN_ENVIRONMENTS, CustomEnvironment, customEnvironmentPolicy(), customEnvironments(), Protection
+### Community 38 - "AGENTS.md"
+Cohesion: 0.12
+Nodes (16): Contributing, Contribuir, Revisar una traducción, Contribuer, Relire une traduction, Contribuir, Revisar uma tradução, Reviewing a translation (+8 more)
 
 ### Community 39 - "postgres/package.json"
 Cohesion: 0.09
@@ -509,12 +533,12 @@ Nodes (21): ioredis, dependencies, ioredis, @rizomadb/driver-api, devDependencie
 Cohesion: 0.16
 Nodes (11): ConnectionProfile, Environment, parseProfile(), redactObject(), redactString(), expandVariables(), MemorySecretStore, resolveConfig() (+3 more)
 
-### Community 43 - "extension.ts"
-Cohesion: 0.07
-Nodes (27): cfg(), makeRegistry(), initI18n(), History, HistoryEntry, BuilderColumn, BuilderError, BuilderInput (+19 more)
+### Community 43 - "queryBuilder.ts"
+Cohesion: 0.15
+Nodes (14): BuilderColumn, BuilderError, BuilderInput, BuilderKind, buildSelect(), Condition, cols, engines (+6 more)
 
 ### Community 44 - "tools.test.ts"
-Cohesion: 0.16
+Cohesion: 0.15
 Nodes (17): backupSqlite(), applySync(), ApplySyncOptions, canon(), CompareOptions, DataDiff, diffTables(), literal() (+9 more)
 
 ### Community 45 - "mongodb/package.json"
@@ -526,8 +550,8 @@ Cohesion: 0.10
 Nodes (20): cassandra-driver, dependencies, cassandra-driver, @rizomadb/driver-api, devDependencies, fast-check, exports, ./meta (+12 more)
 
 ### Community 47 - "README.md"
-Cohesion: 0.09
-Nodes (15): Writing a driver, Troubleshooting, Third-party licenses (production dependencies), Commands reference, Engine capability matrix, Notes, Settings reference, Lista de aceptación v1.0 — estado real (2026-10-22) (+7 more)
+Cohesion: 0.06
+Nodes (29): Writing a driver, Custom environments, Format (`version: 1`), Policies, What is guaranteed, and how, 1. Install, 2. Create a connection, 3. Explore (+21 more)
 
 ### Community 48 - "mysql.test.ts"
 Cohesion: 0.40
@@ -543,15 +567,15 @@ Nodes (20): dependencies, oracledb, @rizomadb/driver-api, devDependencies, @type
 
 ### Community 52 - "webview/history.ts"
 Cohesion: 0.12
-Nodes (18): HostToHistory, api, chips, clear, conn, count, field, Item (+10 more)
+Nodes (17): api, chips, clear, conn, count, field, Item, items (+9 more)
 
 ### Community 53 - "plan.ts"
 Cohesion: 0.21
 Nodes (8): table, el(), fmt(), isMsg(), isNode(), Msg, Node, render()
 
-### Community 54 - "connections.ts"
-Cohesion: 0.18
-Nodes (9): CatalogProfile, DriverRegistry, OpenTunnel, SshSettings, TunnelFactory, DIALECT_OF, SchemaCache, Deps (+1 more)
+### Community 54 - "README.fr.md"
+Cohesion: 0.14
+Nodes (10): Dépannage, Référence des commandes, Référence des paramètres, Modèle de menaces (STRIDE) — ébauche initiale, Ce qu'il fait, Documentation, Développement, Installer (+2 more)
 
 ### Community 55 - "dynamodb/package.json"
 Cohesion: 0.11
@@ -578,8 +602,8 @@ Cohesion: 0.11
 Nodes (18): dependencies, @rizomadb/driver-api, devDependencies, fast-check, exports, ./meta, fast-check, @rizomadb/driver-api (+10 more)
 
 ### Community 61 - "mssql/src/index.ts"
-Cohesion: 0.12
-Nodes (16): ColumnMetaData, isReadOnlySafe(), Item, kindOf(), mapError(), MssqlConnection, mssqlDriver, normalize() (+8 more)
+Cohesion: 0.15
+Nodes (14): ColumnMetaData, isReadOnlySafe(), Item, kindOf(), mapError(), mssqlDriver, normalize(), run() (+6 more)
 
 ### Community 62 - "neo4j/package.json"
 Cohesion: 0.11
@@ -626,8 +650,8 @@ Cohesion: 0.12
 Nodes (16): dependencies, ssh2, devDependencies, @types/ssh2, license, main, name, scripts (+8 more)
 
 ### Community 73 - "statements.ts"
-Cohesion: 0.27
-Nodes (13): splitStatements(), Statement, statementAt(), blockRanges(), cypherRanges(), lineEnd(), lineOffsets(), redisRanges() (+5 more)
+Cohesion: 0.16
+Nodes (19): commandAt(), cypherStatementAt(), isQueryLanguage(), QUERY_LANGUAGES, splitStatements(), Statement, statementAt(), blockRanges() (+11 more)
 
 ### Community 74 - "driver-api/package.json"
 Cohesion: 0.12
@@ -637,13 +661,13 @@ Nodes (15): exports, ./conformance, vitest, license, main, name, peerDependencie
 Cohesion: 0.12
 Nodes (15): dependencies, @rizomadb/driver-api, exports, ./meta, @rizomadb/driver-api, license, main, name (+7 more)
 
-### Community 76 - "logoSvg.ts"
-Cohesion: 0.14
-Nodes (21): ConnectForm, HostToConnect, Shape, short, EngineLogo, LogoShape, esc(), hasGradient() (+13 more)
+### Community 76 - "connectionPanel.ts"
+Cohesion: 0.08
+Nodes (35): ConnectForm, ConnectToHost, HostToConnect, short, Engine, EngineFamily, ENGINES, FAMILY_ORDER (+27 more)
 
 ### Community 77 - "conformance.ts"
-Cohesion: 0.13
-Nodes (11): ConformanceOptions, ctx, engineUp(), reachable(), runConformance(), DriverError, DriverErrorKind, ResolvedConnectionConfig (+3 more)
+Cohesion: 0.20
+Nodes (8): ConformanceOptions, ctx, engineUp(), reachable(), runConformance(), DriverPlugin, ResolvedConnectionConfig, collect()
 
 ### Community 78 - "tasks"
 Cohesion: 0.15
@@ -686,12 +710,12 @@ Cohesion: 0.22
 Nodes (8): CatalogFile, CatalogResult, findSecrets(), loadCatalog(), FAIL_CLOSED, LoadedPolicy, loadPolicy(), PolicySources
 
 ### Community 89 - "compilerOptions"
-Cohesion: 0.15
-Nodes (12): compilerOptions, lib, noEmit, rootDir, types, extends, include, node (+4 more)
+Cohesion: 0.18
+Nodes (10): compilerOptions, lib, noEmit, rootDir, extends, include, src, ../../tsconfig.base.json (+2 more)
 
-### Community 90 - "explain.ts"
-Cohesion: 0.19
-Nodes (14): sig(), exec(), explain(), num(), parseMysqlPlan(), parsePostgresPlan(), parseSqlitePlan(), parseTreePlan() (+6 more)
+### Community 90 - ".execute"
+Cohesion: 0.18
+Nodes (15): run(), sig(), exec(), explain(), num(), parseMysqlPlan(), parsePostgresPlan(), parseSqlitePlan() (+7 more)
 
 ### Community 91 - "editing.ts"
 Cohesion: 0.10
@@ -705,9 +729,9 @@ Nodes (12): asRow(), decodeStream(), detectDelimiter(), detectEncoding(), detect
 Cohesion: 0.19
 Nodes (10): colsOf(), Ctx, Field, kindOf(), SAFE_MAX, SAFE_MIN, toParam(), capabilities (+2 more)
 
-### Community 94 - "Value"
-Cohesion: 0.06
-Nodes (32): Value, cfg, port, assessCql(), stripCql(), CassandraConnection, cassandraDriver, jsonable() (+24 more)
+### Community 94 - "oracle/src/index.ts"
+Cohesion: 0.12
+Nodes (16): bindOf(), fetchTypeHandler(), isQuery(), isReadOnlySafe(), kindOf(), mapError(), normalize(), OracleConnection (+8 more)
 
 ### Community 95 - "engines.integration.test.mts"
 Cohesion: 0.09
@@ -716,6 +740,10 @@ Nodes (36): chPort, esPort, mongoPort, neoPort, page(), profile(), run(), sig() 
 ### Community 96 - "webview/er.ts"
 Cohesion: 0.18
 Nodes (8): Col, draw(), Edge, mk(), Msg, Node, svg, vscode
+
+### Community 97 - "README.pt-br.md"
+Cohesion: 0.15
+Nodes (9): Solução de problemas, Referência de comandos, Modelo de ameaças (STRIDE) — rascunho inicial, Desenvolvimento, Documentação, Instalar, Licença, Motores (+1 more)
 
 ### Community 98 - "AuditLog"
 Cohesion: 0.27
@@ -764,6 +792,10 @@ Nodes (9): compilerOptions, outDir, rootDir, exclude, extends, include, src, src
 ### Community 110 - "data-tools/tsconfig.json"
 Cohesion: 0.20
 Nodes (9): compilerOptions, outDir, rootDir, exclude, extends, include, src, src/**/*.test.ts (+1 more)
+
+### Community 111 - "Connexions"
+Cohesion: 0.12
+Nodes (14): Chemin réseau, Connexions, Connexions enregistrées, Déplacer des connexions dans un fichier scellé, Environnements et protection, Importer depuis d'autres outils, L'arborescence des connexions, L'écran Nouvelle connexion (+6 more)
 
 ### Community 112 - "driver-api/tsconfig.json"
 Cohesion: 0.20
@@ -814,8 +846,8 @@ Cohesion: 0.20
 Nodes (9): compilerOptions, outDir, rootDir, exclude, extends, include, src, src/**/*.test.ts (+1 more)
 
 ### Community 124 - "guardConnection"
-Cohesion: 0.27
-Nodes (4): guardConnection(), Connection, Transaction, freshDb()
+Cohesion: 0.16
+Nodes (8): lc(), SQL_DIALECTS, tableProperties, guardConnection(), Connection, Transaction, freshDb(), freshSchema()
 
 ### Community 125 - "mysql/tsconfig.json"
 Cohesion: 0.20
@@ -871,7 +903,7 @@ Nodes (9): compilerOptions, outDir, rootDir, exclude, extends, include, src, src
 
 ### Community 138 - "dependencies"
 Cohesion: 0.05
-Nodes (37): dependencies, @rizomadb/ai, @rizomadb/data-tools, @rizomadb/driver-api, @rizomadb/driver-clickhouse, @rizomadb/driver-dynamodb, @rizomadb/driver-elasticsearch, @rizomadb/driver-firestore (+29 more)
+Nodes (37): dependencies, pg, @rizomadb/ai, @rizomadb/data-tools, @rizomadb/driver-api, @rizomadb/driver-clickhouse, @rizomadb/driver-dynamodb, @rizomadb/driver-elasticsearch (+29 more)
 
 ### Community 139 - "generate.ts"
 Cohesion: 0.25
@@ -894,8 +926,12 @@ Cohesion: 0.18
 Nodes (11): Authentication and transport, Capabilities, CockroachDB, Driver license, External tools, PostgreSQL, Read-only enforcement, Running the integration tests (+3 more)
 
 ### Community 144 - "Design guide"
-Cohesion: 0.11
-Nodes (16): Contribuir / Contributing, Reviewing a translation, CI/CD, Local equivalents, Recommended repository settings, Verifying a release package, Accessibility (required), Adding a screen: checklist (+8 more)
+Cohesion: 0.20
+Nodes (10): Accessibility (required), Adding a screen: checklist, Building blocks (`src/ui/webview/ui.ts`), Colour and state, Design guide, Layout patterns, Logos, Principles (+2 more)
+
+### Community 145 - "soak.mjs"
+Cohesion: 0.14
+Nodes (10): audit, conns, hs, minutes, policy, rs, samples, t0 (+2 more)
 
 ### Community 146 - "rizomadb.ai.provider"
 Cohesion: 0.29
@@ -958,8 +994,8 @@ Cohesion: 0.40
 Nodes (5): rizomadb.table.openRows, default, markdownDescription, minimum, type
 
 ### Community 165 - "lib.test.ts"
-Cohesion: 0.10
-Nodes (24): formatValue(), DBEAVER_DRIVERS, dec(), ImportedConnection, parseConnectionUri(), parseDBeaver(), parseMyCnf(), parsePgpass() (+16 more)
+Cohesion: 0.08
+Nodes (26): formatValue(), History, HistoryEntry, DBEAVER_DRIVERS, dec(), ImportedConnection, parseConnectionUri(), parseDBeaver() (+18 more)
 
 ### Community 166 - "Amazon DynamoDB"
 Cohesion: 0.20
@@ -1004,6 +1040,10 @@ Nodes (4): rizomadb.ai.redactLiterals, default, markdownDescription, type
 ### Community 176 - "properties"
 Cohesion: 0.18
 Nodes (11): properties, title, configuration, rizomadb.audit.enabled, rizomadb.audit.includeValues, default, markdownDescription, type (+3 more)
+
+### Community 177 - "parserCore.ts"
+Cohesion: 0.28
+Nodes (9): bson, parseMongoCommand(), parseMongoValue(), lex(), MongoSyntaxError, parseCommandWith(), parseValueWith(), plainFactory (+1 more)
 
 ### Community 178 - "rizomadb.audit.path"
 Cohesion: 0.50
@@ -1050,16 +1090,16 @@ Cohesion: 0.20
 Nodes (9): Authentication and transport, Capabilities, Driver license, External tools, Limits (honest), Read-only enforcement, Running the integration tests, Trino (+1 more)
 
 ### Community 192 - "gen-reference.mjs"
-Cohesion: 0.15
-Nodes (12): english, check, commands(), en, es, L, matrix(), md() (+4 more)
+Cohesion: 0.13
+Nodes (13): english, check, commands(), en, es, fr, L, md() (+5 more)
 
 ### Community 193 - "Conexiones"
 Cohesion: 0.17
 Nodes (11): Compartir conexiones con un equipo, Conexiones, Conexiones guardadas, El árbol de conexiones, Entornos y protección, Importar desde otras herramientas, La conexión en uso, La pantalla Nueva conexión (+3 more)
 
 ### Community 194 - "readOnlyUser.integration.test.mts"
-Cohesion: 0.14
-Nodes (19): bq(), dq(), hasControl(), Case, cases, chPort, myPort, pgPort (+11 more)
+Cohesion: 0.13
+Nodes (20): bq(), dq(), hasControl(), Case, cases, chPort, myPort, pgPort (+12 more)
 
 ### Community 195 - "La rejilla de resultados"
 Cohesion: 0.20
@@ -1068,6 +1108,10 @@ Nodes (10): Anatomía, Atajos, Celdas, filas y el panel de registro, Copiar y gu
 ### Community 196 - "The results grid"
 Cohesion: 0.20
 Nodes (10): Anatomy, Cells, rows and the record panel, Copy and save, Filtering in the database, Paging, Shortcuts, The query line, The results grid (+2 more)
+
+### Community 197 - "Utiliser RizomaDB au clavier"
+Cohesion: 0.18
+Nodes (9): Aidez à tester RizomaDB, Ce qui est le plus utile, Comment signaler, Comment tester en sécurité, Comment cela a été vérifié, Dans l'éditeur, Dans la grille de résultats, Se déplacer (+1 more)
 
 ### Community 198 - "ClickHouse"
 Cohesion: 0.20
@@ -1106,8 +1150,8 @@ Cohesion: 0.23
 Nodes (9): assertName(), grantStatement(), lit(), mssql, mysql, oracle, postgres, PRIVS (+1 more)
 
 ### Community 209 - "Primeros pasos"
-Cohesion: 0.12
-Nodes (15): Cambiar la estructura, Cómo, Edición de datos, Guardar cada edición al instante, Qué se puede editar, Revisar y aplicar, 1. Instalar, 2. Crear una conexión (+7 more)
+Cohesion: 0.22
+Nodes (9): 1. Instalar, 2. Crear una conexión, 3. Explorar, 4. Abrir una tabla, 5. Ejecutar una consulta, 6. Editar un valor, 7. Hazlo tuyo, Conviene saber (+1 more)
 
 ### Community 210 - "rizomadb.editor.codeLens"
 Cohesion: 0.50
@@ -1117,9 +1161,9 @@ Nodes (4): rizomadb.editor.codeLens, default, markdownDescription, type
 Cohesion: 0.18
 Nodes (11): A read-only account for the server-side guarantee, Connections, Environments and protection, Import from other tools, Move connections in a sealed file, Network path, Saved connections, Share connections with a team (+3 more)
 
-### Community 212 - "Getting started"
-Cohesion: 0.22
-Nodes (9): 1. Install, 2. Create a connection, 3. Explore, 4. Open a table, 5. Run a query, 6. Edit a value, 7. Make it yours, Getting started (+1 more)
+### Community 212 - "Conexões"
+Cohesion: 0.18
+Nodes (11): A conexão em uso, A tela Nova conexão, A árvore de conexões, Ambientes e proteção, Caminho de rede, Compartilhar conexões com uma equipe, Conexões, Conexões salvas (+3 more)
 
 ### Community 213 - "Marca RizomaDB"
 Cohesion: 0.25
@@ -1137,12 +1181,12 @@ Nodes (9): Build a query without typing SQL, History, Notebooks, Parameters, Res
 Cohesion: 0.33
 Nodes (4): dir, timer, [vsix, expect = "ok"], worker
 
-### Community 250 - "tableProperties"
-Cohesion: 0.43
-Nodes (3): lc(), SQL_DIALECTS, tableProperties
+### Community 250 - "MongoConnection"
+Cohesion: 0.29
+Nodes (4): mapError(), MongoConnection, WRITE_METHODS, ParsedCommand
 
 ### Community 251 - "Estado del proyecto RizomaDB"
-Cohesion: 0.25
+Cohesion: 0.29
 Nodes (7): Actualización (2026-10-20, tras la reanudación), Actualización (2026-10-21, documentación completa), Actualización (2026-10-21, HydraDB y pulido de la rejilla), Actualización (2026-10-22), Avance posterior (2026-10-20), Estado al cortarse la sesión (2026-10-21) — LÍMITE DE USO ALCANZADO, Estado del proyecto RizomaDB
 
 ### Community 252 - "Deployment"
@@ -1150,8 +1194,8 @@ Cohesion: 0.29
 Nodes (6): Air-gapped / offline, Deployment, Mass installation, Proxies and internal certificates, Shared connection catalogs, Workspace Trust
 
 ### Community 253 - "Usar RizomaDB con el teclado"
-Cohesion: 0.18
-Nodes (9): Ayuda a probar RizomaDB, Cómo probar con seguridad, Cómo reportar, Lo más útil, Cómo se comprobó, En el editor, En la rejilla de resultados, Moverse (+1 more)
+Cohesion: 0.40
+Nodes (5): Cómo se comprobó, En el editor, En la rejilla de resultados, Moverse, Usar RizomaDB con el teclado
 
 ### Community 255 - "ADR 0001 — Nombre: RizomaDB"
 Cohesion: 0.40
@@ -1161,9 +1205,9 @@ Nodes (4): ADR 0001 — Nombre: RizomaDB, Decisión, Riesgo de confusión, Verif
 Cohesion: 0.40
 Nodes (4): Análisis competitivo (Fase 0) — verificado 2026-10-20, Correcciones al panorama del prompt maestro, Diferenciadores que se mantienen (defendibles), Pendiente
 
-### Community 257 - "Política de seguridad / Security policy"
-Cohesion: 0.40
-Nodes (4): Alcance, Política de seguridad / Security policy, Reportar una vulnerabilidad, Versiones soportadas
+### Community 257 - "SECURITY.md"
+Cohesion: 0.15
+Nodes (12): Alcance, Política de seguridad, Reportar una vulnerabilidad, Versiones soportadas, Escopo, Política de segurança, Relatar uma vulnerabilidade, Versões suportadas (+4 more)
 
 ### Community 258 - "ADR 0002 — Stack, monorepo y versiones de referencia"
 Cohesion: 0.50
@@ -1173,21 +1217,37 @@ Nodes (3): ADR 0002 — Stack, monorepo y versiones de referencia, Decisiones, P
 Cohesion: 0.50
 Nodes (3): Controls matrix, Data handling and compliance notes, What RizomaDB touches and stores
 
-### Community 260 - "connections.md"
-Cohesion: 0.20
-Nodes (7): Custom environments, Format (`version: 1`), Policies, What is guaranteed, and how, Concepts that differ, From Database Client (cweijan) and DBCode, Migrating to RizomaDB
-
 ### Community 261 - "Idioma y ajustes"
 Cohesion: 0.50
 Nodes (4): Idioma, Idioma y ajustes, La guía, La pantalla de ajustes
+
+### Community 263 - "La grille de résultats"
+Cohesion: 0.20
+Nodes (10): Anatomie, Cellules, lignes et panneau d'enregistrement, Copier et enregistrer, Filtrer dans la base de données, La grille de résultats, La ligne de requête, Où s'ouvrent les résultats, Pagination (+2 more)
 
 ### Community 264 - "Honest comparison"
 Cohesion: 0.50
 Nodes (3): Honest comparison, Where it differs by design, Where RizomaDB is not (yet) competitive
 
+### Community 265 - "A grade de resultados"
+Cohesion: 0.20
+Nodes (10): A grade de resultados, A linha de consulta, Anatomia, Atalhos, Copiar e salvar, Células, linhas e o painel de registro, Filtrar no banco de dados, Onde os resultados abrem (+2 more)
+
+### Community 266 - "STATE.md"
+Cohesion: 0.10
+Nodes (21): Added, Changelog, Añadido, Corregido, Registro de cambios, Sin confirmar, [Sin publicar] — 0.0.1 (no publicado), Fixed (+13 more)
+
+### Community 267 - "assess.ts"
+Cohesion: 0.31
+Nodes (9): Assessment, assessMongo(), DESTRUCTIVE, hasOut(), isEmpty(), READ_COLLECTION, READ_COMMANDS, READ_DB (+1 more)
+
 ### Community 268 - "PostgreSQL"
-Cohesion: 0.17
+Cohesion: 0.18
 Nodes (11): Autenticación y transporte, Capacidades, CockroachDB, Cómo ejecutar las pruebas de integración, Herramientas externas, Licencia del driver, Modo de solo lectura, Notas de tipos (+3 more)
+
+### Community 270 - "CODE_OF_CONDUCT.md"
+Cohesion: 0.36
+Nodes (4): Code of conduct, Código de conducta, Code de conduite, Código de conduta
 
 ### Community 285 - "Apache Cassandra / ScyllaDB"
 Cohesion: 0.20
@@ -1200,6 +1260,10 @@ Nodes (10): Help test RizomaDB, How to report, How to test safely, What is most 
 ### Community 292 - "Amazon DynamoDB"
 Cohesion: 0.20
 Nodes (9): Amazon DynamoDB, Autenticación y transporte, Capacidades, Cómo ejecutar las pruebas de integración, Herramientas externas, Licencia del driver, Límites (con honestidad), Modo de solo lectura (+1 more)
+
+### Community 293 - "Premiers pas"
+Cohesion: 0.22
+Nodes (9): 1. Installer, 2. Créer une connexion, 3. Explorer, 4. Ouvrir une table, 5. Exécuter une requête, 6. Modifier une valeur, 7. Faites-en votre outil, Bon à savoir (+1 more)
 
 ### Community 294 - "Google Cloud Firestore"
 Cohesion: 0.20
@@ -1216,6 +1280,10 @@ Nodes (6): Changing structure, Editing data, How, Review and apply, Save each ed
 ### Community 298 - "InfluxDB 2.x"
 Cohesion: 0.20
 Nodes (9): Autenticación y transporte, Capacidades, Cómo ejecutar las pruebas de integración, Herramientas externas, InfluxDB 2.x, Licencia del driver, Límites (con honestidad), Modo de solo lectura (+1 more)
+
+### Community 299 - "L'éditeur de requêtes"
+Cohesion: 0.22
+Nodes (9): Construire une requête sans écrire de SQL, Exécuter, Historique, Instructions, L'éditeur de requêtes, Notebooks, Paramètres, Résultats (+1 more)
 
 ### Community 300 - "InfluxDB 3 (Core / Enterprise)"
 Cohesion: 0.20
@@ -1261,6 +1329,10 @@ Nodes (8): Autenticación y transporte, Capacidades, Cómo ejecutar las pruebas 
 Cohesion: 0.22
 Nodes (8): Autenticación y transporte, Capacidades, Cómo ejecutar las pruebas de integración, Herramientas externas, Licencia del driver, Modo de solo lectura, Notas de tipos, SQLite
 
+### Community 311 - "Primeiros passos"
+Cohesion: 0.22
+Nodes (9): 1. Instalar, 2. Criar uma conexão, 3. Explorar, 4. Abrir uma tabela, 5. Executar uma consulta, 6. Editar um valor, 7. Deixe do seu jeito, Bom saber (+1 more)
+
 ### Community 312 - "Despliegue"
 Cohesion: 0.29
 Nodes (6): Catálogos de conexiones compartidas, Confianza del espacio de trabajo, Despliegue, Instalación masiva, Proxies y certificados internos, Sin conexión / entornos aislados
@@ -1268,6 +1340,10 @@ Nodes (6): Catálogos de conexiones compartidas, Confianza del espacio de trabaj
 ### Community 315 - "Language and settings"
 Cohesion: 0.50
 Nodes (4): Language, Language and settings, The guide, The settings screen
+
+### Community 316 - "O editor de consultas"
+Cohesion: 0.22
+Nodes (9): Executar, Histórico, Instruções, Montar uma consulta sem digitar SQL, Notebooks, O editor de consultas, Parâmetros, Resultados (+1 more)
 
 ### Community 317 - "Tratamiento de datos y notas de cumplimiento"
 Cohesion: 0.50
@@ -1285,13 +1361,57 @@ Nodes (3): Ajustes recomendados del repositorio, CI/CD, Equivalentes locales
 Cohesion: 0.50
 Nodes (4): rizomadb.query.keysetPaging, default, markdownDescription, type
 
+### Community 321 - "constructors"
+Cohesion: 0.33
+Nodes (3): constructors(), date(), Factory
+
 ### Community 322 - "t"
-Cohesion: 0.09
-Nodes (38): DesignerToHost, GuideToHost, HistoryToHost, bundle, BUNDLE_OF, effectiveLanguage(), format(), t() (+30 more)
+Cohesion: 0.07
+Nodes (47): Shape, GuideToHost, HistoryToHost, HostToHistory, bundle, BUNDLE_OF, effectiveLanguage(), format() (+39 more)
+
+### Community 323 - "Langue et paramètres"
+Cohesion: 0.24
+Nodes (6): L'écran des paramètres, Langue, Langue et paramètres, Le guide, Matrice des capacités par moteur, Notes
+
+### Community 324 - "pt-br/guides/language-and-settings.md"
+Cohesion: 0.29
+Nodes (5): A tela de configurações, Idioma, Idioma e configurações, O guia, Referência de configurações
 
 ### Community 327 - "ExecuteRequest"
+Cohesion: 0.17
+Nodes (8): ExecuteRequest, ResultEvent, ConnectionLoss, makeClient(), makeClient(), makeClient(), param(), makeClient()
+
+### Community 328 - "Edición de datos"
 Cohesion: 0.33
-Nodes (6): ExecuteRequest, makeClient(), makeClient(), makeClient(), makeClient(), parseJson()
+Nodes (6): Cambiar la estructura, Cómo, Edición de datos, Guardar cada edición al instante, Qué se puede editar, Revisar y aplicar
+
+### Community 329 - "Modification des données"
+Cohesion: 0.33
+Nodes (6): Ce qui peut être modifié, Comment, Enregistrer chaque modification immédiatement, Modification des données, Modifier la structure, Relire et appliquer
+
+### Community 330 - "Edição de dados"
+Cohesion: 0.33
+Nodes (6): Alterar a estrutura, Como, Edição de dados, O que pode ser editado, Revisar e aplicar, Salvar cada edição imediatamente
+
+### Community 331 - "pt-br/guides/connections.md"
+Cohesion: 0.40
+Nodes (3): Conceitos que mudam, Do Database Client (cweijan) e do DBCode, Migrar para o RizomaDB
+
+### Community 332 - "Usar o RizomaDB com o teclado"
+Cohesion: 0.40
+Nodes (5): Como isso foi verificado, Na grade de resultados, Navegar, No editor, Usar o RizomaDB com o teclado
+
+### Community 333 - "Ayuda a probar RizomaDB"
+Cohesion: 0.50
+Nodes (4): Ayuda a probar RizomaDB, Cómo probar con seguridad, Cómo reportar, Lo más útil
+
+### Community 334 - "Ajude a testar o RizomaDB"
+Cohesion: 0.50
+Nodes (4): Ajude a testar o RizomaDB, Como relatar, Como testar com segurança, O que é mais útil
+
+### Community 335 - "Politique de sécurité"
+Cohesion: 0.50
+Nodes (4): Politique de sécurité, Périmètre, Signaler une vulnérabilité, Versions prises en charge
 
 ### Community 337 - "rizomadb.security.prodReadOnlyByDefault"
 Cohesion: 0.50
@@ -1306,23 +1426,23 @@ Cohesion: 0.36
 Nodes (5): isReadOnlyStatement(), READ_START, stripSql(), base, port
 
 ## Knowledge Gaps
-- **1811 isolated node(s):** `here`, `base`, `vscode`, `assert`, `common` (+1806 more)
+- **1962 isolated node(s):** `Añadido`, `Corregido`, `Sin confirmar`, `Ajouté`, `Corrigé` (+1957 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **50 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `k()` connect `iconButton` to `webview/er.ts`, `completion.ts`, `gen-reference.mjs`, `mongodb/src/index.ts`, `nosqlCommands.ts`, `activate`, `tr`, `firestore/src/index.ts`, `core/src/index.ts`, `dynamodb/src/index.ts`, `elasticsearch/src/index.ts`, `designer.ts`, `policyFiles.test.ts`, `influxdb3/src/index.ts`, `connect.ts`, `engines.integration.test.mts`?**
-  _High betweenness centrality (0.090) - this node is a cross-community bridge._
-- **Why does `Value` connect `Value` to `export.ts`, `mongodb/src/index.ts`, `PendingEdits`, `lib.test.ts`, `types.ts`, `hydradb/src/index.ts`, `ExecuteRequest`, `redis/src/index.ts`, `tools.test.ts`, `neo4j/src/index.ts`, `trino/src/index.ts`, `server.ts`, `influxdb3/src/index.ts`, `mssql/src/index.ts`, `engines.integration.test.mts`?**
-  _High betweenness centrality (0.064) - this node is a cross-community bridge._
-- **Why does `formatValue()` connect `lib.test.ts` to `extension.ts`, `nosqlCommands.ts`, `Value`, `activate`?**
-  _High betweenness centrality (0.032) - this node is a cross-community bridge._
-- **What connects `here`, `base`, `vscode` to the rest of the system?**
-  _1811 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Why does `Value` connect `Value` to `export.ts`, `mongodb/src/index.ts`, `PendingEdits`, `lib.test.ts`, `types.ts`, `hydradb/src/index.ts`, `ExecuteRequest`, `redis/src/index.ts`, `tools.test.ts`, `neo4j/src/index.ts`, `trino/src/index.ts`, `server.ts`, `influxdb3/src/index.ts`, `oracle/src/index.ts`, `engines.integration.test.mts`?**
+  _High betweenness centrality (0.073) - this node is a cross-community bridge._
+- **Why does `k()` connect `iconButton` to `webview/er.ts`, `nosqlCommands.ts`, `completion.ts`, `mongodb/src/index.ts`, `activate`, `firestore/src/index.ts`, `core/src/index.ts`, `MongoConnection`, `dynamodb/src/index.ts`, `ui.ts`, `elasticsearch/src/index.ts`, `designer.ts`, `policyFiles.test.ts`, `influxdb3/src/index.ts`, `connect.ts`, `engines.integration.test.mts`?**
+  _High betweenness centrality (0.066) - this node is a cross-community bridge._
+- **Why does `formatValue()` connect `lib.test.ts` to `extension.ts`, `Value`, `nosqlCommands.ts`, `activate`?**
+  _High betweenness centrality (0.041) - this node is a cross-community bridge._
+- **What connects `Añadido`, `Corregido`, `Sin confirmar` to the rest of the system?**
+  _1962 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `main.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.024366937410415672 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.025928896017107725 - nodes in this community are weakly interconnected._
 - **Should `completion.ts` be split into smaller, more focused modules?**
   _Cohesion score 0.05499316005471956 - nodes in this community are weakly interconnected._
 - **Should `diff.ts` be split into smaller, more focused modules?**
