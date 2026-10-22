@@ -3,7 +3,7 @@
   "displayName": "RizomaDB — Database Client",
   "description": "%description%",
   "version": "0.0.1",
-  "publisher": "tu-publisher",
+  "publisher": "AnderCMD",
   "license": "Apache-2.0",
   "private": true,
   "icon": "media/icon.png",
