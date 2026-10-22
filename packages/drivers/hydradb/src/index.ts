@@ -50,7 +50,8 @@ function makeClient(o: Opts) {
       res.on("error", () => {});
       resolve({ res, destroy: () => req.destroy() });
     });
-    const onAbort = () => req.destroy(Object.assign(new Error("aborted"), { name: "AbortError" }));
+    // Destroy without an error object: nothing may be left emitting an unhandled "error" once the reply is already being consumed.
+    const onAbort = () => { reject(Object.assign(new Error("aborted"), { name: "AbortError" })); req.destroy(); };
     signal?.addEventListener("abort", onAbort, { once: true });
     req.on("close", () => signal?.removeEventListener("abort", onAbort));
     req.on("error", reject);
