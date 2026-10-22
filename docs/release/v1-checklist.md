@@ -7,6 +7,7 @@ Leyenda: ✅ cumplido y verificado · 🟡 parcial · ❌ no hecho
 | Criterio | Estado | Evidencia / límite |
 |---|---|---|
 | Tier 1 (PG, MySQL/MariaDB, SQLite, SQL Server, Oracle, MongoDB, Redis/Valkey) con pruebas contra motor real | ✅ | Kit de conformidad + pruebas por motor (contenedores Docker), también en CI |
+| Pruebas de terceros | ⬜ | Nadie más ha probado la extensión. Hay una guía («Ayuda a probar») y un formulario de issue «Test report»; falta que alguien lo use |
 | Nube real (AWS, Google Cloud, Atlas, servicios gestionados) | ⬜ | Nunca probada: no hay cuenta. Documentado como «sin confirmar» en README, guía de conexiones, página de motores y sitio; se recomienda probar con solo lectura antes de depender de ello |
 | Tier 2 completo | 🟡 | Probados contra motor real: ClickHouse, Elasticsearch/OpenSearch, DuckDB, Neo4j 5.26, DynamoDB Local 2.5.2, InfluxDB 2.7 y 3 Core, Cassandra 5.0 y ScyllaDB 6.2, Firestore (emulador), Trino 470, y por protocolo CockroachDB 24.3, YugabyteDB 2025.2 y TiDB 8.5 (CockroachDB, YugabyteDB, InfluxDB 3, Firestore y HydraDB corren también en CI, trabajo `engines-extra`). Pendiente: Redshift (requiere cuenta AWS). AWS y Google Cloud reales NO probados. Ver docs/engines |
 | HydraDB | 🟡 | Driver experimental sobre la API HTTP; 16 pruebas contra la imagen oficial, también en CI (`engines-extra`). No lista etiquetas ni propiedades (limitación del motor) |

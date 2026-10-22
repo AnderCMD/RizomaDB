@@ -1,0 +1,41 @@
+name: Test report
+description: Tell us whether RizomaDB worked (or not) with an engine or service. A "works" report helps as much as a bug.
+title: "Test report: <engine / service>"
+labels: ["test-report"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for testing. **Do not paste passwords, tokens, keys or real data.** Replace host names and table contents if they are private.
+  - type: input
+    id: engine
+    attributes: { label: Engine and version, placeholder: "PostgreSQL 16.4" }
+    validations: { required: true }
+  - type: dropdown
+    id: where
+    attributes:
+      label: Where it runs
+      options: ["Local or container", "Managed cloud service (RDS, Cloud SQL, Atlas, ...)", "AWS / Google Cloud / Azure account (DynamoDB, Firestore, ...)", "On-premises server", "Other"]
+    validations: { required: true }
+  - type: input
+    id: system
+    attributes: { label: RizomaDB version, VS Code version and operating system, placeholder: "0.0.1, VS Code 1.142, Windows 11" }
+    validations: { required: true }
+  - type: checkboxes
+    id: worked
+    attributes:
+      label: What you tried (tick what worked)
+      options:
+        - label: Connected (Test connection)
+        - label: The explorer lists schemas and tables
+        - label: A query ran and the results grid showed rows
+        - label: Load more, sort and filter worked
+        - label: Edited a cell and applied the change (on a throwaway table)
+        - label: Read-only mode refused a write
+        - label: Used it with a keyboard only / a screen reader
+  - type: textarea
+    id: details
+    attributes:
+      label: What happened
+      description: What failed, the exact message, and the steps. Messages from the "RizomaDB policy" output channel help.
+    validations: { required: true }
