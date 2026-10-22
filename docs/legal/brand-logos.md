@@ -7,3 +7,4 @@ The "New connection" screen shows each database engine with its brand mark so pe
 - **Fallback:** an engine with no entry in `ENGINE_LOGOS` shows an original RizomaDB monogram tile. All 24 engines currently have a logo.
 - **Removing a logo:** delete its entry from `ENGINE_LOGOS`; the screen falls back to the monogram tile. Do this promptly if an owner asks.
 - **Review:** this is a nominative-use judgement, not legal advice. Have someone qualified confirm it before the first public release.
+- **Review sheet:** [brand-logos-review.md](brand-logos-review.md) lists each mark's source, licence and owner, and the points to decide.
