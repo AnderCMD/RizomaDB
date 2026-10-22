@@ -5,7 +5,7 @@ Todos los ajustes de la extensión. Abre la pantalla de configuración con **Riz
 | Ajuste | Tipo | Por defecto | Qué hace |
 |---|---|---|---|
 | `rizomadb.language` | string (`auto`, `en`, `es`, `pt`, `fr`) | `auto` | Idioma de las pantallas y mensajes de RizomaDB: `auto` sigue el idioma de VS Code, o fuerza `en`, `es`, `pt` (portugués de Brasil) o `fr`. Los nombres de comandos y ajustes siempre siguen a VS Code. |
-| `rizomadb.environments` | list | `[]` | Entornos adicionales además de dev, staging y prod, p. ej. `{ "name": "qa", "protection": "confirm" }`. Protección: `none`, `confirm` (preguntar antes de cada escritura) o `readOnly` (bloquear escrituras). También puedes crear uno desde la pantalla Nueva conexión. |
+| `rizomadb.environments` | lista | `[]` | Entornos adicionales además de dev, staging y prod, p. ej. `{ "name": "qa", "protection": "confirm" }`. Protección: `none`, `confirm` (preguntar antes de cada escritura) o `readOnly` (bloquear escrituras). También puedes crear uno desde la pantalla Nueva conexión. |
 | `rizomadb.editor.codeLens` | boolean | `true` | Muestra botones Ejecutar y Explicar sobre cada sentencia de los editores de consultas, además de Ejecutar todo y la conexión en uso. |
 | `rizomadb.editor.highlightStatement` | boolean | `true` | Resalta la sentencia bajo el cursor en los editores de consultas. |
 | `rizomadb.explorer.groupByFamily` | boolean | `true` | Agrupa las conexiones del árbol por tipo de motor (relacional, documentos, clave-valor…). |
@@ -21,9 +21,9 @@ Todos los ajustes de la extensión. Abre la pantalla de configuración con **Riz
 | `rizomadb.edit.applyImmediately` | boolean | `false` | Guarda cada edición de celda en cuanto la confirmas, sin pulsar Aplicar. En conexiones `dev` se aplica sin preguntar; los demás entornos siguen preguntando, y las políticas y el solo lectura siempre se respetan. |
 | `rizomadb.table.openRows` | number | `200` | Filas cargadas al abrir una tabla. |
 | `rizomadb.policy.team` | object | `{}` | Capa de política de equipo (mismo formato que `.rizomadb/policy.json`). Despliégala con ajustes gestionados de VS Code; las capas de proyecto y usuario solo pueden endurecerla. |
-| `rizomadb.catalog.teamFile` | string | *(empty)* | Ruta de un catálogo compartido de conexiones (sin secretos). |
+| `rizomadb.catalog.teamFile` | string | *(vacío)* | Ruta de un catálogo compartido de conexiones (sin secretos). |
 | `rizomadb.audit.enabled` | boolean | `true` | Escribir un registro de auditoría local de cada sentencia (sin literales). |
-| `rizomadb.audit.path` | string | *(empty)* | Ruta del archivo de auditoría (por defecto, la carpeta de almacenamiento de la extensión). |
+| `rizomadb.audit.path` | string | *(vacío)* | Ruta del archivo de auditoría (por defecto, la carpeta de almacenamiento de la extensión). |
 | `rizomadb.audit.includeValues` | boolean | `false` | Conservar los valores literales en la auditoría. Desactivado por defecto para que el registro no contenga datos. |
 | `rizomadb.mcp.autoRegister` | boolean | `false` | Ofrece el servidor MCP de solo lectura de RizomaDB al cliente MCP de VS Code cuando una carpeta tiene `.rizomadb/mcp.json` (creado con *RizomaDB: Generate MCP Configuration*). Desactivado por defecto; la contraseña de la base de datos se pide al iniciar el servidor. |
 | `rizomadb.ai.enabled` | boolean | `false` | Activa la asistencia con IA. Desactivada por defecto: no se envía nada hasta que la actives y confirmes cada petición remota. |

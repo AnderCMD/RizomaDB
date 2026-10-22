@@ -1,18 +1,18 @@
-# Modelo de amenazas inicial (STRIDE) — borrador Fase 0
+# Threat model (STRIDE) — initial draft
 
-Activos: credenciales de BD, datos consultados, historial/auditoría, integridad de datos escritos, cadena de suministro.
+Assets: database credentials, queried data, history and audit log, integrity of written data, supply chain.
 
-| Amenaza | Categoría | Control previsto |
+| Threat | Category | Control |
 |---|---|---|
-| Secreto en settings/logs/historial | Info disclosure | Solo SecretStorage; redactor central; tests |
-| Webview inyecta mensajes | Tampering/EoP | CSP estricta, zod en ambos extremos, localResourceRoots mínimos |
-| SQL generado con inyección | Tampering | Escapado de identificadores/literales, parámetros, fuzzing |
-| Workspace no confiable carga conexiones/políticas | EoP | Workspace Trust: modo restringido |
-| Escritura accidental en prod | Tampering | Etiquetas de entorno, solo lectura servidor+cliente, cola revisable |
-| MITM / TLS desactivado | Spoofing | TLS verificado por defecto, aviso visible, huellas SSH |
-| Dependencia comprometida | Tampering | Lockfile, auditoría, SBOM, procedencia |
-| Fuga por IA/MCP | Info disclosure | Apagado por defecto, solo esquema, confirmación, auditoría |
-| Repudio de operaciones | Repudiation | Auditoría local JSONL |
-| DoS por resultados enormes | DoS | Límites de filas/memoria, streaming, workers |
+| A secret ends up in settings, logs or history | Information disclosure | Only SecretStorage; a central redactor; tests |
+| A webview injects messages | Tampering / elevation of privilege | Strict CSP, zod validation at both ends, minimal localResourceRoots |
+| Generated SQL with injection | Tampering | Escaping of identifiers and literals, parameters, fuzzing |
+| An untrusted workspace loads connections or policies | Elevation of privilege | Workspace Trust: restricted mode |
+| Accidental write to production | Tampering | Environment labels, read-only on server and client, a reviewable queue |
+| MITM / TLS turned off | Spoofing | TLS verified by default, a visible warning, SSH fingerprints |
+| Compromised dependency | Tampering | Lockfile, audit, SBOM, provenance |
+| Leak through AI / MCP | Information disclosure | Off by default, schema only, confirmation, audit |
+| Repudiation of operations | Repudiation | Local JSONL audit log |
+| DoS through huge results | Denial of service | Row and memory limits, streaming, workers |
 
-Se mantendrá vivo; revisión por fase.
+This document is kept alive and reviewed at each phase.

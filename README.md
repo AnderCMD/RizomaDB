@@ -5,9 +5,11 @@
   </picture>
 </p>
 
-**All your databases, one place. Free.** · *Todas tus bases de datos, un solo lugar. Gratis.*
+**All your databases, one place. Free.**
 
-A multi-engine database client for VS Code (and VSCodium, Cursor, Windsurf): Apache-2.0, no telemetry, no accounts, no locked features. [Leer en español](README.es.md) · [Documentation site](https://andercmd.github.io/RizomaDB/)
+English · [Español](README.es.md) · [Português (Brasil)](README.pt-br.md) · [Français](README.fr.md)
+
+A multi-engine database client for VS Code (and VSCodium, Cursor, Windsurf): Apache-2.0, no telemetry, no accounts, no locked features. [Documentation site](https://andercmd.github.io/RizomaDB/en/)
 
 > **Status: pre-release.** Nothing is published to the Marketplace, Open VSX or npm yet, and v1.0 is **not** ready: see the honest [acceptance checklist](docs/release/v1-checklist.md). The extension builds, installs and passes its tests against real engines, and the project owner did a manual screen-reader pass on macOS, Windows and Linux with no problems found.
 
@@ -32,7 +34,7 @@ code --install-extension apps/extension/rizomadb-0.0.1.vsix
 Then click the RizomaDB icon, or run **RizomaDB: Open the Guide**. Full walk-through: [Getting started](docs/guides/getting-started.md).
 
 ## Documentation
-[Getting started](docs/guides/getting-started.md) · [Connections](docs/guides/connections.md) · [The query editor](docs/guides/query-editor.md) · [The results grid](docs/guides/results-grid.md) · [Editing data](docs/guides/editing-data.md) · [Language and settings](docs/guides/language-and-settings.md) · [Troubleshooting](docs/guides/troubleshooting.md) · [Settings](docs/reference/settings.md) and [commands](docs/reference/commands.md) reference · [Policies](docs/enterprise/policy.md) · [Threat model](docs/security/threat-model.md) · [CI/CD](docs/ci-cd.md) · [Design guide](docs/design/design-guide.md) · [AGENTS.md](AGENTS.md) · [Writing a driver](docs/drivers/authoring.md)
+[Getting started](docs/guides/getting-started.md) · [Connections](docs/guides/connections.md) · [The query editor](docs/guides/query-editor.md) · [The results grid](docs/guides/results-grid.md) · [Using the keyboard](docs/guides/keyboard.md) · [Editing data](docs/guides/editing-data.md) · [Language and settings](docs/guides/language-and-settings.md) · [Troubleshooting](docs/guides/troubleshooting.md) · [Help test RizomaDB](docs/guides/help-test.md) · [Settings](docs/reference/settings.md) and [commands](docs/reference/commands.md) reference · [Policies](docs/enterprise/policy.md) · [Threat model](docs/security/threat-model.md) · [CI/CD](docs/ci-cd.md) · [Design guide](docs/design/design-guide.md) · [AGENTS.md](AGENTS.md) · [Writing a driver](docs/drivers/authoring.md)
 
 ## Development
 ```bash
@@ -44,4 +46,4 @@ node scripts/gen-reference.mjs        # regenerates the settings/commands/engine
 `dev` is the integration branch and `main` is what is deployed (the docs site); CI runs on both. See [CONTRIBUTING.md](CONTRIBUTING.md), [docs/ci-cd.md](docs/ci-cd.md), the decision records in [docs/adr](docs/adr) and the running log in [docs/ai/STATE.md](docs/ai/STATE.md).
 
 ## License
-Apache-2.0. Third-party licenses: [docs/legal/third-party-licenses.md](docs/legal/third-party-licenses.md).
+Apache-2.0. Third-party licenses: [docs/legal/third-party-licenses.md](docs/legal/third-party-licenses.md). [Code of conduct](CODE_OF_CONDUCT.md) · [Security](SECURITY.md) · [Changelog](CHANGELOG.md).

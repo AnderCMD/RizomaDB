@@ -5,11 +5,13 @@
   </picture>
 </p>
 
-**Todas tus bases de datos, un solo lugar. Gratis.** · *All your databases, one place. Free.*
+**Todas tus bases de datos, un solo lugar. Gratis.**
 
-Un cliente de bases de datos multimotor para VS Code (y VSCodium, Cursor, Windsurf): Apache-2.0, sin telemetría, sin cuentas, sin funciones bloqueadas. [Read in English](README.md) · [Sitio de documentación](https://andercmd.github.io/RizomaDB/es/)
+[English](README.md) · Español · [Português (Brasil)](README.pt-br.md) · [Français](README.fr.md)
 
-> **Estado: pre-lanzamiento.** Aún no se publica nada en el Marketplace, Open VSX ni npm, y la v1.0 **no** está lista: mira la [lista de aceptación](docs/release/v1-checklist.md), que es honesta. La extensión compila, se instala y pasa sus pruebas contra motores reales, pero nadie ha hecho una revisión completa con lector de pantalla.
+Un cliente de bases de datos multimotor para VS Code (y VSCodium, Cursor, Windsurf): Apache-2.0, sin telemetría, sin cuentas, sin funciones bloqueadas. [Sitio de documentación](https://andercmd.github.io/RizomaDB/es/)
+
+> **Estado: pre-lanzamiento.** Aún no se publica nada en el Marketplace, Open VSX ni npm, y la v1.0 **no** está lista: mira la [lista de aceptación](docs/release/v1-checklist.md) (en español), que es honesta. La extensión compila, se instala y pasa sus pruebas contra motores reales, y el responsable del proyecto hizo una revisión manual con lector de pantalla en macOS, Windows y Linux sin encontrar problemas.
 
 ## Qué hace
 - **Conecta** con 24 motores desde una pantalla de logos, con el host, puerto y usuario habituales ya rellenados; entornos (`dev`, `staging`, `prod` o los tuyos) con protección; túneles SSH y proxies HTTP/SOCKS5; secretos solo en el almacén de secretos de VS Code. Las conexiones se agrupan por tipo en el árbol, con la activa y su base de datos en la barra de estado.
@@ -32,7 +34,7 @@ code --install-extension apps/extension/rizomadb-0.0.1.vsix
 Luego haz clic en el icono de RizomaDB, o ejecuta **RizomaDB: Abrir la guía**. Recorrido completo: [Primeros pasos](docs/es/guias/primeros-pasos.md).
 
 ## Documentación
-[Primeros pasos](docs/es/guias/primeros-pasos.md) · [Conexiones](docs/es/guias/conexiones.md) · [El editor de consultas](docs/es/guias/editor-de-consultas.md) · [La rejilla de resultados](docs/es/guias/rejilla-de-resultados.md) · [Edición de datos](docs/es/guias/edicion-de-datos.md) · [Idioma y ajustes](docs/es/guias/idioma-y-ajustes.md) · [Solución de problemas](docs/es/guias/solucion-de-problemas.md) · Referencia de [ajustes](docs/es/referencia/ajustes.md) y de [comandos](docs/es/referencia/comandos.md) · [Políticas](docs/es/empresa/politicas.md) · [Modelo de amenazas](docs/security/threat-model.md) · [CI/CD](docs/es/ci-cd.md) · [Guía de diseño](docs/design/design-guide.md) (en inglés) · [AGENTS.md](AGENTS.md)
+[Primeros pasos](docs/es/guias/primeros-pasos.md) · [Conexiones](docs/es/guias/conexiones.md) · [El editor de consultas](docs/es/guias/editor-de-consultas.md) · [La rejilla de resultados](docs/es/guias/rejilla-de-resultados.md) · [Usar el teclado](docs/es/guias/teclado.md) · [Edición de datos](docs/es/guias/edicion-de-datos.md) · [Idioma y ajustes](docs/es/guias/idioma-y-ajustes.md) · [Solución de problemas](docs/es/guias/solucion-de-problemas.md) · [Ayuda a probar](docs/es/guias/ayuda-a-probar.md) · Referencia de [ajustes](docs/es/referencia/ajustes.md) y de [comandos](docs/es/referencia/comandos.md) · [Políticas](docs/es/empresa/politicas.md) · [Modelo de amenazas](docs/es/seguridad/modelo-de-amenazas.md) · [CI/CD](docs/es/ci-cd.md) · [Guía de diseño](docs/design/design-guide.md) (en inglés) · [AGENTS.md](AGENTS.md) (en inglés) · [Escribir un driver](docs/es/drivers/crear-un-driver.md)
 
 ## Desarrollo
 ```bash
@@ -41,7 +43,7 @@ docker compose -f test/compose/docker-compose.yml up -d postgres   # o el motor 
 pnpm lint && pnpm build && pnpm typecheck && pnpm test
 node scripts/gen-reference.mjs        # regenera las páginas de referencia de ajustes, comandos y motores
 ```
-`dev` es la rama de integración y `main` es lo que se despliega (el sitio de documentación); el CI corre en ambas. Mira [CONTRIBUTING.md](CONTRIBUTING.md), [docs/ci-cd.md](docs/ci-cd.md), los registros de decisión en [docs/adr](docs/adr) y el diario en [docs/ai/STATE.md](docs/ai/STATE.md).
+`dev` es la rama de integración y `main` es lo que se despliega (el sitio de documentación); el CI corre en ambas. Mira [CONTRIBUTING.es.md](CONTRIBUTING.es.md), [docs/es/ci-cd.md](docs/es/ci-cd.md), los registros de decisión en [docs/adr](docs/adr) y el diario en [docs/ai/STATE.md](docs/ai/STATE.md).
 
 ## Licencia
-Apache-2.0. Licencias de terceros: [docs/legal/third-party-licenses.md](docs/legal/third-party-licenses.md).
+Apache-2.0. Licencias de terceros: [docs/legal/third-party-licenses.md](docs/legal/third-party-licenses.md). [Código de conducta](CODE_OF_CONDUCT.es.md) · [Seguridad](SECURITY.es.md) · [Registro de cambios](CHANGELOG.es.md).

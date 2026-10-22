@@ -6,6 +6,5 @@ for (const d of ["guides", "engines", "enterprise", "security", "market", "drive
 cpSync("../docs/ci-cd.md", "content/en/ci-cd.md");
 // Spanish: guides, references, engines, enterprise, security, driver authoring and CI/CD are translated; the market comparison stays in English
 for (const d of ["guias", "referencia", "motores", "empresa", "seguridad", "drivers"]) copy(`../docs/es/${d}`, `content/es/${d}`);
-cpSync("../docs/security/threat-model.md", "content/es/seguridad/modelo-de-amenazas.md");   // already written in Spanish
 cpSync("../docs/es/ci-cd.md", "content/es/ci-cd.md");
 for (const d of ["adr", "release"]) copy(`../docs/${d}`, `content/es/${d}`);

@@ -17,6 +17,6 @@ for (const lang of ["pt-br", "fr"]) {
   const nls = read(`package.nls.${lang}.json`);
   for (const [k, tr] of Object.entries(nls)) rows.push(["manifest", k, english[k] ?? "", tr, ""]);
   const file = join(out, `${lang}.csv`);
-  writeFileSync(file, "﻿" + rows.map((r) => r.map(csv).join(",")).join("\n") + "\n");
+  writeFileSync(file, "\uFEFF" + rows.map((r) => r.map(csv).join(",")).join("\n") + "\n");
   console.log(`${file}: ${rows.length - 1} strings`);
 }

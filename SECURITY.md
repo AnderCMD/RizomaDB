@@ -1,11 +1,13 @@
-# Política de seguridad / Security policy
+# Security policy
 
-## Reportar una vulnerabilidad
-No abras un issue público. Usa **GitHub → Security → Report a vulnerability** (aviso privado) en este repositorio.
-Respuesta inicial: mejor esfuerzo, objetivo 5 días hábiles. Divulgación coordinada: 90 días o hasta publicar el parche.
+English · [Español](SECURITY.es.md) · [Português (Brasil)](SECURITY.pt-br.md) · [Français](SECURITY.fr.md)
 
-## Alcance
-Fuga de credenciales, ejecución de código desde webviews, evasión de solo lectura/políticas, inyección SQL en SQL generado, cadena de suministro.
+## Reporting a vulnerability
+Do not open a public issue. Use **GitHub → Security → Report a vulnerability** (a private advisory) in this repository.
+First reply: best effort, aiming for 5 business days. Coordinated disclosure: 90 days or until a fix is released, whichever comes first.
 
-## Versiones soportadas
-Solo la última versión publicada (el proyecto es pre-alfa).
+## Scope
+Credential leaks, code execution from webviews, bypassing read-only mode or policies, SQL injection in generated SQL, and supply-chain issues.
+
+## Supported versions
+Only the latest published version (the project is pre-alpha and nothing is published yet).
