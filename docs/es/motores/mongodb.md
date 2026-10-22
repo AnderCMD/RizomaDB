@@ -3,7 +3,7 @@
 **Nivel:** 1 · **Versiones probadas en CI:** MongoDB 7 (probada)
 
 ## Autenticación y transporte
-usuario/contraseña, URI, TLS; Atlas SRV mediante URI (sin probar contra Atlas)
+usuario/contraseña, URI, TLS; Atlas SRV mediante URI (sin probar contra Atlas, así que no está confirmado que funcione ahí; pruébalo primero en solo lectura)
 
 ## Capacidades
 Colecciones como tablas, cola de edición de documentos con concurrencia optimista, analizador de esquema, vista previa por etapa de pipelines (texto), crear/eliminar índices, importar/exportar, mongodump/mongorestore

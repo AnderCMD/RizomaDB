@@ -6,6 +6,7 @@
 - **Valores por defecto por motor.** El host, el puerto y el usuario habitual ya están (por ejemplo PostgreSQL `postgres@localhost:5432/postgres`, MySQL y MariaDB `root`, SQL Server `sa`, Oracle `system` con servicio `FREEPDB1`, MongoDB y Redis sin usuario). Los campos que un motor no necesita quedan vacíos y opcionales.
 - **TLS en tu propia máquina.** Para `localhost`, `127.0.0.1` y `::1` la casilla de TLS empieza desmarcada, porque los servidores locales rara vez hablan TLS, y no se muestra ninguna advertencia. Si cambias el host a uno remoto vuelve al valor del motor; desmarcar TLS en un host remoto pide confirmación.
 - **Probar conexión** conecta y hace ping sin guardar nada. **Guardar conexión** almacena el perfil y conecta; si falla puedes corregir los campos y reintentar, o elegir **Guardar sin conectar**.
+- **Los servicios en la nube no están confirmados.** RizomaDB solo se ha probado con motores locales y emuladores oficiales, nunca con una cuenta real en la nube (AWS, Google Cloud, Atlas, PostgreSQL/MySQL gestionados). Prueba primero con un usuario de solo lectura o una base de datos desechable; ver [Motores](../motores/README.md#nube-y-servicios-gestionados-sin-confirmar).
 - Las contraseñas, tokens y claves van al **almacén de secretos** de VS Code. Un catálogo compartido nunca los contiene: cada persona escribe los suyos.
 
 ### Entornos y protección

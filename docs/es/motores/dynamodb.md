@@ -1,6 +1,6 @@
 # Amazon DynamoDB
 
-**Nivel:** 2 · **Versiones probadas:** DynamoDB Local 2.5.2 (probada). El servicio real de AWS usa la misma API y la misma firma de peticiones (verificada con el vector de prueba SigV4 publicado por AWS), pero **no se ha probado contra AWS**.
+**Nivel:** 2 · **Versiones probadas:** DynamoDB Local 2.5.2 (probada). El servicio real de AWS usa la misma API y la misma firma de peticiones (verificada con el vector de prueba SigV4 publicado por AWS), pero **no se ha probado contra AWS**, así que no está confirmado que funcione ahí. Pruébalo con un usuario de IAM de solo lectura o una tabla desechable antes de depender de él.
 
 ## Autenticación y transporte
 Solo credenciales estáticas (ID de clave de acceso, clave secreta y token de sesión opcional), firmadas con SigV4 sobre HTTPS. La cadena de credenciales de AWS, los perfiles compartidos, SSO y los roles de IAM **no** son compatibles: pega credenciales temporales en el campo del token de sesión. Define host/puerto/TLS del endpoint para DynamoDB Local o un endpoint de VPC.

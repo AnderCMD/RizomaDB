@@ -3,7 +3,7 @@
 **Level:** 1 · **Versions tested in CI:** MongoDB 7 (tested)
 
 ## Authentication and transport
-user/password, URI, TLS; Atlas SRV via URI (untested against Atlas)
+user/password, URI, TLS; Atlas SRV via URI (not tested against Atlas, so not confirmed to work there; try it read-only first)
 
 ## Capabilities
 Collections as tables, document edit queue with optimistic concurrency, schema analyzer, per-stage pipeline preview (text), index create/drop, import/export, mongodump/mongorestore

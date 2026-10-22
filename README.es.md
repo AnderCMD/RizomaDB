@@ -21,7 +21,7 @@ Un cliente de bases de datos multimotor para VS Code (y VSCodium, Cursor, Windsu
 - **Español, inglés, portugués (Brasil) y francés** (los dos últimos con ayuda de IA, sin revisión nativa todavía), intercambiables dentro de la extensión, y una **guía** interactiva que te lleva de la mano.
 
 ## Motores
-Probados contra servidores reales: PostgreSQL (y CockroachDB, YugabyteDB), MySQL/MariaDB (y TiDB), SQL Server, Oracle, SQLite, MongoDB, Redis/Valkey, ClickHouse, Elasticsearch/OpenSearch, DuckDB, Neo4j, DynamoDB (Local), InfluxDB 2 y 3, Cassandra/ScyllaDB, Firestore (emulador), Trino y **HydraDB (experimental)**. Lo que admite cada uno está en la [matriz de capacidades](docs/es/referencia/matriz-de-motores.md); los límites están en la página de cada motor en [docs/es/motores](docs/es/motores/README.md). Sin probar: servicios reales de AWS o Google Cloud, Redshift.
+Probados contra servidores reales: PostgreSQL (y CockroachDB, YugabyteDB), MySQL/MariaDB (y TiDB), SQL Server, Oracle, SQLite, MongoDB, Redis/Valkey, ClickHouse, Elasticsearch/OpenSearch, DuckDB, Neo4j, DynamoDB (Local), InfluxDB 2 y 3, Cassandra/ScyllaDB, Firestore (emulador), Trino y **HydraDB (experimental)**. Lo que admite cada uno está en la [matriz de capacidades](docs/es/referencia/matriz-de-motores.md); los límites están en la página de cada motor en [docs/es/motores](docs/es/motores/README.md). **Sin confirmar:** nunca se han probado cuentas reales en la nube (AWS, Google Cloud, MongoDB Atlas ni servicios gestionados de PostgreSQL/MySQL); pruébalos con un usuario de solo lectura o una base de datos desechable antes de depender de ellos. Redshift, Snowflake y BigQuery no están implementados. Ver [Nube y servicios gestionados](docs/es/motores/README.md#nube-y-servicios-gestionados-sin-confirmar).
 
 ## Instalar
 ```bash
@@ -44,4 +44,4 @@ node scripts/gen-reference.mjs        # regenera las páginas de referencia de a
 `dev` es la rama de integración y `main` es lo que se despliega (el sitio de documentación); el CI corre en ambas. Mira [CONTRIBUTING.md](CONTRIBUTING.md), [docs/ci-cd.md](docs/ci-cd.md), los registros de decisión en [docs/adr](docs/adr) y el diario en [docs/ai/STATE.md](docs/ai/STATE.md).
 
 ## Licencia
-Apache-2.0. Licencias de terceros: [docs/legal/third-party-licenses.md](docs/legal/third-party-licenses.md). Los logos de los motores se usan solo para identificarlos y pertenecen a sus dueños ([detalle](docs/legal/brand-logos.md)).
+Apache-2.0. Licencias de terceros: [docs/legal/third-party-licenses.md](docs/legal/third-party-licenses.md).

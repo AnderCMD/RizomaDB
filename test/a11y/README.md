@@ -14,4 +14,4 @@ for (const theme of ["theme-dark.css", "theme-light.css"]) {
 ```
 Result on 2026-10-21 after fixes: **0 violations** on grid (with pending edits), plan tree, ER diagram, table designer and metrics. First run found real issues (opacity-based low contrast, missing landmark/heading, ER accessible names), now fixed.
 
-This is automated checking only. A screen-reader pass (NVDA/VoiceOver/JAWS) and keyboard walkthrough are **not done** and are required before a 1.0.
+This is automated checking only. The project owner also did a manual screen-reader pass on macOS, Windows and Linux with no problems found; it is not repeated automatically, so redo it after big UI changes.

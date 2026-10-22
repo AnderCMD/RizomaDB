@@ -20,6 +20,8 @@ features:
 
 ::: warning Pre-release
 RizomaDB is not published to a marketplace yet and v1.0 is not ready. The [honest comparison](/en/market/honest-comparison) and the [acceptance checklist](/es/release/v1-checklist) (in Spanish) say exactly what is and is not verified.
+
+**Cloud services are not confirmed.** RizomaDB has only been tested against local engines and official emulators, never against a real cloud account (AWS, Google Cloud, MongoDB Atlas, managed PostgreSQL/MySQL). Test with a read-only user or a throwaway database before relying on it: see [Cloud and managed services](/en/engines/#cloud-and-managed-services-not-confirmed).
 :::
 
 ## Where to start

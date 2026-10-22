@@ -12,7 +12,7 @@ Based on `competitive-analysis.md` (verified 2026-10-20) and on what RizomaDB ac
 
 ## Where RizomaDB is not (yet) competitive
 - **Breadth**: fewer engines than DBCode's listing; real AWS and Google Cloud services and Redshift were not tested; Level 3 engines and a JDBC/ODBC bridge do not exist.
-- **Never exercised in a real VS Code UI by a person**: the automated end-to-end test activates it in a real VS Code and checks the commands and editor lenses, and the screens pass axe in light and dark, but there is no manual walk-through and no screen-reader pass.
+- **Little human testing so far**: the automated end-to-end test activates it in a real VS Code and checks the commands and editor lenses, the screens pass axe in light and dark, and the owner did a manual screen-reader pass on macOS, Windows and Linux with no problems found; there is no independent accessibility audit.
 - **Not published**: no Marketplace or Open VSX listing, no signed release yet.
 - **DuckDB** needs a platform-specific native module that the VSIX does not ship.
 - Community and translations beyond English and Spanish: none yet.

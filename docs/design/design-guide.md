@@ -47,13 +47,13 @@ Spacing is multiples of 2: bars use 6–8px vertical and 12–14px horizontal pa
 - Destructive actions use the error foreground and are confirmed.
 
 ## Logos
-Engine marks come from CC0/MIT icon sets via `scripts/gen-logos.mjs`, drawn **without a tile**, sized 16px in trees and tabs and 40px on cards. They identify the product; do not recolour them beyond the light/dark adaptation, do not use them in any way that implies endorsement. See `docs/legal/brand-logos.md`.
+Engine marks come from CC0/MIT icon sets via `scripts/gen-logos.mjs`, drawn **without a tile**, sized 16px in trees and tabs and 40px on cards. They identify the product; do not recolour them beyond the light/dark adaptation, do not use them in any way that implies endorsement.
 
 ## Accessibility (required)
 - WCAG 2.2 AA: contrast ≥ 4.5:1 for text, 3:1 for UI; targets reachable by keyboard in a logical order; `prefers-reduced-motion` disables transitions.
 - Landmarks: exactly one `main` per page; toolbars have `role=toolbar` and a label; grids use `role=grid` with `aria-rowcount/colcount`; sort state in `aria-sort`; live changes announced in a polite `aria-live` region.
 - Icon-only controls must have `aria-label`. Placeholders are not labels.
-- Verify with axe in both themes (`test/a11y`), and say plainly that a screen-reader pass is still pending.
+- Verify with axe in both themes (`test/a11y`), and do a manual screen-reader pass after big UI changes (the last one found no problems on macOS, Windows and Linux).
 
 ## Writing
 - Sentence case, no trailing full stop on labels, one idea per sentence. Say what a control does ("Run this statement"), not what it is.

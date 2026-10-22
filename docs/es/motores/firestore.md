@@ -1,6 +1,6 @@
 # Google Cloud Firestore
 
-**Nivel:** 2 · **Versiones probadas:** el emulador de Firestore (imagen `emulators` de Google Cloud CLI, modo Firestore Native, API REST v1) (probada). **Google Cloud en sí no se ha probado**; las peticiones son las mismas llamadas REST, con un token Bearer.
+**Nivel:** 2 · **Versiones probadas:** el emulador de Firestore (imagen `emulators` de Google Cloud CLI, modo Firestore Native, API REST v1) (probada). **Google Cloud en sí no se ha probado**, así que no está confirmado que funcione ahí; las peticiones son las mismas llamadas REST, con un token Bearer. Pruébalo con una cuenta de solo lectura o un proyecto desechable antes de depender de él.
 
 ## Autenticación y transporte
 Emulador: sin credenciales. Google Cloud: un **token de acceso** OAuth pegado en la conexión (por ejemplo `gcloud auth print-access-token`; caduca en aproximadamente una hora). Los archivos de clave de cuenta de servicio, las Application Default Credentials y la identidad de carga de trabajo **no** son compatibles.

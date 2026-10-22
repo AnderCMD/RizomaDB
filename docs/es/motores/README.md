@@ -26,3 +26,13 @@ Qué admite cada motor de un vistazo: la [matriz de capacidades](../referencia/m
 HydraDB es **experimental**: un motor joven con un subconjunto estrecho de Cypher, que se mantiene pequeño y no se amplía.
 
 No implementados: Redshift, otros motores con protocolo PostgreSQL/MySQL (no se afirma compatibilidad salvo que figuren arriba) y todos los motores de Nivel 3. El puente JDBC/ODBC no está implementado.
+
+## Nube y servicios gestionados: sin confirmar
+
+RizomaDB solo se ha probado con motores que corren en local, en contenedores o en un emulador oficial. **No se ha probado con ninguna cuenta real en la nube**, así que el funcionamiento ahí **no está confirmado**:
+
+- Amazon DynamoDB en AWS (solo se probó DynamoDB Local), Google Cloud Firestore en Google Cloud (solo el emulador) y MongoDB Atlas.
+- Versiones gestionadas de motores probados (por ejemplo Amazon RDS/Aurora, Google Cloud SQL, Azure Database, Neon, Supabase, PlanetScale), que hablan el mismo protocolo pero pueden diferir en TLS, autenticación (los inicios de sesión con IAM o token no están implementados), límites y permisos.
+- Redshift, Snowflake y BigQuery no están implementados.
+
+**Pruébalo antes de depender de él.** Antes de usar un servicio en la nube para trabajo real, conéctate primero con un usuario de solo lectura o una base de datos desechable, comprueba que el explorador, una consulta y el filtro funcionan, y solo entonces activa las escrituras. Si algo falla, abre un issue con el motor, el servicio y el mensaje; un resultado confirmado (que funcione o no) ayuda a todos.

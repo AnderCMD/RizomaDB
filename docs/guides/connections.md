@@ -6,6 +6,7 @@
 - **Defaults per engine.** Host, port and the usual user are already there (for example PostgreSQL `postgres@localhost:5432/postgres`, MySQL and MariaDB `root`, SQL Server `sa`, Oracle `system` with service `FREEPDB1`, MongoDB and Redis with no user). Fields an engine does not need stay empty and optional.
 - **TLS on your own machine.** For `localhost`, `127.0.0.1` and `::1` the TLS box starts unchecked, because local servers rarely speak TLS, and no warning is shown. Change the host to a remote one and it goes back to the engine's default; unchecking TLS for a remote host asks you to confirm.
 - **Test connection** connects and pings without keeping anything. **Save connection** stores the profile and connects; if that fails you can fix the fields and retry, or choose **Save without connecting**.
+- **Cloud services are not confirmed.** RizomaDB has only been tested against local engines and official emulators, never against a real cloud account (AWS, Google Cloud, Atlas, managed PostgreSQL/MySQL). Try a read-only user or a throwaway database first; see [Engines](../engines/README.md#cloud-and-managed-services-not-confirmed).
 - Passwords, tokens and keys go to VS Code's **secret storage**. A shared catalog never contains them: each person types their own.
 
 ### Environments and protection

@@ -26,3 +26,13 @@ What each engine supports at a glance: the [capability matrix](../reference/engi
 HydraDB is **experimental**: a young engine with a narrow Cypher subset, kept small and not extended.
 
 Not implemented: Redshift, Other PostgreSQL/MySQL-protocol engines (compatibility is not claimed unless listed above), and all Level 3 engines. The JDBC/ODBC bridge is not implemented.
+
+## Cloud and managed services: not confirmed
+
+RizomaDB has only been tested against engines running locally, in containers or in an official emulator. **It has not been tested against any real cloud account**, so working support there is **not confirmed**:
+
+- Amazon DynamoDB on AWS (only DynamoDB Local was tested), Google Cloud Firestore on Google Cloud (only the emulator), and MongoDB Atlas.
+- Managed versions of tested engines (for example Amazon RDS/Aurora, Google Cloud SQL, Azure Database, Neon, Supabase, PlanetScale), which speak the same protocol but can differ in TLS, authentication (IAM and token logins are not implemented), limits and permissions.
+- Redshift, Snowflake and BigQuery are not implemented.
+
+**Test before relying on it.** Before using a cloud service for real work, connect with a read-only user or a throwaway database first, check that the explorer, a query and the filter work, and only then enable writes. If something fails, please open an issue with the engine, the service and the message; a confirmed result (working or not) helps everyone.
