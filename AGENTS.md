@@ -29,7 +29,7 @@ pnpm --filter rizomadb package                               # builds drivers fi
 node scripts/gen-reference.mjs                               # after changing settings, commands or driver capabilities (CI runs --check)
 node scripts/gen-logos.mjs <dir-with-icon-packages>          # regenerates engineLogos.ts
 ```
-Engine suites skip when their engine is down locally and **fail in CI** (`RZ_REQUIRE_ENGINES`). Start one with `docker compose -f test/compose/docker-compose.yml up -d <engine>`.
+Engine suites skip when their engine is down locally and **fail in CI** (`RZ_REQUIRE_ENGINES`). Five engines (CockroachDB, YugabyteDB, InfluxDB 3, Firestore, HydraDB) and the real Squid/SOCKS5 proxy test run in the `engines-extra` CI job; the rest are job services of the `test` job. Start one with `docker compose -f test/compose/docker-compose.yml up -d <engine>`.
 
 ## Rules that are not negotiable
 1. **No telemetry, no network calls of the extension's own.** A test asserts zero sockets on activation.
@@ -39,7 +39,7 @@ Engine suites skip when their engine is down locally and **fail in CI** (`RZ_REQ
 5. **Never publish.** No Marketplace, Open VSX, npm, release workflow or tags without the owner's explicit confirmation. Deploying the docs site happens only from `main` through `pages.yml`.
 6. **No placeholder code** (`TODO`, stubs) in finished work. No copying code or logos from closed-source products. Engine logos come only from `scripts/gen-logos.mjs` (CC0/MIT sources) — see `docs/legal/brand-logos.md`.
 7. **Webviews are hardened**: strict CSP with a nonce, `localResourceRoots` limited to `dist`, every message validated with zod on both sides, no `innerHTML`/`eval` (a test enforces this). Build DOM with `el()`/`icon()`.
-8. **User text is translated.** Host: `t()` from `src/i18n.ts`. Webview: `tr()` plus an entry in `webviewStrings.ts`. Add the Spanish string to `l10n/bundle.l10n.es.json`; a test fails otherwise. Messages written by drivers/policy/editing are mapped in `src/ui/driverMessages.ts`.
+8. **User text is translated.** Host: `t()` from `src/i18n.ts`. Webview: `tr()` plus an entry in `webviewStrings.ts`. Add the string to all three bundles (`l10n/bundle.l10n.es.json`, `bundle.l10n.pt-br.json`, `bundle.l10n.fr.json`) and, for manifest text, to `package.nls.{es,pt-br,fr}.json`; a test fails otherwise. Messages written by drivers/policy/editing are mapped in `src/ui/driverMessages.ts`.
 9. **Accessibility is a requirement**: WCAG 2.2 AA, keyboard reachable, icon-only controls have an accessible name and a tooltip, axe must report zero violations in light and dark (`test/a11y`).
 
 ## Conventions

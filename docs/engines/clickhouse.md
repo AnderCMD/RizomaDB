@@ -20,5 +20,8 @@ none
 ## Driver license
 @clickhouse/client (Apache-2.0)
 
+## Table screen (filter, paging, column menu)
+Verified against a real server in `apps/extension/src/lib/engines.integration.test.mts`: ClickHouse 24.8 (filter and paging only: columns are not altered from the grid on this engine).
+
 ## Running the integration tests
 `docker compose -f test/compose/docker-compose.yml up -d <service>` then `RZ_ENGINES=clickhouse pnpm test` (see `test/compose/docker-compose.yml` for ports and `packages/test-engines` for the helpers).

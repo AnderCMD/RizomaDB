@@ -20,6 +20,9 @@ En el servidor, `default_transaction_read_only` en las conexiones de solo lectur
 ## Licencia del driver
 pg (MIT), pg-cursor (MIT)
 
+## Pantalla de tabla (filtro, paginación, menú de columna)
+Verificada contra un servidor real en `apps/extension/src/lib/engines.integration.test.mts`: PostgreSQL 17 (filtro, paginación, renombrar/tipo/valor por defecto/NOT NULL/agregar/eliminar columna).
+
 ## Cómo ejecutar las pruebas de integración
 `docker compose -f test/compose/docker-compose.yml up -d <servicio>` y luego `RZ_ENGINES=postgres pnpm test` (los puertos están en `test/compose/docker-compose.yml` y los ayudantes en `packages/test-engines`).
 

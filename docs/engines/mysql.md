@@ -20,6 +20,9 @@ Session `READ ONLY` transaction mode on read-only connections
 ## Driver license
 mysql2 (MIT)
 
+## Table screen (filter, paging, column menu)
+Verified against a real server in `apps/extension/src/lib/engines.integration.test.mts`: MySQL 8.4 (filter, paging, column rename/type/default/NOT NULL/add/drop).
+
 ## Running the integration tests
 `docker compose -f test/compose/docker-compose.yml up -d <service>` then `RZ_ENGINES=mysql pnpm test` (see `test/compose/docker-compose.yml` for ports and `packages/test-engines` for the helpers).
 

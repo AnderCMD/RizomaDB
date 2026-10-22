@@ -20,5 +20,8 @@ ninguna
 ## Licencia del driver
 @clickhouse/client (Apache-2.0)
 
+## Pantalla de tabla (filtro, paginación, menú de columna)
+Verificada contra un servidor real en `apps/extension/src/lib/engines.integration.test.mts`: ClickHouse 24.8 (solo filtro y paginación: en este motor las columnas no se alteran desde la rejilla).
+
 ## Cómo ejecutar las pruebas de integración
 `docker compose -f test/compose/docker-compose.yml up -d <servicio>` y luego `RZ_ENGINES=clickhouse pnpm test` (los puertos están en `test/compose/docker-compose.yml` y los ayudantes en `packages/test-engines`).

@@ -20,6 +20,9 @@ Modo de transacción `READ ONLY` de sesión en las conexiones de solo lectura
 ## Licencia del driver
 mysql2 (MIT)
 
+## Pantalla de tabla (filtro, paginación, menú de columna)
+Verificada contra un servidor real en `apps/extension/src/lib/engines.integration.test.mts`: MySQL 8.4 (filtro, paginación, renombrar/tipo/valor por defecto/NOT NULL/agregar/eliminar columna).
+
 ## Cómo ejecutar las pruebas de integración
 `docker compose -f test/compose/docker-compose.yml up -d <servicio>` y luego `RZ_ENGINES=mysql pnpm test` (los puertos están en `test/compose/docker-compose.yml` y los ayudantes en `packages/test-engines`).
 

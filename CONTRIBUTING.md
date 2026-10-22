@@ -5,7 +5,7 @@
 3. Branches: work on a branch, open a pull request into **`dev`**; `dev` is promoted to **`main`** with a pull request (the *Promote dev to main* workflow opens it). See [docs/ci-cd.md](docs/ci-cd.md).
 4. Conventional Commits (`feat:`, `fix:`, `docs:`, `ci:`…). No telemetry, no secrets outside SecretStorage, no `TODO` in finished code.
 5. Every new driver must pass `runConformance` from `@rizomadb/driver-api/conformance`, add an engine page to `docs/engines/` and appear in `scripts/gen-reference.mjs`.
-6. User-visible text goes through `t()` (host) or the webview strings table, with a Spanish translation in `apps/extension/l10n/bundle.l10n.es.json`; a test fails when one is missing.
+6. User-visible text goes through `t()` (host) or the webview strings table, with translations in `apps/extension/l10n/bundle.l10n.es.json`, `bundle.l10n.pt-br.json` and `bundle.l10n.fr.json` (and `package.nls.*.json` for manifest text); a test fails when one is missing.
 7. After changing settings or commands run `node scripts/gen-reference.mjs` to refresh the reference pages (CI checks they are current).
 8. Important technical decisions: add an ADR in `docs/adr/`.
 

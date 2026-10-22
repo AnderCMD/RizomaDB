@@ -20,5 +20,8 @@ ninguna (Data Pump necesita herramientas del fabricante)
 ## Licencia del driver
 oracledb thin (Apache-2.0 OR UPL-1.0)
 
+## Pantalla de tabla (filtro, paginación, menú de columna)
+Verificada contra un servidor real en `apps/extension/src/lib/engines.integration.test.mts`: Oracle Free 23ai (filtro, paginación, renombrar/tipo/valor por defecto/NOT NULL/agregar/eliminar columna; los nombres son los que Oracle guarda, en mayúsculas).
+
 ## Cómo ejecutar las pruebas de integración
 `docker compose -f test/compose/docker-compose.yml up -d <servicio>` y luego `RZ_ENGINES=oracle pnpm test` (los puertos están en `test/compose/docker-compose.yml` y los ayudantes en `packages/test-engines`).

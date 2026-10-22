@@ -20,5 +20,8 @@ ninguna (la copia de seguridad nativa necesita herramientas del fabricante)
 ## Licencia del driver
 tedious (MIT)
 
+## Pantalla de tabla (filtro, paginación, menú de columna)
+Verificada contra un servidor real en `apps/extension/src/lib/engines.integration.test.mts`: SQL Server 2022 (filtro, paginación, renombrar/tipo/valor por defecto/NOT NULL/agregar/eliminar columna; el valor por defecto se cambia buscando y sustituyendo su restricción generada).
+
 ## Cómo ejecutar las pruebas de integración
 `docker compose -f test/compose/docker-compose.yml up -d <servicio>` y luego `RZ_ENGINES=mssql pnpm test` (los puertos están en `test/compose/docker-compose.yml` y los ayudantes en `packages/test-engines`).
