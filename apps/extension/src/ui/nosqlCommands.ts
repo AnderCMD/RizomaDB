@@ -8,6 +8,7 @@ import type { ConnectionManager } from "../lib/connections.js";
 import type { Node } from "./explorer.js";
 import { t } from "../i18n.js";
 import { friendly } from "./driverMessages.js";
+import { isEditableRedisType, readCommand, writeCommand } from "../lib/redisEdit.js";
 
 const sig = () => new AbortController().signal;
 
@@ -84,6 +85,24 @@ export function registerNoSqlCommands({ mgr, policy, reg, refresh, bind }: Deps)
     const tb = tableNode(n); if (!tb) return;
     const to = await vscode.window.showInputBox({ title: t("New key name"), value: tb.name, validateInput: (x) => (x && x !== tb.name ? undefined : t("Enter a different name")) }); if (!to) return;
     await guarded(tb, `RENAMENX ${JSON.stringify(tb.name)} ${JSON.stringify(to)}`, t("rename {0} to {1}? (fails if the target exists)", tb.name, to));
+  });
+  reg("rizomadb.redis.editValue", async (n?: Node) => {
+    const tb = tableNode(n); if (!tb) return;
+    const conn = await mgr.connect(tb.profile.id), key = tb.name;
+    const type = String((await exec(conn, `TYPE ${JSON.stringify(key)}`)).rows[0]?.[0] ?? "none");
+    if (type === "none") { void vscode.window.showWarningMessage(t("The key no longer exists.")); return; }
+    if (!isEditableRedisType(type)) { void vscode.window.showInformationMessage(t("Editing {0} values is not supported yet; use the console.", type)); return; }
+    const read = (await exec(conn, readCommand(type, key))).rows;
+    let target: string | number | undefined, current = "";
+    if (type === "string") current = String(read[0]?.[0] ?? "");
+    else {
+      if (!read.length) { void vscode.window.showInformationMessage(t("This key has no elements.")); return; }
+      const pick = await vscode.window.showQuickPick(read.map((r) => ({ label: String(r[0]), description: String(r[1] ?? "").slice(0, 80), value: String(r[1] ?? "") })), { title: type === "hash" ? t("Field to edit") : t("List element to edit"), matchOnDescription: true });
+      if (!pick) return;
+      target = type === "list" ? Number(pick.label) : pick.label; current = pick.value;
+    }
+    const value = await vscode.window.showInputBox({ title: t("New value for {0}", target === undefined ? key : `${key} → ${String(target)}`), value: current, ignoreFocusOut: true }); if (value === undefined) return;
+    await guarded(tb, writeCommand(type, key, target, value), t("edit the value of {0}?", key));
   });
   void formatValue;
 }

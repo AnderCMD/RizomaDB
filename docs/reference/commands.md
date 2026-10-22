@@ -40,6 +40,7 @@ Every command, as it appears in the command palette (⇧⌘P / Ctrl+Shift+P) und
 | `rizomadb.mongo.createIndex` | Create Index… | — |
 | `rizomadb.mongo.dropIndex` | Drop Index… | — |
 | `rizomadb.redis.deleteKey` | Delete Key | — |
+| `rizomadb.redis.editValue` | Edit Key Value… | — |
 | `rizomadb.redis.setTtl` | Set Key Expiry… | — |
 | `rizomadb.redis.renameKey` | Rename Key… | — |
 | `rizomadb.admin` | Administration… | — |

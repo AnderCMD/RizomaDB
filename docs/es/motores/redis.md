@@ -6,7 +6,7 @@
 contraseña/usuario ACL, TLS
 
 ## Capacidades
-Explorador de claves (SCAN con el cursor gestionado por ti; KEYS se rechaza), visor por tipo (OPEN), consola, TTL/renombrar/eliminar con confirmación. NO implementado: editores de valor por tipo, MONITOR/Pub-Sub, análisis de memoria
+Explorador de claves (SCAN con el cursor gestionado por ti; KEYS se rechaza), visor por tipo (OPEN), consola, TTL/renombrar/eliminar con confirmación, y **Editar el valor de la clave…** para cadenas (se conserva la expiración), campos de hash y elementos de lista (probado contra un Redis real; el texto con comillas, saltos de línea y emoji se conserva). NO implementado: editores de conjuntos, conjuntos ordenados y streams, MONITOR/Pub-Sub, análisis de memoria
 
 ## Notas de tipos
 Las cadenas son exactas; las respuestas enteras son números de JS (más allá de 2^53 pueden perder precisión)

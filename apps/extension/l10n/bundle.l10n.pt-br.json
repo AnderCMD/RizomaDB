@@ -954,5 +954,11 @@
  "Distribution": "Distribuição",
  "Most frequent values": "Valores mais frequentes",
  "(empty)": "(vazio)",
- "Computed over the {0} rows shown in the grid": "Calculado sobre as {0} linhas exibidas na grade"
+ "Computed over the {0} rows shown in the grid": "Calculado sobre as {0} linhas exibidas na grade",
+ "The key no longer exists.": "A chave não existe mais.",
+ "Editing {0} values is not supported yet; use the console.": "Ainda não é possível editar valores do tipo {0}; use o console.",
+ "This key has no elements.": "Esta chave não tem elementos.",
+ "Field to edit": "Campo a editar",
+ "List element to edit": "Elemento da lista a editar",
+ "edit the value of {0}?": "editar o valor de {0}?"
 }

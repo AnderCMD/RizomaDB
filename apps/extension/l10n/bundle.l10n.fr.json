@@ -954,5 +954,11 @@
  "Distribution": "Distribution",
  "Most frequent values": "Valeurs les plus fréquentes",
  "(empty)": "(vide)",
- "Computed over the {0} rows shown in the grid": "Calculé sur les {0} lignes affichées dans la grille"
+ "Computed over the {0} rows shown in the grid": "Calculé sur les {0} lignes affichées dans la grille",
+ "The key no longer exists.": "La clé n'existe plus.",
+ "Editing {0} values is not supported yet; use the console.": "La modification des valeurs de type {0} n'est pas encore prise en charge ; utilisez la console.",
+ "This key has no elements.": "Cette clé n'a aucun élément.",
+ "Field to edit": "Champ à modifier",
+ "List element to edit": "Élément de la liste à modifier",
+ "edit the value of {0}?": "modifier la valeur de {0} ?"
 }

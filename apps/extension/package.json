@@ -251,6 +251,11 @@
         "category": "RizomaDB"
       },
       {
+        "command": "rizomadb.redis.editValue",
+        "title": "%cmd.redis_editValue%",
+        "category": "RizomaDB"
+      },
+      {
         "command": "rizomadb.redis.setTtl",
         "title": "%cmd.redis_setTtl%",
         "category": "RizomaDB"
@@ -519,6 +524,11 @@
         },
         {
           "command": "rizomadb.redis.deleteKey",
+          "when": "view == rizomadb.connections && viewItem == table.redis",
+          "group": "nosql"
+        },
+        {
+          "command": "rizomadb.redis.editValue",
           "when": "view == rizomadb.connections && viewItem == table.redis",
           "group": "nosql"
         },

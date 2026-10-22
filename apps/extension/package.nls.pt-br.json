@@ -45,6 +45,7 @@
   "cmd.mongo_createIndex": "Criar índice…",
   "cmd.mongo_dropIndex": "Remover índice…",
   "cmd.redis_deleteKey": "Excluir chave",
+  "cmd.redis_editValue": "Editar o valor da chave…",
   "cmd.redis_setTtl": "Definir a expiração da chave…",
   "cmd.redis_renameKey": "Renomear chave…",
   "cmd.admin": "Administração…",
