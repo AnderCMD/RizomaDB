@@ -6,7 +6,7 @@ const engineName: Record<string, string> = { postgres: "PostgreSQL", mysql: "MyS
 const enSidebar = [
   { text: "Start", items: [{ text: "Getting started", link: "/en/guides/getting-started" }, { text: "Migrating to RizomaDB", link: "/en/guides/migration" }, { text: "Troubleshooting", link: "/en/guides/troubleshooting" }] },
   { text: "Using RizomaDB", items: [
-    { text: "Connections", link: "/en/guides/connections" }, { text: "The query editor", link: "/en/guides/query-editor" }, { text: "The results grid", link: "/en/guides/results-grid" },
+    { text: "Connections", link: "/en/guides/connections" }, { text: "The query editor", link: "/en/guides/query-editor" }, { text: "The results grid", link: "/en/guides/results-grid" }, { text: "Using the keyboard", link: "/en/guides/keyboard" },
     { text: "Editing data", link: "/en/guides/editing-data" }, { text: "Language and settings", link: "/en/guides/language-and-settings" } ] },
   { text: "Reference", items: [{ text: "Settings", link: "/en/reference/settings" }, { text: "Commands", link: "/en/reference/commands" }, { text: "Engine capability matrix", link: "/en/reference/engine-matrix" }] },
   { text: "Engines", collapsed: true, items: [{ text: "Support overview", link: "/en/engines/README" }, ...engines.map((e) => ({ text: engineName[e]!, link: `/en/engines/${e}` }))] },
@@ -19,7 +19,7 @@ const enSidebar = [
 const esSidebar = [
   { text: "Inicio", items: [{ text: "Resumen", link: "/es/" }, { text: "Primeros pasos", link: "/es/guias/primeros-pasos" }, { text: "Migrar a RizomaDB", link: "/es/guias/migracion" }, { text: "Solución de problemas", link: "/es/guias/solucion-de-problemas" }] },
   { text: "Usar RizomaDB", items: [
-    { text: "Conexiones", link: "/es/guias/conexiones" }, { text: "El editor de consultas", link: "/es/guias/editor-de-consultas" }, { text: "La rejilla de resultados", link: "/es/guias/rejilla-de-resultados" },
+    { text: "Conexiones", link: "/es/guias/conexiones" }, { text: "El editor de consultas", link: "/es/guias/editor-de-consultas" }, { text: "La rejilla de resultados", link: "/es/guias/rejilla-de-resultados" }, { text: "Usar el teclado", link: "/es/guias/teclado" },
     { text: "Edición de datos", link: "/es/guias/edicion-de-datos" }, { text: "Idioma y ajustes", link: "/es/guias/idioma-y-ajustes" } ] },
   { text: "Referencia", items: [{ text: "Ajustes", link: "/es/referencia/ajustes" }, { text: "Comandos", link: "/es/referencia/comandos" }, { text: "Matriz de capacidades", link: "/es/referencia/matriz-de-motores" }] },
   { text: "Motores", collapsed: true, items: [{ text: "Resumen de compatibilidad", link: "/es/motores/README" }, ...engines.map((e) => ({ text: engineName[e]!, link: `/es/motores/${e}` }))] },

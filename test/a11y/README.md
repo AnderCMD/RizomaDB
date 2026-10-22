@@ -14,4 +14,6 @@ for (const theme of ["theme-dark.css", "theme-light.css"]) {
 ```
 Result on 2026-10-21 after fixes: **0 violations** on grid (with pending edits), plan tree, ER diagram, table designer and metrics. First run found real issues (opacity-based low contrast, missing landmark/heading, ER accessible names), now fixed.
 
+Keyboard audit: load `keyboard.js` (served next to the pages), press Tab once with a real key so the page is in keyboard mode, then run `rzKeyboardAudit()`; it must return no problems. Result on 2026-10-22: 0 problems on all screens in both themes (it found the search boxes' weak focus ring, now fixed). See [docs/guides/keyboard.md](../../docs/guides/keyboard.md).
+
 This is automated checking only. The project owner also did a manual screen-reader pass on macOS, Windows and Linux with no problems found; it is not repeated automatically, so redo it after big UI changes.

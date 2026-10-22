@@ -12,5 +12,6 @@ for (const f of ["theme-dark.css", "theme-light.css"]) cpSync(join(here, f), joi
 const dist = new URL("../../apps/extension/dist/", import.meta.url).pathname;
 for (const f of ["webview.js", "webview.css", "plan.js", "er.js", "designer.js", "metrics.js", "connect.js", "settings.js", "history.js", "guide.js"]) cpSync(join(dist, f), join(out, f));
 cpSync(new URL("../../node_modules/axe-core/axe.min.js", import.meta.url).pathname, join(out, "axe.min.js"));
+cpSync(join(here, "keyboard.js"), join(out, "keyboard.js"));
 const types = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css" };
 createServer((req, res) => { const p = join(out, (req.url ?? "/").split("?")[0]); if (!existsSync(p)) { res.writeHead(404).end(); return; } res.writeHead(200, { "content-type": types[extname(p)] ?? "text/plain" }).end(readFileSync(p)); }).listen(8766, () => console.log("Harness on http://localhost:8766/grid.html (also plan, er, designer, metrics, connect, connect#form)"));
