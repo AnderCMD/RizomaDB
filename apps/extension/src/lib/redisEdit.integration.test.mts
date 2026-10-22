@@ -3,7 +3,7 @@ import { randomBytes } from "node:crypto";
 import { collect, type Connection } from "@rizomadb/driver-api";
 import { engineUp } from "@rizomadb/driver-api/conformance";
 import { redisDriver } from "@rizomadb/driver-redis";
-import { isEditableRedisType, readCommand, writeCommand, writeCommands } from "./redisEdit.js";
+import { isEditableRedisType, readCommand, STREAM_ID, streamAddCommand, streamDeleteCommand, streamReadCommand, writeCommand, writeCommands } from "./redisEdit.js";
 
 const port = Number(process.env.RZ_REDIS_PORT ?? 63799);
 const up = await engineUp("localhost", port, "redis");
@@ -17,6 +17,20 @@ describe("Redis value edits (command text)", () => {
     expect(() => writeCommand("hash", "k", undefined, "v")).toThrow();
     expect(() => writeCommand("list", "k", "x", "v")).toThrow();
     expect(readCommand("list", "k")).toBe('LRANGE "k" 0 999');
+  });
+});
+
+describe("Redis stream edits (command text)", () => {
+  it("builds an add and a delete, and refuses what is not an entry", () => {
+    expect(streamAddCommand("k", [["a", "1"], ["b", 'x "y"']])).toBe('XADD "k" * "a" "1" "b" "x \\"y\\""');
+    expect(streamAddCommand("k", [["a", "1"]], "5-1")).toBe('XADD "k" 5-1 "a" "1"');
+    expect(() => streamAddCommand("k", [])).toThrow();
+    expect(() => streamAddCommand("k", [["", "1"]])).toThrow();
+    expect(() => streamAddCommand("k", [["a", "1"]], "abc")).toThrow();
+    expect(streamDeleteCommand("k", "5-1")).toBe('XDEL "k" 5-1');
+    expect(() => streamDeleteCommand("k", "*")).toThrow();
+    expect(["*", "5", "5-1", "5-*", "x", "-1", ""].map((i) => STREAM_ID.test(i))).toEqual([true, true, true, true, false, false, false]);
+    expect(streamReadCommand("k")).toBe('XRANGE "k" - + COUNT 1000');
   });
 });
 
@@ -48,6 +62,18 @@ describe.skipIf(!up)("Redis value edits against a real server", () => {
     await run(c, writeCommand("list", k, 1, awkward));
     expect((await rows(c, readCommand("list", k))).map((r) => r[1])).toEqual(["x", awkward, "z"]);
     await expect(run(c, writeCommand("list", k, 9, "nope"))).rejects.toBeDefined();   // out of range is the server's error, not a silent append
+  });
+  it("adds stream entries with awkward text and deletes one, leaving the rest", async () => {
+    const c = await open(), k = key("x"); made.push(k);
+    await run(c, streamAddCommand(k, [["msg", awkward], ["n", "1"]], "1-1"));
+    await run(c, streamAddCommand(k, [["msg", "second"]], "2-1"));
+    await run(c, streamAddCommand(k, [["msg", "auto"]]));
+    let r = await rows(c, streamReadCommand(k));
+    expect(r.map((x) => x[0]).slice(0, 2)).toEqual(["1-1", "2-1"]); expect(r).toHaveLength(3);
+    expect((r[0]![1] as { json: Record<string, string> }).json.msg).toBe(awkward);
+    await run(c, streamDeleteCommand(k, "2-1"));
+    r = await rows(c, streamReadCommand(k));
+    expect(r.map((x) => x[0]).slice(0, 1)).toEqual(["1-1"]); expect(r).toHaveLength(2);
   });
 });
 

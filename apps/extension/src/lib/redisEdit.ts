@@ -26,3 +26,19 @@ export function writeCommands(type: EditableRedisType, key: string, target: stri
   return [`LSET ${q(key)} ${Number(target)} ${q(value)}`];
 }
 export const writeCommand = (type: EditableRedisType, key: string, target: string | number | undefined, value: string) => writeCommands(type, key, target, value)[0] ?? "";
+
+/** Streams are append-only logs: an entry is never changed, only added (XADD) or deleted (XDEL). */
+export const STREAM_ID = /^(?:\*|\d+(?:-(?:\d+|\*))?)$/;
+export const isStreamEntryId = (id: string): boolean => /^\d+-\d+$/.test(id);
+
+export function streamAddCommand(key: string, fields: [string, string][], id = "*"): string {
+  if (!fields.length) throw new Error("An entry needs at least one field");
+  if (!STREAM_ID.test(id)) throw new Error("An entry ID must be * or look like 1700000000000-0");
+  if (fields.some(([f]) => f === "")) throw new Error("A field name cannot be empty");
+  return `XADD ${q(key)} ${id} ${fields.map(([f, v]) => `${q(f)} ${q(v)}`).join(" ")}`;
+}
+export function streamDeleteCommand(key: string, id: string): string {
+  if (!isStreamEntryId(id)) throw new Error("An entry ID looks like 1700000000000-0");
+  return `XDEL ${q(key)} ${id}`;
+}
+export const streamReadCommand = (key: string): string => `XRANGE ${q(key)} - + COUNT ${READ_LIMIT}`;

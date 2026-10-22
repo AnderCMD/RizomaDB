@@ -986,5 +986,15 @@
  "No ordering": "Aucun tri",
  "Order by": "Trier par",
  "Direction": "Sens",
- "Maximum rows": "Nombre maximal de lignes"
+ "Maximum rows": "Nombre maximal de lignes",
+ "Add an entry": "Ajouter une entrée",
+ "Delete an entry": "Supprimer une entrée",
+ "Stream {0}": "Stream {0}",
+ "Field name (leave empty to finish)": "Nom du champ (laisser vide pour terminer)",
+ "Value of {0}": "Valeur de {0}",
+ "Entry ID (leave * for automatic)": "ID de l'entrée (laisser * pour automatique)",
+ "Use * or an ID such as 1700000000000-0": "Utilisez * ou un ID comme 1700000000000-0",
+ "add an entry to {0}?": "ajouter une entrée à {0} ?",
+ "Entry to delete": "Entrée à supprimer",
+ "delete the entry {0}?": "supprimer l'entrée {0} ?"
 }

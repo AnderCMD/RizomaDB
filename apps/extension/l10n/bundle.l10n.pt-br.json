@@ -986,5 +986,15 @@
  "No ordering": "Sem ordenação",
  "Order by": "Ordenar por",
  "Direction": "Direção",
- "Maximum rows": "Máximo de linhas"
+ "Maximum rows": "Máximo de linhas",
+ "Add an entry": "Adicionar uma entrada",
+ "Delete an entry": "Excluir uma entrada",
+ "Stream {0}": "Stream {0}",
+ "Field name (leave empty to finish)": "Nome do campo (deixe vazio para terminar)",
+ "Value of {0}": "Valor de {0}",
+ "Entry ID (leave * for automatic)": "ID da entrada (deixe * para automático)",
+ "Use * or an ID such as 1700000000000-0": "Use * ou um ID como 1700000000000-0",
+ "add an entry to {0}?": "adicionar uma entrada a {0}?",
+ "Entry to delete": "Entrada a excluir",
+ "delete the entry {0}?": "excluir a entrada {0}?"
 }

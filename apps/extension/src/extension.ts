@@ -29,7 +29,7 @@ import { customEnvironmentPolicy } from "./lib/environments.js";
 import { databaseOf } from "./lib/connectionInfo.js";
 import { friendly, friendlyReasons } from "./ui/driverMessages.js";
 import { buildTableQuery, filterKindOf, FilterError } from "./lib/tableQuery.js";
-import { keysetAfter, keysetOrder, keysetSupported, withKeyset, type KeysetKey } from "./lib/keysetPaging.js";
+import { keysetOrder, keysetStatement, keysetSupported, lastKey, type KeysetKey } from "./lib/keysetPaging.js";
 import { registerEditorTools } from "./ui/editorTools.js";
 import { statementRanges } from "./lib/statements.js";
 import { openGuide, offerGuideOnce } from "./ui/guidePanel.js";
@@ -252,13 +252,12 @@ export async function activate(ctx: vscode.ExtensionContext) {
       const cap = cfg().get<number>("query.maxRows", 100000), loaded = run.loaded ?? 0;
       const size = m.mode === "all" ? cap - loaded : cfg().get<number>("query.pageSize", 1000);
       if (size <= 0) return;
-      const p = mgr.get(run.id), after = run.keyset?.last && run.keyset.keys.length ? keysetAfter(run.keyset.keys, run.keyset.last) : undefined;
-      if (run.keyset && after && p && run.table) {
+      const p = mgr.get(run.id);
+      if (run.keyset?.last && p && run.table) {
         const conn = await mgr.connect(run.id);
         const quoted = run.table.schema ? `${conn.quoteIdent(run.table.schema)}.${conn.quoteIdent(run.table.name)}` : conn.quoteIdent(run.table.name);
-        const statement = buildTableQuery({ driver: p.driver, quoted, schema: run.table.schema, name: run.table.name, where: withKeyset(run.filter?.where ?? "", after), order: keysetOrder(run.keyset.keys), limit: cap });
-        await execute(run.id, run.sql, run.title, run.edit, run.params, run.table, { skip: loaded, size, keyset: run.keyset, statement }, run.filter);
-        return;
+        const statement = keysetStatement({ driver: p.driver, quoted, schema: run.table.schema, name: run.table.name, where: run.filter?.where ?? "", keys: run.keyset.keys, last: run.keyset.last, limit: cap });
+        if (statement) { await execute(run.id, run.sql, run.title, run.edit, run.params, run.table, { skip: loaded, size, keyset: run.keyset, statement }, run.filter); return; }
       }
       await execute(run.id, run.sql, run.title, run.edit, run.params, run.table, { skip: loaded, size, ...(run.keyset ? { keyset: run.keyset } : {}) }, run.filter);
       return;
@@ -407,7 +406,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
     const rawRows: Value[][] = skip > 0 ? lastRaw : []; lastRaw = rawRows; let cols: ColumnInfo[] = [];
     const emit = (e: RunEvent) => {
       if (e.type === "start") { columnsSeen = true; cols = e.columns; mask = maskFor(policy().maskColumns, e.columns.map((c) => c.name)); if (mask) edit = undefined; results.describe(tableRef ? `${profile.name}.${tableRef.name}` : `${profile.name} · ${title}`, tabIcon()); results.post({ v: 1, type: "start", title, sql: e.sql, columns: e.columns, editable: !!edit, ...(skip > 0 ? { append: true } : {}), connection: connectionInfo(), ...(edit ? { flags: { pk: edit.target.columns.filter((c) => c.primaryKey).map((c) => c.name), required: edit.target.columns.filter((c) => !c.nullable).map((c) => c.name) } } : {}), ...(tableRef ? { table: { name: tableRef.name, ...(tableRef.schema ? { schema: tableRef.schema } : {}), alter: !tableRef.isView && !mgr.isReadOnly(profile) && profile.driver in DIALECT_OF && ["sqlite", "postgres", "mysql", "mssql", "oracle"].includes(profile.driver), ...(filterKindOf(profile.driver) ? { filter: { kind: filterKindOf(profile.driver)!, where: filter?.where ?? "", order: filter?.order ?? "" } } : {}) } } : {}) }); }
-      else if (e.type === "rows") { if (keyset && e.rows.length) { const at = keyset.keys.map((k) => cols.findIndex((c) => c.name === k.name)); const row = e.rows[e.rows.length - 1]!; keyset.last = at.every((i) => i >= 0) ? at.map((i) => row[i]!) : undefined; } const shown = mask ? e.rows.map(mask) : e.rows; if (edit) rawRows.push(...e.rows); results.post({ v: 1, type: "rows", rows: shown.map((r) => r.map(formatValue)) }); }
+      else if (e.type === "rows") { if (keyset && e.rows.length) { keyset.last = lastKey(keyset.keys, cols, e.rows[e.rows.length - 1]!); } const shown = mask ? e.rows.map(mask) : e.rows; if (edit) rawRows.push(...e.rows); results.post({ v: 1, type: "rows", rows: shown.map((r) => r.map(formatValue)) }); }
       else if (e.type === "done") {
         if (!columnsSeen) results.post({ v: 1, type: "start", title, sql: "", columns: [] });
         // "truncated" means the page was full and at least one more row exists: offer the next page unless the row cap is reached.

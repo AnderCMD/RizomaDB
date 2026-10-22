@@ -13,7 +13,7 @@ Every setting of the extension. Open the settings screen with **RizomaDB: Open S
 | `rizomadb.security.confirmDestructive` | boolean | `true` | Ask for confirmation before destructive statements (DROP, TRUNCATE, UPDATE/DELETE without WHERE). Read-only blocking is never affected by this setting. |
 | `rizomadb.security.prodReadOnlyByDefault` | boolean | `true` | Treat connections tagged `prod` as read-only. |
 | `rizomadb.query.pageSize` | number | `1000` | Rows loaded per page of query results. "Load more" in the results view fetches the next page on every engine. |
-| `rizomadb.query.keysetPaging` | boolean | `false` | Page tables by their primary key instead of skipping rows. "Load more" then starts right after the last row, so it stays fast on large tables. Opening a table sorts it by its key. SQLite, PostgreSQL and MySQL only; other engines and tables without a primary key keep skipping rows. A custom sort in the filter box also keeps skipping rows. |
+| `rizomadb.query.keysetPaging` | boolean | `false` | Page tables by their primary key instead of skipping rows. "Load more" then starts right after the last row, so it stays fast on large tables. Opening a table sorts it by its key. SQLite, PostgreSQL, MySQL, SQL Server and Oracle only; other engines and tables without a primary key keep skipping rows. A custom sort in the filter box also keeps skipping rows. |
 | `rizomadb.query.maxRows` | number | `100000` | Maximum rows kept in one result view across all loaded pages. |
 | `rizomadb.query.timeoutSeconds` | number | `0` | Query timeout in seconds (0 = none). |
 | `rizomadb.history.enabled` | boolean | `true` | Record executed statements in a local history file (secrets are redacted). |

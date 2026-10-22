@@ -1,7 +1,8 @@
-import type { Value } from "@rizomadb/driver-api";
+import type { ColumnInfo, Value } from "@rizomadb/driver-api";
+import { buildTableQuery } from "./tableQuery.js";
 
 /** Engines whose keyset statements are tested against a real server (rule 4): the rest keep offset paging. */
-const TESTED = new Set(["sqlite", "postgres", "mysql"]);
+const TESTED = new Set(["sqlite", "postgres", "mysql", "mssql", "oracle"]);
 export const keysetSupported = (driver: string): boolean => TESTED.has(driver);
 
 export interface KeysetKey { name: string; quoted: string }
@@ -33,4 +34,17 @@ export function keysetAfter(keys: KeysetKey[], last: Value[]): string | undefine
 export function withKeyset(where: string, after: string): string {
   const w = where.trim();
   return w ? `(${w}) AND ${after}` : after;
+}
+
+/** The key of a row, found by column name; undefined when a key column is not in the result. */
+export function lastKey(keys: KeysetKey[], columns: Pick<ColumnInfo, "name">[], row: Value[]): Value[] | undefined {
+  const at = keys.map((k) => columns.findIndex((c) => c.name === k.name));
+  return at.every((i) => i >= 0) ? at.map((i) => row[i]!) : undefined;
+}
+
+export interface KeysetPage { driver: string; quoted: string; schema?: string | undefined; name: string; where: string; keys: KeysetKey[]; last: Value[]; limit: number }
+/** The statement for the page after `last`, or undefined when the key cannot be written safely (the caller then skips rows instead). */
+export function keysetStatement(i: KeysetPage): string | undefined {
+  const after = keysetAfter(i.keys, i.last);
+  return after === undefined ? undefined : buildTableQuery({ driver: i.driver, quoted: i.quoted, schema: i.schema, name: i.name, where: withKeyset(i.where, after), order: keysetOrder(i.keys), limit: i.limit });
 }

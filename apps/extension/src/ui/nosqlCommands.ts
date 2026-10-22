@@ -8,7 +8,7 @@ import type { ConnectionManager } from "../lib/connections.js";
 import type { Node } from "./explorer.js";
 import { t } from "../i18n.js";
 import { friendly } from "./driverMessages.js";
-import { isEditableRedisType, readCommand, writeCommands } from "../lib/redisEdit.js";
+import { isEditableRedisType, readCommand, STREAM_ID, streamAddCommand, streamDeleteCommand, streamReadCommand, writeCommands } from "../lib/redisEdit.js";
 
 const sig = () => new AbortController().signal;
 
@@ -86,11 +86,41 @@ export function registerNoSqlCommands({ mgr, policy, reg, refresh, bind }: Deps)
     const to = await vscode.window.showInputBox({ title: t("New key name"), value: tb.name, validateInput: (x) => (x && x !== tb.name ? undefined : t("Enter a different name")) }); if (!to) return;
     await guarded(tb, `RENAMENX ${JSON.stringify(tb.name)} ${JSON.stringify(to)}`, t("rename {0} to {1}? (fails if the target exists)", tb.name, to));
   });
+  /** A stream entry is never changed in place: the user adds one (XADD) or deletes one (XDEL). */
+  async function editStream(tb: NonNullable<ReturnType<typeof tableNode>>, conn: Awaited<ReturnType<typeof mgr.connect>>, key: string): Promise<void> {
+    const action = await vscode.window.showQuickPick([{ label: t("Add an entry"), id: "add" as const }, { label: t("Delete an entry"), id: "del" as const }], { title: t("Stream {0}", key) });
+    if (!action) return;
+    if (action.id === "add") {
+      const fields: [string, string][] = [];
+      for (;;) {
+        const field = await vscode.window.showInputBox({ title: t("Field name (leave empty to finish)"), prompt: fields.length ? fields.map(([f]) => f).join(", ") : undefined, ignoreFocusOut: true });
+        if (field === undefined) return;
+        if (field === "") { if (fields.length) break; continue; }
+        const value = await vscode.window.showInputBox({ title: t("Value of {0}", field), ignoreFocusOut: true });
+        if (value === undefined) return;
+        fields.push([field, value]);
+      }
+      const id = await vscode.window.showInputBox({ title: t("Entry ID (leave * for automatic)"), value: "*", ignoreFocusOut: true, validateInput: (v) => (STREAM_ID.test(v) ? undefined : t("Use * or an ID such as 1700000000000-0")) });
+      if (id === undefined) return;
+      const cmd = streamAddCommand(key, fields, id);
+      if (!(await guarded(tb, cmd, t("add an entry to {0}?", key)))) return;
+      try { await exec(conn, cmd); refresh(); } catch (e) { void vscode.window.showErrorMessage(t("Command failed: {0}", friendly((e as Error).message))); }
+      return;
+    }
+    const entries = (await exec(conn, streamReadCommand(key))).rows;
+    if (!entries.length) { void vscode.window.showInformationMessage(t("This key has no elements.")); return; }
+    const pick = await vscode.window.showQuickPick(entries.map((r) => ({ label: String(r[0]), description: JSON.stringify((r[1] as { json?: unknown } | null)?.json ?? r[1]).slice(0, 100) })), { title: t("Entry to delete"), matchOnDescription: true });
+    if (!pick) return;
+    const cmd = streamDeleteCommand(key, pick.label);
+    if (!(await guarded(tb, cmd, t("delete the entry {0}?", pick.label)))) return;
+    try { await exec(conn, cmd); refresh(); } catch (e) { void vscode.window.showErrorMessage(t("Command failed: {0}", friendly((e as Error).message))); }
+  }
   reg("rizomadb.redis.editValue", async (n?: Node) => {
     const tb = tableNode(n); if (!tb) return;
     const conn = await mgr.connect(tb.profile.id), key = tb.name;
     const type = String((await exec(conn, `TYPE ${JSON.stringify(key)}`)).rows[0]?.[0] ?? "none");
     if (type === "none") { void vscode.window.showWarningMessage(t("The key no longer exists.")); return; }
+    if (type === "stream") { await editStream(tb, conn, key); return; }
     if (!isEditableRedisType(type)) { void vscode.window.showInformationMessage(t("Editing {0} values is not supported yet; use the console.", type)); return; }
     const read = (await exec(conn, readCommand(type, key))).rows;
     let target: string | number | undefined, current: string;

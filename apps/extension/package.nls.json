@@ -83,7 +83,7 @@
   "cfg.groupByFamily": "Group the connections in the tree by engine type (relational, document, key-value…).",
   "cfg.environments": "Extra environments next to dev, staging and prod, e.g. `{ \"name\": \"qa\", \"protection\": \"confirm\" }`. Protection: `none`, `confirm` (ask before every write) or `readOnly` (block writes). Add one from the New connection screen too.",
   "cfg.pageSize": "Rows loaded per page of query results. \"Load more\" in the results view fetches the next page on every engine.",
-  "cfg.keysetPaging": "Page tables by their primary key instead of skipping rows. \"Load more\" then starts right after the last row, so it stays fast on large tables. Opening a table sorts it by its key. SQLite, PostgreSQL and MySQL only; other engines and tables without a primary key keep skipping rows. A custom sort in the filter box also keeps skipping rows.",
+  "cfg.keysetPaging": "Page tables by their primary key instead of skipping rows. \"Load more\" then starts right after the last row, so it stays fast on large tables. Opening a table sorts it by its key. SQLite, PostgreSQL, MySQL, SQL Server and Oracle only; other engines and tables without a primary key keep skipping rows. A custom sort in the filter box also keeps skipping rows.",
   "cfg.applyImmediately": "Save each cell edit as soon as you confirm it, without pressing Apply. On `dev` connections it applies silently; every other environment still asks first, and policies and read-only rules always apply.",
   "cmd.runAt": "Run Statement Here",
   "cmd.explainAt": "Explain Statement Here",

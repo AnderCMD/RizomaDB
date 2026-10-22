@@ -6,7 +6,7 @@
 password/ACL user, TLS
 
 ## Capabilities
-Key browser (SCAN with cursor handled for you; KEYS is refused), per-type viewer (OPEN), console, TTL/rename/delete with confirmation, and **Edit Key Value…** for strings (the expiry is kept), hash fields, list elements, set members (renamed: the new member is added before the old one is removed) and sorted-set scores (existing members only) (tested against a real Redis; text with quotes, newlines and emoji round-trips). NOT implemented: editors for streams, MONITOR/Pub-Sub, memory analysis
+Key browser (SCAN with cursor handled for you; KEYS is refused), per-type viewer (OPEN), console, TTL/rename/delete with confirmation, and **Edit Key Value…** for strings (the expiry is kept), hash fields, list elements, set members (renamed: the new member is added before the old one is removed) and sorted-set scores (existing members only) (tested against a real Redis; text with quotes, newlines and emoji round-trips). and stream entries, which are never changed in place: **Edit Key Value…** on a stream adds an entry (XADD, automatic or explicit ID) or deletes one (XDEL), tested against a real Redis. NOT implemented: MONITOR/Pub-Sub, consumer groups, memory analysis
 
 ## Type notes
 Strings exact; integer replies are JS numbers (beyond 2^53 may lose precision)

@@ -14,7 +14,7 @@ import { elasticsearchDriver } from "@rizomadb/driver-elasticsearch";
 import { neo4jDriver } from "@rizomadb/driver-neo4j";
 import { runStatement, type RunEvent } from "./runner.js";
 import { buildTableQuery } from "./tableQuery.js";
-import { keysetAfter, keysetOrder, keysetSupported, withKeyset } from "./keysetPaging.js";
+import { keysetOrder, keysetStatement, keysetSupported, lastKey } from "./keysetPaging.js";
 
 /**
  * What the table screen does, run against real servers: the filter box builds a statement, the runner pages through it by skipping rows,
@@ -80,14 +80,15 @@ for (const e of sqlEngines) {
       const info = await conn.introspect().describeTable({ name: TBL });
       const keys = (info.columns ?? []).filter((c) => c.primaryKey).map((c) => ({ name: c.name, quoted: conn.quoteIdent(c.name) }));
       expect(keys.map((k) => k.name)).toEqual([C("id")]);
+      // The exact flow of the grid: the first page is the table ordered by its key, "Load more" asks for the rows after the last key seen.
       const walkKeys = async (where: string, size: number) => {
         const got: number[] = []; let last: unknown[] | undefined, pages = 0;
         for (;;) {
-          const w = last ? withKeyset(where, keysetAfter(keys, last as never)!) : where;
-          const r = await page(conn, e.driver, q(w, keysetOrder(keys)), 0, size);
+          const sql = last ? keysetStatement({ driver: e.driver, quoted: conn.quoteIdent(TBL), name: TBL, where, keys, last: last as never, limit: 100000 })! : q(where, keysetOrder(keys));
+          const r = await page(conn, e.driver, sql, 0, size);
           got.push(...r.rows.map((x) => Number(x[0]))); pages++;
           if (!r.more) return { got, pages };
-          last = [r.rows[r.rows.length - 1]![0]];
+          last = lastKey(keys, info.columns!, r.rows[r.rows.length - 1]!);
         }
       };
       const all = await walkKeys("", 10);
