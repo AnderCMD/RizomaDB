@@ -14,6 +14,7 @@ Views, custom queries, edited query lines, masked columns, read-only connections
 1. **Double-click** a cell (or select it and press **Enter** or **F2**, or use the pencil button). A box opens with the value.
 2. Type and press **Enter** to keep, **Esc** to cancel. **Delete** sets NULL; the right-click menu has *Set to NULL* and *Set to empty text*.
 3. **Add row** appends a row; unset cells show `DEFAULT`. The trash button marks the selected rows for deletion (and restores them). Undo (Ctrl/⌘+Z) discards added rows.
+   **Paste from a spreadsheet:** select a cell and press Ctrl/⌘+V. Tab-separated cells (what Excel, Numbers and Sheets copy) fill down and to the right from the selected cell, empty cells become NULL, and a single value fills every selected row of that column. Up to 5,000 cells per paste; it is one undo step, and if any cell is not valid for its column nothing is applied.
 4. The footer of the edit bar counts the **pending changes**. Edited cells are highlighted, deleted rows are struck through.
 
 Values are checked against the column type as you type: an integer column refuses `abc`, JSON columns must be valid JSON, and binary columns cannot be edited here.

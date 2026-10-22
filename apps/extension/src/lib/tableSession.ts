@@ -66,6 +66,21 @@ export class TableSession {
       this.pending.do({ t: "setNew", index, col: c.name, value });
     }
   }
+  /** Applies many cells as one undo step; nothing is applied when any cell is invalid. */
+  editMany(cells: { row: number; col: number; text: string | null }[]) {
+    const ops: Parameters<PendingEdits["do"]>[0][] = [];
+    const fresh = this.insertCount();
+    for (const { row, col, text } of cells) {
+      const c = this.columns[col];
+      if (!c) throw new InputError("No such column");
+      let value: Value;
+      try { value = parseInput(c.kind, text); } catch (e) { throw e instanceof InputError ? new InputError(`${e.message} (row ${row + 1}, ${c.name})`) : e; }
+      if (row < this.rowCount) ops.push({ t: "set", row, col: c.name, value });
+      else if (row - this.rowCount < fresh) ops.push({ t: "setNew", index: row - this.rowCount, col: c.name, value });
+      else throw new InputError("No such row");
+    }
+    if (ops.length) this.pending.do({ t: "group", ops });
+  }
   toggleDelete(row: number) {
     if (row >= this.rowCount) throw new InputError("Inserted rows are discarded with Undo");
     this.pending.do({ t: this.pending.state().deletes.has(row) ? "restore" : "delete", row });

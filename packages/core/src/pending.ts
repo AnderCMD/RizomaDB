@@ -6,7 +6,9 @@ export type Op =
   | { t: "delete"; row: number }
   | { t: "restore"; row: number }
   | { t: "insert" }
-  | { t: "setNew"; index: number; col: string; value: Value };
+  | { t: "setNew"; index: number; col: string; value: Value }
+  /** Several operations that undo and redo as one step (a paste). */
+  | { t: "group"; ops: Op[] };
 
 export interface PendingState {
   sets: Map<number, Row>;
@@ -24,8 +26,12 @@ export class PendingEdits {
   private cursor = 0;
   constructor(readonly original: readonly Row[], readonly target: EditTarget) {}
 
-  do(op: Op) {
+  private check(op: Op) {
+    if (op.t === "group") { for (const o of op.ops) this.check(o); return; }
     if (op.t !== "insert" && op.t !== "setNew" && (op.row < 0 || op.row >= this.original.length)) throw new RangeError(`No such row ${"row" in op ? op.row : ""}`);
+  }
+  do(op: Op) {
+    this.check(op);
     this.ops = this.ops.slice(0, this.cursor); this.ops.push(op); this.cursor++;
   }
   undo(): boolean { if (this.cursor === 0) return false; this.cursor--; return true; }
@@ -36,7 +42,8 @@ export class PendingEdits {
 
   state(): PendingState {
     const sets = new Map<number, Row>(), deletes = new Set<number>(), inserts: Row[] = [];
-    for (const op of this.ops.slice(0, this.cursor)) {
+    for (const op of this.ops.slice(0, this.cursor).flatMap((o) => (o.t === "group" ? o.ops : [o]))) {
+      if (op.t === "group") continue;
       if (op.t === "set") {
         const cur = sets.get(op.row) ?? {};
         cur[op.col] = op.value; sets.set(op.row, cur);

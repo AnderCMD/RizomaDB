@@ -1,5 +1,6 @@
 import { HostToWebview } from "../../messages.js";
 import { tr } from "./i18n.js";
+import { parsePasted } from "./clipboard.js";
 import { el, icon, iconButton, openMenu, enableTips, engineLogo, type MenuItem } from "./ui.js";
 
 declare function acquireVsCodeApi(): { postMessage(m: unknown): void; getState(): unknown; setState(s: unknown): void };
@@ -601,6 +602,24 @@ grid.addEventListener("keydown", (e) => {
   else if (k === "F10" && e.shiftKey) { const r = grid.querySelector(".sel")?.getBoundingClientRect(); cellMenu(sel.r, sel.c, { x: r?.left ?? 0, y: r?.bottom ?? 0 }); }
   else return;
   e.preventDefault();
+});
+
+// Paste from a spreadsheet: tab-separated cells land from the selected cell down and to the right; a single value fills the selected rows. Empty cells become NULL.
+const MAX_PASTE = 5000;
+grid.addEventListener("paste", (e) => {
+  if (!editable || editing) return;
+  const text = e.clipboardData?.getData("text/plain") ?? "";
+  if (!text) return;
+  e.preventDefault();
+  const data = parsePasted(text);
+  const cells: { row: number; col: number; text: string | null }[] = [];
+  const value = (v: string | undefined) => (v === undefined || v === "" ? null : v);
+  if (data.length === 1 && data[0]!.length === 1 && selRows.size) for (const r of selRows) cells.push({ row: r, col: vcols[sel.c]!, text: value(data[0]![0]) });
+  else data.forEach((line, i) => line.forEach((v, j) => { const vr = sel.r + i, vc = sel.c + j; if (vr < totalRows() && vc < vcols.length) cells.push({ row: stor(vr), col: vcols[vc]!, text: value(v) }); }));
+  if (!cells.length) return;
+  if (cells.length > MAX_PASTE) { toast(tr("Too many cells to paste at once (limit {0})", MAX_PASTE.toLocaleString())); return; }
+  send({ type: "editMany", cells });
+  announce(tr("Pasted {0} cells", cells.length.toLocaleString())); toast(tr("Pasted {0} cells", cells.length.toLocaleString()));
 });
 
 // ---- toolbar state ----

@@ -38,3 +38,15 @@ describe("PendingEdits", () => {
     expect(() => new PendingEdits(rows, target).do({ t: "set", row: 9, col: "name", value: "x" })).toThrow(RangeError);
   });
 });
+
+describe("grouped operations", () => {
+  it("undoes and redoes a group as one step and validates every member", () => {
+    const p = new PendingEdits(rows, target);
+    p.do({ t: "group", ops: [{ t: "set", row: 0, col: "name", value: "p" }, { t: "set", row: 1, col: "name", value: "q" }] });
+    expect(p.count).toBe(2);
+    expect(p.undo()).toBe(true); expect(p.count).toBe(0); expect(p.canUndo).toBe(false);
+    expect(p.redo()).toBe(true); expect(p.count).toBe(2);
+    expect(() => p.do({ t: "group", ops: [{ t: "set", row: 0, col: "name", value: "z" }, { t: "set", row: 9, col: "name", value: "z" }] })).toThrow(RangeError);
+    expect(p.count).toBe(2);
+  });
+});

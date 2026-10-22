@@ -928,5 +928,7 @@
  "Exported {0} settings.": "Se exportaron {0} ajustes.",
  "Imported {0} settings.": "Se importaron {0} ajustes.",
  "Imported {0} settings; skipped {1} that are not valid: {2}": "Se importaron {0} ajustes; se omitieron {1} no válidos: {2}",
- "This is not a RizomaDB settings file.": "Este no es un archivo de ajustes de RizomaDB."
+ "This is not a RizomaDB settings file.": "Este no es un archivo de ajustes de RizomaDB.",
+ "Pasted {0} cells": "Se pegaron {0} celdas",
+ "Too many cells to paste at once (limit {0})": "Demasiadas celdas para pegar de una vez (límite {0})"
 }

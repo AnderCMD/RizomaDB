@@ -152,6 +152,16 @@ describe("TableSession", () => {
     expect(s.pending.toChanges().map((c) => c.kind).sort()).toEqual(["delete", "insert", "update"]);
     expect(() => s.edit(0, 0, "x")).toThrow(InputError);
   });
+  it("applies a paste as one undo step and rejects it whole when one cell is invalid", () => {
+    const s = new TableSession(target, cols, [[1, "a"], [2, "b"], [3, "c"]]);
+    s.editMany([{ row: 0, col: 1, text: "A" }, { row: 1, col: 1, text: "B" }, { row: 2, col: 1, text: null }]);
+    expect(s.view().count).toBe(3);
+    s.pending.undo();
+    expect(s.view().count).toBe(0);
+    expect(() => s.editMany([{ row: 0, col: 1, text: "ok" }, { row: 1, col: 0, text: "nope" }])).toThrow(/row 2, id/);
+    expect(s.view().count).toBe(0);
+    expect(() => s.editMany([{ row: 7, col: 1, text: "x" }])).toThrow(InputError);
+  });
 });
 
 describe("ssh tunnel integration in ConnectionManager", () => {

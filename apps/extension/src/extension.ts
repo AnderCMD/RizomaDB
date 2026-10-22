@@ -257,6 +257,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
     const cur = session;
     try {
       if (m.type === "edit") cur.s.edit(m.row, m.col, m.text);
+      else if (m.type === "editMany") cur.s.editMany(m.cells);
       else if (m.type === "toggleDelete") cur.s.toggleDelete(m.row);
       else if (m.type === "setDeleted") { const has = new Set(cur.s.view().deletes); for (const r of m.rows) if (has.has(r) !== m.deleted) cur.s.toggleDelete(r); }
       else if (m.type === "insertRow") cur.s.insertRow();
@@ -267,7 +268,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
       else if (m.type === "apply") { await applyPending(); return; }
       notice("info", "");
       pushPending();
-      if (m.type === "edit" && cfg().get<boolean>("edit.applyImmediately", false) && cur.s.pending.count > 0) await applyPending(true);
+      if ((m.type === "edit" || m.type === "editMany") && cfg().get<boolean>("edit.applyImmediately", false) && cur.s.pending.count > 0) await applyPending(true);
     } catch (e) {
       notice("error", friendly(e instanceof InputError || e instanceof EditError ? e.message : (e as Error).message));
     }

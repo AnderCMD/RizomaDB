@@ -14,6 +14,7 @@ Las vistas, las consultas personalizadas, las líneas de consulta que editaste, 
 1. Haz **doble clic** en una celda (o selecciónala y pulsa **Enter** o **F2**, o usa el botón del lápiz). Se abre un cuadro con el valor.
 2. Escribe y pulsa **Enter** para conservar, **Esc** para cancelar. **Supr** pone NULL; el menú de clic derecho tiene *Poner NULL* y *Poner texto vacío*.
 3. **Agregar fila** añade una fila; las celdas sin definir muestran `DEFAULT`. El botón de la papelera marca las filas seleccionadas para eliminar (y las restaura). Deshacer (Ctrl/⌘+Z) descarta las filas agregadas.
+   **Pegar desde una hoja de cálculo:** selecciona una celda y pulsa Ctrl/⌘+V. Las celdas separadas por tabuladores (lo que copian Excel, Numbers y Sheets) rellenan hacia abajo y a la derecha desde la celda seleccionada, las celdas vacías pasan a NULL y un solo valor rellena esa columna en todas las filas seleccionadas. Hasta 5.000 celdas por pegado; es un único paso de deshacer y, si alguna celda no es válida para su columna, no se aplica nada.
 4. La barra de edición cuenta los **cambios pendientes**. Las celdas editadas se resaltan y las filas eliminadas se tachan.
 
 Los valores se comprueban contra el tipo de la columna al escribir: una columna entera rechaza `abc`, las columnas JSON deben tener JSON válido y las binarias no se pueden editar aquí.
