@@ -18,7 +18,7 @@ INTEGER exact (bigint beyond 2^53)
 built-in `VACUUM INTO` for backups
 
 ## Driver license
-node:sqlite (no dependency); NOTE: availability inside VS Code's embedded Node is unverified (see ADR 0009)
+node:sqlite (no dependency); NOTE: availability inside VS Code's embedded Node is unverified
 
 ## Running the integration tests
 `docker compose -f test/compose/docker-compose.yml up -d <service>` then `RZ_ENGINES=sqlite pnpm test` (see `test/compose/docker-compose.yml` for ports and `packages/test-engines` for the helpers).

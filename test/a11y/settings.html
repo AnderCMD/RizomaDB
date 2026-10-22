@@ -3,7 +3,7 @@
 <script>window.acquireVsCodeApi=()=>({postMessage(){}})</script><script src="settings.js"></script>
 <script>const b=(k,t,d,v,m)=>({key:'rizomadb.'+k,title:t,description:d,kind:'boolean',value:v,modified:!!m});
 window.dispatchEvent(new MessageEvent('message',{data:{v:1,type:'load',language:'es',groups:[
-{id:'language',title:'Language',items:[{key:'rizomadb.language',title:'Extension language',description:'Language of the screens: `auto` follows VS Code.',kind:'choice',value:'auto',modified:false,options:['auto','en','es','pt','fr']}]},
+{id:'language',title:'Language',items:[{key:'rizomadb.language',title:'Extension language',description:'Language of the screens: `auto` follows VS Code.',kind:'choice',value:'auto',modified:false,options:['auto','en','es']}]},
 {id:'results',title:'Results',items:[{key:'rizomadb.results.location',title:'Where results open',description:'Bottom half, whole area or beside.',kind:'choice',value:'bottom',modified:false,options:['bottom','full','beside']}]},
 {id:'security',title:'Security',items:[b('security.confirmDestructive','Confirm destructive statements','Ask before DROP or DELETE.',true),b('security.prodReadOnlyByDefault','Production is read-only by default','New prod connections start read-only.',false,true)]},
 {id:'query',title:'Queries',items:[{key:'rizomadb.query.maxRows',title:'Maximum rows per result',description:'Rows kept in memory.',kind:'number',value:10000,modified:false,min:1},{key:'rizomadb.query.timeoutSeconds',title:'Query timeout (seconds)',description:'0 means no limit.',kind:'number',value:0,modified:false,min:0}]},

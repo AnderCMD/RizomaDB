@@ -16,9 +16,9 @@
 | History, Audit, MCP, AI | Retention and what is recorded, the opt-in read-only MCP server, the opt-in AI assistant |
 
 ## Language
-RizomaDB speaks **English, Spanish, Portuguese (Brazil) and French**. By default it follows VS Code's display language. To change only the extension, set `rizomadb.language` to `en`, `es`, `pt` or `fr`; screens you already have open keep the old language until you reopen them.
+RizomaDB speaks **English and Spanish**. By default it follows VS Code's display language. To change only the extension, set `rizomadb.language` to `en` or `es`; screens you already have open keep the old language until you reopen them.
 
-Command names, setting names and view titles are provided to VS Code through its own mechanism, so they always follow **VS Code's** language. The settings screen has a button that opens VS Code's language picker. Messages from a database server (for example a syntax error) are shown as the server wrote them; the messages RizomaDB writes itself are translated. The Spanish text is reviewed by the maintainer; the Portuguese and French translations were written with AI assistance and have **not** been reviewed by native speakers, so wording corrections are welcome.
+Command names, setting names and view titles are provided to VS Code through its own mechanism, so they always follow **VS Code's** language. The settings screen has a button that opens VS Code's language picker. Messages from a database server (for example a syntax error) are shown as the server wrote them; the messages RizomaDB writes itself are translated. Wording corrections to the Spanish text are welcome.
 
 ## The guide
 **RizomaDB: Open the Guide** opens a step-by-step tour with buttons that do each step for you. It also appears once, the first time the extension runs. There is a matching *Get started* walkthrough in VS Code's Welcome page.

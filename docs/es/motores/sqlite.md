@@ -18,7 +18,7 @@ INTEGER exacto (bigint más allá de 2^53)
 la orden `VACUUM INTO` incorporada para las copias
 
 ## Licencia del driver
-node:sqlite (sin dependencias); NOTA: su disponibilidad dentro del Node embebido de VS Code no está verificada (ver ADR 0009)
+node:sqlite (sin dependencias); NOTA: su disponibilidad dentro del Node embebido de VS Code no está verificada
 
 ## Cómo ejecutar las pruebas de integración
 `docker compose -f test/compose/docker-compose.yml up -d <servicio>` y luego `RZ_ENGINES=sqlite pnpm test` (los puertos están en `test/compose/docker-compose.yml` y los ayudantes en `packages/test-engines`).

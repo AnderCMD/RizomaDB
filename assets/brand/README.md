@@ -1,6 +1,6 @@
 # RizomaDB brand
 
-English · [Español](README.es.md) · [Português (Brasil)](README.pt-br.md) · [Français](README.fr.md)
+English · [Español](README.es.md)
 
 **Meaning.** A database cylinder with roots (a rhizome) reaching three nodes: many databases connected without a hierarchy. The amber node marks the "origin point" of the connection.
 

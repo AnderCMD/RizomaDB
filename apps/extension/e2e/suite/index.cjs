@@ -52,13 +52,11 @@ exports.run = async function run() {
     await vscode.commands.executeCommand("workbench.action.closeAllEditors");
     await vscode.commands.executeCommand("rizomadb.newConnection");
     await new Promise((r) => setTimeout(r, 600));
-    return vscode.window.tabGroups.all.flatMap((g) => g.tabs).map((t) => t.label).find((l) => /connex|conex|conexão|connection/i.test(l));
+    return vscode.window.tabGroups.all.flatMap((g) => g.tabs).map((t) => t.label).find((l) => /conexi|connection/i.test(l));
   };
   try {
     assert.strictEqual(await titleIn("en"), "New connection");
     assert.strictEqual(await titleIn("es"), "Nueva conexión");
-    assert.strictEqual(await titleIn("pt"), "Nova conexão");
-    assert.strictEqual(await titleIn("fr"), "Nouvelle connexion");
   } finally { await cfg.update("language", undefined, vscode.ConfigurationTarget.Global); }
   console.log(`host node ${process.versions.node}, electron ${process.versions.electron}`);
   let sqliteOk = true; try { require("node:sqlite"); } catch { sqliteOk = false; }

@@ -4,7 +4,7 @@ Todos los ajustes de la extensión. Abre la pantalla de configuración con **Riz
 
 | Ajuste | Tipo | Por defecto | Qué hace |
 |---|---|---|---|
-| `rizomadb.language` | string (`auto`, `en`, `es`, `pt`, `fr`) | `auto` | Idioma de las pantallas y mensajes de RizomaDB: `auto` sigue el idioma de VS Code, o fuerza `en`, `es`, `pt` (portugués de Brasil) o `fr`. Los nombres de comandos y ajustes siempre siguen a VS Code. |
+| `rizomadb.language` | string (`auto`, `en`, `es`) | `auto` | Idioma de las pantallas y mensajes de RizomaDB: `auto` sigue el idioma de VS Code, o fuerza `en` o `es`. Los nombres de comandos y ajustes siempre siguen a VS Code. |
 | `rizomadb.environments` | lista | `[]` | Entornos adicionales además de dev, staging y prod, p. ej. `{ "name": "qa", "protection": "confirm" }`. Protección: `none`, `confirm` (preguntar antes de cada escritura) o `readOnly` (bloquear escrituras). También puedes crear uno desde la pantalla Nueva conexión. |
 | `rizomadb.editor.codeLens` | boolean | `true` | Muestra botones Ejecutar y Explicar sobre cada sentencia de los editores de consultas, además de Ejecutar todo y la conexión en uso. |
 | `rizomadb.editor.highlightStatement` | boolean | `true` | Resalta la sentencia bajo el cursor en los editores de consultas. |

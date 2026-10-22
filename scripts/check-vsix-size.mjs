@@ -1,4 +1,4 @@
-// Fails when the packaged extension grows past the budget (see docs/adr/0012). Usage: node scripts/check-vsix-size.mjs path.vsix [maxMB]
+// Fails when the packaged extension grows past the budget (8 MB for the universal package, 60 MB for the per-platform ones that carry DuckDB). Usage: node scripts/check-vsix-size.mjs path.vsix [maxMB]
 import { statSync } from "node:fs";
 const [file, max = "8"] = process.argv.slice(2);
 const mb = statSync(file).size / 1024 / 1024;

@@ -1,6 +1,6 @@
 # Honest comparison
 
-Based on `competitive-analysis.md` (verified 2026-10-20, written in Spanish) and on what RizomaDB actually passes in its own tests. "Not verified" means we did not confirm it from a primary source. Updated 2026-10-22.
+Based on a review of the competitors' public listings (checked 2026-10-20) and on what RizomaDB actually passes in its own tests. "Not verified" means we did not confirm it from a primary source. Updated 2026-10-22.
 
 | | RizomaDB (this repo) | DBCode | Database Client | SQLTools |
 |---|---|---|---|---|
@@ -15,8 +15,8 @@ Based on `competitive-analysis.md` (verified 2026-10-20, written in Spanish) and
 - **Little human testing so far**: the automated end-to-end test activates it in a real VS Code and checks the commands and editor lenses, the screens pass axe in light and dark, and the owner did a manual screen-reader pass on macOS, Windows and Linux with no problems found; there is no independent accessibility audit.
 - **Not published**: no Marketplace or Open VSX listing, and the release workflow (checksums, SBOM, build provenance) has never run.
 - **DuckDB** needs a platform-specific native module: it ships only in the per-platform VSIX files, which are built by the release workflow (only two of the six were run).
-- Community: none yet. The Portuguese and French texts were written with AI assistance and have not been reviewed by native speakers.
+- Community: none yet.
 - Some features are young: HydraDB is experimental; paging works on every engine by re-running the query and skipping rows, which is slower for very deep pages than a native cursor (an optional setting pages by primary key on five SQL engines).
 
 ## Where it differs by design
-Verifiable license and zero telemetry; a single policy and audit choke point for every write path; enterprise controls (layered policy, custom environments with protection, masking, audit) without a paid tier; editing in place with pending changes applied in one transaction and conflict detection; an opt-in, schema-only AI assistant and an opt-in read-only MCP server with guardrails; and an interactive guide plus an interface in English, Spanish, Portuguese (Brazil) and French, switchable inside the extension.
+Verifiable license and zero telemetry; a single policy and audit choke point for every write path; enterprise controls (layered policy, custom environments with protection, masking, audit) without a paid tier; editing in place with pending changes applied in one transaction and conflict detection; an opt-in, schema-only AI assistant and an opt-in read-only MCP server with guardrails; and an interactive guide plus an interface in English and Spanish, switchable inside the extension.

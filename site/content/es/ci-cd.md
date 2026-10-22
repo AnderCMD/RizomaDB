@@ -10,7 +10,7 @@ rama de funcionalidad ──PR──▶ dev ──PR (flujo Promote)──▶ ma
 | Flujo | Se ejecuta en | Qué hace |
 |---|---|---|
 | `ci.yml` | push y pull request a `main` o `dev` | lint, compilación, comprobación de tipos, auditoría de licencias, verificación de que las páginas de referencia generadas están al día, las suites de pruebas contra contenedores de motores reales (un segundo trabajo, `engines-extra`, levanta CockroachDB, YugabyteDB, InfluxDB 3, Firestore y HydraDB desde el archivo compose), benchmarks, compila el VSIX y lo conserva como artefacto (14 días), compila el sitio de documentación, compila y prueba el VSIX de linux-x64 (`platform-package`), busca secretos (gitleaks) y ejecuta CodeQL. Un push más reciente reemplaza una ejecución en curso. |
-| `pages.yml` | push a `main` que toque `docs/`, `site/` o el flujo, o manual | compila el sitio VitePress (inglés, español, portugués y francés) y lo despliega en GitHub Pages. |
+| `pages.yml` | push a `main` que toque `docs/`, `site/` o el flujo, o manual | compila el sitio VitePress (inglés y español) y lo despliega en GitHub Pages. |
 | `promote.yml` | manual | abre el pull request `dev` → `main` si dev tiene commits que main no tiene. |
 | `release.yml` | etiqueta `v*`, o manual | compila el VSIX universal y uno por plataforma (con la biblioteca nativa de DuckDB), comprueba su tamaño, genera el SBOM y las sumas de verificación, atestigua la procedencia y los adjunta a una prerelease. **Publicar en el Marketplace y en Open VSX es un paso aparte que necesita aprobación manual.** |
 

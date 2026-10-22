@@ -18,7 +18,7 @@ jobs:
       - run: pnpm build && pnpm audit:licenses --check
       - run: pnpm --filter rizomadb package
       - run: node scripts/check-vsix-size.mjs apps/extension/*.vsix 8
-      # One VSIX per platform, each carrying DuckDB's native library (docs/adr/0012): the universal one above stays small and has no DuckDB.
+      # One VSIX per platform, each carrying DuckDB's native library (docs/engines/duckdb.md): the universal one above stays small and has no DuckDB.
       - name: Platform packages
         run: |
           for t in darwin-arm64 darwin-x64 linux-x64 linux-arm64 win32-x64 win32-arm64; do

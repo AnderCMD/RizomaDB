@@ -1,6 +1,6 @@
 # Security policy
 
-English · [Español](SECURITY.es.md) · [Português (Brasil)](SECURITY.pt-br.md) · [Français](SECURITY.fr.md)
+English · [Español](SECURITY.es.md)
 
 ## Reporting a vulnerability
 Do not open a public issue. Use **GitHub → Security → Report a vulnerability** (a private advisory) in this repository.

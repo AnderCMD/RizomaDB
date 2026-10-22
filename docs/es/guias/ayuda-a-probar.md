@@ -6,7 +6,6 @@ RizomaDB se ha probado con motores locales, contenedores y emuladores oficiales,
 1. **Nube y servicios gestionados**: Amazon DynamoDB en AWS, Google Cloud Firestore, MongoDB Atlas y PostgreSQL/MySQL gestionados (RDS, Aurora, Cloud SQL, Azure Database, Neon, Supabase, PlanetScale). Ver [Nube y servicios gestionados](../motores/README.md#nube-y-servicios-gestionados-sin-confirmar).
 2. **Otros sistemas operativos y lectores de pantalla**: Windows y Linux con NVDA, JAWS u Orca; un recorrido solo con teclado por las pantallas ([Usar el teclado](teclado.md)).
 3. **Tus propias bases de datos**: tablas más grandes, tipos de columna raros, redes lentas, túneles SSH y proxies.
-4. **Traducciones**: quienes hablen portugués de Brasil y francés pueden revisar los textos ([CONTRIBUTING.md](https://github.com/AnderCMD/RizomaDB/blob/main/CONTRIBUTING.md#reviewing-a-translation)).
 
 ## Cómo probar con seguridad
 - Usa un **usuario de solo lectura** o una base de datos desechable. Activa primero el interruptor de solo lectura de la conexión.

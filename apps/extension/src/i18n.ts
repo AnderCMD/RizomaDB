@@ -5,10 +5,10 @@ import { readFileSync } from "node:fs";
  * RizomaDB's own UI language. "auto" follows the VS Code display language (vscode.l10n); the others override it for the
  * extension alone. Manifest strings (command titles, setting descriptions, view names) are fixed by VS Code and always follow it.
  */
-export const UI_LANGUAGES = ["auto", "en", "es", "pt", "fr"] as const;
+export const UI_LANGUAGES = ["auto", "en", "es"] as const;
 export type UiLanguage = (typeof UI_LANGUAGES)[number];
 /** The bundle file of each override language (named by the VS Code locale id, so "auto" finds the same files). */
-export const BUNDLE_OF: Record<Exclude<UiLanguage, "auto" | "en">, string> = { es: "bundle.l10n.es.json", pt: "bundle.l10n.pt-br.json", fr: "bundle.l10n.fr.json" };
+export const BUNDLE_OF: Record<Exclude<UiLanguage, "auto" | "en">, string> = { es: "bundle.l10n.es.json" };
 let choice: UiLanguage = "auto";
 let bundle: Record<string, string> = {};
 let loaded: UiLanguage | undefined;

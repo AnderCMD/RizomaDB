@@ -1,4 +1,4 @@
-// Generates the reference pages (settings, commands, engine matrix) in English, Spanish, Portuguese (Brazil) and French from the extension manifest and the
+// Generates the reference pages (settings, commands, engine matrix) in English and Spanish from the extension manifest and the
 // drivers' declared capabilities, so they cannot drift from the code. `--check` fails when a committed page is out of date.
 // Needs the packages built (the matrix reads each driver's compiled meta).
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
@@ -7,7 +7,7 @@ import { pathToFileURL } from "node:url";
 
 const root = new URL("../", import.meta.url).pathname;
 const read = (f) => JSON.parse(readFileSync(root + f, "utf8"));
-const pkg = read("apps/extension/package.json"), en = read("apps/extension/package.nls.json"), es = read("apps/extension/package.nls.es.json"), pt = read("apps/extension/package.nls.pt-br.json"), fr = read("apps/extension/package.nls.fr.json");
+const pkg = read("apps/extension/package.json"), en = read("apps/extension/package.nls.json"), es = read("apps/extension/package.nls.es.json");
 const check = process.argv.includes("--check");
 const L = {
   en: { empty: "(empty)", list: "list", nls: en, settingsTitle: "Settings reference", commandsTitle: "Commands reference", matrixTitle: "Engine capability matrix", setting: "Setting", type: "Type", def: "Default", desc: "What it does", command: "Command", name: "Name", keys: "Shortcut", values: "values",
@@ -30,26 +30,6 @@ const L = {
     fam: { relational: "relacional", document: "documentos", keyvalue: "clave-valor", search: "búsqueda", graph: "grafos", timeseries: "series temporales", widecolumn: "columna ancha" },
     filter: { sql: "WHERE / ORDER BY", mongo: "filtro / orden (JSON)", es: "texto de búsqueda / orden", cypher: "condición / ORDER BY" },
     notes: "Notas", notesList: ["**Cuadro de filtro de tabla**: la barra bajo la línea de consulta al abrir una tabla; cambia la sentencia en la base de datos, así que la paginación y la edición siguen funcionando.", "**Edición de columnas**: renombrar, cambiar tipo, NOT NULL, valor por defecto, agregar y eliminar desde el menú de la columna; muestran el DDL exacto y piden confirmación.", "**Solo lectura impuesto por el servidor** significa que la propia conexión rechaza las escrituras; por RizomaDB (cliente) significa que lo hace un clasificador de sentencias que deniega por defecto, así que para una garantía firme usa además un rol de base de datos de solo lectura."] },
-  "pt-br": { empty: "(vazio)", list: "lista", nls: pt, settingsTitle: "Referência de configurações", commandsTitle: "Referência de comandos", matrixTitle: "Matriz de capacidades por motor", setting: "Configuração", type: "Tipo", def: "Padrão", desc: "O que faz", command: "Comando", name: "Nome", keys: "Atalho", values: "valores",
-    settingsIntro: "Todas as configurações da extensão. Abra a tela de configurações com **RizomaDB: Abrir configurações** para alterá-las com um formulário; cada alteração é salva nas suas configurações de usuário ao ser feita. As configurações marcadas como *machine-overridable* também podem ser definidas por um administrador.",
-    commandsIntro: "Todos os comandos, como aparecem na paleta de comandos (⇧⌘P / Ctrl+Shift+P) em **RizomaDB**. Alguns agem sobre o item em que você clica com o botão direito na árvore de conexões e não servem a partir da paleta.",
-    matrixIntro: "O que cada motor suporta, lido das capacidades declaradas pelos drivers e das regras da extensão. Um traço significa *não suportado*; nunca é uma promessa de que será adicionado. Quais motores são testados contra um servidor real está na página de cada motor.",
-    gen: "Gerado por `scripts/gen-reference.mjs` a partir do manifesto da extensão; não edite à mão.",
-    cols: ["Motor", "Família", "Linguagem de consulta", "Editar linhas na grade", "Cancelar", "Somente leitura imposto por", "Caixa de filtro da tabela", "Edição de colunas", "Plano de execução", "Ferramentas de administração"],
-    edit: { primaryKey: "por chave primária", documentId: "por id do documento", key: "por chave", none: "—" }, ro: { server: "o servidor", client: "RizomaDB (cliente)" }, yes: "sim",
-    fam: { relational: "relacional", document: "documentos", keyvalue: "chave-valor", search: "busca", graph: "grafos", timeseries: "séries temporais", widecolumn: "colunas largas" },
-    filter: { sql: "WHERE / ORDER BY", mongo: "filtro / ordem (JSON)", es: "texto de busca / ordem", cypher: "condição / ORDER BY" },
-    notes: "Notas", notesList: ["**Caixa de filtro da tabela**: a barra abaixo da linha de consulta ao abrir uma tabela; altera a instrução no banco de dados, então a paginação e a edição continuam funcionando.", "**Edição de colunas**: renomear, alterar tipo, NOT NULL, valor padrão, adicionar e excluir pelo menu da coluna; mostram o DDL exato e pedem confirmação.", "**Somente leitura imposto pelo servidor** significa que a própria conexão recusa escritas; por RizomaDB (cliente) significa que um classificador de instruções que nega por padrão faz isso, então, para uma garantia firme, use também um papel de banco de dados somente leitura."] },
-  fr: { empty: "(vide)", list: "liste", nls: fr, settingsTitle: "Référence des paramètres", commandsTitle: "Référence des commandes", matrixTitle: "Matrice des capacités par moteur", setting: "Paramètre", type: "Type", def: "Par défaut", desc: "Ce que ça fait", command: "Commande", name: "Nom", keys: "Raccourci", values: "valeurs",
-    settingsIntro: "Tous les paramètres de l'extension. Ouvrez l'écran des paramètres avec **RizomaDB : Ouvrir les paramètres** pour les modifier avec un formulaire ; chaque changement est enregistré dans vos paramètres utilisateur au moment où vous le faites. Les paramètres marqués *machine-overridable* peuvent aussi être fixés par un administrateur.",
-    commandsIntro: "Toutes les commandes, telles qu'elles apparaissent dans la palette de commandes (⇧⌘P / Ctrl+Shift+P) sous **RizomaDB**. Certaines agissent sur l'élément sur lequel vous faites un clic droit dans l'arborescence des connexions et ne servent pas depuis la palette.",
-    matrixIntro: "Ce que chaque moteur prend en charge, lu dans les capacités déclarées par les pilotes et les règles de l'extension. Un tiret signifie *non pris en charge* ; ce n'est jamais une promesse d'ajout. Les moteurs testés contre un vrai serveur figurent sur la page de chaque moteur.",
-    gen: "Généré par `scripts/gen-reference.mjs` à partir du manifeste de l'extension ; ne pas modifier à la main.",
-    cols: ["Moteur", "Famille", "Langage de requête", "Modifier les lignes dans la grille", "Annuler", "Lecture seule imposée par", "Zone de filtre de la table", "Modification des colonnes", "Plan d'exécution", "Outils d'administration"],
-    edit: { primaryKey: "par clé primaire", documentId: "par id de document", key: "par clé", none: "—" }, ro: { server: "le serveur", client: "RizomaDB (client)" }, yes: "oui",
-    fam: { relational: "relationnel", document: "documents", keyvalue: "clé-valeur", search: "recherche", graph: "graphes", timeseries: "séries temporelles", widecolumn: "colonnes larges" },
-    filter: { sql: "WHERE / ORDER BY", mongo: "filtre / tri (JSON)", es: "texte de recherche / tri", cypher: "condition / ORDER BY" },
-    notes: "Notes", notesList: ["**Zone de filtre de la table** : la barre sous la ligne de requête à l'ouverture d'une table ; elle modifie l'instruction dans la base, donc la pagination et la modification continuent de fonctionner.", "**Modification des colonnes** : renommer, changer le type, NOT NULL, valeur par défaut, ajouter et supprimer depuis le menu de la colonne ; elles montrent le DDL exact et demandent confirmation.", "**Lecture seule imposée par le serveur** signifie que la connexion elle-même refuse les écritures ; par RizomaDB (client) signifie qu'un classificateur d'instructions qui refuse par défaut s'en charge, donc pour une garantie ferme utilisez aussi un rôle de base de données en lecture seule."] },
 };
 const tr = (lang, s) => (typeof s === "string" ? s.replace(/^%(.+)%$/, (_, k) => L[lang].nls[k] ?? en[k] ?? k) : "");
 const md = (s) => s.replace(/\|/g, "\\|").replace(/\n/g, " ");
@@ -89,9 +69,9 @@ async function matrix(lang) {
   return `# ${t.matrixTitle}\n\n${t.matrixIntro}\n\n| ${t.cols.join(" | ")} |\n|${t.cols.map(() => "---").join("|")}|\n${rows.join("\n")}\n\n## ${t.notes}\n\n${t.notesList.map((n) => `- ${n}`).join("\n")}\n\n*${t.gen}*\n`;
 }
 
-outputs.push(["docs/reference/settings.md", settings("en")], ["docs/es/referencia/ajustes.md", settings("es")], ["docs/pt-br/reference/settings.md", settings("pt-br")], ["docs/fr/reference/settings.md", settings("fr")]);
-outputs.push(["docs/reference/commands.md", commands("en")], ["docs/es/referencia/comandos.md", commands("es")], ["docs/pt-br/reference/commands.md", commands("pt-br")], ["docs/fr/reference/commands.md", commands("fr")]);
-outputs.push(["docs/reference/engine-matrix.md", await matrix("en")], ["docs/es/referencia/matriz-de-motores.md", await matrix("es")], ["docs/pt-br/reference/engine-matrix.md", await matrix("pt-br")], ["docs/fr/reference/engine-matrix.md", await matrix("fr")]);
+outputs.push(["docs/reference/settings.md", settings("en")], ["docs/es/referencia/ajustes.md", settings("es")]);
+outputs.push(["docs/reference/commands.md", commands("en")], ["docs/es/referencia/comandos.md", commands("es")]);
+outputs.push(["docs/reference/engine-matrix.md", await matrix("en")], ["docs/es/referencia/matriz-de-motores.md", await matrix("es")]);
 
 let stale = 0;
 for (const [f, content] of outputs) {

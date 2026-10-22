@@ -1,5 +1,7 @@
 # Design guide
 
+[Español](../es/design/guia-de-diseno.md)
+
 How RizomaDB screens look and behave. It describes what the code does today; when you change a screen, change this page too. For agents: this is the checklist to follow before adding UI.
 
 ## Principles

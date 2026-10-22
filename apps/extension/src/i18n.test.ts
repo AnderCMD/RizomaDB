@@ -7,7 +7,7 @@ const strings = new Set<string>();
 for (const f of walk(join(process.cwd(), "src"))) for (const m of readFileSync(f, "utf8").matchAll(/\b(?:t|vscode\.l10n\.t)\(\s*("(?:[^"\\]|\\.)*")/g)) { try { strings.add(JSON.parse(m[1]!) as string); } catch { /* template literal etc. */ } }
 const nls = (f: string) => JSON.parse(readFileSync(join(process.cwd(), f), "utf8")) as Record<string, string>;
 const ph = (s: string) => (s.match(/\{\d+\}/g) ?? []).sort().join();
-const LANGS = [{ name: "Spanish", bundle: "bundle.l10n.es.json", manifest: "package.nls.es.json" }, { name: "Portuguese (Brazil)", bundle: "bundle.l10n.pt-br.json", manifest: "package.nls.pt-br.json" }, { name: "French", bundle: "bundle.l10n.fr.json", manifest: "package.nls.fr.json" }];
+const LANGS = [{ name: "Spanish", bundle: "bundle.l10n.es.json", manifest: "package.nls.es.json" }];
 
 for (const L of LANGS) describe(`${L.name} translation`, () => {
   const es = JSON.parse(readFileSync(join(process.cwd(), "l10n", L.bundle), "utf8")) as Record<string, string>;

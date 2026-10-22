@@ -158,7 +158,7 @@ jobs:
       - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v7
         with: { node-version: 24, cache: pnpm }
-      - run: node scripts/check-docs-parity.mjs   # every page exists in English, Spanish, Portuguese and French
+      - run: node scripts/check-docs-parity.mjs   # every page exists in English and Spanish
       - run: pnpm install --frozen-lockfile --filter @rizomadb/site...
       - run: node sync-docs.mjs
         working-directory: site

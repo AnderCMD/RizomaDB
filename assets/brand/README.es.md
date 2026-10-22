@@ -1,6 +1,6 @@
 # Marca RizomaDB
 
-[English](README.md) · Español · [Português (Brasil)](README.pt-br.md) · [Français](README.fr.md)
+[English](README.md) · Español
 
 **Significado.** Un cilindro de base de datos del que brotan raíces (rizoma) hacia tres nodos: muchas bases de datos conectadas sin jerarquía. El nodo ámbar marca el "punto de origen" de la conexión.
 

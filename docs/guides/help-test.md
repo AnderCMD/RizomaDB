@@ -6,7 +6,6 @@ RizomaDB has been tested against local engines, containers and official emulator
 1. **Cloud and managed services**: Amazon DynamoDB on AWS, Google Cloud Firestore, MongoDB Atlas, and managed PostgreSQL/MySQL (RDS, Aurora, Cloud SQL, Azure Database, Neon, Supabase, PlanetScale). See [Cloud and managed services](../engines/README.md#cloud-and-managed-services-not-confirmed).
 2. **Other operating systems and screen readers**: Windows and Linux with NVDA, JAWS or Orca; a keyboard-only run through the screens ([Using the keyboard](keyboard.md)).
 3. **Your own databases**: bigger tables, odd column types, slow networks, SSH tunnels and proxies.
-4. **Translations**: native speakers of Portuguese (Brazil) and French can review the texts ([CONTRIBUTING.md](https://github.com/AnderCMD/RizomaDB/blob/main/CONTRIBUTING.md#reviewing-a-translation)).
 
 ## How to test safely
 - Use a **read-only user** or a throwaway database. Turn on the connection's read-only switch first.

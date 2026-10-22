@@ -54,7 +54,7 @@ function render() {
   fill(); document.getElementById("title")?.focus();
 }
 
-const LABELS: Record<string, string> = { "rizomadb.language:auto": msg("Follow VS Code"), "rizomadb.language:en": "English", "rizomadb.language:es": "Español", "rizomadb.language:pt": "Português (Brasil)", "rizomadb.language:fr": "Français", "rizomadb.results.location:bottom": msg("Bottom half"), "rizomadb.results.location:full": msg("Whole editor area"), "rizomadb.results.location:beside": msg("Beside the editor") };
+const LABELS: Record<string, string> = { "rizomadb.language:auto": msg("Follow VS Code"), "rizomadb.language:en": "English", "rizomadb.language:es": "Español", "rizomadb.results.location:bottom": msg("Bottom half"), "rizomadb.results.location:full": msg("Whole editor area"), "rizomadb.results.location:beside": msg("Beside the editor") };
 
 function info(it: Item) {
   const b = el("span", { class: "info", tabindex: "0", role: "note", "aria-label": `${it.title}: ${plain(it.description)}`, "data-tip": plain(it.description) });

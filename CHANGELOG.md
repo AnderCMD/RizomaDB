@@ -1,8 +1,8 @@
 # Changelog
 
-English · [Español](CHANGELOG.es.md) · [Português (Brasil)](CHANGELOG.pt-br.md) · [Français](CHANGELOG.fr.md)
+English · [Español](CHANGELOG.es.md)
 
-All notable changes are listed here, newest first. The format follows [Keep a Changelog](https://keepachangelog.com/). Nothing has been published yet; the day-to-day log is in [docs/ai/STATE.md](docs/ai/STATE.md) (in Spanish).
+All notable changes are listed here, newest first. The format follows [Keep a Changelog](https://keepachangelog.com/). Nothing has been published yet.
 
 ## [Unreleased] — 0.0.1 (not published)
 
@@ -12,7 +12,7 @@ All notable changes are listed here, newest first. The format follows [Keep a Ch
 - Optional table paging by primary key (SQLite, PostgreSQL, MySQL, SQL Server, Oracle), editing of Redis stream entries, AWS profiles for DynamoDB and Google credential files for Firestore.
 - A no-SQL query builder, a read-only user generator, favourites in the history and settings export/import.
 - Per-platform packages that carry DuckDB's native library, and release steps for checksums, an SBOM and build provenance (not yet run).
-- Interface and documentation in English, Spanish, Portuguese (Brazil) and French.
+- Interface and documentation in English and Spanish.
 
 ### Fixed
 - Abandoning a large result no longer blocks the next statement on MySQL and SQL Server; a late cancel no longer hits the next statement on MySQL, PostgreSQL and Oracle.

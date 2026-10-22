@@ -1,6 +1,6 @@
 # Comparaison honnête
 
-Fondée sur `competitive-analysis.md` (vérifié le 2026-10-20, rédigé en espagnol) et sur ce que RizomaDB réussit réellement dans ses propres tests. « Non vérifié » signifie que nous ne l'avons pas confirmé auprès d'une source primaire. Mise à jour le 2026-10-22.
+Fondée sur `competitive-analysis.md` (vérifié le 2026-10-20, en anglais) et sur ce que RizomaDB réussit réellement dans ses propres tests. « Non vérifié » signifie que nous ne l'avons pas confirmé auprès d'une source primaire. Mise à jour le 2026-10-22.
 
 | | RizomaDB (ce dépôt) | DBCode | Database Client | SQLTools |
 |---|---|---|---|---|

@@ -7,7 +7,7 @@
 
 **All your databases, one place. Free.**
 
-English · [Español](README.es.md) · [Português (Brasil)](README.pt-br.md) · [Français](README.fr.md)
+English · [Español](README.es.md)
 
 A multi-engine database client for VS Code (and VSCodium, Cursor, Windsurf): Apache-2.0, no telemetry, no accounts, no locked features. [Documentation site](https://andercmd.github.io/RizomaDB/en/)
 
@@ -20,7 +20,7 @@ A multi-engine database client for VS Code (and VSCodium, Cursor, Windsurf): Apa
 - **Design and move data**: table designer, ER diagrams, schema compare and docs, import/export, backup/restore, data compare/sync and test-data generation.
 - **Govern**: layered policies where the strictest wins, one policy and audit point for every write path, column masking, shared catalogs without secrets.
 - **Optional extras**: an AI assistant (off by default, schema only) and a read-only MCP server with guardrails.
-- **English, Spanish, Portuguese (Brazil) and French** (the last two machine-assisted, not yet reviewed by native speakers), switchable inside the extension, and an interactive **guide** that walks you through it.
+- **English and Spanish**, switchable inside the extension, and an interactive **guide** that walks you through it.
 
 ## Engines
 Tested against real servers: PostgreSQL (and CockroachDB, YugabyteDB), MySQL/MariaDB (and TiDB), SQL Server, Oracle, SQLite, MongoDB, Redis/Valkey, ClickHouse, Elasticsearch/OpenSearch, DuckDB, Neo4j, DynamoDB (Local), InfluxDB 2 and 3, Cassandra/ScyllaDB, Firestore (emulator), Trino, and **HydraDB (experimental)**. What each one supports is in the [capability matrix](docs/reference/engine-matrix.md); limits are on each engine's page in [docs/engines](docs/engines/README.md). **Not confirmed:** real cloud accounts (AWS, Google Cloud, MongoDB Atlas and managed PostgreSQL/MySQL services) have never been tested, so test with a read-only user or a throwaway database before relying on them; Redshift, Snowflake and BigQuery are not implemented. See [Cloud and managed services](docs/engines/README.md#cloud-and-managed-services-not-confirmed).
@@ -43,7 +43,7 @@ docker compose -f test/compose/docker-compose.yml up -d postgres   # or any engi
 pnpm lint && pnpm build && pnpm typecheck && pnpm test
 node scripts/gen-reference.mjs        # regenerates the settings/commands/engine reference pages
 ```
-`dev` is the integration branch and `main` is what is deployed (the docs site); CI runs on both. See [CONTRIBUTING.md](CONTRIBUTING.md), [docs/ci-cd.md](docs/ci-cd.md), the decision records in [docs/adr](docs/adr) and the running log in [docs/ai/STATE.md](docs/ai/STATE.md).
+`dev` is the integration branch and `main` is what is deployed (the docs site); CI runs on both. See [CONTRIBUTING.md](CONTRIBUTING.md), [docs/ci-cd.md](docs/ci-cd.md).
 
 ## License
 Apache-2.0. Third-party licenses: [docs/legal/third-party-licenses.md](docs/legal/third-party-licenses.md). [Code of conduct](CODE_OF_CONDUCT.md) · [Security](SECURITY.md) · [Changelog](CHANGELOG.md).

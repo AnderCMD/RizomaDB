@@ -1,7 +1,7 @@
 import * as z from "zod/mini";
 import { Shape } from "./connectMessages.js";
 
-/** Versioned host⇄webview protocol (ADR 0008). Validated at both ends. */
+/** Versioned host⇄webview protocol. Validated at both ends. */
 export const PROTOCOL_VERSION = 1;
 
 const Col = z.object({ name: z.string(), nativeType: z.string(), kind: z.string() });

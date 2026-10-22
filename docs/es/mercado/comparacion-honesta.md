@@ -1,6 +1,6 @@
 # Comparación honesta
 
-Basada en `competitive-analysis.md` (verificado el 2026-10-20, escrito en español) y en lo que RizomaDB realmente pasa en sus propias pruebas. «No verificado» significa que no lo confirmamos en una fuente primaria. Actualizada el 2026-10-22.
+Basada en una revisión de los listados públicos de la competencia (comprobados el 2026-10-20) y en lo que RizomaDB realmente pasa en sus propias pruebas. «No verificado» significa que no lo confirmamos en una fuente primaria. Actualizada el 2026-10-22.
 
 | | RizomaDB (este repositorio) | DBCode | Database Client | SQLTools |
 |---|---|---|---|---|
@@ -15,8 +15,8 @@ Basada en `competitive-analysis.md` (verificado el 2026-10-20, escrito en españ
 - **Poca prueba humana hasta ahora**: la prueba de extremo a extremo automática lo activa en un VS Code real y comprueba los comandos y las lentes del editor, las pantallas pasan axe en claro y oscuro, y la persona responsable hizo una revisión manual con lector de pantalla en macOS, Windows y Linux sin encontrar problemas; no hay una auditoría de accesibilidad independiente.
 - **Sin publicar**: no hay ficha en el Marketplace ni en Open VSX, y el flujo de release (sumas de verificación, SBOM, procedencia de compilación) nunca se ha ejecutado.
 - **DuckDB** necesita un módulo nativo específico de la plataforma: solo se incluye en los VSIX por plataforma, que construye el flujo de release (solo se ejecutaron dos de los seis).
-- Comunidad: ninguna todavía. Los textos en portugués y francés se escribieron con ayuda de IA y no los han revisado hablantes nativos.
+- Comunidad: ninguna todavía.
 - Algunas funciones son jóvenes: HydraDB es experimental; la paginación funciona en todos los motores volviendo a ejecutar la consulta y saltando filas, lo que es más lento para páginas muy profundas que un cursor nativo (un ajuste opcional pagina por clave primaria en cinco motores SQL).
 
 ## Dónde se diferencia por diseño
-Licencia verificable y cero telemetría; un único punto de política y auditoría para toda ruta de escritura; controles empresariales (política en capas, entornos propios con protección, enmascarado, auditoría) sin un nivel de pago; edición en el sitio con cambios pendientes aplicados en una transacción y detección de conflictos; un asistente de IA opcional solo con el esquema y un servidor MCP opcional de solo lectura con restricciones; y una guía interactiva más una interfaz en inglés, español, portugués (Brasil) y francés, intercambiables dentro de la extensión.
+Licencia verificable y cero telemetría; un único punto de política y auditoría para toda ruta de escritura; controles empresariales (política en capas, entornos propios con protección, enmascarado, auditoría) sin un nivel de pago; edición en el sitio con cambios pendientes aplicados en una transacción y detección de conflictos; un asistente de IA opcional solo con el esquema y un servidor MCP opcional de solo lectura con restricciones; y una guía interactiva más una interfaz en inglés y español, intercambiables dentro de la extensión.
