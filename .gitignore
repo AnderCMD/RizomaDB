@@ -39,3 +39,4 @@ site/.vitepress/dist
 graphify-out/.pending_changes
 graphify-out/manifest.json
 graphify-out/20*/
+translation-review/

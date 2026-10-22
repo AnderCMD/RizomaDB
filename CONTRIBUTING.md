@@ -12,3 +12,6 @@
 Contribution license: Apache-2.0.
 
 AI agents: read [AGENTS.md](AGENTS.md) first; UI work follows the [design guide](docs/design/design-guide.md). `graphify-out/GRAPH_REPORT.md` is a map of the code.
+
+## Reviewing a translation
+The Portuguese (Brazil) and French texts were written with AI assistance and are waiting for native-speaker review. `node scripts/export-translations.mjs` writes `translation-review/pt-br.csv` and `fr.csv` (English, current text, an empty "corrected" column; placeholders such as `{0}` must stay). Send corrections as a pull request that edits `apps/extension/l10n/bundle.l10n.<lang>.json` and `apps/extension/package.nls.<lang>.json`, or as the filled-in CSV in an issue.
