@@ -172,7 +172,7 @@ jobs:
       - uses: actions/setup-node@v7
         with: { node-version: 24, cache: pnpm }
       - run: pnpm install --frozen-lockfile
-      - run: pnpm --filter rizomadb build
+      - run: pnpm build   # builds the workspace packages the extension bundles
       - run: node scripts/package-platform.mjs linux-x64 out
       - run: node scripts/check-vsix-size.mjs out/rizomadb-linux-x64.vsix 60
       - run: node scripts/smoke-vsix-duckdb.mjs out/rizomadb-linux-x64.vsix
