@@ -27,6 +27,7 @@ export const meta: Omit<DriverPlugin, "connect"> = {
     type: "object", required: ["region"],
     properties: {
       region: { type: "string", title: "Region", default: "us-east-1" },
+      profile: { type: "string", title: "AWS profile (from ~/.aws/credentials)", description: "Reads access keys from this profile of the shared credentials file. Used when no keys are typed below; SSO and role assumption are not supported." },
       accessKeyId: { type: "string", title: "Access key ID" },
       secretAccessKey: { type: "string", title: "Secret access key", secret: true },
       sessionToken: { type: "string", title: "Session token (temporary credentials)", secret: true },

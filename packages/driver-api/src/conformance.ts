@@ -40,6 +40,8 @@ export interface ConformanceOptions {
   createTableSql?: string;
   /** Expression yielding the BIGINT 9223372036854775807 (dialects differ on literals/casts). */
   bigintSql?: string;
+  /** A SELECT returning far more rows than one batch (100,000+), to check that abandoning a result mid-stream leaves the connection usable. */
+  manyRowsSql?: string;
   /** Two-parameter query returning (a, b), in the dialect's placeholder syntax. */
   paramSql: string;
   /** Config that must fail to authenticate/connect. */
@@ -104,6 +106,23 @@ export function runConformance(opts: ConformanceOptions): void {
         await expect(p).rejects.toMatchObject({ kind: "cancelled" });
         expect(Date.now() - t).toBeLessThan(3000);
         await conn.ping();
+      });
+    }
+
+    if (opts.manyRowsSql) {
+      it("stays usable after a caller abandons a big result mid-stream", async () => {
+        for (const abort of [false, true]) {
+          const ac = new AbortController();
+          const it = conn.execute({ sql: opts.manyRowsSql!, batchSize: 100 }, ac.signal)[Symbol.asyncIterator]();
+          for (;;) { const r = await it.next(); if (r.done || r.value.type === "rows") break; }
+          if (abort) ac.abort();
+          await it.return?.(undefined);
+          // A real statement, not ping(): the next query is the one that waits behind rows nobody read.
+          const t = Date.now();
+          const next = await collect(conn.execute({ sql: opts.manyRowsSql!, maxRows: 1 }, new AbortController().signal));
+          expect(next.rows.length).toBe(1);
+          expect(Date.now() - t, "the next statement is not stuck behind the unread rows").toBeLessThan(5000);
+        }
       });
     }
 

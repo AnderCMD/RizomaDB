@@ -74,7 +74,9 @@ async function* run(tds: Tds, readOnly: boolean, req: ExecuteRequest, signal: Ab
   let wake: (() => void) | undefined;
   const push = (i: Item) => { q.push(i); wake?.(); wake = undefined; };
   let types: string[] = [];
-  const r = new Request(req.sql, (err, rowCount) => push(err ? { err } : { end: rowCount ?? 0 }));
+  let settled = false, settle!: () => void;
+  const completion = new Promise<void>((res) => { settle = res; });
+  const r = new Request(req.sql, (err, rowCount) => { settled = true; settle(); push(err ? { err } : { end: rowCount ?? 0 }); });
   (req.params ?? []).forEach((v, i) => param(r, i, v));
   r.on("columnMetadata", (cols: ColumnMetaData[] | Record<string, ColumnMetaData>) => {
     const list = Array.isArray(cols) ? cols : Object.values(cols);
@@ -114,7 +116,11 @@ async function* run(tds: Tds, readOnly: boolean, req: ExecuteRequest, signal: Ab
       return;
     }
     throw signal.aborted ? new DriverError("cancelled", "Query cancelled", { cause: e }) : mapError(e);
-  } finally { signal.removeEventListener("abort", onAbort); }
+  } finally {
+    signal.removeEventListener("abort", onAbort);
+    // A caller that stops reading leaves the request running (and paused, with rows nobody reads): cancel it and wait for it to end, or the next statement on this connection waits behind it.
+    if (!settled) { tds.cancel(); r.resume(); await Promise.race([completion, new Promise<void>((res) => setTimeout(res, 2000).unref())]); }
+  }
 }
 
 class MssqlConnection implements Connection {

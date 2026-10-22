@@ -4,6 +4,7 @@ import {
   DriverError, type ColumnInfo, type Connection, type DriverErrorKind, type DriverPlugin, type ExecuteRequest, type IntrospectionApi, type ResultEvent, type TableInfo, type Value,
 } from "@rizomadb/driver-api";
 import { meta, quoteIdent } from "./meta.js";
+import { defaultCredentialsPath, loadGoogleCredentials, tokenSource } from "./googleAuth.js";
 import { assessFirestore, ConsoleSyntaxError, opName, parseCommand, type Command } from "./console.js";
 
 export { quoteIdent, assessFirestore, parseCommand, ConsoleSyntaxError };
@@ -13,15 +14,15 @@ type FsValue = Record<string, unknown>;
 
 interface Client { request(method: string, path: string, body?: unknown, signal?: AbortSignal): Promise<unknown>; close(): void }
 
-function makeClient(o: { host: string; port: number; ssl: boolean; token: string | undefined }): Client {
+function makeClient(o: { host: string; port: number; ssl: boolean; getToken: () => Promise<string | undefined> }): Client {
   const agent = o.ssl ? new https.Agent({ keepAlive: true }) : new http.Agent({ keepAlive: true });
   const lib = o.ssl ? https : http;
   return {
     close: () => agent.destroy(),
-    request: (method, path, body, signal) => new Promise((resolve, reject) => {
+    request: async (method, path, body, signal) => { const token = await o.getToken(); return new Promise((resolve, reject) => {
       if (signal?.aborted) { reject(Object.assign(new Error("aborted"), { name: "AbortError" })); return; }
       const payload = body === undefined ? undefined : JSON.stringify(body);
-      const req = lib.request({ host: o.host, port: o.port, method, path, agent, headers: { ...(o.token ? { authorization: `Bearer ${o.token}` } : {}), ...(payload !== undefined ? { "content-type": "application/json", "content-length": Buffer.byteLength(payload) } : {}) } }, (res) => {
+      const req = lib.request({ host: o.host, port: o.port, method, path, agent, headers: { ...(token ? { authorization: `Bearer ${token}` } : {}), ...(payload !== undefined ? { "content-type": "application/json", "content-length": Buffer.byteLength(payload) } : {}) } }, (res) => {
         const chunks: Buffer[] = [];
         res.on("data", (c: Buffer) => chunks.push(c));
         res.on("end", () => {
@@ -37,7 +38,7 @@ function makeClient(o: { host: string; port: number; ssl: boolean; token: string
       req.on("error", reject);
       if (payload !== undefined) req.write(payload);
       req.end();
-    }),
+    }); },
   };
 }
 
@@ -196,10 +197,21 @@ export const firestoreDriver: DriverPlugin = {
   ...meta,
   async connect(cfg) {
     const local = typeof cfg.host === "string" && cfg.host !== "";
-    const token = cfg.accessToken ? String(cfg.accessToken) : local ? "owner" : undefined;
-    if (!token) throw new DriverError("authentication", "An OAuth access token is required for Google Cloud (for example `gcloud auth print-access-token`).");
+    // A token typed in the connection wins; otherwise a credentials file (chosen here, GOOGLE_APPLICATION_CREDENTIALS, or the gcloud application-default file) is exchanged for short-lived tokens.
+    let getToken: (() => Promise<string>) | undefined;
+    if (cfg.accessToken) { const t = String(cfg.accessToken); getToken = async () => t; }
+    else if (local) getToken = async () => "owner";
+    else {
+      const file = cfg.credentialsFile ? String(cfg.credentialsFile) : defaultCredentialsPath();
+      if (file) {
+        try { getToken = tokenSource(loadGoogleCredentials(file)); } catch (e) { throw new DriverError("authentication", (e as Error).message); }
+      }
+    }
+    if (!getToken) throw new DriverError("authentication", "An OAuth access token or a Google credentials file is required for Google Cloud (for example `gcloud auth print-access-token`).");
+    const wrap = getToken;
+    const tokenOrError = async () => { try { return await wrap(); } catch (e) { throw e instanceof DriverError ? e : new DriverError("authentication", (e as Error).message); } };
     if (!cfg.projectId) throw new DriverError("syntax", "Project ID is required.");
-    const c = makeClient({ host: local ? String(cfg.host) : "firestore.googleapis.com", port: local ? Number(cfg.port ?? 8080) : 443, ssl: local ? !!cfg.ssl : true, token });
+    const c = makeClient({ host: local ? String(cfg.host) : "firestore.googleapis.com", port: local ? Number(cfg.port ?? 8080) : 443, ssl: local ? !!cfg.ssl : true, getToken: tokenOrError });
     const conn = new FirestoreConnection(c, String(cfg.projectId), String(cfg.databaseId ?? "(default)"), { product: local ? "Firestore (custom endpoint)" : "Google Cloud Firestore", version: "v1" }, !!cfg.readOnly);
     try { await conn.ping(); } catch (e) { c.close(); throw e; }
     return conn;

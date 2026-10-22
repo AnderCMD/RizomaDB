@@ -1,3 +1,4 @@
+import { awsKeysFromEnv, loadAwsProfile, type AwsKeys } from "./awsCredentials.js";
 import http from "node:http";
 import https from "node:https";
 import {
@@ -180,10 +181,15 @@ class DynamoConnection implements Connection {
 export const dynamodbDriver: DriverPlugin = {
   ...meta,
   async connect(cfg) {
-    const region = String(cfg.region ?? "us-east-1");
     const local = typeof cfg.host === "string" && cfg.host !== "";
-    const creds: Credentials = { accessKeyId: String(cfg.accessKeyId ?? (local ? "local" : "")), secretAccessKey: String(cfg.secretAccessKey ?? (local ? "local" : "")), ...(cfg.sessionToken ? { sessionToken: String(cfg.sessionToken) } : {}) };
-    if (!creds.accessKeyId || !creds.secretAccessKey) throw new DriverError("authentication", "Access key ID and secret access key are required (the AWS credential chain, profiles and SSO are not supported).");
+    // Keys typed in the connection win, then a named profile from ~/.aws/credentials, then the standard environment variables.
+    let keys: AwsKeys | undefined = cfg.accessKeyId || cfg.secretAccessKey ? { accessKeyId: String(cfg.accessKeyId ?? ""), secretAccessKey: String(cfg.secretAccessKey ?? ""), ...(cfg.sessionToken ? { sessionToken: String(cfg.sessionToken) } : {}) } : undefined;
+    if (!keys && cfg.profile) { try { keys = loadAwsProfile(String(cfg.profile)); } catch (e) { throw new DriverError("authentication", (e as Error).message); } }
+    if (!keys && !local) keys = awsKeysFromEnv();
+    if (!keys && local) keys = { accessKeyId: "local", secretAccessKey: "local" };
+    const region = String(cfg.region || keys?.region || "us-east-1");
+    const creds: Credentials = { accessKeyId: keys?.accessKeyId ?? "", secretAccessKey: keys?.secretAccessKey ?? "", ...(keys?.sessionToken ? { sessionToken: keys.sessionToken } : {}) };
+    if (!creds.accessKeyId || !creds.secretAccessKey) throw new DriverError("authentication", "Access key ID and secret access key are required, or an AWS profile with access keys (SSO and role assumption are not supported).");
     const c = makeClient({ host: local ? String(cfg.host) : `dynamodb.${region}.amazonaws.com`, port: local ? Number(cfg.port ?? 8000) : 443, ssl: local ? !!cfg.ssl : true, region, creds });
     const conn = new DynamoConnection(c, { product: local ? "DynamoDB (custom endpoint)" : "Amazon DynamoDB", version: region }, !!cfg.readOnly);
     try { await conn.ping(); } catch (e) { c.close(); throw e; }

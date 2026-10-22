@@ -28,6 +28,7 @@ export const meta: Omit<DriverPlugin, "connect"> = {
     properties: {
       projectId: { type: "string", title: "Project ID" },
       databaseId: { type: "string", title: "Database ID", default: "(default)" },
+      credentialsFile: { type: "string", title: "Google credentials file (JSON)", description: "A service-account key, or the file written by `gcloud auth application-default login`. RizomaDB asks Google for short-lived tokens with it. Empty = GOOGLE_APPLICATION_CREDENTIALS or the gcloud default file." },
       accessToken: { type: "string", title: "OAuth access token", secret: true, description: "For example from `gcloud auth print-access-token` (expires after about an hour). Not needed for the emulator." },
       host: { type: "string", title: "Endpoint host (empty = Google Cloud)", description: "Set for the Firestore emulator, e.g. localhost" },
       port: { type: "number", title: "Endpoint port", default: 8080 },

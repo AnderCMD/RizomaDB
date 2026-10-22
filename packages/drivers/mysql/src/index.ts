@@ -90,13 +90,13 @@ async function* run(c: Ctx, req: ExecuteRequest, signal: AbortSignal): AsyncGene
   };
   signal.addEventListener("abort", onAbort, { once: true });
   const batch = req.batchSize ?? 500, max = req.maxRows ?? Infinity;
-  let buf: Value[][] = [], n = 0, sentCols = false;
+  let buf: Value[][] = [], n = 0, sentCols = false, drained = false;
   try {
     // A killed or dropped connection can leave the row stream waiting forever, so every read races against connection loss.
     const rows = (stream as AsyncIterable<Value[]>)[Symbol.asyncIterator]();
     for (;;) {
       const step = await c.lost.race(rows.next());
-      if (step.done) break;
+      if (step.done) { drained = true; break; }
       const row = step.value;
       if (!sentCols && fields) { sentCols = true; yield { type: "columns", columns: colsOf(fields) }; }
       buf.push(row); n++;
@@ -111,7 +111,11 @@ async function* run(c: Ctx, req: ExecuteRequest, signal: AbortSignal): AsyncGene
     yield { type: "done", rowCount: n, durationMs: performance.now() - t0, ...(header && !(fields && fields.length) ? { affectedRows: header.affectedRows ?? 0 } : {}) };
   } catch (e) {
     throw signal.aborted && !(e instanceof DriverError && e.kind !== "cancelled") ? new DriverError("cancelled", "Query cancelled", { cause: e }) : mapError(e);
-  } finally { finished = true; signal.removeEventListener("abort", onAbort); }
+  } finally {
+    finished = true; signal.removeEventListener("abort", onAbort);
+    // A caller that stops reading early (or aborts and returns) leaves rows unread: without this the connection stays busy and the next statement waits for them.
+    if (!drained) stream.destroy();
+  }
 }
 
 const colsOf = (f: mysql.FieldPacket[]): ColumnInfo[] =>

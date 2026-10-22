@@ -17,6 +17,6 @@ const enabled = await engineUp("127.0.0.1", Number(process.env.RZ_MYSQL_PORT ?? 
 
 runConformance({
   enabled,
-  plugin: mysqlDriver, config: freshDb, slowSql: "SELECT SLEEP(10)", paramSql: "SELECT ? AS a, ? AS b",
+  plugin: mysqlDriver, config: freshDb, manyRowsSql: "SELECT 1 FROM information_schema.columns a, information_schema.columns b LIMIT 200000", slowSql: "SELECT SLEEP(10)", paramSql: "SELECT ? AS a, ? AS b",
   badConfig: () => ({ ...base, password: "wrong" }),
 });

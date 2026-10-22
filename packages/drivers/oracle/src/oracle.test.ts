@@ -21,7 +21,7 @@ runConformance({
   enabled,
   plugin: oracleDriver, config: freshUser,
   // DBMS_SESSION.SLEEP is not interruptible by break(); a CPU-bound query is (documented limitation).
-  slowSql: "SELECT COUNT(*) FROM dual CONNECT BY LEVEL <= 2000000000", paramSql: "SELECT :1 AS a, :2 AS b FROM dual",
+  manyRowsSql: "SELECT LEVEL FROM dual CONNECT BY LEVEL <= 200000", slowSql: "SELECT COUNT(*) FROM dual CONNECT BY LEVEL <= 2000000000", paramSql: "SELECT :1 AS a, :2 AS b FROM dual",
   bigintSql: "SELECT 9223372036854775807 AS big FROM dual",
   createTableSql: "CREATE TABLE conf_t (id NUMBER PRIMARY KEY, name VARCHAR2(100) NOT NULL)",
   badConfig: () => ({ ...base, user: "system", password: "wrong" }),

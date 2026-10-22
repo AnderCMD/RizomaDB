@@ -16,6 +16,7 @@ async function freshDb() {
 
 runConformance({
   plugin: clickhouseDriver, enabled, config: freshDb,
+  manyRowsSql: "SELECT number FROM numbers(200000)",
   slowSql: "SELECT count() FROM numbers(100000000000)",
   paramSql: "SELECT {p1:String} AS a, {p2:Nullable(String)} AS b",
   bigintSql: "SELECT toInt64(9223372036854775807) AS big",

@@ -18,6 +18,6 @@ const enabled = await engineUp("127.0.0.1", Number(process.env.RZ_MSSQL_PORT ?? 
 
 runConformance({
   enabled,
-  plugin: mssqlDriver, config: freshDb, slowSql: "WAITFOR DELAY '00:00:10'", bigintSql: "SELECT CAST(9223372036854775807 AS BIGINT) AS big", paramSql: "SELECT @p1 AS a, @p2 AS b",
+  plugin: mssqlDriver, config: freshDb, manyRowsSql: "SELECT TOP 200000 1 AS x FROM sys.all_columns a CROSS JOIN sys.all_columns b", slowSql: "WAITFOR DELAY '00:00:10'", bigintSql: "SELECT CAST(9223372036854775807 AS BIGINT) AS big", paramSql: "SELECT @p1 AS a, @p2 AS b",
   badConfig: () => ({ ...base, password: "wrong" }),
 });

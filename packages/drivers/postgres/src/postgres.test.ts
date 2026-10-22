@@ -21,6 +21,7 @@ runConformance({
   enabled,
   plugin: postgresDriver,
   config: freshDb,
+  manyRowsSql: "SELECT g FROM generate_series(1, 200000) g",
   slowSql: "SELECT pg_sleep(10)",
   paramSql: "SELECT $1::text AS a, $2::text AS b",
   badConfig: () => ({ ...base, database: "postgres", password: "wrong" }),

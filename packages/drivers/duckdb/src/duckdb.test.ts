@@ -9,6 +9,7 @@ import { duckdbDriver, isReadOnlySafe } from "./index.js";
 runConformance({
   plugin: duckdbDriver,
   config: () => ({ path: join(mkdtempSync(join(tmpdir(), "rz-duck-")), "db.duckdb") }),
+  manyRowsSql: "SELECT i FROM range(200000) r(i)",
   slowSql: "SELECT count(*) FROM range(100000000000) r(i) WHERE i % 7 = 3",
   paramSql: "SELECT ? AS a, ? AS b",
   badConfig: () => ({ path: "/nonexistent-dir/x/y.duckdb" }),
