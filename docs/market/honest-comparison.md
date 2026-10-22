@@ -10,7 +10,7 @@ Based on a review of the competitors' public listings (checked 2026-10-20) and o
 | Paid tiers | None | Pro/Team | Not verified | None |
 | Telemetry | None; asserted by a zero-socket test | Anonymous (follows VS Code setting) | Anonymous, own opt-out | Not found |
 | Maturity | 1.0.0, newly released, not yet tested by other people | Widely used | Widely used | Widely used |
-| Engines with real-engine tests | 18 drivers covering 24 engines: SQLite, PostgreSQL (+CockroachDB, YugabyteDB), MySQL/MariaDB (+TiDB), SQL Server, Oracle, MongoDB, Redis/Valkey, ClickHouse, Elasticsearch/OpenSearch, DuckDB, Neo4j, DynamoDB Local, InfluxDB 2 and 3, Cassandra/ScyllaDB, Firestore emulator, Trino, HydraDB (experimental) | "90+" per their listing | See listing | Many via drivers |
+| Engines with real-engine tests | 18 drivers covering 25 engines: SQLite, PostgreSQL (+CockroachDB, YugabyteDB), MySQL/MariaDB (+TiDB), SQL Server, Oracle, MongoDB, Redis/Valkey, ClickHouse, Elasticsearch/OpenSearch, DuckDB, Neo4j, DynamoDB Local, InfluxDB 2 and 3, Cassandra/ScyllaDB, Firestore emulator, Trino, HydraDB (experimental) | "90+" per their listing | See listing | Many via drivers |
 
 ## Where RizomaDB is not (yet) competitive
 - **Breadth**: fewer engines than DBCode's listing; real cloud accounts (AWS, Google Cloud, Atlas, managed PostgreSQL/MySQL) were never tested; Redshift, Snowflake and BigQuery are not implemented; Level 3 engines and a JDBC/ODBC bridge do not exist.

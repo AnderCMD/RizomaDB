@@ -11,12 +11,21 @@
 
 Aquí se listan los cambios notables, del más nuevo al más antiguo. El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/). Todavía no se ha publicado nada.
 
+## [1.0.1] — 2026-10-22
+
+### Cambiado
+- La página del Marketplace se reescribió con capturas de las pantallas principales, una tabla de motores, los pasos para empezar y los límites conocidos.
+
+### Corregido
+- El sitio de documentación ahora sirve su logotipo, favicon e imágenes para compartir.
+- El número de motores es 25 (las notas de la 1.0.0 decían 24).
+
 ## [1.0.0] — 2026-10-22
 
 Primera versión.
 
 ### Añadido
-- Un cliente de bases de datos multimotor para VS Code con 24 motores, un editor SQL nativo con botones Ejecutar, una rejilla de resultados editable con cambios pendientes que se aplican en una transacción, un diseñador de tablas, diagramas ER, importación/exportación y herramientas de esquema.
+- Un cliente de bases de datos multimotor para VS Code con 25 motores, un editor SQL nativo con botones Ejecutar, una rejilla de resultados editable con cambios pendientes que se aplican en una transacción, un diseñador de tablas, diagramas ER, importación/exportación y herramientas de esquema.
 - Gobierno: políticas en capas donde gana la más estricta, un único punto de política y auditoría para toda escritura, enmascarado de columnas, catálogos compartidos sin secretos y archivos de catálogo cifrados.
 - Paginación opcional de tablas por clave primaria (SQLite, PostgreSQL, MySQL, SQL Server, Oracle), edición de entradas de streams de Redis, perfiles de AWS para DynamoDB y archivos de credenciales de Google para Firestore.
 - Un constructor de consultas sin SQL, un generador de usuarios de solo lectura, favoritos en el historial y exportación/importación de ajustes.

@@ -3,7 +3,7 @@ layout: home
 hero:
   name: RizomaDB
   text: All your databases, one place.
-  tagline: A free, open-source, no-telemetry database client for VS Code. 24 engines, one results grid, safe by default.
+  tagline: A free, open-source, no-telemetry database client for VS Code. 25 engines, one results grid, safe by default.
   image: { src: /logo.svg, alt: RizomaDB }
   actions:
     - { theme: brand, text: Get started, link: /en/guides/getting-started }

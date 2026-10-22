@@ -10,7 +10,7 @@ Basada en una revisión de los listados públicos de la competencia (comprobados
 | Niveles de pago | Ninguno | Pro/Team | No verificado | Ninguno |
 | Telemetría | Ninguna; la comprueba una prueba de cero sockets | Anónima (sigue el ajuste de VS Code) | Anónima, con su propia exclusión voluntaria | No encontrada |
 | Madurez | 1.0.0, recién publicado, aún sin pruebas de otras personas | Muy usado | Muy usado | Muy usado |
-| Motores con pruebas contra un motor real | 18 drivers que cubren 24 motores: SQLite, PostgreSQL (+CockroachDB, YugabyteDB), MySQL/MariaDB (+TiDB), SQL Server, Oracle, MongoDB, Redis/Valkey, ClickHouse, Elasticsearch/OpenSearch, DuckDB, Neo4j, DynamoDB Local, InfluxDB 2 y 3, Cassandra/ScyllaDB, emulador de Firestore, Trino, HydraDB (experimental) | «90+» según su listado | Ver su listado | Muchos mediante drivers |
+| Motores con pruebas contra un motor real | 18 drivers que cubren 25 motores: SQLite, PostgreSQL (+CockroachDB, YugabyteDB), MySQL/MariaDB (+TiDB), SQL Server, Oracle, MongoDB, Redis/Valkey, ClickHouse, Elasticsearch/OpenSearch, DuckDB, Neo4j, DynamoDB Local, InfluxDB 2 y 3, Cassandra/ScyllaDB, emulador de Firestore, Trino, HydraDB (experimental) | «90+» según su listado | Ver su listado | Muchos mediante drivers |
 
 ## Dónde RizomaDB no es (todavía) competitivo
 - **Amplitud**: menos motores que el listado de DBCode; nunca se probaron cuentas reales en la nube (AWS, Google Cloud, Atlas, PostgreSQL/MySQL gestionados); Redshift, Snowflake y BigQuery no están implementados; no existen los motores de Nivel 3 ni un puente JDBC/ODBC.

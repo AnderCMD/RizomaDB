@@ -3,7 +3,7 @@ layout: home
 hero:
   name: RizomaDB
   text: Todas tus bases de datos, un solo lugar.
-  tagline: Un cliente de bases de datos gratuito, de código abierto y sin telemetría para VS Code. 24 motores, una rejilla de resultados, seguro por defecto.
+  tagline: Un cliente de bases de datos gratuito, de código abierto y sin telemetría para VS Code. 25 motores, una rejilla de resultados, seguro por defecto.
   image: { src: /logo.svg, alt: RizomaDB }
   actions:
     - { theme: brand, text: Primeros pasos, link: /es/guias/primeros-pasos }

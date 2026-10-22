@@ -8,7 +8,7 @@ This page takes you from nothing to editing a value in a table. The same walk-th
 Install RizomaDB from the VS Code Marketplace (search for "RizomaDB", or run `code --install-extension AnderCMD.rizomadb`), or download the `.vsix` file from the latest [GitHub release](https://github.com/AnderCMD/RizomaDB/releases) and install it:
 
 ```bash
-code --install-extension rizomadb-1.0.0.vsix
+code --install-extension rizomadb-1.0.1.vsix
 ```
 
 To build it yourself:
