@@ -6,6 +6,9 @@ import { defaultEffectivePolicy } from "@rizomadb/core";
 import { buildModel, columnStatements, type Dialect } from "@rizomadb/schema-tools";
 import { postgresDriver } from "@rizomadb/driver-postgres";
 import { mysqlDriver } from "@rizomadb/driver-mysql";
+import { mssqlDriver } from "@rizomadb/driver-mssql";
+import { oracleDriver } from "@rizomadb/driver-oracle";
+import { clickhouseDriver } from "@rizomadb/driver-clickhouse";
 import { mongoDriver } from "@rizomadb/driver-mongodb";
 import { elasticsearchDriver } from "@rizomadb/driver-elasticsearch";
 import { neo4jDriver } from "@rizomadb/driver-neo4j";
@@ -35,11 +38,17 @@ async function walk(conn: Connection, driver: string, sql: string, size: number)
 }
 
 // ---- SQL engines: filter, order, paging and column DDL ----
-const sqlEngines: { name: string; driver: string; plugin: DriverPlugin; dialect: Dialect; port: number; env: string; admin: ResolvedConnectionConfig; cfg: (db: string) => ResolvedConnectionConfig; create: string }[] = [
+const sqlEngines: { name: string; driver: string; plugin: DriverPlugin; dialect: Dialect; port: number; env: string; admin: ResolvedConnectionConfig; cfg: (db: string) => ResolvedConnectionConfig; create: string; provision?: (admin: Connection, db: string) => Promise<void> }[] = [
   { name: "postgres", driver: "postgres", plugin: postgresDriver, dialect: "postgres", port: Number(process.env.RZ_PG_PORT ?? 54329), env: "pg", admin: { host: "localhost", port: Number(process.env.RZ_PG_PORT ?? 54329), user: "postgres", password: "rizoma_test", ssl: false, database: "postgres" },
     cfg: (db) => ({ host: "localhost", port: Number(process.env.RZ_PG_PORT ?? 54329), user: "postgres", password: "rizoma_test", ssl: false, database: db }), create: "CREATE TABLE people (id integer PRIMARY KEY, name varchar(20) NOT NULL, age integer)" },
   { name: "mysql", driver: "mysql", plugin: mysqlDriver, dialect: "mysql", port: Number(process.env.RZ_MYSQL_PORT ?? 33069), env: "mysql", admin: { host: "127.0.0.1", port: Number(process.env.RZ_MYSQL_PORT ?? 33069), user: "root", password: "rizoma_test", ssl: false },
     cfg: (db) => ({ host: "127.0.0.1", port: Number(process.env.RZ_MYSQL_PORT ?? 33069), user: "root", password: "rizoma_test", ssl: false, database: db }), create: "CREATE TABLE people (id int PRIMARY KEY, name varchar(20) NOT NULL, age int)" },
+  { name: "mssql", driver: "mssql", plugin: mssqlDriver, dialect: "mssql", port: Number(process.env.RZ_MSSQL_PORT ?? 14339), env: "mssql", admin: { host: "127.0.0.1", port: Number(process.env.RZ_MSSQL_PORT ?? 14339), user: "sa", password: "Rizoma_test1", ssl: true, sslVerify: false },
+    cfg: (db) => ({ host: "127.0.0.1", port: Number(process.env.RZ_MSSQL_PORT ?? 14339), user: "sa", password: "Rizoma_test1", ssl: true, sslVerify: false, database: db }), create: "CREATE TABLE people (id int PRIMARY KEY, name varchar(20) NOT NULL, age int)" },
+  // Oracle has no CREATE DATABASE: each run gets its own schema (user) with its own password.
+  { name: "oracle", driver: "oracle", plugin: oracleDriver, dialect: "oracle", port: Number(process.env.RZ_ORACLE_PORT ?? 15219), env: "oracle", admin: { host: "127.0.0.1", port: Number(process.env.RZ_ORACLE_PORT ?? 15219), service: "FREEPDB1", user: "system", password: "rizoma_test" },
+    cfg: (db) => ({ host: "127.0.0.1", port: Number(process.env.RZ_ORACLE_PORT ?? 15219), service: "FREEPDB1", user: db, password: "Rz_test_pw1" }), create: "CREATE TABLE people (id number(10) PRIMARY KEY, name varchar2(20) NOT NULL, age number(10))",
+    provision: async (admin, db) => { await run(admin, `CREATE USER ${db} IDENTIFIED BY Rz_test_pw1 QUOTA UNLIMITED ON USERS`); await run(admin, `GRANT CREATE SESSION, CREATE TABLE TO ${db}`); } },
 ];
 
 for (const e of sqlEngines) {
@@ -47,14 +56,16 @@ for (const e of sqlEngines) {
   describe.skipIf(!up)(`${e.name}: table filter, paging and column edits`, () => {
     let conn: Connection;
     beforeAll(async () => {
-      const db = `rz_${randomBytes(5).toString("hex")}`;
-      const admin = await e.plugin.connect(e.admin, { log() {} }); await run(admin, `CREATE DATABASE ${db}`); await admin.close();
+      const hex = randomBytes(5).toString("hex"), db = e.name === "oracle" ? `RZ${hex.toUpperCase()}` : `rz_${hex}`;
+      const admin = await e.plugin.connect(e.admin, { log() {} }); await (e.provision ? e.provision(admin, db) : run(admin, `CREATE DATABASE ${db}`)); await admin.close();
       conn = await e.plugin.connect(e.cfg(db), { log() {} });
       await run(conn, e.create);
       for (let i = 1; i <= 25; i++) await run(conn, `INSERT INTO people VALUES (${i}, 'p${i}', ${20 + (i % 10)})`);
     });
     afterAll(async () => { await conn?.close(); });
-    const q = (where = "", order = "") => buildTableQuery({ driver: e.driver, quoted: conn.quoteIdent("people"), name: "people", where, order, limit: 100000 });
+    // Oracle stores unquoted names in upper case and the explorer passes them as stored.
+    const C = (n: string) => (e.name === "oracle" ? n.toUpperCase() : n), TBL = C("people");
+    const q = (where = "", order = "") => buildTableQuery({ driver: e.driver, quoted: conn.quoteIdent(TBL), name: TBL, where, order, limit: 100000 });
 
     it("pages a whole table in order without gaps or repeats", async () => {
       const r = await walk(conn, e.driver, q("", "id"), 10);
@@ -67,26 +78,51 @@ for (const e of sqlEngines) {
     it("rejects an injected filter before it reaches the server", () => { expect(() => q("1=1; DROP TABLE people")).toThrow(); });
 
     it("renames, retypes, defaults, constrains, adds and drops a column on the real table", async () => {
-      const describe_ = async () => { const info = await conn.introspect().describeTable({ name: "people" }); return buildModel(e.dialect, [{ ...info }]).tables[0]!; };
+      const describe_ = async () => { const info = await conn.introspect().describeTable({ name: TBL }); return buildModel(e.dialect, [{ ...info }]).tables[0]!; };
       const exec = async (table: Awaited<ReturnType<typeof describe_>>, op: Parameters<typeof columnStatements>[2]) => { for (const s of columnStatements(e.dialect, table, op)) if (!s.sql.startsWith("--")) await run(conn, s.sql); return describe_(); };
       let t = await describe_();
-      t = await exec(t, { op: "rename", column: "age", to: "years" });
-      expect(t.columns.map((c) => c.name)).toContain("years");
+      t = await exec(t, { op: "rename", column: C("age"), to: C("years") });
+      expect(t.columns.map((c) => c.name)).toContain(C("years"));
       expect((await run(conn, "SELECT years FROM people WHERE id = 1")).rows).toHaveLength(1);
-      t = await exec(t, { op: "type", column: "name", type: "varchar(50)" });
-      expect(t.columns.find((c) => c.name === "name")!.type).toMatch(/50/);
-      t = await exec(t, { op: "default", column: "years", default: "7" });
-      expect(String(t.columns.find((c) => c.name === "years")!.default)).toContain("7");
-      t = await exec(t, { op: "nullable", column: "years", nullable: false });
-      expect(t.columns.find((c) => c.name === "years")!.nullable).toBe(false);
-      t = await exec(t, { op: "add", column: { name: "note", type: e.dialect === "postgres" ? "text" : "varchar(30)", nullable: true } });
-      expect(t.columns.map((c) => c.name)).toContain("note");
-      t = await exec(t, { op: "drop", column: "note" });
-      expect(t.columns.map((c) => c.name)).not.toContain("note");
+      t = await exec(t, { op: "type", column: C("name"), type: "varchar(50)" });
+      expect(t.columns.find((c) => c.name === C("name"))!.type).toMatch(/50/);
+      t = await exec(t, { op: "default", column: C("years"), default: "7" });
+      expect(String(t.columns.find((c) => c.name === C("years"))!.default)).toContain("7");
+      t = await exec(t, { op: "default", column: C("years"), default: "9" });
+      expect(String(t.columns.find((c) => c.name === C("years"))!.default)).toContain("9");
+      t = await exec(t, { op: "nullable", column: C("years"), nullable: false });
+      expect(t.columns.find((c) => c.name === C("years"))!.nullable).toBe(false);
+      t = await exec(t, { op: "add", column: { name: C("note"), type: e.dialect === "postgres" ? "text" : "varchar(30)", nullable: true } });
+      expect(t.columns.map((c) => c.name)).toContain(C("note"));
+      t = await exec(t, { op: "drop", column: C("note") });
+      expect(t.columns.map((c) => c.name)).not.toContain(C("note"));
       expect(Number((await run(conn, "SELECT count(*) FROM people")).rows[0]![0])).toBe(25);
     });
   });
 }
+
+// ---- ClickHouse: filter and paging (columns are not altered from the grid on this engine) ----
+const chPort = Number(process.env.RZ_CLICKHOUSE_PORT ?? 18124);
+describe.skipIf(!(await engineUp("127.0.0.1", chPort, "clickhouse")))("clickhouse: table filter and paging", () => {
+  let conn: Connection; const db = `rz_${randomBytes(4).toString("hex")}`;
+  beforeAll(async () => {
+    const base = { host: "localhost", port: chPort, user: "default", password: "rizoma_test" };
+    const admin = await clickhouseDriver.connect(base, { log() {} }); await run(admin, `CREATE DATABASE ${db}`); await admin.close();
+    conn = await clickhouseDriver.connect({ ...base, database: db }, { log() {} });
+    await run(conn, "CREATE TABLE people (id Int32, name String, age Int32) ENGINE = MergeTree ORDER BY id");
+    await run(conn, `INSERT INTO people SELECT number + 1, concat('p', toString(number + 1)), 20 + ((number + 1) % 10) FROM numbers(25)`);
+  });
+  afterAll(async () => { await conn?.close(); });
+  const q = (where = "", order = "") => buildTableQuery({ driver: "clickhouse", quoted: conn.quoteIdent("people"), name: "people", where, order, limit: 100000 });
+  it("pages a whole table in order without gaps or repeats", async () => {
+    const r = await walk(conn, "clickhouse", q("", "id"), 10);
+    expect(r.out.map(Number)).toEqual(Array.from({ length: 25 }, (_, i) => i + 1)); expect(r.pages).toBe(3);
+  });
+  it("filters and orders in the database, then pages the filtered rows", async () => {
+    const r = await walk(conn, "clickhouse", q("age >= 28", "id DESC"), 3);
+    expect(r.out.map(Number)).toEqual(Array.from({ length: 25 }, (_, i) => i + 1).filter((i) => 20 + (i % 10) >= 28).sort((x, y) => y - x));
+  });
+});
 
 // ---- MongoDB ----
 const mongoPort = Number(process.env.RZ_MONGO_PORT ?? 27018);

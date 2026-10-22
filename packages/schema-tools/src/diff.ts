@@ -104,8 +104,11 @@ function alterColumn(d: Dialect, c: Extract<Change, { kind: "alter-column" }>): 
   } else if (d === "mysql") {
     out.push({ sql: `ALTER TABLE ${tn} MODIFY COLUMN ${columnDef(d, c.to)}`, ...typeNarrowing });
   } else if (d === "mssql") {
+    // A default is a named constraint with a generated name: it is looked up and dropped, then the new one is added unnamed.
+    const lit = (x: string) => x.replaceAll("'", "''");
+    if (c.what.includes("default")) out.push({ sql: `DECLARE @rz sysname = (SELECT dc.name FROM sys.default_constraints dc JOIN sys.columns c ON c.object_id = dc.parent_object_id AND c.column_id = dc.parent_column_id WHERE dc.parent_object_id = OBJECT_ID(N'${lit(tn)}') AND c.name = N'${lit(c.to.name)}');\nIF @rz IS NOT NULL BEGIN DECLARE @rzsql nvarchar(max) = N'ALTER TABLE ${lit(tn)} DROP CONSTRAINT ' + QUOTENAME(@rz); EXEC(@rzsql); END` });
     if (c.what.includes("type") || c.what.includes("nullable")) out.push({ sql: `ALTER TABLE ${tn} ALTER COLUMN ${col} ${c.to.type} ${c.to.nullable ? "NULL" : "NOT NULL"}`, ...typeNarrowing });
-    if (c.what.includes("default")) out.push({ sql: `-- default of ${tn}.${col} changes`, manual: "SQL Server defaults are named constraints: drop the old default constraint, then ADD CONSTRAINT ... DEFAULT." });
+    if (c.what.includes("default") && c.to.default !== undefined) out.push({ sql: `ALTER TABLE ${tn} ADD DEFAULT ${c.to.default} FOR ${col}` });
   } else if (d === "oracle") {
     const bits = [c.what.includes("type") ? c.to.type : "", c.what.includes("default") ? `DEFAULT ${c.to.default ?? "NULL"}` : "", c.what.includes("nullable") ? (c.to.nullable ? "NULL" : "NOT NULL") : ""].filter(Boolean).join(" ");
     out.push({ sql: `ALTER TABLE ${tn} MODIFY (${col} ${bits})`, ...typeNarrowing });

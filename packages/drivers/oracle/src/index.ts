@@ -66,13 +66,15 @@ async function* run(conn: oracledb.Connection, state: { readOnly: boolean; inTx:
   const t0 = performance.now();
   const sql = req.sql.replace(/;\s*$/, (m) => (/\bend\s*;?\s*$/i.test(req.sql) ? m : ""));
   const binds = (req.params ?? []).map(bindOf) as oracledb.BindParameters;
-  const onAbort = () => { void conn.break().catch(() => {}); };
+  // A break still in flight when this statement ends would cancel whatever runs next on the connection, so it is awaited below.
+  let pending: Promise<void> | undefined, finished = false, busy = true;   // busy: the server is working for this statement (false while the consumer holds a yielded batch)
+  const onAbort = () => { if (!finished && busy) pending = conn.break().catch(() => {}); };
   signal.addEventListener("abort", onAbort, { once: true });
   const batch = req.batchSize ?? 500, max = req.maxRows ?? Infinity;
   try {
     if (!isQuery(sql)) {
       const r = await conn.execute(sql, binds, { autoCommit: !state.inTx });
-      yield { type: "done", rowCount: 0, affectedRows: r.rowsAffected ?? 0, durationMs: performance.now() - t0 };
+      busy = false; yield { type: "done", rowCount: 0, affectedRows: r.rowsAffected ?? 0, durationMs: performance.now() - t0 }; busy = true;
       return;
     }
     const stream = conn.queryStream(sql, binds, { fetchArraySize: Math.min(batch, 1000), outFormat: oracledb.OUT_FORMAT_ARRAY, fetchTypeHandler });
@@ -84,18 +86,22 @@ async function* run(conn: oracledb.Connection, state: { readOnly: boolean; inTx:
     });
     let buf: Value[][] = [], n = 0, sent = false;
     for await (const row of stream as AsyncIterable<unknown[]>) {
-      if (!sent && cols) { sent = true; yield { type: "columns", columns: cols }; }
+      if (!sent && cols) { sent = true; busy = false; yield { type: "columns", columns: cols }; busy = true; }
       buf.push(row.map((v, i) => normalize(v, names[i] ?? "")));
       n++;
-      if (buf.length >= batch) { yield { type: "rows", rows: buf }; buf = []; }
+      if (buf.length >= batch) { busy = false; yield { type: "rows", rows: buf }; busy = true; buf = []; }
       if (n >= max) { stream.destroy(); break; }
     }
-    if (!sent && cols) yield { type: "columns", columns: cols };
-    if (buf.length) yield { type: "rows", rows: buf };
-    yield { type: "done", rowCount: n, durationMs: performance.now() - t0 };
+    if (!sent && cols) { busy = false; yield { type: "columns", columns: cols }; busy = true; }
+    if (buf.length) { busy = false; yield { type: "rows", rows: buf }; busy = true; }
+    busy = false; yield { type: "done", rowCount: n, durationMs: performance.now() - t0 }; busy = true;
   } catch (e) {
     throw signal.aborted ? new DriverError("cancelled", "Query cancelled", { cause: e }) : mapError(e);
-  } finally { signal.removeEventListener("abort", onAbort); }
+  } finally {
+    finished = true;
+    signal.removeEventListener("abort", onAbort);
+    if (pending) await Promise.race([pending, new Promise<void>((res) => setTimeout(res, 1500).unref())]);
+  }
 }
 
 class OracleConnection implements Connection {
