@@ -29,4 +29,4 @@ none
 none (built on node:http)
 
 ## Running the integration tests
-`docker compose -f test/compose/docker-compose.yml up -d hydradb` then `pnpm --filter @rizomadb/driver-hydradb test` (HTTP port 18443, override with `RZ_HYDRADB_PORT`; the test token is in `test/compose/hydradb-auth-token`). CI does not run this engine yet (the image needs a token file), so it is listed in `RZ_SKIP_ENGINES`.
+`docker compose -f test/compose/docker-compose.yml up -d hydradb` then `pnpm --filter @rizomadb/driver-hydradb test` (HTTP port 18443, override with `RZ_HYDRADB_PORT`; the test token is in `test/compose/hydradb-auth-token`). CI runs it in the `engines-extra` job, which starts the engine from the compose file (the image needs a token file, so it cannot be a job service).

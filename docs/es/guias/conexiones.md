@@ -17,7 +17,7 @@ Cada conexión tiene un entorno. `prod` es de solo lectura por defecto y `stagin
 | Bloquear escrituras | El entorno es de solo lectura |
 | Sin protección | Nada adicional |
 
-Los entornos nuevos se guardan en el ajuste `rizomadb.environments`, donde también puedes editarlos. Solo pueden hacer las cosas más estrictas que tus archivos de política, nunca más laxas. Mira [Políticas](/en/enterprise/policy) (en inglés).
+Los entornos nuevos se guardan en el ajuste `rizomadb.environments`, donde también puedes editarlos. Solo pueden hacer las cosas más estrictas que tus archivos de política, nunca más laxas. Mira [Políticas](/es/empresa/politicas).
 
 ### Ruta de red
 Por defecto RizomaDB conecta directamente. En **Ruta de red** puedes pasar por un **túnel SSH** (archivo de clave o contraseña, con verificación estricta de la huella del host y aviso ante hosts desconocidos) o por un **proxy HTTP** / **proxy SOCKS5** (con usuario y contraseña opcionales). Una conexión usa un túnel SSH *o* un proxy, no ambos.
@@ -35,7 +35,7 @@ La segunda pestaña de la misma pantalla lista las conexiones que tienes. Cada t
 La conexión *activa* es la asociada al editor de consultas en el que estás, o la última que ejecutó algo. La barra de estado la muestra como `[ENTORNO] nombre · base de datos`; haz clic para cambiar la conexión del editor actual.
 
 ## Importar desde otras herramientas
-**RizomaDB: Importar conexiones de otras herramientas…** lee cadenas de conexión, `~/.pgpass`, `~/.my.cnf` y archivos de DBeaver y SQLTools. Mira [Migración](/en/guides/migration) (en inglés).
+**RizomaDB: Importar conexiones de otras herramientas…** lee cadenas de conexión, `~/.pgpass`, `~/.my.cnf` y archivos de DBeaver y SQLTools. Mira [Migración](/es/guias/migracion).
 
 ## Compartir conexiones con un equipo
 Un archivo de catálogo (`.rizomadb/connections.json` en el proyecto, o el archivo indicado en `rizomadb.catalog.teamFile`) lista conexiones sin secretos; cada persona agrega su propia contraseña la primera vez. Las entradas compartidas son de solo lectura en la interfaz.

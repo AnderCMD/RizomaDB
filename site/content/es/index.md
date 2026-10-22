@@ -14,7 +14,7 @@ features:
   - { icon: "▶️", title: "Un botón Ejecutar sobre cada sentencia", details: "Ejecutar, Explicar, Ejecutar todo, parámetros, historial con buscador y notebooks, en el lenguaje de cada motor.", link: /es/guias/editor-de-consultas }
   - { icon: "🗂️", title: "Una rejilla hecha para explorar", details: "Ordena, filtra en las filas o en la base de datos, cambia anchos, oculta, panel de registro, copia como CSV/JSON/Markdown y Cargar más en todos los motores.", link: /es/guias/rejilla-de-resultados }
   - { icon: "✏️", title: "Edita en el sitio, con seguridad", details: "Doble clic en una celda. Los cambios esperan como pendientes; revisa el SQL y aplícalos en una transacción, con detección de conflictos.", link: /es/guias/edicion-de-datos }
-  - { icon: "🛡️", title: "Seguro por defecto", details: "Políticas en capas donde gana la más estricta, un único punto de auditoría para toda escritura, producción de solo lectura, enmascarado de columnas.", link: /en/enterprise/policy }
+  - { icon: "🛡️", title: "Seguro por defecto", details: "Políticas en capas donde gana la más estricta, un único punto de auditoría para toda escritura, producción de solo lectura, enmascarado de columnas.", link: /es/empresa/politicas }
   - { icon: "🌍", title: "Español e inglés", details: "Cambia el idioma dentro de la extensión y sigue la guía integrada que te lleva de la mano.", link: /es/guias/idioma-y-ajustes }
 ---
 
@@ -24,6 +24,6 @@ RizomaDB aún no está publicado en ningún marketplace y la v1.0 no está lista
 
 ## Por dónde empezar
 - Si eres nuevo: [Primeros pasos](/es/guias/primeros-pasos) y luego [Conexiones](/es/guias/conexiones).
-- Si buscas un motor: la [matriz de capacidades](/es/referencia/matriz-de-motores) y las [páginas de motores](/en/engines/README) (en inglés).
-- Si lo vas a desplegar en un equipo: [Políticas](/en/enterprise/policy), [Despliegue](/en/enterprise/deployment) y [Cumplimiento](/en/enterprise/compliance) (en inglés).
+- Si buscas un motor: la [matriz de capacidades](/es/referencia/matriz-de-motores) y las [páginas de motores](/es/motores/README).
+- Si lo vas a desplegar en un equipo: [Políticas](/es/empresa/politicas), [Despliegue](/es/empresa/despliegue) y [Cumplimiento](/es/empresa/cumplimiento).
 - Si algo falla: [Solución de problemas](/es/guias/solucion-de-problemas).

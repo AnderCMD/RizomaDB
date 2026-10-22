@@ -21,7 +21,7 @@ Un cliente de bases de datos multimotor para VS Code (y VSCodium, Cursor, Windsu
 - **Español e inglés**, intercambiables dentro de la extensión, y una **guía** interactiva que te lleva de la mano.
 
 ## Motores
-Probados contra servidores reales: PostgreSQL (y CockroachDB, YugabyteDB), MySQL/MariaDB (y TiDB), SQL Server, Oracle, SQLite, MongoDB, Redis/Valkey, ClickHouse, Elasticsearch/OpenSearch, DuckDB, Neo4j, DynamoDB (Local), InfluxDB 2 y 3, Cassandra/ScyllaDB, Firestore (emulador), Trino y **HydraDB (experimental)**. Lo que admite cada uno está en la [matriz de capacidades](docs/es/referencia/matriz-de-motores.md); los límites están en la página de cada motor en [docs/engines](docs/engines/README.md) (en inglés). Sin probar: servicios reales de AWS o Google Cloud, Redshift.
+Probados contra servidores reales: PostgreSQL (y CockroachDB, YugabyteDB), MySQL/MariaDB (y TiDB), SQL Server, Oracle, SQLite, MongoDB, Redis/Valkey, ClickHouse, Elasticsearch/OpenSearch, DuckDB, Neo4j, DynamoDB (Local), InfluxDB 2 y 3, Cassandra/ScyllaDB, Firestore (emulador), Trino y **HydraDB (experimental)**. Lo que admite cada uno está en la [matriz de capacidades](docs/es/referencia/matriz-de-motores.md); los límites están en la página de cada motor en [docs/es/motores](docs/es/motores/README.md). Sin probar: servicios reales de AWS o Google Cloud, Redshift.
 
 ## Instalar
 ```bash
@@ -32,7 +32,7 @@ code --install-extension apps/extension/rizomadb-0.0.1.vsix
 Luego haz clic en el icono de RizomaDB, o ejecuta **RizomaDB: Abrir la guía**. Recorrido completo: [Primeros pasos](docs/es/guias/primeros-pasos.md).
 
 ## Documentación
-[Primeros pasos](docs/es/guias/primeros-pasos.md) · [Conexiones](docs/es/guias/conexiones.md) · [El editor de consultas](docs/es/guias/editor-de-consultas.md) · [La rejilla de resultados](docs/es/guias/rejilla-de-resultados.md) · [Edición de datos](docs/es/guias/edicion-de-datos.md) · [Idioma y ajustes](docs/es/guias/idioma-y-ajustes.md) · [Solución de problemas](docs/es/guias/solucion-de-problemas.md) · Referencia de [ajustes](docs/es/referencia/ajustes.md) y de [comandos](docs/es/referencia/comandos.md) · [Políticas](docs/enterprise/policy.md) · [Modelo de amenazas](docs/security/threat-model.md) · [CI/CD](docs/ci-cd.md) · [Guía de diseño](docs/design/design-guide.md) (en inglés) · [AGENTS.md](AGENTS.md)
+[Primeros pasos](docs/es/guias/primeros-pasos.md) · [Conexiones](docs/es/guias/conexiones.md) · [El editor de consultas](docs/es/guias/editor-de-consultas.md) · [La rejilla de resultados](docs/es/guias/rejilla-de-resultados.md) · [Edición de datos](docs/es/guias/edicion-de-datos.md) · [Idioma y ajustes](docs/es/guias/idioma-y-ajustes.md) · [Solución de problemas](docs/es/guias/solucion-de-problemas.md) · Referencia de [ajustes](docs/es/referencia/ajustes.md) y de [comandos](docs/es/referencia/comandos.md) · [Políticas](docs/es/empresa/politicas.md) · [Modelo de amenazas](docs/security/threat-model.md) · [CI/CD](docs/es/ci-cd.md) · [Guía de diseño](docs/design/design-guide.md) (en inglés) · [AGENTS.md](AGENTS.md)
 
 ## Desarrollo
 ```bash

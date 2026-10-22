@@ -9,7 +9,7 @@ feature branch ──PR──▶ dev ──PR (Promote workflow)──▶ main �
 
 | Workflow | Runs on | What it does |
 |---|---|---|
-| `ci.yml` | push and pull request to `main` or `dev` | lint, build, typecheck, licence audit, a check that the generated reference pages are current, the test suites against real engine containers, benchmarks, builds the VSIX and keeps it as an artifact (14 days), builds the docs site, scans for secrets (gitleaks) and runs CodeQL. A newer push replaces a run in progress. |
+| `ci.yml` | push and pull request to `main` or `dev` | lint, build, typecheck, licence audit, a check that the generated reference pages are current, the test suites against real engine containers (a second job, `engines-extra`, starts CockroachDB, YugabyteDB, InfluxDB 3, Firestore and HydraDB from the compose file), benchmarks, builds the VSIX and keeps it as an artifact (14 days), builds the docs site, scans for secrets (gitleaks) and runs CodeQL. A newer push replaces a run in progress. |
 | `pages.yml` | push to `main` that touches `docs/`, `site/` or the workflow, or manual | builds the VitePress site (English and Spanish) and deploys it to GitHub Pages. |
 | `promote.yml` | manual | opens the pull request `dev` → `main` if dev has commits main lacks. |
 | `release.yml` | tag `v*`, or manual | builds the VSIX, checks its size, generates the SBOM and checksums, attests provenance and attaches them to a prerelease. **Publishing to the Marketplace and Open VSX is a separate step that needs a manual approval.** |

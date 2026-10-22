@@ -10,7 +10,7 @@
 | Query results | memory only (grid) | row cap `rizomadb.query.maxRows`; exports go where the user saves them |
 | SSH known hosts | extension storage + `~/.ssh/known_hosts` | unknown hosts are never auto-trusted |
 
-No data is sent to the project or any third party. AI features are not implemented in this build (see ROADMAP).
+No data is sent to the project or any third party. The optional AI assistant is **off by default** (`rizomadb.ai.enabled`); when you turn it on, a request goes only to the endpoint you configure (a local model such as Ollama, or a provider you choose), only after you confirm what will be sent, and literals can be redacted first (`rizomadb.ai.redactLiterals`). Nothing is sent without that confirmation, and `disable: ["ai"]` in a policy turns the feature off for everyone.
 
 ## Controls matrix
 | Control | Implemented by | Evidence |
@@ -20,6 +20,6 @@ No data is sent to the project or any third party. AI features are not implement
 | Logging | local audit trail, blocked attempts included | `policy-engine.test.ts` |
 | Data minimisation | masking in grid/exports, literal-free audit | export/mask tests |
 | Transport security | TLS verify on by default, SSH host-key pinning | `network` tests |
-| Supply chain | lockfile, license audit, CycloneDX SBOM, provenance, gitleaks, CodeQL (workflows provided; **not yet run on GitHub**) | `.github/workflows` |
+| Supply chain | lockfile, license audit, CycloneDX SBOM, provenance, gitleaks, CodeQL (all run on every push in the CI workflow) | `.github/workflows` |
 
 This matrix describes the software, not an organisation's compliance: you still need your own risk assessment.

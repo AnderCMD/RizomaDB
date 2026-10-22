@@ -4,7 +4,8 @@ const copy = (from, to) => { rmSync(to, { recursive: true, force: true }); mkdir
 // English
 for (const d of ["guides", "engines", "enterprise", "security", "market", "drivers", "reference", "design"]) copy(`../docs/${d}`, `content/en/${d}`);
 cpSync("../docs/ci-cd.md", "content/en/ci-cd.md");
-// Spanish: the user guides and references are translated; the rest of the technical pages stay in English
-copy("../docs/es/guias", "content/es/guias");
-copy("../docs/es/referencia", "content/es/referencia");
+// Spanish: guides, references, engines, enterprise, security, driver authoring and CI/CD are translated; the market comparison stays in English
+for (const d of ["guias", "referencia", "motores", "empresa", "seguridad", "drivers"]) copy(`../docs/es/${d}`, `content/es/${d}`);
+cpSync("../docs/security/threat-model.md", "content/es/seguridad/modelo-de-amenazas.md");   // already written in Spanish
+cpSync("../docs/es/ci-cd.md", "content/es/ci-cd.md");
 for (const d of ["adr", "release"]) copy(`../docs/${d}`, `content/es/${d}`);

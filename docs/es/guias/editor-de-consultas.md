@@ -31,4 +31,4 @@ Los resultados se abren en la mitad inferior de la ventana (`rizomadb.results.lo
 **Nuevo notebook SQL** crea un notebook `.sqlnb`: celdas SQL con sus resultados debajo, guardado como JSON simple.
 
 ## Seguridad
-Cada sentencia se clasifica antes de ejecutarse. Las lecturas se ejecutan; las escrituras siguen el entorno (confirmación, aprobación, solo lectura); las destructivas (`DROP`, `TRUNCATE`, `UPDATE`/`DELETE` sin `WHERE`…) preguntan antes. El motivo se muestra en tu idioma. Mira [Políticas](/en/enterprise/policy) (en inglés).
+Cada sentencia se clasifica antes de ejecutarse. Las lecturas se ejecutan; las escrituras siguen el entorno (confirmación, aprobación, solo lectura); las destructivas (`DROP`, `TRUNCATE`, `UPDATE`/`DELETE` sin `WHERE`…) preguntan antes. El motivo se muestra en tu idioma. Mira [Políticas](/es/empresa/politicas).

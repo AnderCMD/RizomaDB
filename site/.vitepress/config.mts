@@ -17,12 +17,17 @@ const enSidebar = [
   { text: "Project", items: [{ text: "Honest comparison", link: "/en/market/honest-comparison" }, { text: "Writing a driver", link: "/en/drivers/authoring" }, { text: "Design guide", link: "/en/design/design-guide" }, { text: "CI/CD", link: "/en/ci-cd" }] },
 ];
 const esSidebar = [
-  { text: "Inicio", items: [{ text: "Resumen", link: "/es/" }, { text: "Primeros pasos", link: "/es/guias/primeros-pasos" }, { text: "Solución de problemas", link: "/es/guias/solucion-de-problemas" }] },
+  { text: "Inicio", items: [{ text: "Resumen", link: "/es/" }, { text: "Primeros pasos", link: "/es/guias/primeros-pasos" }, { text: "Migrar a RizomaDB", link: "/es/guias/migracion" }, { text: "Solución de problemas", link: "/es/guias/solucion-de-problemas" }] },
   { text: "Usar RizomaDB", items: [
     { text: "Conexiones", link: "/es/guias/conexiones" }, { text: "El editor de consultas", link: "/es/guias/editor-de-consultas" }, { text: "La rejilla de resultados", link: "/es/guias/rejilla-de-resultados" },
     { text: "Edición de datos", link: "/es/guias/edicion-de-datos" }, { text: "Idioma y ajustes", link: "/es/guias/idioma-y-ajustes" } ] },
   { text: "Referencia", items: [{ text: "Ajustes", link: "/es/referencia/ajustes" }, { text: "Comandos", link: "/es/referencia/comandos" }, { text: "Matriz de capacidades", link: "/es/referencia/matriz-de-motores" }] },
-  { text: "Proyecto", items: [{ text: "Lista de aceptación v1.0", link: "/es/release/v1-checklist" }, { text: "Comparación honesta (en)", link: "/en/market/honest-comparison" }, { text: "CI/CD (en)", link: "/en/ci-cd" }] },
+  { text: "Motores", collapsed: true, items: [{ text: "Resumen de compatibilidad", link: "/es/motores/README" }, ...engines.map((e) => ({ text: engineName[e]!, link: `/es/motores/${e}` }))] },
+  { text: "Empresa", items: [
+    { text: "Políticas", link: "/es/empresa/politicas" }, { text: "Auditoría", link: "/es/empresa/auditoria" },
+    { text: "Despliegue", link: "/es/empresa/despliegue" }, { text: "Cumplimiento", link: "/es/empresa/cumplimiento" } ] },
+  { text: "Seguridad", items: [{ text: "Modelo de amenazas", link: "/es/seguridad/modelo-de-amenazas" }, { text: "Política de dependencias", link: "/es/seguridad/politica-de-dependencias" }] },
+  { text: "Proyecto", items: [{ text: "Lista de aceptación v1.0", link: "/es/release/v1-checklist" }, { text: "Comparación honesta (en)", link: "/en/market/honest-comparison" }, { text: "Escribir un driver", link: "/es/drivers/crear-un-driver" }, { text: "Guía de diseño (en)", link: "/en/design/design-guide" }, { text: "CI/CD", link: "/es/ci-cd" }] },
   { text: "Decisiones (ADR)", collapsed: true, items: [
     { text: "Nombre y marca", link: "/es/adr/0001-nombre-y-riesgo-de-marca" }, { text: "Stack y versiones", link: "/es/adr/0002-stack-y-versiones" },
     { text: "Monorepo y empaquetado", link: "/es/adr/0003-monorepo-empaquetado" }, { text: "Estrategia de drivers", link: "/es/adr/0004-estrategia-de-drivers" },
