@@ -17,5 +17,5 @@ No hay un formato de importación para ellos: no se verificó cómo guardan las 
 
 ## Conceptos que cambian
 - **Las ediciones se ponen en cola.** Las ediciones de la rejilla se convierten en un conjunto de cambios pendientes que revisas y aplicas en una sola transacción; no se escribe nada al confirmar una celda (salvo que actives `rizomadb.edit.applyImmediately`).
-- **Política.** Las conexiones `prod` son de solo lectura por defecto; cámbialo en el perfil de la conexión o en los archivos de política ([Políticas](/es/empresa/politicas)).
+- **Política.** Las conexiones `prod` son de solo lectura por defecto; cámbialo en el perfil de la conexión o en los archivos de política ([Políticas](../empresa/politicas.md)).
 - **Sin telemetría.** No hay nada de lo que desactivarse.

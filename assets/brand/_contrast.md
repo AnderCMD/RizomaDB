@@ -1,4 +1,4 @@
-| Par | Primer plano | Fondo | Ratio | Mínimo | OK |
+| Pair | Foreground | Background | Ratio | Minimum | OK |
 |---|---|---|---|---|---|
 | mint on navy (graphic) | #34D399 | #0F172A | 9.29:1 | 3:1 | ✔ |
 | amber on navy (graphic) | #FBBF24 | #0F172A | 10.69:1 | 3:1 | ✔ |

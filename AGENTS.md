@@ -3,7 +3,7 @@
 Instructions for AI coding agents (and humans in a hurry) working on RizomaDB. Read this before changing code. Human-oriented docs are in [README.md](README.md) and [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## What this is
-A free (Apache-2.0), no-telemetry, multi-engine database client for VS Code. pnpm workspaces + Turborepo, TypeScript strict, esbuild bundles, vitest. Spanish is the project's working language for decision records; code, UI strings and most docs are English with a Spanish translation.
+A free (Apache-2.0), no-telemetry, multi-engine database client for VS Code. pnpm workspaces + Turborepo, TypeScript strict, esbuild bundles, vitest. Spanish is the project's working language for decision records (ADRs) and the running log; code, comments and commit messages are English, and the user-facing text and documentation exist in English, Spanish, Portuguese (Brazil) and French.
 
 ## Map first: use the graph
 `graphify-out/GRAPH_REPORT.md` and `graphify-out/graph.json` are a knowledge graph of the **code** (AST only; docs are not in it). Before searching files, read the report's god nodes and communities, or ask: `graphify query "<question>"`, `graphify path "A" "B"`, `graphify explain "Node"`. A post-commit hook rebuilds it locally (`graphify hook install`); after large changes run `graphify update .` and commit the refreshed `graph.json` and report. Treat the graph as a map, not as proof: confirm in the source.
@@ -40,7 +40,8 @@ Engine suites skip when their engine is down locally and **fail in CI** (`RZ_REQ
 6. **No placeholder code** (`TODO`, stubs) in finished work. No copying code or logos from closed-source products. Engine logos come only from `scripts/gen-logos.mjs` (CC0/MIT sources).
 7. **Webviews are hardened**: strict CSP with a nonce, `localResourceRoots` limited to `dist`, every message validated with zod on both sides, no `innerHTML`/`eval` (a test enforces this). Build DOM with `el()`/`icon()`.
 8. **User text is translated.** Host: `t()` from `src/i18n.ts`. Webview: `tr()` plus an entry in `webviewStrings.ts`. Add the string to all three bundles (`l10n/bundle.l10n.es.json`, `bundle.l10n.pt-br.json`, `bundle.l10n.fr.json`) and, for manifest text, to `package.nls.{es,pt-br,fr}.json`; a test fails otherwise. Messages written by drivers/policy/editing are mapped in `src/ui/driverMessages.ts`.
-9. **Accessibility is a requirement**: WCAG 2.2 AA, keyboard reachable, icon-only controls have an accessible name and a tooltip, axe must report zero violations in light and dark (`test/a11y`).
+9. **Documentation exists in four languages.** When you change a page in `docs/`, a root file (README, CONTRIBUTING, SECURITY, CODE_OF_CONDUCT, CHANGELOG, GOVERNANCE, ROADMAP) or the brand README, update its Spanish, Portuguese and French counterparts (`docs/es/`, `docs/pt-br/`, `docs/fr/`, `*.es.md`, `*.pt-br.md`, `*.fr.md`); `node scripts/check-docs-parity.mjs` lists what is missing and CI runs it. Keep code, comments and commit messages in English.
+10. **Accessibility is a requirement**: WCAG 2.2 AA, keyboard reachable, icon-only controls have an accessible name and a tooltip, axe must report zero violations in light and dark (`test/a11y`).
 
 ## Conventions
 - Match the surrounding code: terse, strict types, comments only for the *why*.

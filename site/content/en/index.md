@@ -15,7 +15,7 @@ features:
   - { icon: "🗂️", title: "A results grid made for exploring", details: "Sort, filter in the rows or in the database, resize, hide, record panel, copy as CSV/JSON/Markdown, and Load more on every engine.", link: /en/guides/results-grid }
   - { icon: "✏️", title: "Edit in place, safely", details: "Double-click a cell. Changes wait as pending; review the SQL and apply them in one transaction, with conflict detection.", link: /en/guides/editing-data }
   - { icon: "🛡️", title: "Safe by default", details: "Layered policies where the strictest wins, one audit point for every write, read-only production, column masking.", link: /en/enterprise/policy }
-  - { icon: "🌍", title: "English and Spanish", details: "Switch the language inside the extension, and follow the built-in guide that takes you by the hand.", link: /en/guides/language-and-settings }
+  - { icon: "🌍", title: "Four languages", details: "English, Spanish, Portuguese (Brazil) and French. Switch the language inside the extension, and follow the built-in guide that takes you by the hand.", link: /en/guides/language-and-settings }
 ---
 
 ::: warning Pre-release

@@ -27,7 +27,7 @@ const esSidebar = [
     { text: "Políticas", link: "/es/empresa/politicas" }, { text: "Auditoría", link: "/es/empresa/auditoria" },
     { text: "Despliegue", link: "/es/empresa/despliegue" }, { text: "Cumplimiento", link: "/es/empresa/cumplimiento" } ] },
   { text: "Seguridad", items: [{ text: "Modelo de amenazas", link: "/es/seguridad/modelo-de-amenazas" }, { text: "Política de dependencias", link: "/es/seguridad/politica-de-dependencias" }] },
-  { text: "Proyecto", items: [{ text: "Lista de aceptación v1.0", link: "/es/release/v1-checklist" }, { text: "Comparación honesta (en)", link: "/en/market/honest-comparison" }, { text: "Escribir un driver", link: "/es/drivers/crear-un-driver" }, { text: "Guía de diseño (en)", link: "/en/design/design-guide" }, { text: "CI/CD", link: "/es/ci-cd" }] },
+  { text: "Proyecto", items: [{ text: "Lista de aceptación v1.0", link: "/es/release/v1-checklist" }, { text: "Comparación honesta", link: "/es/mercado/comparacion-honesta" }, { text: "Escribir un driver", link: "/es/drivers/crear-un-driver" }, { text: "Guía de diseño (en)", link: "/en/design/design-guide" }, { text: "CI/CD", link: "/es/ci-cd" }] },
   { text: "Decisiones (ADR)", collapsed: true, items: [
     { text: "Nombre y marca", link: "/es/adr/0001-nombre-y-riesgo-de-marca" }, { text: "Stack y versiones", link: "/es/adr/0002-stack-y-versiones" },
     { text: "Monorepo y empaquetado", link: "/es/adr/0003-monorepo-empaquetado" }, { text: "Estrategia de drivers", link: "/es/adr/0004-estrategia-de-drivers" },
@@ -37,6 +37,22 @@ const esSidebar = [
     { text: "Análisis SQL sin LSP", link: "/es/adr/0011-analisis-sql-sin-lsp-separado" }, { text: "Presupuesto de tamaño", link: "/es/adr/0012-presupuesto-de-tamano" },
     { text: "Política y conexión protegida", link: "/es/adr/0013-politica-y-conexion-protegida" } ] },
 ];
+
+// Portuguese (Brazil) and French pages keep the English file names, so one function builds both sidebars.
+type Words = { start: string; gettingStarted: string; migration: string; troubleshooting: string; using: string; connections: string; editor: string; grid: string; keyboard: string; helpTest: string; editing: string; language: string; reference: string; settings: string; commands: string; matrix: string; engines: string; overview: string; enterprise: string; policy: string; audit: string; deployment: string; compliance: string; security: string; threat: string; deps: string; project: string; comparison: string; driver: string; design: string; ci: string };
+const localSidebar = (l: string, w: Words) => [
+  { text: w.start, items: [{ text: w.gettingStarted, link: `/${l}/guides/getting-started` }, { text: w.migration, link: `/${l}/guides/migration` }, { text: w.troubleshooting, link: `/${l}/guides/troubleshooting` }] },
+  { text: w.using, items: [
+    { text: w.connections, link: `/${l}/guides/connections` }, { text: w.editor, link: `/${l}/guides/query-editor` }, { text: w.grid, link: `/${l}/guides/results-grid` }, { text: w.keyboard, link: `/${l}/guides/keyboard` }, { text: w.helpTest, link: `/${l}/guides/help-test` },
+    { text: w.editing, link: `/${l}/guides/editing-data` }, { text: w.language, link: `/${l}/guides/language-and-settings` } ] },
+  { text: w.reference, items: [{ text: w.settings, link: `/${l}/reference/settings` }, { text: w.commands, link: `/${l}/reference/commands` }, { text: w.matrix, link: `/${l}/reference/engine-matrix` }] },
+  { text: w.engines, collapsed: true, items: [{ text: w.overview, link: `/${l}/engines/README` }, ...engines.map((e) => ({ text: engineName[e]!, link: `/${l}/engines/${e}` }))] },
+  { text: w.enterprise, items: [{ text: w.policy, link: `/${l}/enterprise/policy` }, { text: w.audit, link: `/${l}/enterprise/audit` }, { text: w.deployment, link: `/${l}/enterprise/deployment` }, { text: w.compliance, link: `/${l}/enterprise/compliance` }] },
+  { text: w.security, items: [{ text: w.threat, link: `/${l}/security/threat-model` }, { text: w.deps, link: `/${l}/security/dependency-policy` }] },
+  { text: w.project, items: [{ text: w.comparison, link: `/${l}/market/honest-comparison` }, { text: w.driver, link: `/${l}/drivers/authoring` }, { text: w.design, link: "/en/design/design-guide" }, { text: w.ci, link: `/${l}/ci-cd` }] },
+];
+const ptSidebar = localSidebar("pt-br", { start: "Início", gettingStarted: "Primeiros passos", migration: "Migrar para o RizomaDB", troubleshooting: "Solução de problemas", using: "Usar o RizomaDB", connections: "Conexões", editor: "O editor de consultas", grid: "A grade de resultados", keyboard: "Usar o teclado", helpTest: "Ajude a testar o RizomaDB", editing: "Edição de dados", language: "Idioma e configurações", reference: "Referência", settings: "Configurações", commands: "Comandos", matrix: "Matriz de capacidades", engines: "Motores", overview: "Resumo de compatibilidade", enterprise: "Empresa", policy: "Políticas", audit: "Auditoria", deployment: "Implantação", compliance: "Conformidade", security: "Segurança", threat: "Modelo de ameaças", deps: "Política de dependências", project: "Projeto", comparison: "Comparação honesta", driver: "Escrever um driver", design: "Guia de design (em inglês)", ci: "CI/CD" });
+const frSidebar = localSidebar("fr", { start: "Démarrer", gettingStarted: "Premiers pas", migration: "Migrer vers RizomaDB", troubleshooting: "Dépannage", using: "Utiliser RizomaDB", connections: "Connexions", editor: "L'éditeur de requêtes", grid: "La grille de résultats", keyboard: "Utiliser le clavier", helpTest: "Aidez à tester RizomaDB", editing: "Modification des données", language: "Langue et paramètres", reference: "Référence", settings: "Paramètres", commands: "Commandes", matrix: "Matrice des capacités", engines: "Moteurs", overview: "Aperçu de la compatibilité", enterprise: "Entreprise", policy: "Politiques", audit: "Audit", deployment: "Déploiement", compliance: "Conformité", security: "Sécurité", threat: "Modèle de menaces", deps: "Politique de dépendances", project: "Projet", comparison: "Comparaison honnête", driver: "Écrire un pilote", design: "Guide de conception (en anglais)", ci: "CI/CD" });
 
 export default defineConfig({
   title: "RizomaDB",
@@ -56,5 +72,7 @@ export default defineConfig({
   locales: {
     root: { label: "English", lang: "en", link: "/en/", themeConfig: { sidebar: enSidebar, nav: [{ text: "Guide", link: "/en/guides/getting-started" }, { text: "Reference", link: "/en/reference/settings" }, { text: "Engines", link: "/en/reference/engine-matrix" }] } },
     es: { label: "Español", lang: "es", link: "/es/", themeConfig: { sidebar: esSidebar, nav: [{ text: "Guía", link: "/es/guias/primeros-pasos" }, { text: "Referencia", link: "/es/referencia/ajustes" }, { text: "Motores", link: "/es/referencia/matriz-de-motores" }] } },
+    "pt-br": { label: "Português (Brasil)", lang: "pt-BR", link: "/pt-br/", themeConfig: { sidebar: ptSidebar, nav: [{ text: "Guia", link: "/pt-br/guides/getting-started" }, { text: "Referência", link: "/pt-br/reference/settings" }, { text: "Motores", link: "/pt-br/reference/engine-matrix" }] } },
+    fr: { label: "Français", lang: "fr", link: "/fr/", themeConfig: { sidebar: frSidebar, nav: [{ text: "Guide", link: "/fr/guides/getting-started" }, { text: "Référence", link: "/fr/reference/settings" }, { text: "Moteurs", link: "/fr/reference/engine-matrix" }] } },
   },
 });

@@ -13,8 +13,8 @@ const out = join(root, "assets/brand");
 mkdirSync(out, { recursive: true });
 
 const C = { navy: "#0F172A", mint: "#34D399", white: "#FFFFFF", amber: "#FBBF24" };
-const TITLE = "Logotipo de RizomaDB";
-const DESC = "Un cilindro de base de datos del que brotan raíces conectadas a tres nodos: un rizoma que une muchas bases de datos.";
+const TITLE = "RizomaDB logo";
+const DESC = "A database cylinder with roots reaching three connected nodes: a rhizome that joins many databases.";
 
 // --- contrast check (WCAG) ---
 const lum = (hex) => {
@@ -101,5 +101,5 @@ const sheet = `<svg xmlns="http://www.w3.org/2000/svg" width="${sw}" height="380
 mkdirSync(join(root, "assets/brand/_proof"), { recursive: true });
 writeFileSync(join(root, "assets/brand/_proof/legibility-sheet.png"), png(sheet, sw));
 writeFileSync(join(root, "assets/brand/_contrast.md"),
-  `| Par | Primer plano | Fondo | Ratio | Mínimo | OK |\n|---|---|---|---|---|---|\n${table.join("\n")}\n`);
+  `| Pair | Foreground | Background | Ratio | Minimum | OK |\n|---|---|---|---|---|---|\n${table.join("\n")}\n`);
 console.log("brand assets written\n" + table.join("\n"));

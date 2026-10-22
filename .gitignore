@@ -9,6 +9,10 @@ test/a11y/out
 site/.vitepress/cache
 site/content/en/*/
 site/content/es/*/
+site/content/pt-br/*/
+site/content/fr/*/
+site/content/pt-br/ci-cd.md
+site/content/fr/ci-cd.md
 .soak
 
 # graphify: keep the report and graph, not the caches or the 2.6 MB html

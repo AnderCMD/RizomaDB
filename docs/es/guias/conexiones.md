@@ -18,7 +18,7 @@ Cada conexión tiene un entorno. `prod` es de solo lectura por defecto y `stagin
 | Bloquear escrituras | El entorno es de solo lectura |
 | Sin protección | Nada adicional |
 
-Los entornos nuevos se guardan en el ajuste `rizomadb.environments`, donde también puedes editarlos. Solo pueden hacer las cosas más estrictas que tus archivos de política, nunca más laxas. Mira [Políticas](/es/empresa/politicas).
+Los entornos nuevos se guardan en el ajuste `rizomadb.environments`, donde también puedes editarlos. Solo pueden hacer las cosas más estrictas que tus archivos de política, nunca más laxas. Mira [Políticas](../empresa/politicas.md).
 
 ### Ruta de red
 Por defecto RizomaDB conecta directamente. En **Ruta de red** puedes pasar por un **túnel SSH** (archivo de clave o contraseña, con verificación estricta de la huella del host y aviso ante hosts desconocidos) o por un **proxy HTTP** / **proxy SOCKS5** (con usuario y contraseña opcionales). Una conexión usa un túnel SSH *o* un proxy, no ambos.
@@ -39,7 +39,7 @@ La conexión *activa* es la asociada al editor de consultas en el que estás, o 
 Marcar una conexión como de solo lectura lo aplica RizomaDB (y el servidor cuando el motor lo permite). Para una garantía que no dependa de ningún cliente, dale a la conexión una cuenta de base de datos que solo pueda leer. Haz clic derecho en la conexión y elige **Generar script de usuario de solo lectura…**: eliges el nombre de la cuenta y RizomaDB abre un script en un editor. Nunca lo ejecuta ni escribe una contraseña: sustituye el marcador `<choose-a-password>` y ejecútalo con una cuenta de administrador. Disponible para PostgreSQL, MySQL/MariaDB, ClickHouse y Redis/Valkey; cada script se ejecutó contra un servidor real y se comprobó que la cuenta nueva lee y que se le rechazan las escrituras (los demás motores lo avisan en lugar de adivinar).
 
 ## Importar desde otras herramientas
-**RizomaDB: Importar conexiones de otras herramientas…** lee cadenas de conexión, `~/.pgpass`, `~/.my.cnf` y archivos de DBeaver y SQLTools. Mira [Migración](/es/guias/migracion).
+**RizomaDB: Importar conexiones de otras herramientas…** lee cadenas de conexión, `~/.pgpass`, `~/.my.cnf` y archivos de DBeaver y SQLTools. Mira [Migración](migracion.md).
 
 ## Llevar conexiones en un archivo sellado
 **Exportar conexiones (cifradas)…** escribe tus conexiones guardadas en un archivo `.rzcat` sellado con una frase de paso que eliges (AES-256-GCM, clave derivada con scrypt); **Importar conexiones (cifradas)…** lo lee. El archivo solo contiene perfiles: las contraseñas siguen en el almacenamiento secreto de cada persona y se piden en la primera conexión. Una frase de paso incorrecta o un archivo alterado se rechazan por completo, y las conexiones cuyo id ya existe se omiten. Puedes enviar el archivo por cualquier canal; guarda la frase de paso aparte.

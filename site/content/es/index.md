@@ -15,11 +15,11 @@ features:
   - { icon: "🗂️", title: "Una rejilla hecha para explorar", details: "Ordena, filtra en las filas o en la base de datos, cambia anchos, oculta, panel de registro, copia como CSV/JSON/Markdown y Cargar más en todos los motores.", link: /es/guias/rejilla-de-resultados }
   - { icon: "✏️", title: "Edita en el sitio, con seguridad", details: "Doble clic en una celda. Los cambios esperan como pendientes; revisa el SQL y aplícalos en una transacción, con detección de conflictos.", link: /es/guias/edicion-de-datos }
   - { icon: "🛡️", title: "Seguro por defecto", details: "Políticas en capas donde gana la más estricta, un único punto de auditoría para toda escritura, producción de solo lectura, enmascarado de columnas.", link: /es/empresa/politicas }
-  - { icon: "🌍", title: "Español e inglés", details: "Cambia el idioma dentro de la extensión y sigue la guía integrada que te lleva de la mano.", link: /es/guias/idioma-y-ajustes }
+  - { icon: "🌍", title: "Cuatro idiomas", details: "Español, inglés, portugués (Brasil) y francés. Cambia el idioma dentro de la extensión y sigue la guía integrada que te lleva de la mano.", link: /es/guias/idioma-y-ajustes }
 ---
 
 ::: warning Pre-lanzamiento
-RizomaDB aún no está publicado en ningún marketplace y la v1.0 no está lista. La [lista de aceptación](/es/release/v1-checklist) y la [comparación honesta](/en/market/honest-comparison) (en inglés) dicen exactamente qué está y qué no está verificado.
+RizomaDB aún no está publicado en ningún marketplace y la v1.0 no está lista. La [lista de aceptación](/es/release/v1-checklist) y la [comparación honesta](/es/mercado/comparacion-honesta) dicen exactamente qué está y qué no está verificado.
 
 **Los servicios en la nube no están confirmados.** RizomaDB solo se ha probado con motores locales y emuladores oficiales, nunca con una cuenta real en la nube (AWS, Google Cloud, MongoDB Atlas, PostgreSQL/MySQL gestionados). Pruébalo con un usuario de solo lectura o una base de datos desechable antes de depender de él: ver [Nube y servicios gestionados](/es/motores/#nube-y-servicios-gestionados-sin-confirmar).
 :::
