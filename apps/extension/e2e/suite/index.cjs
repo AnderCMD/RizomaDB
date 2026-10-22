@@ -44,6 +44,22 @@ exports.run = async function run() {
   await opened("rizomadb.newConnection", "rizomadb.connect");
   await opened("rizomadb.openGuide", "rizomadb.guide");
   await opened("rizomadb.openHistory", "rizomadb.history");
+  // The extension language setting changes the screens' own titles in a real window (the settings screen reopens itself on a change).
+  const cfg = vscode.workspace.getConfiguration("rizomadb");
+  const titleIn = async (lang) => {
+    await cfg.update("language", lang, vscode.ConfigurationTarget.Global);
+    await new Promise((r) => setTimeout(r, 400));
+    await vscode.commands.executeCommand("workbench.action.closeAllEditors");
+    await vscode.commands.executeCommand("rizomadb.newConnection");
+    await new Promise((r) => setTimeout(r, 600));
+    return vscode.window.tabGroups.all.flatMap((g) => g.tabs).map((t) => t.label).find((l) => /connex|conex|conexão|connection/i.test(l));
+  };
+  try {
+    assert.strictEqual(await titleIn("en"), "New connection");
+    assert.strictEqual(await titleIn("es"), "Nueva conexión");
+    assert.strictEqual(await titleIn("pt"), "Nova conexão");
+    assert.strictEqual(await titleIn("fr"), "Nouvelle connexion");
+  } finally { await cfg.update("language", undefined, vscode.ConfigurationTarget.Global); }
   console.log(`host node ${process.versions.node}, electron ${process.versions.electron}`);
   let sqliteOk = true; try { require("node:sqlite"); } catch { sqliteOk = false; }
   console.log(`node:sqlite available in this host: ${sqliteOk}`);
