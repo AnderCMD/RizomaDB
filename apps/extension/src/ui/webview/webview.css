@@ -328,3 +328,12 @@ button.engine-card .logo.bare { margin: 0 2px; }
 .filterbar .field-icon input { width: 100%; min-width: 120px; } .filterbar .forder { width: 220px; min-width: 0; } .filterbar .field-icon { height: 30px; }
 
 .chip.exp { margin-left: auto; background: transparent; color: var(--vscode-foreground); border: 1px dashed var(--rz-muted); font-size: .75em; }
+
+/* column statistics dialog */
+.dialog .sub { margin: 14px 12px 4px; font-size: 1em; color: var(--rz-muted); font-weight: 600; }
+.hbars { display: grid; gap: 4px; padding: 0 12px; max-height: 40vh; overflow: auto; }
+.hbar { display: grid; grid-template-columns: minmax(70px, 30%) 1fr max-content; gap: 8px; align-items: center; font-size: .92em; }
+.hbar-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: var(--vscode-editor-font-family); }
+.hbar-track { display: block; height: 8px; border-radius: 999px; background: var(--rz-surface-2, rgba(128,128,128,.18)); overflow: hidden; }
+.hbar-fill { display: block; height: 100%; border-radius: 999px; background: var(--vscode-progressBar-background, var(--vscode-button-background, #0e639c)); }
+.hbar-n { color: var(--rz-muted); font-variant-numeric: tabular-nums; }

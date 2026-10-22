@@ -941,5 +941,18 @@
  "Database the account may read": "Base de datos que podrá leer la cuenta",
  "A database name is required.": "Hace falta el nombre de una base de datos.",
  "Review this script, replace the password placeholder and run it with an administrator account. RizomaDB does not run it.": "Revisa este script, sustituye el marcador de contraseña y ejecútalo con una cuenta de administrador. RizomaDB no lo ejecuta.",
- "That name cannot be used in the script.": "Ese nombre no se puede usar en el script."
+ "That name cannot be used in the script.": "Ese nombre no se puede usar en el script.",
+ "Column statistics…": "Estadísticas de la columna…",
+ "Column statistics for {0}": "Estadísticas de {0}",
+ "Values": "Valores",
+ "Nulls": "Nulos",
+ "Distinct": "Distintos",
+ "Minimum": "Mínimo",
+ "Maximum": "Máximo",
+ "Average": "Promedio",
+ "Sum": "Suma",
+ "Distribution": "Distribución",
+ "Most frequent values": "Valores más frecuentes",
+ "(empty)": "(vacío)",
+ "Computed over the {0} rows shown in the grid": "Calculado sobre las {0} filas que muestra la rejilla"
 }

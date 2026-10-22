@@ -1,6 +1,7 @@
 import { HostToWebview } from "../../messages.js";
 import { tr } from "./i18n.js";
 import { parsePasted } from "./clipboard.js";
+import { columnStats } from "./stats.js";
 import { el, icon, iconButton, openMenu, enableTips, engineLogo, type MenuItem } from "./ui.js";
 
 declare function acquireVsCodeApi(): { postMessage(m: unknown): void; getState(): unknown; setState(s: unknown): void };
@@ -161,6 +162,37 @@ function showShortcuts() {
   const close = () => { dlg.remove(); back.remove(); btnKeys.focus(); };
   const head_ = el("div", { class: "tb flat" }); head_.append(el("strong", { id: "dlg-title" }, tr("Keyboard shortcuts")), el("span", { class: "grow" }), iconButton("x", tr("Close"), close));
   dlg.append(head_, list);
+  const back = el("div", { class: "backdrop" }); back.addEventListener("click", close);
+  dlg.addEventListener("keydown", (e) => { if (e.key === "Escape") { e.stopPropagation(); close(); } });
+  app.append(back, dlg); dlg.querySelector("button")?.focus();
+}
+
+// Statistics and a distribution for one column, over the rows currently shown (filters and the find box apply).
+function showStats(ci: number) {
+  const c = columns[ci]!;
+  const s = columnStats(Array.from({ length: vlen() }, (_, r) => raw(stor(r), ci).text), c.kind);
+  const dlg = el("div", { class: "dialog", role: "dialog", "aria-modal": "true", "aria-labelledby": "dlg-title" });
+  const close = () => { dlg.remove(); back.remove(); };
+  const head_ = el("div", { class: "tb flat" }); head_.append(el("strong", { id: "dlg-title" }, tr("Column statistics for {0}", c.name)), el("span", { class: "grow" }), iconButton("x", tr("Close"), close));
+  const facts = el("dl", { class: "keys" });
+  const fact = (k: string, v: string) => { facts.append(el("dt", {}, k), el("dd", {}, v)); };
+  fact(tr("Values"), s.count.toLocaleString()); fact(tr("Nulls"), s.nulls.toLocaleString()); fact(tr("Distinct"), s.distinct.toLocaleString());
+  if (s.min !== undefined) { fact(tr("Minimum"), s.min); fact(tr("Maximum"), s.max ?? ""); }
+  if (s.numeric) { fact(tr("Average"), String(Number(s.numeric.avg.toPrecision(10)))); fact(tr("Sum"), String(Number(s.numeric.sum.toPrecision(12)))); }
+  const bars = el("div", { class: "hbars", tabindex: "0", role: "group", "aria-label": tr("Distribution") });
+  const binned = !!s.numeric && s.numeric.histogram.length > 1 && s.distinct > 10;
+  const peak = Math.max(1, ...(binned ? s.numeric!.histogram.map((b) => b.count) : s.top.map((t) => t.count)));
+  const bar = (label: string, count: number) => {
+    const row = el("div", { class: "hbar" }), fill = el("span", { class: "hbar-fill", "aria-hidden": "true" });
+    fill.style.width = `${Math.max(1, Math.round((count / peak) * 100))}%`;
+    const track = el("span", { class: "hbar-track" }); track.append(fill);
+    row.append(el("span", { class: "hbar-label", title: label }, label), track, el("span", { class: "hbar-n" }, count.toLocaleString()));
+    bars.append(row);
+  };
+  const fmt = (n: number) => String(Number(n.toPrecision(6)));
+  if (binned) for (const b of s.numeric!.histogram) bar(`${fmt(b.from)} – ${fmt(b.to)}`, b.count);
+  else for (const t of s.top) bar(t.value === "" ? tr("(empty)") : t.value, t.count);
+  dlg.append(head_, facts, el("h2", { class: "sub" }, binned ? tr("Distribution") : tr("Most frequent values")), bars, el("p", { class: "muted pad" }, tr("Computed over the {0} rows shown in the grid", s.count.toLocaleString())));
   const back = el("div", { class: "backdrop" }); back.addEventListener("click", close);
   dlg.addEventListener("keydown", (e) => { if (e.key === "Escape") { e.stopPropagation(); close(); } });
   app.append(back, dlg); dlg.querySelector("button")?.focus();
@@ -396,6 +428,7 @@ function headerMenu(ci: number, anchorEl: HTMLElement | { x: number; y: number }
     { label: tr("Filter this column"), icon: "filter", run: () => { toggleFilters(true); filterRow.querySelector<HTMLInputElement>(`input[data-col="${ci}"]`)?.focus(); } },
     { label: tr("Fit width to content"), icon: "columns", run: () => autosize(ci) },
     { label: tr("Hide column"), icon: "eyeOff", run: () => hideColumn(ci) },
+    { label: tr("Column statistics…"), icon: "rows", run: () => showStats(ci) },
     { label: tr("Copy column name"), icon: "copy", run: () => { send({ type: "copy", text: c.name }); toast(tr("Copied")); } },
     { label: tr("Copy column values"), icon: "copy", run: () => send({ type: "copy", text: Array.from({ length: vlen() }, (_, r) => rows[stor(r)]![ci] ?? "").join("\n") }) },
   ];
