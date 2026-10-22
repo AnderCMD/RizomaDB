@@ -14,6 +14,7 @@ import { elasticsearchDriver } from "@rizomadb/driver-elasticsearch";
 import { neo4jDriver } from "@rizomadb/driver-neo4j";
 import { runStatement, type RunEvent } from "./runner.js";
 import { buildTableQuery } from "./tableQuery.js";
+import { keysetAfter, keysetOrder, keysetSupported, withKeyset } from "./keysetPaging.js";
 
 /**
  * What the table screen does, run against real servers: the filter box builds a statement, the runner pages through it by skipping rows,
@@ -74,6 +75,25 @@ for (const e of sqlEngines) {
     it("filters and orders in the database, then pages the filtered rows", async () => {
       const r = await walk(conn, e.driver, q("age >= 28", "id DESC"), 3);
       expect(r.out.map(Number)).toEqual(Array.from({ length: 25 }, (_, i) => i + 1).filter((i) => 20 + (i % 10) >= 28).sort((x, y) => y - x));
+    });
+    it.skipIf(!keysetSupported(e.driver))("pages by primary key, with and without a filter, never skipping rows", async () => {
+      const info = await conn.introspect().describeTable({ name: TBL });
+      const keys = (info.columns ?? []).filter((c) => c.primaryKey).map((c) => ({ name: c.name, quoted: conn.quoteIdent(c.name) }));
+      expect(keys.map((k) => k.name)).toEqual([C("id")]);
+      const walkKeys = async (where: string, size: number) => {
+        const got: number[] = []; let last: unknown[] | undefined, pages = 0;
+        for (;;) {
+          const w = last ? withKeyset(where, keysetAfter(keys, last as never)!) : where;
+          const r = await page(conn, e.driver, q(w, keysetOrder(keys)), 0, size);
+          got.push(...r.rows.map((x) => Number(x[0]))); pages++;
+          if (!r.more) return { got, pages };
+          last = [r.rows[r.rows.length - 1]![0]];
+        }
+      };
+      const all = await walkKeys("", 10);
+      expect(all.got).toEqual(Array.from({ length: 25 }, (_, i) => i + 1)); expect(all.pages).toBe(3);
+      const some = await walkKeys("age >= 28 OR id = 1", 3);
+      expect(some.got).toEqual(Array.from({ length: 25 }, (_, i) => i + 1).filter((i) => 20 + (i % 10) >= 28 || i === 1));
     });
     it("rejects an injected filter before it reaches the server", () => { expect(() => q("1=1; DROP TABLE people")).toThrow(); });
 

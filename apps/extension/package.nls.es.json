@@ -83,6 +83,7 @@
   "cfg.groupByFamily": "Agrupa las conexiones del árbol por tipo de motor (relacional, documentos, clave-valor…).",
   "cfg.environments": "Entornos adicionales además de dev, staging y prod, p. ej. `{ \"name\": \"qa\", \"protection\": \"confirm\" }`. Protección: `none`, `confirm` (preguntar antes de cada escritura) o `readOnly` (bloquear escrituras). También puedes crear uno desde la pantalla Nueva conexión.",
   "cfg.pageSize": "Filas cargadas por página en los resultados de consulta. «Cargar más» en la vista de resultados trae la siguiente página en todos los motores.",
+  "cfg.keysetPaging": "Pagina las tablas por su clave primaria en vez de saltar filas. «Cargar más» empieza justo después de la última fila, así que sigue rápido en tablas grandes. Al abrir una tabla se ordena por su clave. Solo SQLite, PostgreSQL y MySQL; los demás motores y las tablas sin clave primaria siguen saltando filas. Un orden propio en el filtro también salta filas.",
   "cfg.applyImmediately": "Guarda cada edición de celda en cuanto la confirmas, sin pulsar Aplicar. En conexiones `dev` se aplica sin preguntar; los demás entornos siguen preguntando, y las políticas y el solo lectura siempre se respetan.",
   "cmd.runAt": "Ejecutar la sentencia de aquí",
   "cmd.explainAt": "Explicar la sentencia de aquí",

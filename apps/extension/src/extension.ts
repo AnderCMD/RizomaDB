@@ -29,6 +29,7 @@ import { customEnvironmentPolicy } from "./lib/environments.js";
 import { databaseOf } from "./lib/connectionInfo.js";
 import { friendly, friendlyReasons } from "./ui/driverMessages.js";
 import { buildTableQuery, filterKindOf, FilterError } from "./lib/tableQuery.js";
+import { keysetAfter, keysetOrder, keysetSupported, withKeyset, type KeysetKey } from "./lib/keysetPaging.js";
 import { registerEditorTools } from "./ui/editorTools.js";
 import { statementRanges } from "./lib/statements.js";
 import { openGuide, offerGuideOnce } from "./ui/guidePanel.js";
@@ -173,7 +174,9 @@ export async function activate(ctx: vscode.ExtensionContext) {
   explorer.activeId = activeId;
   let running: AbortController | undefined;
   type TableRef = { schema?: string; name: string; isView?: boolean };
-  let lastRun: { id: string; sql: string; title: string; edit?: { target: EditTarget } | undefined; params?: Value[] | undefined; table?: TableRef | undefined; loaded?: number; filter?: { where: string; order: string } | undefined } | undefined;
+  /** Keyset paging of a table: the key columns, and the key of the last row loaded (undefined = continue by skipping rows). */
+  type KeysetState = { keys: KeysetKey[]; last?: Value[] };
+  let lastRun: { id: string; sql: string; title: string; edit?: { target: EditTarget } | undefined; params?: Value[] | undefined; table?: TableRef | undefined; loaded?: number; filter?: { where: string; order: string } | undefined; keyset?: KeysetState | undefined } | undefined;
   let lastRaw: Value[][] = [];
   let session: { s: TableSession; profileId: string; refresh: () => Promise<unknown> } | undefined;
   const results = new ResultsPanel(ctx, (m) => void onWebviewMessage(m));
@@ -220,14 +223,15 @@ export async function activate(ctx: vscode.ExtensionContext) {
         const conn = await mgr.connect(run.id);
         const quoted = run.table.schema ? `${conn.quoteIdent(run.table.schema)}.${conn.quoteIdent(run.table.name)}` : conn.quoteIdent(run.table.name);
         const limit = Math.min(cfg().get<number>("query.maxRows", 100000), p.driver === "elasticsearch" ? 10000 : Infinity);
-        const sql = buildTableQuery({ driver: p.driver, quoted, schema: run.table.schema, name: run.table.name, where: m.where, order: m.order, limit });
-        await execute(run.id, sql, run.title, run.edit, undefined, run.table, undefined, { where: m.where.trim(), order: m.order.trim() });
+        const keyset = m.order.trim() ? undefined : await keysetFor(p, conn, run.table);
+        const sql = buildTableQuery({ driver: p.driver, quoted, schema: run.table.schema, name: run.table.name, where: m.where, order: keyset ? keysetOrder(keyset.keys) : m.order, limit });
+        await execute(run.id, sql, run.title, run.edit, undefined, run.table, keyset ? { skip: 0, keyset } : undefined, { where: m.where.trim(), order: m.order.trim() });
       } catch (e) { notice("error", friendly(e instanceof FilterError ? e.message : (e as Error).message)); }
       return;
     }
     if (m.type === "runSql") {
       const run = lastRun; const sql = m.sql.trim(); if (!run || !sql) return;
-      if (sql === run.sql.trim()) { await execute(run.id, run.sql, run.title, run.edit, run.params, run.table, run.loaded ? { skip: 0, size: run.loaded } : undefined, run.filter); return; }
+      if (sql === run.sql.trim()) { await execute(run.id, run.sql, run.title, run.edit, run.params, run.table, run.loaded ? { skip: 0, size: run.loaded, ...(run.keyset ? { keyset: run.keyset } : {}) } : undefined, run.filter); return; }
       if (!(await confirmDiscard())) return;
       const bound = await promptParameters(run.id, sql); if (!bound) return;
       // Edited text is a new query: it no longer says which table it shows, so the grid is read-only.
@@ -241,14 +245,22 @@ export async function activate(ctx: vscode.ExtensionContext) {
       await vscode.window.showTextDocument(doc, { viewColumn: vscode.ViewColumn.One, preserveFocus: false });
       return;
     }
-    if (m.type === "refresh") { if (lastRun) await execute(lastRun.id, lastRun.sql, lastRun.title, lastRun.edit, lastRun.params, lastRun.table, lastRun.loaded ? { skip: 0, size: lastRun.loaded } : undefined, lastRun.filter); return; }
+    if (m.type === "refresh") { if (lastRun) await execute(lastRun.id, lastRun.sql, lastRun.title, lastRun.edit, lastRun.params, lastRun.table, lastRun.loaded ? { skip: 0, size: lastRun.loaded, ...(lastRun.keyset ? { keyset: lastRun.keyset } : {}) } : undefined, lastRun.filter); return; }
     if (m.type === "loadMore") {
       const run = lastRun; if (!run) return;
       if (session && session.s.pending.count > 0) { notice("error", t("Apply or discard your changes before loading more rows.")); return; }
       const cap = cfg().get<number>("query.maxRows", 100000), loaded = run.loaded ?? 0;
       const size = m.mode === "all" ? cap - loaded : cfg().get<number>("query.pageSize", 1000);
       if (size <= 0) return;
-      await execute(run.id, run.sql, run.title, run.edit, run.params, run.table, { skip: loaded, size }, run.filter);
+      const p = mgr.get(run.id), after = run.keyset?.last && run.keyset.keys.length ? keysetAfter(run.keyset.keys, run.keyset.last) : undefined;
+      if (run.keyset && after && p && run.table) {
+        const conn = await mgr.connect(run.id);
+        const quoted = run.table.schema ? `${conn.quoteIdent(run.table.schema)}.${conn.quoteIdent(run.table.name)}` : conn.quoteIdent(run.table.name);
+        const statement = buildTableQuery({ driver: p.driver, quoted, schema: run.table.schema, name: run.table.name, where: withKeyset(run.filter?.where ?? "", after), order: keysetOrder(run.keyset.keys), limit: cap });
+        await execute(run.id, run.sql, run.title, run.edit, run.params, run.table, { skip: loaded, size, keyset: run.keyset, statement }, run.filter);
+        return;
+      }
+      await execute(run.id, run.sql, run.title, run.edit, run.params, run.table, { skip: loaded, size, ...(run.keyset ? { keyset: run.keyset } : {}) }, run.filter);
       return;
     }
     if (m.type === "columnAction") {
@@ -357,7 +369,15 @@ export async function activate(ctx: vscode.ExtensionContext) {
     return id;
   }
 
-  async function execute(id: string, sql: string, title: string, edit?: { target: EditTarget }, params?: Value[], tableRef?: TableRef, page?: { skip: number; size: number }, filter?: { where: string; order: string }): Promise<string | undefined> {
+  /** The key columns to page a table by, when the user turned keyset paging on and the table and engine allow it. */
+  async function keysetFor(profile: NonNullable<ReturnType<typeof mgr.get>>, conn: Awaited<ReturnType<typeof mgr.connect>>, ref: TableRef): Promise<KeysetState | undefined> {
+    if (!cfg().get<boolean>("query.keysetPaging", false) || !keysetSupported(profile.driver) || ref.isView) return undefined;
+    const info = await conn.introspect().describeTable({ name: ref.name, ...(ref.schema ? { schema: ref.schema } : {}) });
+    const keys = (info.columns ?? []).filter((c) => c.primaryKey).map((c) => ({ name: c.name, quoted: conn.quoteIdent(c.name) }));
+    return keys.length ? { keys } : undefined;
+  }
+
+  async function execute(id: string, sql: string, title: string, edit?: { target: EditTarget }, params?: Value[], tableRef?: TableRef, page?: { skip: number; size?: number; keyset?: KeysetState; statement?: string }, filter?: { where: string; order: string }): Promise<string | undefined> {
     let result: string = "error";
     const profile = mgr.get(id);
     if (!profile) return;
@@ -371,7 +391,8 @@ export async function activate(ctx: vscode.ExtensionContext) {
     session = undefined;
     const skip = page?.skip ?? 0, cap = cfg().get<number>("query.maxRows", 100000), pageSize = cfg().get<number>("query.pageSize", 1000);
     const size = Math.max(1, Math.min(page?.size ?? (tableRef ? cfg().get<number>("table.openRows", 200) : pageSize), cap - skip));
-    lastRun = { id, sql, title, edit, params, table: tableRef, loaded: skip, filter };
+    const keyset = page?.keyset ? { keys: page.keyset.keys } as KeysetState : undefined;
+    lastRun = { id, sql, title, edit, params, table: tableRef, loaded: skip, filter, keyset };
     const tabIcon = (): { light: vscode.Uri; dark: vscode.Uri } | undefined => {
       const eng = engineOf(profile), logo = eng ? ENGINE_LOGOS[eng.key] : undefined;
       if (!eng || !logo || logo.wordmark) return undefined;
@@ -386,7 +407,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
     const rawRows: Value[][] = skip > 0 ? lastRaw : []; lastRaw = rawRows; let cols: ColumnInfo[] = [];
     const emit = (e: RunEvent) => {
       if (e.type === "start") { columnsSeen = true; cols = e.columns; mask = maskFor(policy().maskColumns, e.columns.map((c) => c.name)); if (mask) edit = undefined; results.describe(tableRef ? `${profile.name}.${tableRef.name}` : `${profile.name} · ${title}`, tabIcon()); results.post({ v: 1, type: "start", title, sql: e.sql, columns: e.columns, editable: !!edit, ...(skip > 0 ? { append: true } : {}), connection: connectionInfo(), ...(edit ? { flags: { pk: edit.target.columns.filter((c) => c.primaryKey).map((c) => c.name), required: edit.target.columns.filter((c) => !c.nullable).map((c) => c.name) } } : {}), ...(tableRef ? { table: { name: tableRef.name, ...(tableRef.schema ? { schema: tableRef.schema } : {}), alter: !tableRef.isView && !mgr.isReadOnly(profile) && profile.driver in DIALECT_OF && ["sqlite", "postgres", "mysql", "mssql", "oracle"].includes(profile.driver), ...(filterKindOf(profile.driver) ? { filter: { kind: filterKindOf(profile.driver)!, where: filter?.where ?? "", order: filter?.order ?? "" } } : {}) } } : {}) }); }
-      else if (e.type === "rows") { const shown = mask ? e.rows.map(mask) : e.rows; if (edit) rawRows.push(...e.rows); results.post({ v: 1, type: "rows", rows: shown.map((r) => r.map(formatValue)) }); }
+      else if (e.type === "rows") { if (keyset && e.rows.length) { const at = keyset.keys.map((k) => cols.findIndex((c) => c.name === k.name)); const row = e.rows[e.rows.length - 1]!; keyset.last = at.every((i) => i >= 0) ? at.map((i) => row[i]!) : undefined; } const shown = mask ? e.rows.map(mask) : e.rows; if (edit) rawRows.push(...e.rows); results.post({ v: 1, type: "rows", rows: shown.map((r) => r.map(formatValue)) }); }
       else if (e.type === "done") {
         if (!columnsSeen) results.post({ v: 1, type: "start", title, sql: "", columns: [] });
         // "truncated" means the page was full and at least one more row exists: offer the next page unless the row cap is reached.
@@ -403,8 +424,8 @@ export async function activate(ctx: vscode.ExtensionContext) {
       const drv = await mgr.loadDriver(profile.driver);
       const timeout = cfg().get<number>("query.timeoutSeconds", 0);
       const out = await runStatement({
-        conn, profile, sql, ...(params ? { params } : {}), ...(drv.assess ? { assess: drv.assess } : {}), signal: ac.signal, policy: policy(), readOnly: mgr.isReadOnly(profile),
-        maxRows: size, ...(skip > 0 ? { skip } : {}), ...(timeout > 0 ? { timeoutMs: timeout * 1000 } : {}),
+        conn, profile, sql: page?.statement ?? sql, ...(params ? { params } : {}), ...(drv.assess ? { assess: drv.assess } : {}), signal: ac.signal, policy: policy(), readOnly: mgr.isReadOnly(profile),
+        maxRows: size, ...(skip > 0 && !keyset ? { skip } : {}), ...(timeout > 0 ? { timeoutMs: timeout * 1000 } : {}),
         confirmDestructive: cfg().get<boolean>("security.confirmDestructive", true),
         confirm: async (reason) => (await vscode.window.showWarningMessage(
           t("[{0}] {1}: {2}", profile.environment.toUpperCase(), profile.name, friendlyReasons(reason)), { modal: true, detail: sql.slice(0, 500) }, t("Run anyway"))) === t("Run anyway"),
@@ -414,7 +435,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
       if (out.status === "ok" && /^\s*(create|alter|drop|rename|truncate)\b/i.test(sql)) { schemaCache.invalidate(id); lang.refreshAll(); void vscode.commands.executeCommand("rizomadb.refresh"); }
       if (edit && out.status === "ok") {
         const ts = new TableSession(edit.target, cols, rawRows);
-        session = { s: ts, profileId: id, refresh: () => execute(id, sql, title, edit, undefined, tableRef, lastRun?.loaded ? { skip: 0, size: lastRun.loaded } : undefined, filter) };
+        session = { s: ts, profileId: id, refresh: () => execute(id, sql, title, edit, undefined, tableRef, lastRun?.loaded ? { skip: 0, size: lastRun.loaded, ...(lastRun.keyset ? { keyset: lastRun.keyset } : {}) } : undefined, filter) };
         pushPending();
       }
       if (cfg().get<boolean>("history.enabled", true) && skip === 0) {
@@ -541,7 +562,10 @@ export async function activate(ctx: vscode.ExtensionContext) {
     }
     // The statement carries the row cap, not the first page: the runner reads pages of it and "Load more" continues from there.
     const limit = Math.min(cfg().get<number>("query.maxRows", 100000), profile.driver === "elasticsearch" ? 10000 : Infinity);
-    await execute(profile.id, plugin.openCommand ? plugin.openCommand({ ...(n.schema ? { schema: n.schema } : {}), name: n.name }, limit) : plugin.selectTop(name, limit), n.name, edit, undefined, { name: n.name, ...(n.schema ? { schema: n.schema } : {}), isView: !!n.isView });
+    const ref: TableRef = { name: n.name, ...(n.schema ? { schema: n.schema } : {}), isView: !!n.isView };
+    const keyset = await keysetFor(profile, conn, ref);
+    const open = keyset ? buildTableQuery({ driver: profile.driver, quoted: name, schema: n.schema, name: n.name, where: "", order: keysetOrder(keyset.keys), limit }) : plugin.openCommand ? plugin.openCommand({ ...(n.schema ? { schema: n.schema } : {}), name: n.name }, limit) : plugin.selectTop(name, limit);
+    await execute(profile.id, open, n.name, edit, undefined, ref, keyset ? { skip: 0, keyset } : undefined);
     if (!edit) notice("info", n.isView ? t("Views are read-only.") : mgr.isReadOnly(profile) ? t("Read-only connection: editing is disabled.") : t("This table has no primary key, so its rows cannot be edited safely."));
   });
   reg("rizomadb.export", async (n?: Node) => {

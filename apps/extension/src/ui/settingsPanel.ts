@@ -18,6 +18,7 @@ const TITLES: Record<string, () => string> = {
   "editor.highlightStatement": () => t("Highlight the statement at the cursor"),
   "edit.applyImmediately": () => t("Save each edit immediately"),
   "query.pageSize": () => t("Rows per page"),
+  "query.keysetPaging": () => t("Page tables by primary key"),
   "environments": () => t("Extra environments"),
   "explorer.groupByFamily": () => t("Group connections by engine type"),
   "security.confirmDestructive": () => t("Confirm destructive statements"),

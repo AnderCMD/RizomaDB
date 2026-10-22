@@ -4,6 +4,7 @@ import { sqliteDriver } from "@rizomadb/driver-sqlite";
 import { defaultEffectivePolicy } from "@rizomadb/core";
 import { runStatement, type RunEvent } from "./runner.js";
 import { buildTableQuery } from "./tableQuery.js";
+import { keysetAfter, keysetOrder, withKeyset } from "./keysetPaging.js";
 
 /** The filter box and "Load more" against a real engine: the statements the UI builds must run, filter, order and page. */
 describe("table filter and paging on SQLite", () => {
@@ -30,6 +31,27 @@ describe("table filter and paging on SQLite", () => {
     expect(first.ids).toEqual([19, 18, 9]); expect(first.more).toBe(true);
     const rest = await page(conn, filtered, 3, 3);
     expect(rest.ids).toEqual([8]); expect(rest.more).toBe(false);
+    await conn.close();
+  });
+
+  it("pages by primary key: every page continues after the last key, with a filter and a composite key", async () => {
+    const conn = await sqliteDriver.connect({ path: ":memory:" }, { log() {} });
+    const run = async (sql: string) => { const out: unknown[][] = []; for await (const ev of conn.execute({ sql }, new AbortController().signal)) if (ev.type === "rows") out.push(...ev.rows); return out; };
+    await run("CREATE TABLE k (a INTEGER, b TEXT, v INTEGER, PRIMARY KEY (a, b))");
+    for (let a = 1; a <= 4; a++) for (const b of ["x", "o'k", "z"]) await run(`INSERT INTO k VALUES (${a}, '${b.replace(/'/g, "''")}', ${a * 10})`);
+    const keys = [{ name: "a", quoted: conn.quoteIdent("a") }, { name: "b", quoted: conn.quoteIdent("b") }];
+    const base = { driver: "sqlite", quoted: conn.quoteIdent("k"), name: "k", limit: 100000 };
+    const expected = await run(`SELECT a, b FROM k WHERE v >= 20 ORDER BY a, b`);
+    const got: unknown[][] = [];
+    let last: (string | number | bigint | null)[] | undefined;
+    for (let guard = 0; guard < 20; guard++) {
+      const where = last ? withKeyset("v >= 20", keysetAfter(keys, last as never)!) : "v >= 20";
+      const rows = await run(buildTableQuery({ ...base, where, order: keysetOrder(keys), limit: 4 }).replace("SELECT *", "SELECT a, b"));
+      if (!rows.length) break;
+      got.push(...rows); last = rows[rows.length - 1] as never;
+    }
+    expect(got).toEqual(expected);
+    expect(got.length).toBe(9);
     await conn.close();
   });
 });

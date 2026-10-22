@@ -45,6 +45,8 @@ A table opens with a first page (`rizomadb.table.openRows`, 200); a query starts
 
 How it works, honestly: the query is run again and the rows already shown are skipped, which works on **every** engine. The database does the work again up to that point, so very deep pages are slower, and without an `ORDER BY` the engine is not obliged to return rows in the same order twice. For a stable result on a changing table, sort it. If you have pending edits you must apply or discard them before loading more.
 
+Optional, off by default: turn on `rizomadb.query.keysetPaging` and a table is opened sorted by its primary key, and *Load more* asks the database for the rows **after** the last key instead of skipping rows, so deep pages stay as fast as the first. It is tested on SQLite, PostgreSQL and MySQL; other engines, tables without a primary key, keys that are not numbers or text, and a custom sort typed in the filter box keep skipping rows. Because the table is then ordered by its key, the row order differs from the engine's natural order.
+
 ## Where results open
 `rizomadb.results.location`: `bottom` (the lower half under the editor, the default), `full` (the whole editor area) or `beside`.
 
