@@ -15,7 +15,7 @@ Based on a review of the competitors' public listings (checked 2026-10-20) and o
 ## Where RizomaDB is not (yet) competitive
 - **Breadth**: fewer engines than DBCode's listing; real cloud accounts (AWS, Google Cloud, Atlas, managed PostgreSQL/MySQL) were never tested; Redshift, Snowflake and BigQuery are not implemented; Level 3 engines and a JDBC/ODBC bridge do not exist.
 - **Little human testing so far**: the automated end-to-end test activates it in a real VS Code and checks the commands and editor lenses, the screens pass axe in light and dark, and the owner did a manual screen-reader pass on macOS, Windows and Linux with no problems found; there is no independent accessibility audit.
-- **Not published**: no Marketplace or Open VSX listing, and the release workflow (checksums, SBOM, build provenance) has never run.
+- **Distribution**: on the VS Code Marketplace and as a GitHub release (checksums, SBOM, build provenance); not on Open VSX yet.
 - **DuckDB** needs a platform-specific native module: it ships only in the per-platform VSIX files, which are built by the release workflow (only two of the six were run).
 - Community: none yet.
 - Some features are young: HydraDB is experimental; paging works on every engine by re-running the query and skipping rows, which is slower for very deep pages than a native cursor (an optional setting pages by primary key on five SQL engines).

@@ -35,4 +35,4 @@ Cada VSIX de una versión viene con `SHA256SUMS`, un SBOM (`sbom.cdx.json`) y un
 sha256sum -c SHA256SUMS --ignore-missing
 gh attestation verify rizomadb-linux-x64.vsix --repo AnderCMD/RizomaDB
 ```
-La atestación prueba qué ejecución del workflow construyó el archivo; no es un certificado de firma de código. Este camino aún no se ha ejecutado, porque no se ha hecho ninguna versión.
+La atestación prueba qué ejecución del workflow construyó el archivo; no es un certificado de firma de código.
