@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>
+
 # Threat model (STRIDE) — initial draft
 
 Assets: database credentials, queried data, history and audit log, integrity of written data, supply chain.

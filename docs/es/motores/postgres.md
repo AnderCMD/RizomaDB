@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>
+
 # PostgreSQL
 
 **Nivel:** 1 · **Versiones probadas en CI:** 17 (probada); 12–16 se espera que funcionen, no están en CI

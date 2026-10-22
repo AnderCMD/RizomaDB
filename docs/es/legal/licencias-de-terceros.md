@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>
+
 # Licencias de terceros (dependencias de producción)
 
 Generado por `pnpm audit:licenses`; verificado en CI. RizomaDB en sí es Apache-2.0.

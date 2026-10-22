@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>
+
 # SQL Server
 
 **Nivel:** 1 · **Versiones probadas en CI:** SQL Server 2022 (probada)

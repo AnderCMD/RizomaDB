@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>
+
 # Honest comparison
 
 Based on a review of the competitors' public listings (checked 2026-10-20) and on what RizomaDB actually passes in its own tests. "Not verified" means we did not confirm it from a primary source. Updated 2026-10-22.
@@ -7,7 +9,7 @@ Based on a review of the competitors' public listings (checked 2026-10-20) and o
 | License | Apache-2.0, all code open | Proprietary product | New versions closed | MIT |
 | Paid tiers | None | Pro/Team | Not verified | None |
 | Telemetry | None; asserted by a zero-socket test | Anonymous (follows VS Code setting) | Anonymous, own opt-out | Not found |
-| Maturity | Pre-1.0, never published, not tested by real users | Widely used | Widely used | Widely used |
+| Maturity | 1.0.0, newly released, not yet tested by other people | Widely used | Widely used | Widely used |
 | Engines with real-engine tests | 18 drivers covering 24 engines: SQLite, PostgreSQL (+CockroachDB, YugabyteDB), MySQL/MariaDB (+TiDB), SQL Server, Oracle, MongoDB, Redis/Valkey, ClickHouse, Elasticsearch/OpenSearch, DuckDB, Neo4j, DynamoDB Local, InfluxDB 2 and 3, Cassandra/ScyllaDB, Firestore emulator, Trino, HydraDB (experimental) | "90+" per their listing | See listing | Many via drivers |
 
 ## Where RizomaDB is not (yet) competitive

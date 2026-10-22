@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>
+
 # Políticas
 
 RizomaDB combina capas de políticas y **siempre gana el resultado más estricto**: un archivo de proyecto puede endurecer lo que fijó el equipo, un archivo de usuario puede endurecer lo que fijó el proyecto, y nadie puede relajar lo que una capa superior restringió.

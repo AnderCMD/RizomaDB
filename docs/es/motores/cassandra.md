@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>
+
 # Apache Cassandra / ScyllaDB
 
 **Nivel:** 2 · **Versiones probadas:** Apache Cassandra 5.0 (probada). ScyllaDB 6.2.3 (un solo nodo, modo desarrollador) pasa las mismas 10 pruebas (`RZ_CASSANDRA_PORT=19043 RZ_CASSANDRA_EXPECT=ScyllaDB`); el driver la detecta mediante `system.versions` y oculta las vistas materializadas `<índice>_index` que Scylla crea para los índices secundarios. Los clústeres de varios nodos, Scylla Cloud, Alternator (API de DynamoDB) y las funciones propias de Scylla **no** están probados.

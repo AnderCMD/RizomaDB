@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>
+
 # Registro de auditoría
 
 Cada sentencia ejecutada mediante RizomaDB se añade a un archivo JSONL local (por defecto, la carpeta de almacenamiento de la extensión; `rizomadb.audit.path` lo cambia). No se envía nada a ningún lado.

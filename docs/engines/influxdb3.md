@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>
+
 # InfluxDB 3 (Core / Enterprise)
 
 **Level:** 2 · **Versions tested:** InfluxDB 3 Core 3.12.1, single node, file object store, started with `--without-auth` (tested). Enterprise, Cloud Dedicated/Serverless and authenticated servers use the same HTTP API and a bearer token, but are **not** tested.

@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>
+
 # Neo4j
 
 **Nivel:** 2 · **Versiones probadas:** Neo4j 5.26 Community (probada). Se espera que funcionen otras 5.x y Enterprise/Aura, pero **no están probadas**; la 4.x no es compatible (no tiene Query API).

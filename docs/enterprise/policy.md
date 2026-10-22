@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>
+
 # Policies
 
 RizomaDB merges policy layers and the **strictest result always wins**: a project file can tighten what the team set, a user file can tighten what the project set, nobody can loosen what a higher layer restricted.

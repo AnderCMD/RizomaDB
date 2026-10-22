@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>
+
 # Referencia de comandos
 
 Todos los comandos, como aparecen en la paleta de comandos (⇧⌘P / Ctrl+Shift+P) bajo **RizomaDB**. Algunos actúan sobre el elemento al que haces clic derecho en el árbol de conexiones y no sirven desde la paleta.

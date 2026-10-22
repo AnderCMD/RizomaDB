@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>
+
 # Escribir un driver
 
 Un driver es un objeto que implementa `DriverPlugin` de `@rizomadb/driver-api`:

@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>
+
 # Ayuda a probar RizomaDB
 
 RizomaDB se ha probado con motores locales, contenedores y emuladores oficiales, por una sola persona. **No** se ha probado con cuentas reales en la nube ni por mucha gente en muchos sistemas, y ahí es donde más probablemente se esconden los errores. Si puedes probar algo de lo siguiente, un reporte breve es muy valioso, **funcione o no**.

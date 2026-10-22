@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>
+
 # Oracle Database
 
 **Level:** 1 · **Versions tested in CI:** Oracle Free 23ai (tested); 12c+ expected

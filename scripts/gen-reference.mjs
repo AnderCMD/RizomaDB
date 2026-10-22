@@ -9,6 +9,7 @@ const root = new URL("../", import.meta.url).pathname;
 const read = (f) => JSON.parse(readFileSync(root + f, "utf8"));
 const pkg = read("apps/extension/package.json"), en = read("apps/extension/package.nls.json"), es = read("apps/extension/package.nls.es.json");
 const check = process.argv.includes("--check");
+const LOGO = '<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>';
 const L = {
   en: { empty: "(empty)", list: "list", nls: en, settingsTitle: "Settings reference", commandsTitle: "Commands reference", matrixTitle: "Engine capability matrix", setting: "Setting", type: "Type", def: "Default", desc: "What it does", command: "Command", name: "Name", keys: "Shortcut", values: "values",
     settingsIntro: "Every setting of the extension. Open the settings screen with **RizomaDB: Open Settings** to change them with a form; each change is saved to your user settings as you make it. Settings marked *machine-overridable* can also be set by an administrator.",
@@ -44,13 +45,13 @@ function settings(lang) {
     rows.push(`| \`${k}\` | ${type} | ${def} | ${md(tr(lang, v.markdownDescription ?? v.description))} |`);
   }
   const t = L[lang];
-  return `# ${t.settingsTitle}\n\n${t.settingsIntro}\n\n| ${t.setting} | ${t.type} | ${t.def} | ${t.desc} |\n|---|---|---|---|\n${rows.join("\n")}\n\n*${t.gen}*\n`;
+  return `${LOGO}\n\n# ${t.settingsTitle}\n\n${t.settingsIntro}\n\n| ${t.setting} | ${t.type} | ${t.def} | ${t.desc} |\n|---|---|---|---|\n${rows.join("\n")}\n\n*${t.gen}*\n`;
 }
 function commands(lang) {
   const keys = new Map(pkg.contributes.keybindings.map((k) => [k.command, `${k.key.replace("ctrl", "Ctrl").replace("shift", "Shift").replace("enter", "Enter").replaceAll("+", "+")} / ${k.mac.replace("cmd", "⌘").replace("shift", "⇧").replace("enter", "Enter").replaceAll("+", "")}`]));
   const t = L[lang];
   const rows = pkg.contributes.commands.map((c) => `| \`${c.command}\` | ${md(tr(lang, c.title))} | ${keys.get(c.command) ?? "—"} |`);
-  return `# ${t.commandsTitle}\n\n${t.commandsIntro}\n\n| ${t.command} | ${t.name} | ${t.keys} |\n|---|---|---|\n${rows.join("\n")}\n\n*${t.gen}*\n`;
+  return `${LOGO}\n\n# ${t.commandsTitle}\n\n${t.commandsIntro}\n\n| ${t.command} | ${t.name} | ${t.keys} |\n|---|---|---|\n${rows.join("\n")}\n\n*${t.gen}*\n`;
 }
 async function matrix(lang) {
   const t = L[lang];
@@ -66,7 +67,7 @@ async function matrix(lang) {
     const name = id === "hydradb" ? `${meta.displayName} (experimental)` : meta.displayName;
     rows.push(`| ${name} | ${t.fam[meta.family] ?? meta.family} | ${lang_} | ${t.edit[c.rowEditing] ?? "—"} | ${c.cancelQuery ? t.yes : "—"} | ${t.ro[c.readOnlyEnforcement] ?? "—"} | ${FILTER[id] ? t.filter[FILTER[id]] : "—"} | ${ALTER.has(id) ? t.yes : "—"} | ${c.explain !== "none" ? t.yes : "—"} | ${ADMIN.has(id) ? t.yes : "—"} |`);
   }
-  return `# ${t.matrixTitle}\n\n${t.matrixIntro}\n\n| ${t.cols.join(" | ")} |\n|${t.cols.map(() => "---").join("|")}|\n${rows.join("\n")}\n\n## ${t.notes}\n\n${t.notesList.map((n) => `- ${n}`).join("\n")}\n\n*${t.gen}*\n`;
+  return `${LOGO}\n\n# ${t.matrixTitle}\n\n${t.matrixIntro}\n\n| ${t.cols.join(" | ")} |\n|${t.cols.map(() => "---").join("|")}|\n${rows.join("\n")}\n\n## ${t.notes}\n\n${t.notesList.map((n) => `- ${n}`).join("\n")}\n\n*${t.gen}*\n`;
 }
 
 outputs.push(["docs/reference/settings.md", settings("en")], ["docs/es/referencia/ajustes.md", settings("es")]);

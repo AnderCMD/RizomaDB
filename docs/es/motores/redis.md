@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>
+
 # Redis / Valkey
 
 **Nivel:** 1 · **Versiones probadas en CI:** Redis 7, Valkey 8 (probadas)

@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>
+
 # Lista de aceptación v1.0 — estado real (2026-10-22)
 
 [English](../../release/v1-checklist.md)

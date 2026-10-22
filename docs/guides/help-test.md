@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>
+
 # Help test RizomaDB
 
 RizomaDB has been tested against local engines, containers and official emulators, by one person. It has **not** been tested against real cloud accounts or by many people on many systems, and that is where bugs are most likely to hide. If you can run any of the following, a short report is valuable, **whether it worked or not**.

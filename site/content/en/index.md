@@ -18,8 +18,8 @@ features:
   - { icon: "🌍", title: "English and Spanish", details: "Switch the language inside the extension, and follow the built-in guide that takes you by the hand.", link: /en/guides/language-and-settings }
 ---
 
-::: warning Pre-release
-RizomaDB is not published to a marketplace yet and v1.0 is not ready. The [honest comparison](/en/market/honest-comparison) and the [acceptance checklist](/en/release/v1-checklist) say exactly what is and is not verified.
+::: warning Version 1.0.0
+RizomaDB 1.0.0 is on the VS Code Marketplace (Open VSX is not published yet), but some things are not confirmed. The [honest comparison](/en/market/honest-comparison) and the [acceptance checklist](/en/release/v1-checklist) say exactly what is and is not verified.
 
 **Cloud services are not confirmed.** RizomaDB has only been tested against local engines and official emulators, never against a real cloud account (AWS, Google Cloud, MongoDB Atlas, managed PostgreSQL/MySQL). Test with a read-only user or a throwaway database before relying on it: see [Cloud and managed services](/en/engines/#cloud-and-managed-services-not-confirmed).
 :::

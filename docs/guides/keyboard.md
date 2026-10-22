@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>
+
 # Using RizomaDB with the keyboard
 
 RizomaDB is designed to be used without a mouse. If you find something that needs one, that is a bug: please report it.

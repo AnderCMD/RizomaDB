@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>
+
 # Migrar a RizomaDB
 
 RizomaDB lee las definiciones de conexión de otras herramientas con **RizomaDB: Importar conexiones**. No se envía nada a ningún lado; los archivos se analizan en local.

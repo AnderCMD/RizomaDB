@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>
+
 # El editor de consultas
 
 **RizomaDB: Nueva consulta** abre un editor en el lenguaje de la conexión: SQL, shell de Mongo, comandos de Redis, Cypher (Neo4j, HydraDB), solicitudes REST para Elasticsearch/OpenSearch y la consola JSON de Firestore, o Flux y CQL donde corresponda. Elige la conexión con el elemento de la barra de estado o con la primera lente del editor.

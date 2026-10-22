@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>
+
 # Solución de problemas
 
 **No puedo editar una celda.** Solo se pueden editar las tablas con clave primaria (o documentos de MongoDB) abiertas desde el árbol. Las vistas, las consultas personalizadas, una línea de consulta que editaste y las conexiones de solo lectura no; la rejilla explica cuál aplica. Comprueba que la conexión no sea de solo lectura y que el entorno no sea `prod` con protección de solo lectura.

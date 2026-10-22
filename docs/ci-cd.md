@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>
+
 # CI/CD
 
 How a change travels from a branch to users, and what is automatic.
@@ -12,14 +14,13 @@ feature branch ──PR──▶ dev ──PR (Promote workflow)──▶ main �
 | `ci.yml` | push and pull request to `main` or `dev` | lint, build, typecheck, licence audit, a check that the generated reference pages are current, the test suites against real engine containers (a second job, `engines-extra`, starts CockroachDB, YugabyteDB, InfluxDB 3, Firestore and HydraDB from the compose file), benchmarks, builds the VSIX and keeps it as an artifact (14 days), builds the docs site, builds and smoke-tests the linux-x64 platform VSIX (`platform-package`), scans for secrets (gitleaks) and runs CodeQL. A newer push replaces a run in progress. |
 | `pages.yml` | push to `main` that touches `docs/`, `site/` or the workflow, or manual | builds the VitePress site (English and Spanish) and deploys it to GitHub Pages. |
 | `promote.yml` | manual | opens the pull request `dev` → `main` if dev has commits main lacks. |
-| `release.yml` | tag `v*`, or manual | builds the universal VSIX and one VSIX per platform (with DuckDB's native library), checks their size, generates the SBOM and checksums, attests provenance and attaches them to a prerelease. **Publishing to the Marketplace and Open VSX is a separate step that needs a manual approval.** |
+| `release.yml` | tag `v*`, or manual | builds the universal VSIX and one VSIX per platform (with DuckDB's native library), checks their size, generates the SBOM and checksums, attests provenance and attaches them to the GitHub release (the notes come from `CHANGELOG.md`). **It publishes nothing to a marketplace: the VSIX is uploaded by hand at https://marketplace.visualstudio.com/manage.** |
 
-Nothing is published to a marketplace or registry automatically.
+Nothing is published to a marketplace or registry automatically. Open VSX is not published yet.
 
 ## Repository settings
 These are repository settings, not code, so the workflows do not apply them. Applied on 2026-10-22:
 - `main` and `dev` are protected: the `test`, `engines-extra`, `site` and `secrets` checks must pass, and force-pushes and deletions are blocked. Administrators are not forced through pull requests, so the owner can still fast-forward `main` from `dev`.
-- The `marketplace` environment (used by the release job to publish) requires a reviewer and only accepts protected branches.
 - The default workflow token is read-only and Actions cannot approve pull requests.
 
 Not enabled: letting GitHub Actions create pull requests (Settings → Actions → General), which `promote.yml` needs to open the `dev` → `main` pull request.

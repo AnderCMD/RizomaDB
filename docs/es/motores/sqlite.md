@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>
+
 # SQLite
 
 **Nivel:** 1 · **Versiones probadas en CI:** SQLite incluido en el runtime de Node (`node:sqlite`)

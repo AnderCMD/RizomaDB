@@ -1,10 +1,8 @@
 name: Release
-# Builds, signs and attaches artifacts for a tag. Publishing to a marketplace is a separate, manually approved job.
+# Builds the packages, attests their provenance and attaches them to the GitHub release of a tag. The Marketplace upload is done by hand (see docs/ci-cd.md).
 on:
   push: { tags: ["v*"] }
   workflow_dispatch:
-    inputs:
-      publish: { description: "Publish to Marketplace and Open VSX (needs environment approval)", type: boolean, default: false }
 permissions: { contents: write, id-token: write, attestations: write }
 jobs:
   build:
@@ -32,18 +30,12 @@ jobs:
         with: { subject-path: "*.vsix" }
       - uses: actions/upload-artifact@v4
         with: { name: release, path: "*.vsix\nSHA256SUMS\nsbom.cdx.json" }
+      - name: Release notes from the changelog
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          v="${GITHUB_REF_NAME#v}"
+          awk -v v="$v" '$0 ~ "^## \\[" v "\\]" {f=1; next} /^## \[/ {f=0} f' CHANGELOG.md > release-notes.md
+          test -s release-notes.md || { echo "No CHANGELOG section for $v" >&2; exit 1; }
       - uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
-        with: { files: "*.vsix\nSHA256SUMS\nsbom.cdx.json", prerelease: true }
-  publish:
-    needs: build
-    if: github.event.inputs.publish == 'true'
-    runs-on: ubuntu-latest
-    environment: marketplace   # configure required reviewers on this environment: nothing is published without a human approval
-    steps:
-      - uses: actions/download-artifact@v4
-        with: { name: release }
-      - run: npx @vscode/vsce publish --packagePath *.vsix   # the universal package and one per platform
-        env: { VSCE_PAT: "${{ secrets.VSCE_PAT }}" }
-      - run: for f in *.vsix; do npx ovsx publish "$f"; done
-        env: { OVSX_PAT: "${{ secrets.OVSX_PAT }}" }
+        with: { files: "*.vsix\nSHA256SUMS\nsbom.cdx.json", body_path: release-notes.md, make_latest: true }

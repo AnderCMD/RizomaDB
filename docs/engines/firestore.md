@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>
+
 # Google Cloud Firestore
 
 **Level:** 2 · **Versions tested:** the Firestore emulator (Google Cloud CLI `emulators` image, Firestore Native mode, REST API v1) (tested). **Google Cloud itself has not been tested**, so it is not confirmed to work there; the requests are the same REST calls, with a bearer token. Test it with a read-only account or a throwaway project before relying on it.

@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>
+
 # Amazon DynamoDB
 
 **Nivel:** 2 · **Versiones probadas:** DynamoDB Local 2.5.2 (probada). El servicio real de AWS usa la misma API y la misma firma de peticiones (verificada con el vector de prueba SigV4 publicado por AWS), pero **no se ha probado contra AWS**, así que no está confirmado que funcione ahí. Pruébalo con un usuario de IAM de solo lectura o una tabla desechable antes de depender de él.

@@ -19,7 +19,7 @@ body:
     validations: { required: true }
   - type: input
     id: system
-    attributes: { label: RizomaDB version, VS Code version and operating system, placeholder: "0.0.1, VS Code 1.142, Windows 11" }
+    attributes: { label: RizomaDB version, VS Code version and operating system, placeholder: "1.0.0, VS Code 1.142, Windows 11" }
     validations: { required: true }
   - type: checkboxes
     id: worked

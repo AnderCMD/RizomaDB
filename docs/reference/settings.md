@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>
+
 # Settings reference
 
 Every setting of the extension. Open the settings screen with **RizomaDB: Open Settings** to change them with a form; each change is saved to your user settings as you make it. Settings marked *machine-overridable* can also be set by an administrator.

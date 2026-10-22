@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>
+
 # Política de dependencias
 
 * Las dependencias mínimas necesarias; cada una necesita una razón (driver de base de datos, SSH, validación de esquemas, formateador).

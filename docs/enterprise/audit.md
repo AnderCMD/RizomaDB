@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>
+
 # Audit trail
 
 Every statement executed through RizomaDB is appended to a local JSONL file (default: the extension's storage folder; `rizomadb.audit.path` overrides it). Nothing is sent anywhere.

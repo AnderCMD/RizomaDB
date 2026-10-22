@@ -26,7 +26,9 @@ const T = {
     notes: { "MPL-2.0": "dependencia sin modificar; las obligaciones de la MPL se aplican solo a sus propios archivos", "Python-2.0": "argparse (estilo PSF, permisiva)" },
     tools: "Herramientas solo de compilación (no se distribuyen): esbuild, TypeScript, vitest, eslint, svgo, @resvg/resvg-js (MPL-2.0, generación de los PNG de marca), opentype.js, tipografía Inter (SIL OFL 1.1, convertida a trazados en el logotipo)." },
 };
+const LOGO = '<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>';
 const render = (t) => [
+  LOGO, "",
   `# ${t.title}`, "", t.intro, "",
   ...Object.keys(REVIEWED).map((l) => `- **${l}** — ${t.notes[l]}`), "",
   `| ${t.head.join(" | ")} |`, "|---|---|---|",

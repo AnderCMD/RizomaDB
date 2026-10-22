@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>
+
 # Referencia de ajustes
 
 Todos los ajustes de la extensión. Abre la pantalla de configuración con **RizomaDB: Abrir configuración** para cambiarlos con un formulario; cada cambio se guarda en tu configuración de usuario al hacerlo. Los ajustes marcados como *machine-overridable* también los puede fijar un administrador.

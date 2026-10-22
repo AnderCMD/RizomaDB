@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>
+
 # InfluxDB 3 (Core / Enterprise)
 
 **Nivel:** 2 · **Versiones probadas:** InfluxDB 3 Core 3.12.1, un solo nodo, almacén de objetos en archivos, iniciado con `--without-auth` (probada). Enterprise, Cloud Dedicated/Serverless y los servidores con autenticación usan la misma API HTTP y un token Bearer, pero **no están probados**.

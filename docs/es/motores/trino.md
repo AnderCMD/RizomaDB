@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>
+
 # Trino
 
 **Nivel:** 2 · **Versiones probadas:** Trino 470, un solo nodo, catálogo `memory` (probada). Starburst, Athena (basada en Trino pero otro servicio), Presto y los clústeres protegidos (OAuth, Kerberos, certificados de cliente) **no** están probados.

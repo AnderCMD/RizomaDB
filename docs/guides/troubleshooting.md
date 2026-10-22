@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>
+
 # Troubleshooting
 
 **I cannot edit a cell.** Only tables with a primary key (or MongoDB documents, Redis keys) opened from the tree are editable. Views, custom queries, a query line you edited and read-only connections are not; the grid explains which applies. Make sure the connection is not read-only and the environment is not `prod` with read-only protection.

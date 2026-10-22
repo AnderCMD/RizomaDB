@@ -37,7 +37,16 @@ export default defineConfig({
   cleanUrls: true,
   // GitHub Pages serves a project site under /<repo>/; the Pages workflow sets SITE_BASE, local builds stay at "/".
   base: process.env.SITE_BASE ?? "/",
-  head: [["link", { rel: "icon", href: `${process.env.SITE_BASE ?? "/"}favicon.svg` }]],
+  head: [
+    ["link", { rel: "icon", type: "image/svg+xml", href: `${process.env.SITE_BASE ?? "/"}favicon.svg` }],
+    ["link", { rel: "icon", type: "image/png", sizes: "128x128", href: `${process.env.SITE_BASE ?? "/"}favicon-128.png` }],
+    ["link", { rel: "apple-touch-icon", href: `${process.env.SITE_BASE ?? "/"}apple-touch-icon.png` }],
+    ["meta", { property: "og:type", content: "website" }],
+    ["meta", { property: "og:title", content: "RizomaDB" }],
+    ["meta", { property: "og:description", content: "Free, open-source, no-telemetry multi-engine database client for VS Code" }],
+    ["meta", { property: "og:image", content: "https://andercmd.github.io/RizomaDB/social-preview.png" }],
+    ["meta", { name: "twitter:card", content: "summary_large_image" }],
+  ],
   // The repo docs link to source files and to each other with repo-relative paths.
   ignoreDeadLinks: true,
   themeConfig: {

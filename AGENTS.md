@@ -36,7 +36,7 @@ Engine suites skip when their engine is down locally and **fail in CI** (`RZ_REQ
 2. **Secrets only in VS Code SecretStorage.** Never in settings, state, logs, history or the audit log.
 3. **Every statement goes through the guarded connection** (`packages/core/src/guard.ts`): one policy check and one audit entry. Never call a driver's `execute` from UI code on an unguarded connection.
 4. **Do not claim support you have not tested.** A capability or engine is documented as supported only with a test against a real engine; otherwise say "not tested". Keep `docs/release/v1-checklist.md` and its Spanish counterpart honest.
-5. **Never publish.** No Marketplace, Open VSX, npm, release workflow or tags without the owner's explicit confirmation. Deploying the docs site happens only from `main` through `pages.yml`.
+5. **Never publish.** No Marketplace, Open VSX, release workflow or tags without the owner's explicit confirmation. Deploying the docs site happens only from `main` through `pages.yml`.
 6. **No placeholder code** (`TODO`, stubs) in finished work. No copying code or logos from closed-source products. Engine logos come only from `scripts/gen-logos.mjs` (CC0/MIT sources).
 7. **Webviews are hardened**: strict CSP with a nonce, `localResourceRoots` limited to `dist`, every message validated with zod on both sides, no `innerHTML`/`eval` (a test enforces this). Build DOM with `el()`/`icon()`.
 8. **User text is translated.** Host: `t()` from `src/i18n.ts`. Webview: `tr()` plus an entry in `webviewStrings.ts`. Add the Spanish string to `l10n/bundle.l10n.es.json` and, for manifest text, to `package.nls.es.json`; a test fails otherwise. Messages written by drivers/policy/editing are mapped in `src/ui/driverMessages.ts`.

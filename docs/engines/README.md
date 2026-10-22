@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>
+
 # Engines
 
 What each engine supports at a glance: the [capability matrix](../reference/engine-matrix.md) (generated from the code). Limits, versions tested and test instructions are on each engine's page.

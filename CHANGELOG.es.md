@@ -1,10 +1,19 @@
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-horizontal-dark.svg">
+    <img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-horizontal-light.svg" alt="RizomaDB" width="320">
+  </picture>
+</p>
+
 # Registro de cambios
 
 [English](CHANGELOG.md) · Español
 
 Aquí se listan los cambios notables, del más nuevo al más antiguo. El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/). Todavía no se ha publicado nada.
 
-## [Sin publicar] — 0.0.1 (no publicado)
+## [1.0.0] — 2026-10-22
+
+Primera versión.
 
 ### Añadido
 - Un cliente de bases de datos multimotor para VS Code con 24 motores, un editor SQL nativo con botones Ejecutar, una rejilla de resultados editable con cambios pendientes que se aplican en una transacción, un diseñador de tablas, diagramas ER, importación/exportación y herramientas de esquema.
@@ -18,5 +27,5 @@ Aquí se listan los cambios notables, del más nuevo al más antiguo. El formato
 - Abandonar un resultado grande ya no bloquea la siguiente sentencia en MySQL y SQL Server; una cancelación tardía ya no golpea la siguiente sentencia en MySQL, PostgreSQL y Oracle.
 - Varios problemas de enmascarado, de restricciones por defecto de SQL Server y de cancelación en HydraDB encontrados al probar con servidores reales.
 
-### Sin confirmar
-- Nunca se han probado cuentas reales en la nube (AWS, Google Cloud, MongoDB Atlas, servicios gestionados de PostgreSQL/MySQL). Redshift, Snowflake y BigQuery no están implementados. Ver [docs/es/release/lista-de-aceptacion-v1.md](docs/es/release/lista-de-aceptacion-v1.md).
+### Límites conocidos
+- Nunca se han probado cuentas reales en la nube (AWS, Google Cloud, MongoDB Atlas, servicios gestionados de PostgreSQL/MySQL). Redshift, Snowflake y BigQuery no están implementados. El paquete está en el Marketplace de VS Code y adjunto a este release; todavía no está en Open VSX. Ver [docs/es/release/lista-de-aceptacion-v1.md](docs/es/release/lista-de-aceptacion-v1.md).

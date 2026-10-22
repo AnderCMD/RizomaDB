@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>
+
 # Elasticsearch / OpenSearch
 
 **Nivel:** 2 · **Versiones probadas en CI:** Elasticsearch 8.15, OpenSearch 2.17 (probadas)

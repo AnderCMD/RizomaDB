@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>
+
 # Engine capability matrix
 
 What each engine supports, read from the drivers' declared capabilities and the extension's rules. A dash means *not supported*; it is never a promise that will be added. Which engines are tested against a real server is on each engine's page.

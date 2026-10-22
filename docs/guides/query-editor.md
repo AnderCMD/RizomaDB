@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>
+
 # The query editor
 
 **RizomaDB: New Query** opens an editor in the language of the connection: SQL, Mongo shell, Redis commands, Cypher (Neo4j, HydraDB), REST requests for Elasticsearch/OpenSearch and the JSON console of Firestore, or Flux and CQL where those engines apply. Pick the connection with the status bar item or the first lens in the editor.

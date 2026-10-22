@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>
+
 # Motores
 
 Qué admite cada motor de un vistazo: la [matriz de capacidades](../referencia/matriz-de-motores.md) (generada a partir del código). Los límites, las versiones probadas y las instrucciones de prueba están en la página de cada motor.

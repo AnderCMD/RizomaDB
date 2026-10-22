@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>
+
 # Matriz de capacidades por motor
 
 Qué admite cada motor, leído de las capacidades que declaran los drivers y de las reglas de la extensión. Un guion significa *no soportado*; nunca es una promesa de que se añadirá. Qué motores se prueban contra un servidor real está en la página de cada motor.

@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>
+
 # The results grid
 
 Opening a table or running a query shows the rows in a grid built for exploring. Every button is an icon with a label when you hover or focus it.

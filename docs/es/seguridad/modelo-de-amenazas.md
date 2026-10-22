@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>
+
 # Modelo de amenazas (STRIDE) — borrador inicial
 
 Activos: credenciales de bases de datos, datos consultados, historial y registro de auditoría, integridad de los datos escritos, cadena de suministro.

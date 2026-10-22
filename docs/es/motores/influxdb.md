@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>
+
 # InfluxDB 2.x
 
 **Nivel:** 2 · **Versiones probadas:** InfluxDB 2.7.12 OSS (probada). InfluxDB 3 (SQL/InfluxQL), InfluxDB 1.x e InfluxDB Cloud **no** son compatibles ni están probadas.

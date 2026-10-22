@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>
+
 # HydraDB
 
 **Estado:** experimental (se muestra con una insignia Experimental). **Nivel:** 2 · **Versiones probadas:** `ghcr.io/hydra-db/hydradb:latest` (imagen del 2026-09-29, registros de HydraDB 0.1.x, API de consultas HTTP `v1`), un solo nodo, sin cifrar. Otras versiones, clústeres y despliegues con TLS **no están probados**.

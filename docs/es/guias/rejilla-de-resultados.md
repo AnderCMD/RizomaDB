@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>
+
 # La rejilla de resultados
 
 Abrir una tabla o ejecutar una consulta muestra las filas en una rejilla hecha para explorar. Cada botón es un icono con una etiqueta al pasar el mouse o enfocarlo.

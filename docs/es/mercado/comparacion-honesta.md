@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>
+
 # Comparación honesta
 
 Basada en una revisión de los listados públicos de la competencia (comprobados el 2026-10-20) y en lo que RizomaDB realmente pasa en sus propias pruebas. «No verificado» significa que no lo confirmamos en una fuente primaria. Actualizada el 2026-10-22.
@@ -7,7 +9,7 @@ Basada en una revisión de los listados públicos de la competencia (comprobados
 | Licencia | Apache-2.0, todo el código abierto | Producto propietario | Las versiones nuevas son cerradas | MIT |
 | Niveles de pago | Ninguno | Pro/Team | No verificado | Ninguno |
 | Telemetría | Ninguna; la comprueba una prueba de cero sockets | Anónima (sigue el ajuste de VS Code) | Anónima, con su propia exclusión voluntaria | No encontrada |
-| Madurez | Pre-1.0, nunca publicado, sin pruebas de personas usuarias reales | Muy usado | Muy usado | Muy usado |
+| Madurez | 1.0.0, recién publicado, aún sin pruebas de otras personas | Muy usado | Muy usado | Muy usado |
 | Motores con pruebas contra un motor real | 18 drivers que cubren 24 motores: SQLite, PostgreSQL (+CockroachDB, YugabyteDB), MySQL/MariaDB (+TiDB), SQL Server, Oracle, MongoDB, Redis/Valkey, ClickHouse, Elasticsearch/OpenSearch, DuckDB, Neo4j, DynamoDB Local, InfluxDB 2 y 3, Cassandra/ScyllaDB, emulador de Firestore, Trino, HydraDB (experimental) | «90+» según su listado | Ver su listado | Muchos mediante drivers |
 
 ## Dónde RizomaDB no es (todavía) competitivo

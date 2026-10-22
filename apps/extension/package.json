@@ -2,7 +2,10 @@
   "name": "rizomadb",
   "displayName": "RizomaDB — Database Client",
   "description": "%description%",
-  "version": "0.0.1",
+  "version": "1.0.0",
+  "repository": { "type": "git", "url": "https://github.com/AnderCMD/RizomaDB.git" },
+  "bugs": { "url": "https://github.com/AnderCMD/RizomaDB/issues" },
+  "homepage": "https://andercmd.github.io/RizomaDB/",
   "publisher": "AnderCMD",
   "license": "Apache-2.0",
   "private": true,
@@ -19,8 +22,12 @@
     "database",
     "sql",
     "postgres",
+    "mysql",
     "sqlite",
-    "client"
+    "mongodb",
+    "redis",
+    "client",
+    "query"
   ],
   "engines": {
     "vscode": "^1.100.0"

@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>
+
 # MySQL / MariaDB
 
 **Level:** 1 · **Versions tested in CI:** MySQL 8.4 and MariaDB 11 (tested)

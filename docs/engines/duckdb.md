@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>
+
 # DuckDB
 
 **Level:** 2 · **Versions tested in CI:** DuckDB 1.5 (tested)

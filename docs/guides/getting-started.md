@@ -1,14 +1,21 @@
+<p align="center"><img src="https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/brand/logo-mark.svg" alt="RizomaDB" width="56"></p>
+
 # Getting started
 
 This page takes you from nothing to editing a value in a table. The same walk-through is built into the extension: run **RizomaDB: Open the Guide** (the book icon in the connections view) and it takes you step by step, with buttons that do each step for you.
 
 ## 1. Install
-RizomaDB is not published to a marketplace yet. Build the extension and install the file:
+Install RizomaDB from the VS Code Marketplace (search for "RizomaDB", or run `code --install-extension AnderCMD.rizomadb`), or download the `.vsix` file from the latest [GitHub release](https://github.com/AnderCMD/RizomaDB/releases) and install it:
+
+```bash
+code --install-extension rizomadb-1.0.0.vsix
+```
+
+To build it yourself:
 
 ```bash
 pnpm install
 pnpm --filter rizomadb package          # creates apps/extension/rizomadb-<version>.vsix
-code --install-extension apps/extension/rizomadb-0.0.1.vsix
 ```
 
 It also installs in VSCodium, Cursor and Windsurf (use their own `--install-extension`). Reload the window afterwards.
