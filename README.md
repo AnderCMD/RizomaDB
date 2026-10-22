@@ -11,7 +11,7 @@ English · [Español](README.es.md)
 
 A multi-engine database client for VS Code (and VSCodium, Cursor, Windsurf): Apache-2.0, no telemetry, no accounts, no locked features. [Documentation site](https://andercmd.github.io/RizomaDB/en/)
 
-> **Status: 1.0.0.** Available on the VS Code Marketplace and as a VSIX attached to each [GitHub release](https://github.com/AnderCMD/RizomaDB/releases) (Open VSX is not published yet). It builds, installs and passes its tests against real engines, and the project owner did a manual screen-reader pass on macOS, Windows and Linux with no problems found. Some things are **not confirmed**, above all real cloud accounts: see the honest [acceptance checklist](docs/release/v1-checklist.md).
+> **Status: 1.0.0.** Available on the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=AnderCMD.rizomadb) and as a VSIX attached to each [GitHub release](https://github.com/AnderCMD/RizomaDB/releases) (Open VSX is not published yet). It builds, installs and passes its tests against real engines, and the project owner did a manual screen-reader pass on macOS, Windows and Linux with no problems found. Some things are **not confirmed**, above all real cloud accounts: see the honest [acceptance checklist](docs/release/v1-checklist.md).
 
 ## What it does
 - **Connect** to 24 engines from a screen of logos, with the usual host, port and user already filled in; environments (`dev`, `staging`, `prod` or your own) with protection; SSH tunnels and HTTP/SOCKS5 proxies; secrets only in VS Code's secret storage. Connections are grouped by type in the tree, with the active one and its database in the status bar.
