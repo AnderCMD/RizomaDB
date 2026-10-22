@@ -38,9 +38,9 @@ function literal(driver: string, col: BuilderColumn, raw: string): string {
     if (!yes && !no) throw new BuilderError(`"${raw}" is not a boolean`);
     return driver === "mssql" || driver === "oracle" ? (yes ? "1" : "0") : yes ? "TRUE" : "FALSE";
   }
-  if (/[\u0000]/.test(raw)) throw new BuilderError("A value cannot contain a null character");
+  if (raw.includes("\0")) throw new BuilderError("A value cannot contain a null character");
   const body = driver === "mysql" ? raw.replaceAll("\\", "\\\\").replaceAll("'", "''") : raw.replaceAll("'", "''");
-  return `${driver === "mssql" && /[^\u0000-\u007f]/.test(raw) ? "N" : ""}'${body}'`;
+  return `${driver === "mssql" && [...raw].some((ch) => ch.charCodeAt(0) > 127) ? "N" : ""}'${body}'`;
 }
 
 export function buildSelect(i: BuilderInput): string {
