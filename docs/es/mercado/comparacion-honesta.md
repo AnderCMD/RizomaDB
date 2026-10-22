@@ -1,6 +1,6 @@
 # Comparación honesta
 
-Basada en `competitive-analysis.md` (verificado el 2026-10-20, en inglés) y en lo que RizomaDB realmente pasa en sus propias pruebas. «No verificado» significa que no lo confirmamos en una fuente primaria. Actualizada el 2026-10-22.
+Basada en `competitive-analysis.md` (verificado el 2026-10-20, escrito en español) y en lo que RizomaDB realmente pasa en sus propias pruebas. «No verificado» significa que no lo confirmamos en una fuente primaria. Actualizada el 2026-10-22.
 
 | | RizomaDB (este repositorio) | DBCode | Database Client | SQLTools |
 |---|---|---|---|---|
