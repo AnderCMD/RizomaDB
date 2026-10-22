@@ -34,6 +34,9 @@ The second tab of the same screen lists the connections you have. Each card show
 ## The connection in use
 The *active* connection is the one bound to the query editor you are in, or the last one that ran something. The status bar shows it as `[ENV] name · database`; click it to change the connection of the current editor.
 
+## A read-only account for the server-side guarantee
+Marking a connection read-only is enforced by RizomaDB (and by the server where the engine allows it). For a guarantee that does not depend on any client, give the connection a database account that can only read. Right-click the connection and choose **Generate Read-Only User Script…**: you pick the account name and RizomaDB opens a script in an editor. It never runs it and never writes a password: replace the `<choose-a-password>` placeholder and run it with an administrator account. Available for PostgreSQL, MySQL/MariaDB, ClickHouse and Redis/Valkey; each script was run against a real server and the new account was checked to read and to be refused writes (other engines say so instead of guessing).
+
 ## Import from other tools
 **RizomaDB: Import Connections From Other Tools…** reads connection strings, `~/.pgpass`, `~/.my.cnf`, DBeaver and SQLTools files. See [Migrating](migration.md).
 

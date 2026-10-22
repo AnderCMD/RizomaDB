@@ -61,7 +61,7 @@ jobs:
         ports: ["6380:6379"]
       clickhouse:
         image: clickhouse/clickhouse-server:24.8
-        env: { CLICKHOUSE_USER: default, CLICKHOUSE_PASSWORD: rizoma_test }
+        env: { CLICKHOUSE_USER: default, CLICKHOUSE_PASSWORD: rizoma_test, CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: "1" }
         ports: ["8123:8123"]
       elasticsearch:
         image: docker.elastic.co/elasticsearch/elasticsearch:8.15.3

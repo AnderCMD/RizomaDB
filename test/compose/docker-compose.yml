@@ -31,7 +31,7 @@ services:
     ports: ["63800:6379"]
   clickhouse:
     image: clickhouse/clickhouse-server:24.8
-    environment: { CLICKHOUSE_USER: default, CLICKHOUSE_PASSWORD: rizoma_test, CLICKHOUSE_DB: default }
+    environment: { CLICKHOUSE_USER: default, CLICKHOUSE_PASSWORD: rizoma_test, CLICKHOUSE_DB: default, CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: "1" }
     ports: ["18124:8123"]
     ulimits: { nofile: { soft: 262144, hard: 262144 } }
   elasticsearch:

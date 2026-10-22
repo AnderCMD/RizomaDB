@@ -45,7 +45,11 @@ function makeClient(o: Opts) {
   const open = (method: string, path: string, body: unknown, signal: AbortSignal | undefined, ndjson: boolean) => new Promise<{ res: IncomingMessage; destroy: () => void }>((resolve, reject) => {
     if (signal?.aborted) { reject(Object.assign(new Error("aborted"), { name: "AbortError" })); return; }
     const payload = body === undefined ? undefined : stringifyBody(body);
-    const req = lib.request({ host: o.host, port: o.port, method, path, agent, headers: headers(payload, ndjson) }, (res) => resolve({ res, destroy: () => req.destroy() }));
+    const req = lib.request({ host: o.host, port: o.port, method, path, agent, headers: headers(payload, ndjson) }, (res) => {
+      // An abort that lands while nobody is reading the reply would otherwise surface as an uncaught 'error' on the response.
+      res.on("error", () => {});
+      resolve({ res, destroy: () => req.destroy() });
+    });
     const onAbort = () => req.destroy(Object.assign(new Error("aborted"), { name: "AbortError" }));
     signal?.addEventListener("abort", onAbort, { once: true });
     req.on("close", () => signal?.removeEventListener("abort", onAbort));

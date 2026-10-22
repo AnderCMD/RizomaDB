@@ -115,6 +115,11 @@
         "category": "RizomaDB"
       },
       {
+        "command": "rizomadb.readOnlyUser",
+        "title": "%cmd.readOnlyUser%",
+        "category": "RizomaDB"
+      },
+      {
         "command": "rizomadb.disconnect",
         "title": "%cmd.disconnect%",
         "category": "RizomaDB"
@@ -410,6 +415,10 @@
         },
         {
           "command": "rizomadb.toggleReadOnly",
+          "when": "view == rizomadb.connections && viewItem == connection"
+        },
+        {
+          "command": "rizomadb.readOnlyUser",
           "when": "view == rizomadb.connections && viewItem == connection"
         },
         {

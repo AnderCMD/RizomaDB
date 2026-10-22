@@ -25,7 +25,7 @@ Placeholders such as `:name`, `$1`, `@name` or `?` ask for their values before r
 Results open in the lower half of the window (`rizomadb.results.location`). Every run replaces the same tab; **Pin Results Tab** keeps it. The tab is named `connection.table` with the engine's logo. See [The results grid](results-grid.md).
 
 ## History
-**RizomaDB: Open Query History** opens a screen with everything you ran, newest first, grouped by day. Search the text, filter by status (all, succeeded, failed) or connection, and for each entry **open in an editor**, **run again** (when the connection still exists) or **copy**. **Clear** deletes the history. Statements and errors are stored locally with secrets redacted; `rizomadb.history.enabled` and `rizomadb.history.retentionDays` control it.
+**RizomaDB: Open Query History** opens a screen with everything you ran, newest first, grouped by day. Search the text, filter by status (all, succeeded, failed) or connection, and for each entry **open in an editor**, **run again** (when the connection still exists) or **copy**. The star on each entry adds it to your **favorites** (the *Starred* filter): favorites are kept apart from the history, so **Clear** and the retention setting never remove them (un-star to delete one). **Clear** deletes the history. Statements and errors are stored locally with secrets redacted; `rizomadb.history.enabled` and `rizomadb.history.retentionDays` control it.
 
 ## Notebooks
 **New SQL Notebook** creates a `.sqlnb` notebook: SQL cells with their results below, saved as plain JSON.

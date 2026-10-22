@@ -35,6 +35,7 @@ export const ICONS = {
   minus: ["M5 12h14"],
   fit: ["M4 9V4h5", "M20 9V4h-5", "M4 15v5h5", "M20 15v5h-5"],
   image: ["M4 5h16v14H4z", "m4 16 5-5 4 4 3-3 4 4", "M9 9h.01"],
+  star: ["m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"],
   lock: ["M6 11h12v9H6z", "M9 11V8a3 3 0 0 1 6 0v3"],
 } as const;
 export type IconName = keyof typeof ICONS;

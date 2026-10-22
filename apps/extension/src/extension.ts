@@ -21,6 +21,8 @@ import { engineOf } from "./ui/explorer.js";
 import { ENGINE_LOGOS } from "./engineLogos.js";
 import { tableProperties } from "./lib/tableProperties.js";
 import { openHistoryScreen } from "./ui/historyPanel.js";
+import { Favorites } from "./lib/favorites.js";
+import { readOnlyUserScript, supportsReadOnlyUser, ReadOnlyUserError } from "./lib/readOnlyUser.js";
 import { customEnvironmentPolicy } from "./lib/environments.js";
 import { databaseOf } from "./lib/connectionInfo.js";
 import { friendly, friendlyReasons } from "./ui/driverMessages.js";
@@ -153,6 +155,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
   ctx.subscriptions.push(watcher, watcher.onDidChange(() => void reloadPolicy()), watcher.onDidCreate(() => void reloadPolicy()), watcher.onDidDelete(() => void reloadPolicy()),
     vscode.workspace.onDidGrantWorkspaceTrust(() => void reloadPolicy()), vscode.workspace.onDidChangeConfiguration((e) => { if (e.affectsConfiguration("rizomadb.security") || e.affectsConfiguration("rizomadb.environments") || e.affectsConfiguration("rizomadb.policy")) void reloadPolicy(); }));
   const history = new History(join(ctx.globalStorageUri.fsPath, "history.jsonl"));
+  const favorites = new Favorites(join(ctx.globalStorageUri.fsPath, "favorites.json"));
   void history.prune(cfg().get<number>("history.retentionDays", 90));
 
   const explorer = new Explorer(mgr);
@@ -676,6 +679,21 @@ export async function activate(ctx: vscode.ExtensionContext) {
     if (n.kind !== "connection") return;
     await mgr.update(n.profile.id, { readOnly: !n.profile.readOnly });
   });
+  reg("rizomadb.readOnlyUser", async (n: Node) => {
+    if (n.kind !== "connection") return;
+    const key = engineOf(n.profile)?.key ?? n.profile.driver;
+    if (!supportsReadOnlyUser(key)) { void vscode.window.showInformationMessage(t("A read-only user script is not available for {0} yet.", engineOf(n.profile)?.name ?? n.profile.driver)); return; }
+    const user = await vscode.window.showInputBox({ title: t("Name of the read-only account"), value: "rizoma_readonly", validateInput: (v) => (/^[A-Za-z_][A-Za-z0-9_]{0,62}$/.test(v) ? undefined : t("Use letters, digits and underscores, starting with a letter or underscore.")) });
+    if (!user) return;
+    let database = databaseOf(n.profile);
+    if (key !== "redis" && !database) database = (await vscode.window.showInputBox({ title: t("Database the account may read"), validateInput: (v) => (v.trim() ? undefined : t("A database name is required.")) }))?.trim() ?? "";
+    if (key !== "redis" && !database) return;
+    try {
+      const script = readOnlyUserScript(key, { user, database }, t("Review this script, replace the password placeholder and run it with an administrator account. RizomaDB does not run it."));
+      const doc = await vscode.workspace.openTextDocument({ language: script.language, content: script.text });
+      await vscode.window.showTextDocument(doc, { viewColumn: vscode.ViewColumn.Beside });
+    } catch (e) { void vscode.window.showErrorMessage(e instanceof ReadOnlyUserError ? t("That name cannot be used in the script.") : (e as Error).message); }
+  });
   reg("rizomadb.disconnect", (n: Node) => { if (n.kind === "connection") return mgr.disconnect(n.profile.id); });
   reg("rizomadb.deleteConnection", async (n: Node) => {
     if (n.kind !== "connection") return;
@@ -724,7 +742,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
     } catch (e) { void vscode.window.showErrorMessage(t("Could not get a plan: {0}", friendly((e as Error).message))); }
   });
   reg("rizomadb.openHistory", async () => {
-    openHistoryScreen(ctx, history, {
+    openHistoryScreen(ctx, history, favorites, {
       exists: (id) => !!mgr.get(id),
       run: (id, sql) => execute(id, sql, t("Query")),
       open: async (id, sql) => {

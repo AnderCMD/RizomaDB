@@ -5,8 +5,13 @@ const assert = require("node:assert");
 exports.run = async function run() {
   const ext = vscode.extensions.all.find((e) => e.packageJSON.name === "rizomadb");
   assert.ok(ext, "extension is installed in the dev host");
+  const started = performance.now();
   await ext.activate();
+  const activationMs = Math.round(performance.now() - started);
   assert.ok(ext.isActive, "extension activates");
+  // Activation does no network and loads no driver; a generous budget still catches an accidental heavy import.
+  console.log(`RizomaDB activation: ${activationMs} ms`);
+  assert.ok(activationMs < 3000, `activation took ${activationMs} ms (budget 3000 ms)`);
   const declared = ext.packageJSON.contributes.commands.map((c) => c.command);
   const registered = new Set(await vscode.commands.getCommands(true));
   const missing = declared.filter((c) => !registered.has(c));

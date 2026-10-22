@@ -13,6 +13,7 @@ Todos los comandos, como aparecen en la paleta de comandos (⇧⌘P / Ctrl+Shift
 | `rizomadb.openTable` | Abrir datos de la tabla | — |
 | `rizomadb.openHistory` | Abrir historial de consultas | — |
 | `rizomadb.toggleReadOnly` | Alternar solo lectura | — |
+| `rizomadb.readOnlyUser` | Generar script de usuario de solo lectura… | — |
 | `rizomadb.disconnect` | Desconectar | — |
 | `rizomadb.deleteConnection` | Eliminar conexión | — |
 | `rizomadb.refresh` | Actualizar | — |

@@ -21,6 +21,11 @@ describe("redaction", () => {
     expect(redactString("postgres://u:hunter2@host/db")).not.toContain("hunter2");
     expect(redactString("failed with s3cret!", ["s3cret!"])).not.toContain("s3cret!");
     expect(redactString("password=abc123 more")).not.toContain("abc123");
+    expect(redactString("CREATE USER x PASSWORD 'hunter2'")).not.toContain("hunter2");
+    expect(redactString('ALTER ROLE r WITH PASSWORD "hunter2" VALID UNTIL 2030')).not.toContain("hunter2");
+    expect(redactString("CREATE USER u IDENTIFIED BY 'hunter2'")).not.toContain("hunter2");
+    expect(redactString("CREATE USER u IDENTIFIED WITH mysql_native_password BY 'hunter2'")).not.toContain("hunter2");
+    expect(redactString("SELECT password FROM users WHERE id = 1")).toBe("SELECT password FROM users WHERE id = 1");
   });
 });
 

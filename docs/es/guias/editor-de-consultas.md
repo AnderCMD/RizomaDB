@@ -25,7 +25,7 @@ Los marcadores como `:nombre`, `$1`, `@nombre` o `?` piden sus valores antes de 
 Los resultados se abren en la mitad inferior de la ventana (`rizomadb.results.location`). Cada ejecución reemplaza la misma pestaña; **Fijar la pestaña de resultados** la conserva. La pestaña se llama `conexión.tabla` y lleva el logo del motor. Mira [La rejilla de resultados](rejilla-de-resultados.md).
 
 ## Historial
-**RizomaDB: Abrir el historial de consultas** abre una pantalla con todo lo que ejecutaste, lo más reciente primero, agrupado por día. Busca en el texto, filtra por estado (todas, correctas, con error) o por conexión y, en cada entrada, **abre en un editor**, **ejecuta de nuevo** (si la conexión aún existe) o **copia**. **Vaciar** borra el historial. Las sentencias y errores se guardan localmente con los secretos ocultos; `rizomadb.history.enabled` y `rizomadb.history.retentionDays` lo controlan.
+**RizomaDB: Abrir el historial de consultas** abre una pantalla con todo lo que ejecutaste, lo más reciente primero, agrupado por día. Busca en el texto, filtra por estado (todas, favoritas, correctas, con error) o por conexión y, en cada entrada, **abre en un editor**, **ejecuta de nuevo** (si la conexión aún existe) o **copia**. La estrella de cada entrada la añade a tus **favoritas** (filtro *Favoritas*): las favoritas se guardan aparte del historial, así que **Vaciar** y el ajuste de retención nunca las eliminan (quita la estrella para borrar una). **Vaciar** borra el historial. Las sentencias y errores se guardan localmente con los secretos ocultos; `rizomadb.history.enabled` y `rizomadb.history.retentionDays` lo controlan.
 
 ## Notebooks
 **Nuevo notebook SQL** crea un notebook `.sqlnb`: celdas SQL con sus resultados debajo, guardado como JSON simple.

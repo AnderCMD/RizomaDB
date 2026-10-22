@@ -930,5 +930,16 @@
  "Imported {0} settings; skipped {1} that are not valid: {2}": "Se importaron {0} ajustes; se omitieron {1} no válidos: {2}",
  "This is not a RizomaDB settings file.": "Este no es un archivo de ajustes de RizomaDB.",
  "Pasted {0} cells": "Se pegaron {0} celdas",
- "Too many cells to paste at once (limit {0})": "Demasiadas celdas para pegar de una vez (límite {0})"
+ "Too many cells to paste at once (limit {0})": "Demasiadas celdas para pegar de una vez (límite {0})",
+ "Starred": "Favoritas",
+ "Saved": "Guardada",
+ "Add to favorites": "Añadir a favoritas",
+ "Remove from favorites": "Quitar de favoritas",
+ "A read-only user script is not available for {0} yet.": "Aún no hay script de usuario de solo lectura para {0}.",
+ "Name of the read-only account": "Nombre de la cuenta de solo lectura",
+ "Use letters, digits and underscores, starting with a letter or underscore.": "Usa letras, dígitos y guiones bajos, empezando por una letra o un guion bajo.",
+ "Database the account may read": "Base de datos que podrá leer la cuenta",
+ "A database name is required.": "Hace falta el nombre de una base de datos.",
+ "Review this script, replace the password placeholder and run it with an administrator account. RizomaDB does not run it.": "Revisa este script, sustituye el marcador de contraseña y ejecútalo con una cuenta de administrador. RizomaDB no lo ejecuta.",
+ "That name cannot be used in the script.": "Ese nombre no se puede usar en el script."
 }

@@ -11,6 +11,7 @@
   "cmd.openTable": "Abrir datos de la tabla",
   "cmd.openHistory": "Abrir historial de consultas",
   "cmd.toggleReadOnly": "Alternar solo lectura",
+  "cmd.readOnlyUser": "Generar script de usuario de solo lectura…",
   "cmd.disconnect": "Desconectar",
   "cmd.deleteConnection": "Eliminar conexión",
   "cmd.refresh": "Actualizar",

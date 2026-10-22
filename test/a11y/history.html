@@ -2,6 +2,7 @@
 <div id="app"></div>
 <script>window.acquireVsCodeApi=()=>({postMessage(){}})</script><script src="history.js"></script>
 <script>const d=Date.now();window.dispatchEvent(new MessageEvent('message',{data:{v:1,type:'load',items:[
-{i:0,ts:new Date(d).toISOString(),connectionName:'Portafolio',environment:'dev',status:'ok',durationMs:12,rowCount:3,sql:'SELECT * FROM links LIMIT 100',canRun:true},
-{i:1,ts:new Date(d-3600000).toISOString(),connectionName:'Prod DB',environment:'prod',status:'error',durationMs:3,rowCount:0,sql:'SELEC nope',error:'syntax error at or near SELEC',canRun:false},
-{i:2,ts:new Date(d-90000000).toISOString(),connectionName:'Portafolio',environment:'staging',status:'ok',durationMs:140,rowCount:1200,sql:'SELECT count(*) FROM events',canRun:true}]}}));</script></body></html>
+{i:0,ts:new Date(d).toISOString(),connectionName:'Portafolio',environment:'dev',status:'ok',durationMs:12,rowCount:3,sql:'SELECT * FROM links LIMIT 100',canRun:true,starred:true},
+{i:1,ts:new Date(d-3600000).toISOString(),connectionName:'Prod DB',environment:'prod',status:'error',durationMs:3,rowCount:0,sql:'SELEC nope',error:'syntax error at or near SELEC',canRun:false,starred:false},
+{i:2,ts:new Date(d-90000000).toISOString(),connectionName:'Portafolio',environment:'staging',status:'ok',durationMs:140,rowCount:1200,sql:'SELECT count(*) FROM events',canRun:true,starred:false},
+{i:3,ts:new Date(d-200000000).toISOString(),connectionName:'Portafolio',environment:'dev',status:'saved',durationMs:0,rowCount:0,sql:'SELECT id, name FROM people ORDER BY name',canRun:true,starred:true}]}}));</script></body></html>

@@ -34,6 +34,9 @@ La segunda pestaña de la misma pantalla lista las conexiones que tienes. Cada t
 ## La conexión en uso
 La conexión *activa* es la asociada al editor de consultas en el que estás, o la última que ejecutó algo. La barra de estado la muestra como `[ENTORNO] nombre · base de datos`; haz clic para cambiar la conexión del editor actual.
 
+## Una cuenta de solo lectura para la garantía en el servidor
+Marcar una conexión como de solo lectura lo aplica RizomaDB (y el servidor cuando el motor lo permite). Para una garantía que no dependa de ningún cliente, dale a la conexión una cuenta de base de datos que solo pueda leer. Haz clic derecho en la conexión y elige **Generar script de usuario de solo lectura…**: eliges el nombre de la cuenta y RizomaDB abre un script en un editor. Nunca lo ejecuta ni escribe una contraseña: sustituye el marcador `<choose-a-password>` y ejecútalo con una cuenta de administrador. Disponible para PostgreSQL, MySQL/MariaDB, ClickHouse y Redis/Valkey; cada script se ejecutó contra un servidor real y se comprobó que la cuenta nueva lee y que se le rechazan las escrituras (los demás motores lo avisan en lugar de adivinar).
+
 ## Importar desde otras herramientas
 **RizomaDB: Importar conexiones de otras herramientas…** lee cadenas de conexión, `~/.pgpass`, `~/.my.cnf` y archivos de DBeaver y SQLTools. Mira [Migración](/es/guias/migracion).
 

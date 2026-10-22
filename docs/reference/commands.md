@@ -13,6 +13,7 @@ Every command, as it appears in the command palette (⇧⌘P / Ctrl+Shift+P) und
 | `rizomadb.openTable` | Open Table Data | — |
 | `rizomadb.openHistory` | Open Query History | — |
 | `rizomadb.toggleReadOnly` | Toggle Read-Only | — |
+| `rizomadb.readOnlyUser` | Generate Read-Only User Script… | — |
 | `rizomadb.disconnect` | Disconnect | — |
 | `rizomadb.deleteConnection` | Delete Connection | — |
 | `rizomadb.refresh` | Refresh | — |

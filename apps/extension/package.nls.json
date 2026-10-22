@@ -11,6 +11,7 @@
   "cmd.openTable": "Open Table Data",
   "cmd.openHistory": "Open Query History",
   "cmd.toggleReadOnly": "Toggle Read-Only",
+  "cmd.readOnlyUser": "Generate Read-Only User Script…",
   "cmd.disconnect": "Disconnect",
   "cmd.deleteConnection": "Delete Connection",
   "cmd.refresh": "Refresh",
