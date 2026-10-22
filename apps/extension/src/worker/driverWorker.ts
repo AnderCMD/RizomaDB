@@ -1,3 +1,5 @@
+import { existsSync } from "node:fs";
+import { join } from "node:path";
 import { DriverError, type Connection, type DriverPlugin, type Transaction } from "@rizomadb/driver-api";
 import type { Request, Response, WireError } from "./protocol.js";
 
@@ -21,6 +23,10 @@ const drivers: Record<string, () => Promise<DriverPlugin>> = {
   neo4j: async () => (await import("@rizomadb/driver-neo4j")).neo4jDriver,
   hydradb: async () => (await import("@rizomadb/driver-hydradb")).hydradbDriver,
   duckdb: async () => {
+    // Platform builds of the VSIX carry DuckDB's native library in native/node_modules (see scripts/package-platform.mjs); the universal build does not.
+    const here = typeof __dirname === "string" ? __dirname : "";
+    const native = here ? join(here, "..", "native", "node_modules") : "";
+    if (native && existsSync(native) && !module.paths.includes(native)) module.paths.push(native);
     try { return (await import("@rizomadb/driver-duckdb")).duckdbDriver; }
     catch (e) { throw new DriverError("unsupported", `DuckDB is not included in this build (its native library is platform-specific): ${(e as Error).message}`); }
   },

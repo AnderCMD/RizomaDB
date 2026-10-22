@@ -6,7 +6,7 @@
 file path or :memory:
 
 ## Capabilities
-Full SQL feature set. The native library is platform-specific and is NOT included in the VSIX: the driver reports a clear error until a platform build is shipped
+Full SQL feature set. The native library is platform-specific. It is included in the per-platform VSIX files (darwin-arm64/x64, linux-x64/arm64, win32-x64/arm64; about 38 MB each) and NOT in the universal VSIX, where the driver reports a clear error. Only the darwin-arm64 package was run here, plus the linux-x64 one in CI; the other platforms are built by the release workflow, which has never run, so they are not tested
 
 ## Type notes
 HUGEINT exact, DECIMAL as string, LIST/STRUCT as JSON

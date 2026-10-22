@@ -18,9 +18,16 @@ jobs:
       - run: pnpm build && pnpm audit:licenses --check
       - run: pnpm --filter rizomadb package
       - run: node scripts/check-vsix-size.mjs apps/extension/*.vsix 8
+      # One VSIX per platform, each carrying DuckDB's native library (docs/adr/0012): the universal one above stays small and has no DuckDB.
+      - name: Platform packages
+        run: |
+          for t in darwin-arm64 darwin-x64 linux-x64 linux-arm64 win32-x64 win32-arm64; do
+            node scripts/package-platform.mjs "$t" apps/extension/platform
+          done
+          for f in apps/extension/platform/*.vsix; do node scripts/check-vsix-size.mjs "$f" 60; done
       - run: pnpm run sbom:generate
       - name: Checksums
-        run: cd apps/extension && sha256sum *.vsix > SHA256SUMS && mv SHA256SUMS ../../ && cp *.vsix ../../ && cd ../.. && ls
+        run: cp apps/extension/*.vsix apps/extension/platform/*.vsix . && sha256sum *.vsix > SHA256SUMS && ls -la
       - uses: actions/attest-build-provenance@v2
         with: { subject-path: "*.vsix" }
       - uses: actions/upload-artifact@v4
@@ -36,7 +43,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with: { name: release }
-      - run: npx @vscode/vsce publish --packagePath *.vsix
+      - run: npx @vscode/vsce publish --packagePath *.vsix   # the universal package and one per platform
         env: { VSCE_PAT: "${{ secrets.VSCE_PAT }}" }
-      - run: npx ovsx publish *.vsix
+      - run: for f in *.vsix; do npx ovsx publish "$f"; done
         env: { OVSX_PAT: "${{ secrets.OVSX_PAT }}" }

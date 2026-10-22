@@ -163,6 +163,19 @@ jobs:
         working-directory: site
       - run: pnpm --filter @rizomadb/site build
         env: { SITE_BASE: "/${{ github.event.repository.name }}/" }
+  platform-package:
+    # The release builds one VSIX per platform with DuckDB's native library: prove that path on every change (linux-x64 here) without publishing anything.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with: { node-version: 24, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter rizomadb build
+      - run: node scripts/package-platform.mjs linux-x64 out
+      - run: node scripts/check-vsix-size.mjs out/rizomadb-linux-x64.vsix 60
+      - run: node scripts/smoke-vsix-duckdb.mjs out/rizomadb-linux-x64.vsix
   secrets:
     runs-on: ubuntu-latest
     steps:

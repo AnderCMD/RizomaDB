@@ -24,3 +24,12 @@ Son ajustes del repositorio, no código, así que los flujos no los aplican:
 
 ## Equivalentes locales
 `pnpm lint && pnpm build && pnpm typecheck && pnpm test`, luego `node scripts/gen-reference.mjs --check` (o sin `--check` para refrescar las páginas de referencia), luego `pnpm --filter rizomadb package`. Para el sitio: `cd site && node sync-docs.mjs && cd .. && pnpm --filter @rizomadb/site build`. Los motores que necesitan contenedores se levantan con `docker compose -f test/compose/docker-compose.yml up -d <motor>`.
+
+## Verificar un paquete de una versión
+Cada VSIX de una versión viene con `SHA256SUMS`, un SBOM (`sbom.cdx.json`) y una atestación de procedencia de compilación de GitHub. Para comprobar una descarga:
+
+```bash
+sha256sum -c SHA256SUMS --ignore-missing
+gh attestation verify rizomadb-linux-x64.vsix --repo AnderCMD/RizomaDB
+```
+La atestación prueba qué ejecución del workflow construyó el archivo; no es un certificado de firma de código. Este camino aún no se ha ejecutado, porque no se ha hecho ninguna versión.

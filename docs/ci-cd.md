@@ -24,3 +24,12 @@ These are repository settings, not code, so they are not applied by the workflow
 
 ## Local equivalents
 `pnpm lint && pnpm build && pnpm typecheck && pnpm test`, then `node scripts/gen-reference.mjs --check` (or without `--check` to refresh the reference pages), then `pnpm --filter rizomadb package`. For the site: `cd site && node sync-docs.mjs && cd .. && pnpm --filter @rizomadb/site build`. Engines that need containers start with `docker compose -f test/compose/docker-compose.yml up -d <engine>`.
+
+## Verifying a release package
+Each VSIX in a release comes with `SHA256SUMS`, an SBOM (`sbom.cdx.json`) and a GitHub build-provenance attestation. To check a download:
+
+```bash
+sha256sum -c SHA256SUMS --ignore-missing
+gh attestation verify rizomadb-linux-x64.vsix --repo AnderCMD/RizomaDB
+```
+The attestation proves which workflow run built the file; it is not a code-signing certificate. This path has not run yet, because no release has been made.
