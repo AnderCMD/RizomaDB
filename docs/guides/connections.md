@@ -40,5 +40,8 @@ Marking a connection read-only is enforced by RizomaDB (and by the server where 
 ## Import from other tools
 **RizomaDB: Import Connections From Other Tools…** reads connection strings, `~/.pgpass`, `~/.my.cnf`, DBeaver and SQLTools files. See [Migrating](migration.md).
 
+## Move connections in a sealed file
+**Export Connections (Encrypted)…** writes your saved connections to a `.rzcat` file sealed with a passphrase you choose (AES-256-GCM, key derived with scrypt); **Import Connections (Encrypted)…** reads one. The file holds profiles only: passwords stay in each person's secret storage and are asked for on first connect. A wrong passphrase or an altered file is rejected whole, and connections whose id already exists are skipped. You can send the file through any channel; keep the passphrase apart.
+
 ## Share connections with a team
 A catalog file (`.rizomadb/connections.json` in the project, or the file named in `rizomadb.catalog.teamFile`) lists connections without secrets; each person adds their own password the first time. Shared entries are read-only in the interface.

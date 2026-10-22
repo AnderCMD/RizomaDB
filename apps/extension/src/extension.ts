@@ -22,6 +22,8 @@ import { ENGINE_LOGOS } from "./engineLogos.js";
 import { tableProperties } from "./lib/tableProperties.js";
 import { openHistoryScreen } from "./ui/historyPanel.js";
 import { Favorites } from "./lib/favorites.js";
+import { buildSelect, kindOfNative, OPERATORS, BuilderError, type Condition } from "./lib/queryBuilder.js";
+import { seal, unseal, SealedCatalogError, MIN_PASSPHRASE } from "./lib/encryptedCatalog.js";
 import { readOnlyUserScript, supportsReadOnlyUser, ReadOnlyUserError } from "./lib/readOnlyUser.js";
 import { customEnvironmentPolicy } from "./lib/environments.js";
 import { databaseOf } from "./lib/connectionInfo.js";
@@ -678,6 +680,64 @@ export async function activate(ctx: vscode.ExtensionContext) {
   reg("rizomadb.toggleReadOnly", async (n: Node) => {
     if (n.kind !== "connection") return;
     await mgr.update(n.profile.id, { readOnly: !n.profile.readOnly });
+  });
+  reg("rizomadb.buildQuery", async (n: Node) => {
+    if (n?.kind !== "connection") return;
+    const p = n.profile;
+    if (filterKindOf(p.driver) !== "sql") { void vscode.window.showInformationMessage(t("The query builder is for SQL engines.")); return; }
+    const conn = await mgr.connect(p.id), api = conn.introspect();
+    const tables = await api.listTables();
+    const tpick = await vscode.window.showQuickPick(tables.map((x) => ({ label: x.name, description: x.schema ?? "", ref: x })), { title: t("Table to query"), matchOnDescription: true }); if (!tpick) return;
+    const info = await api.describeTable({ name: tpick.ref.name, ...(tpick.ref.schema ? { schema: tpick.ref.schema } : {}) });
+    const columns = (info.columns ?? []).map((c) => ({ name: c.name, kind: kindOfNative(c.nativeType) }));
+    if (!columns.length) { void vscode.window.showWarningMessage(t("Could not read the table definition.")); return; }
+    const chosen = await vscode.window.showQuickPick(columns.map((c) => ({ label: c.name, description: c.kind })), { title: t("Columns to show (none selected = all)"), canPickMany: true }); if (!chosen) return;
+    const where: Condition[] = [];
+    for (;;) {
+      const next = await vscode.window.showQuickPick([{ label: where.length ? t("Add another condition…") : t("Add a condition…"), v: "add" }, { label: t("Continue"), v: "go" }], { title: t("Conditions: {0}", String(where.length)) }); if (!next) return;
+      if (next.v === "go") break;
+      const col = await vscode.window.showQuickPick(columns.map((c) => ({ label: c.name, description: c.kind })), { title: t("Column")}); if (!col) continue;
+      const op = await vscode.window.showQuickPick([...OPERATORS], { title: t("Operator") }); if (!op) continue;
+      const needsValue = op !== "IS NULL" && op !== "IS NOT NULL";
+      const value = needsValue ? await vscode.window.showInputBox({ title: `${col.label} ${op}`, prompt: op === "IN" ? t("Values separated by commas") : undefined }) : "";
+      if (value === undefined) continue;
+      where.push({ column: col.label, op: op as Condition["op"], ...(needsValue ? { value } : {}) });
+    }
+    const ord = await vscode.window.showQuickPick([{ label: t("No ordering"), v: "" }, ...columns.map((c) => ({ label: c.name, v: c.name }))], { title: t("Order by") }); if (!ord) return;
+    let desc = false;
+    if (ord.v) { const d = await vscode.window.showQuickPick([{ label: t("ascending"), v: false }, { label: t("descending"), v: true }], { title: t("Direction") }); if (!d) return; desc = d.v; }
+    const lim = await vscode.window.showInputBox({ title: t("Maximum rows"), value: "100", validateInput: (v) => (/^[1-9]\d{0,6}$/.test(v) ? undefined : t("Enter a whole number")) }); if (!lim) return;
+    try {
+      const sql = buildSelect({ driver: p.driver, quote: conn.quoteIdent, table: info.name, schema: info.schema, columns, select: chosen.map((c) => c.label), where, orderBy: ord.v ? [{ column: ord.v, desc }] : [], limit: Number(lim) });
+      const doc = await vscode.workspace.openTextDocument({ language: "sql", content: `${sql};\n` });
+      await ctx.workspaceState.update(`doc:${doc.uri.toString()}`, p.id);
+      await vscode.window.showTextDocument(doc, { viewColumn: vscode.ViewColumn.One });
+    } catch (e) { void vscode.window.showErrorMessage(e instanceof BuilderError ? friendly(e.message) : (e as Error).message); }
+  });
+  reg("rizomadb.exportCatalog", async () => {
+    const mine = mgr.list().filter((p) => !mgr.isShared(p.id));
+    if (!mine.length) { void vscode.window.showInformationMessage(t("You have no saved connections yet")); return; }
+    const ask = (title: string) => vscode.window.showInputBox({ title, password: true, ignoreFocusOut: true, validateInput: (v) => (v.length >= MIN_PASSPHRASE ? undefined : t("Use at least {0} characters.", MIN_PASSPHRASE)) });
+    const pass = await ask(t("Passphrase to seal the connections (needed to open the file)")); if (!pass) return;
+    if ((await ask(t("Repeat the passphrase"))) !== pass) { void vscode.window.showErrorMessage(t("The passphrases do not match.")); return; }
+    const target = await vscode.window.showSaveDialog({ defaultUri: vscode.Uri.file("rizomadb-connections.rzcat"), filters: { [t("Sealed connections")]: ["rzcat"] } }); if (!target) return;
+    await vscode.workspace.fs.writeFile(target, Buffer.from(seal(mine, pass), "utf8"));
+    void vscode.window.showInformationMessage(t("Exported {0} connections. Passwords are not included: they are asked for on first connect.", String(mine.length)));
+  });
+  reg("rizomadb.importCatalog", async () => {
+    const picked = await vscode.window.showOpenDialog({ canSelectMany: false, filters: { [t("Sealed connections")]: ["rzcat"] } }); if (!picked?.[0]) return;
+    const bytes = await vscode.workspace.fs.readFile(picked[0]);
+    if (bytes.byteLength > 5_000_000) { void vscode.window.showErrorMessage(t("This is not a sealed connections file.")); return; }
+    const pass = await vscode.window.showInputBox({ title: t("Passphrase of the sealed file"), password: true, ignoreFocusOut: true }); if (!pass) return;
+    try {
+      const list = unseal(Buffer.from(bytes).toString("utf8"), pass);
+      let added = 0, skipped = 0;
+      for (const p of list) { if (mgr.get(p.id)) { skipped++; continue; } await mgr.add({ id: p.id, name: p.name, driver: p.driver, environment: p.environment, readOnly: p.readOnly, tags: p.tags, secretKeys: p.secretKeys, values: p.options }); added++; }
+      void vscode.window.showInformationMessage(t("Imported {0} connections ({1} already existed).", String(added), String(skipped)));
+    } catch (e) {
+      const c = e instanceof SealedCatalogError ? e.code : "invalid";
+      void vscode.window.showErrorMessage(c === "wrong-passphrase" ? t("Wrong passphrase, or the file was altered.") : c === "not-sealed" ? t("This is not a sealed connections file.") : t("The file is damaged or has unsupported content."));
+    }
   });
   reg("rizomadb.readOnlyUser", async (n: Node) => {
     if (n.kind !== "connection") return;

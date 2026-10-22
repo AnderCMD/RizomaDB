@@ -2,6 +2,9 @@
 
 **RizomaDB: Nueva consulta** abre un editor en el lenguaje de la conexión: SQL, shell de Mongo, comandos de Redis, Cypher (Neo4j, HydraDB), solicitudes REST para Elasticsearch/OpenSearch y la consola JSON de Firestore, o Flux y CQL donde corresponda. Elige la conexión con el elemento de la barra de estado o con la primera lente del editor.
 
+## Construir una consulta sin escribir SQL
+Haz clic derecho en una conexión SQL y elige **Construir una consulta…**: eliges la tabla, las columnas a mostrar, las condiciones que quieras (columna, operador, valor; `IN` admite una lista separada por comas), el orden y el límite de filas. RizomaDB abre el `SELECT` resultante en un editor ligado a esa conexión; no lo ejecuta. Los valores se convierten en literales del tipo de la columna (un valor que no encaja, como texto en un número, se rechaza), los nombres los entrecomilla el driver y la sentencia se comprobó contra PostgreSQL y MySQL reales, con comillas, barras invertidas y acentos en el texto. Los demás motores SQL usan el mismo código pero no tienen prueba.
+
 ## Ejecutar
 | Acción | Cómo |
 |---|---|

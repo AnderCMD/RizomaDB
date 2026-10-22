@@ -2,6 +2,9 @@
 
 **RizomaDB: New Query** opens an editor in the language of the connection: SQL, Mongo shell, Redis commands, Cypher (Neo4j, HydraDB), REST requests for Elasticsearch/OpenSearch and the JSON console of Firestore, or Flux and CQL where those engines apply. Pick the connection with the status bar item or the first lens in the editor.
 
+## Build a query without typing SQL
+Right-click a SQL connection and choose **Build a Query…**: pick a table, the columns to show, any number of conditions (column, operator, value; `IN` takes a comma-separated list), the order and the row limit. RizomaDB opens the resulting `SELECT` in an editor bound to that connection; it does not run it. Values become literals of the column's type (a value that does not fit, such as text for a number, is refused), names are quoted by the driver, and the statement was checked against real PostgreSQL and MySQL, including quotes, backslashes and accents in text. Other SQL engines use the same code but are not covered by a test.
+
 ## Running
 | Action | How |
 |---|---|

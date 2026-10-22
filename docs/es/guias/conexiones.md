@@ -40,5 +40,8 @@ Marcar una conexión como de solo lectura lo aplica RizomaDB (y el servidor cuan
 ## Importar desde otras herramientas
 **RizomaDB: Importar conexiones de otras herramientas…** lee cadenas de conexión, `~/.pgpass`, `~/.my.cnf` y archivos de DBeaver y SQLTools. Mira [Migración](/es/guias/migracion).
 
+## Llevar conexiones en un archivo sellado
+**Exportar conexiones (cifradas)…** escribe tus conexiones guardadas en un archivo `.rzcat` sellado con una frase de paso que eliges (AES-256-GCM, clave derivada con scrypt); **Importar conexiones (cifradas)…** lo lee. El archivo solo contiene perfiles: las contraseñas siguen en el almacenamiento secreto de cada persona y se piden en la primera conexión. Una frase de paso incorrecta o un archivo alterado se rechazan por completo, y las conexiones cuyo id ya existe se omiten. Puedes enviar el archivo por cualquier canal; guarda la frase de paso aparte.
+
 ## Compartir conexiones con un equipo
 Un archivo de catálogo (`.rizomadb/connections.json` en el proyecto, o el archivo indicado en `rizomadb.catalog.teamFile`) lista conexiones sin secretos; cada persona agrega su propia contraseña la primera vez. Las entradas compartidas son de solo lectura en la interfaz.

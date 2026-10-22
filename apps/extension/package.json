@@ -115,6 +115,21 @@
         "category": "RizomaDB"
       },
       {
+        "command": "rizomadb.buildQuery",
+        "title": "%cmd.buildQuery%",
+        "category": "RizomaDB"
+      },
+      {
+        "command": "rizomadb.exportCatalog",
+        "title": "%cmd.exportCatalog%",
+        "category": "RizomaDB"
+      },
+      {
+        "command": "rizomadb.importCatalog",
+        "title": "%cmd.importCatalog%",
+        "category": "RizomaDB"
+      },
+      {
         "command": "rizomadb.readOnlyUser",
         "title": "%cmd.readOnlyUser%",
         "category": "RizomaDB"
@@ -424,6 +439,10 @@
         },
         {
           "command": "rizomadb.readOnlyUser",
+          "when": "view == rizomadb.connections && viewItem == connection"
+        },
+        {
+          "command": "rizomadb.buildQuery",
           "when": "view == rizomadb.connections && viewItem == connection"
         },
         {
