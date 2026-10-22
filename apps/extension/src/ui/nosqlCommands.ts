@@ -93,7 +93,7 @@ export function registerNoSqlCommands({ mgr, policy, reg, refresh, bind }: Deps)
     if (type === "none") { void vscode.window.showWarningMessage(t("The key no longer exists.")); return; }
     if (!isEditableRedisType(type)) { void vscode.window.showInformationMessage(t("Editing {0} values is not supported yet; use the console.", type)); return; }
     const read = (await exec(conn, readCommand(type, key))).rows;
-    let target: string | number | undefined, current = "";
+    let target: string | number | undefined, current: string;
     if (type === "string") current = String(read[0]?.[0] ?? "");
     else {
       if (!read.length) { void vscode.window.showInformationMessage(t("This key has no elements.")); return; }
