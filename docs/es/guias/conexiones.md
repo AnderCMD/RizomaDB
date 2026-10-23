@@ -59,6 +59,12 @@ La mayoría de los motores con driver JDBC muestran arriba del formulario un cua
 
 El mismo lector lo usa **RizomaDB: Importar conexiones de otras herramientas…** cuando le das una URL `jdbc:` o cuando un archivo de DBeaver contiene una.
 
+## Editar una conexión guardada
+En **Conexiones guardadas**, pulsa el lápiz de una tarjeta. Se abre el mismo formulario con los datos, la contraseña y los ajustes de túnel o proxy; usa el botón del ojo junto a una contraseña para mostrarla u ocultarla. **Guardar cambios** conserva el id, las etiquetas y la elección de solo lectura de la conexión. Si estaba abierta se cierra, para que la próxima conexión use los valores nuevos. Pulsa **Probar conexión** antes si quieres comprobar los cambios: una prueba fallida nunca toca la conexión guardada. Las conexiones de un catálogo compartido no se pueden editar aquí.
+
+## Solo lectura y editable
+El botón del candado de una conexión guardada (o **RizomaDB: Alternar solo lectura**) la cambia entre solo lectura y editable. Las conexiones de `prod` empiezan en solo lectura; pasar una a editable pide confirmación y cada escritura sigue pidiéndola. Una política (archivo de equipo, proyecto o usuario, o un entorno con «Bloquear escrituras») que prohíba escribir no se puede saltar así: el candado explica que una política lo bloquea. El ajuste *Producción es de solo lectura por defecto* quita ese estado inicial para todas las conexiones `prod`.
+
 ## Importar desde otras herramientas
 **RizomaDB: Importar conexiones de otras herramientas…** lee cadenas de conexión, `~/.pgpass`, `~/.my.cnf` y archivos de DBeaver y SQLTools. Mira [Migración](migracion.md).
 

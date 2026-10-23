@@ -37,13 +37,24 @@ export function engineOf(p: ConnectionProfile) {
   return ENGINES.find((e) => e.key === key) ?? ENGINES.find((e) => e.driver === p.driver);
 }
 
+/** How long after activation a collapsed-then-restored node is not connected automatically. */
+const RESTORE_GRACE_MS = 5000;
+
 export class Explorer implements vscode.TreeDataProvider<Node> {
   private ev = new vscode.EventEmitter<Node | undefined>();
   readonly onDidChangeTreeData = this.ev.event;
   /** Which connection is active right now (set by the extension). */
   activeId: () => string | undefined = () => undefined;
-  constructor(private mgr: ConnectionManager) { mgr.onChange(() => this.ev.fire(undefined)); }
-  refresh() { this.ev.fire(undefined); }
+  private readonly startedAt = Date.now();
+  /** What each open connection answered, so a refresh caused by another connection does not query every expanded node again. */
+  private cache = new WeakMap<object, Map<string, Node[]>>();
+  private timer: ReturnType<typeof setTimeout> | undefined;
+  // Connecting, disconnecting or editing fires many changes in a row (and one per connection when the window restores them): redraw once.
+  constructor(private mgr: ConnectionManager) { mgr.onChange(() => { clearTimeout(this.timer); this.timer = setTimeout(() => this.ev.fire(undefined), 150); }); }
+  /** Redraw the tree (icons, active marker) without asking the databases again. */
+  redraw() { clearTimeout(this.timer); this.timer = setTimeout(() => this.ev.fire(undefined), 150); }
+  /** Explicit refresh (the user asked, or a schema change happened): forget the cached answers too. */
+  refresh() { this.cache = new WeakMap(); clearTimeout(this.timer); this.ev.fire(undefined); }
 
   private icon(p: ConnectionProfile): { light: vscode.Uri; dark: vscode.Uri } | vscode.ThemeIcon {
     const e = engineOf(p), logo = e && !ENGINE_LOGOS[e.key]?.wordmark ? ENGINE_LOGOS[e.key] : undefined;
@@ -102,8 +113,16 @@ export class Explorer implements vscode.TreeDataProvider<Node> {
     try {
       if (n.kind === "column") return [];
       if (n.kind === "category") return n.items.map((x) => ({ kind: "table", profile: n.profile, ...(n.schema ? { schema: n.schema } : {}), name: x.name, isView: x.kind === "view" }));
+      // VS Code re-expands the nodes that were open last time as soon as the view appears. Connecting every one of them (tunnels, TLS,
+      // drivers) at startup made the window slow, so in the first seconds a connection that is not open yet shows nothing: expanding it again connects.
+      if (!this.mgr.isConnected(n.profile.id) && Date.now() - this.startedAt < RESTORE_GRACE_MS) return [];
       const conn = await this.mgr.connect(n.profile.id);
       const driver = await this.mgr.loadDriver(n.profile.driver);
+      const key = n.kind === "connection" ? "c" : n.kind === "schema" ? `s:${n.schema}` : `t:${n.schema ?? ""}:${n.kind === "table" ? n.name : ""}`;
+      let store = this.cache.get(conn);
+      if (!store) { store = new Map(); this.cache.set(conn, store); }
+      const hit = store.get(key); if (hit) return hit;
+      const remember = (r: Node[]) => { store!.set(key, r); return r; };
       const categories = async (schema?: string): Promise<Node[]> => {
         const list = await conn.introspect().listTables(schema);
         const tables = list.filter((x) => x.kind !== "view"), views = list.filter((x) => x.kind === "view");
@@ -111,12 +130,12 @@ export class Explorer implements vscode.TreeDataProvider<Node> {
         return [mk(tables, false), ...(views.length ? [mk(views, true)] : [])];
       };
       if (n.kind === "connection") {
-        if (driver.capabilities.schemas) return (await conn.introspect().listSchemas()).map((schema) => ({ kind: "schema", profile: n.profile, schema }));
-        return categories();
+        if (driver.capabilities.schemas) return remember((await conn.introspect().listSchemas()).map((schema) => ({ kind: "schema", profile: n.profile, schema })));
+        return remember(await categories());
       }
-      if (n.kind === "schema") return categories(n.schema);
+      if (n.kind === "schema") return remember(await categories(n.schema));
       const info = await conn.introspect().describeTable({ name: n.name, ...(n.schema ? { schema: n.schema } : {}) });
-      return (info.columns ?? []).map((c) => ({ kind: "column", label: c.name, detail: `${c.nativeType}${c.nullable ? "" : " NOT NULL"}`, pk: c.primaryKey }));
+      return remember((info.columns ?? []).map((c) => ({ kind: "column", label: c.name, detail: `${c.nativeType}${c.nullable ? "" : " NOT NULL"}`, pk: c.primaryKey })));
     } catch (e) {
       void vscode.window.showErrorMessage(t("RizomaDB: {0}", friendly((e as Error).message)));
       return [];

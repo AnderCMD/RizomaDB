@@ -53,7 +53,7 @@ function showSaved() {
     screen.append(empty); app.append(screen); h1.focus(); return;
   }
   const list = el("ul", { class: "conn-list" });
-  const act = (action: "connect" | "disconnect" | "query" | "readonly" | "delete", id: string) => vscode.postMessage({ v: 1, type: "conn", action, id });
+  const act = (action: "connect" | "disconnect" | "query" | "readonly" | "delete" | "edit", id: string) => vscode.postMessage({ v: 1, type: "conn", action, id });
   for (const c of conns) {
     const e = engines.find((x) => x.key === c.engine);
     const li = el("li", { class: `conn-card${c.active ? " is-active" : ""}` });
@@ -69,6 +69,7 @@ function showSaved() {
     tools_.append(
       c.connected ? iconButton("plug", `${msg("Disconnect")}: ${c.name}`, () => act("disconnect", c.id)) : iconButton("plug", `${msg("Connect")}: ${c.name}`, () => act("connect", c.id), { primary: true }),
       iconButton("code", `${msg("New query")}: ${c.name}`, () => act("query", c.id)),
+      iconButton("pencil", `${msg("Edit connection")}: ${c.name}`, () => act("edit", c.id), { hidden: c.shared }),
       iconButton("lock", `${c.readOnly ? msg("Allow writes") : msg("Make read-only")}: ${c.name}`, () => act("readonly", c.id), { pressed: c.readOnly }),
       iconButton("trash", `${msg("Delete")}: ${c.name}`, () => act("delete", c.id), { danger: true, hidden: c.shared }));
     li.append(info_, tools_); list.append(li);
@@ -128,21 +129,39 @@ function showGrid() {
   h1.focus();
 }
 
-function showForm(m: { key: string; driver: string; fields: Field[]; tunnel: boolean; defaultName: string; environments: string[] }) {
+type EditInfo = { id: string; name: string; environment: string; via: "none" | "ssh" | "http" | "socks5"; net: Record<string, string> };
+
+function showForm(m: { key: string; driver: string; fields: Field[]; tunnel: boolean; defaultName: string; environments: string[]; edit?: EditInfo | undefined }) {
   const engine = engines.find((e) => e.key === m.key)!;
   app.replaceChildren();
   const screen = el("form", { class: "screen connect-form", novalidate: "" });
   screen.addEventListener("submit", (ev) => ev.preventDefault());
-  const back = iconButton("left", msg("Back to engines"), showGrid);
+  const editing = m.edit;
+  const back = iconButton("left", editing ? msg("Back to saved connections") : msg("Back to engines"), editing ? showSaved : showGrid);
   back.classList.add("back");
   const head = el("div", { class: "form-head" });
-  const h1 = el("h1", { id: "title", tabindex: "-1" }, engine.name);
+  const h1 = el("h1", { id: "title", tabindex: "-1" }, editing ? `${msg("Edit connection")}: ${engine.name}` : engine.name);
   head.append(logo(engine, 40), h1);
 
   const inputs = new Map<string, HTMLInputElement | HTMLSelectElement>();
   const row = (key: string, title: string, control: HTMLInputElement | HTMLSelectElement, hint?: string, required = false) => {
-    const label = el("label", { class: "field" });
-    label.append(el("span", {}, required ? `${title} *` : title), control);
+    const secret = control instanceof HTMLInputElement && control.type === "password";
+    const label = el(secret ? "div" : "label", { class: "field" });
+    const caption = required ? `${title} *` : title;
+    if (secret) {
+      // A password gets an eye button to show or hide it. The button sits beside the input, not inside the label, so the input's name stays the caption.
+      control.id = `in-${key}`;
+      const wrap = el("div", { class: "pwd" }), eye = iconButton("eye", msg("Show password"), undefined, { pressed: false });
+      eye.addEventListener("click", () => {
+        const show = control.type === "password";
+        control.type = show ? "text" : "password";
+        eye.replaceChildren(icon(show ? "eyeOff" : "eye"));
+        eye.setAttribute("aria-pressed", String(show)); eye.setAttribute("data-tip", show ? msg("Hide password") : msg("Show password"));
+      });
+      eye.setAttribute("aria-label", `${msg("Show password")}: ${title}`);
+      wrap.append(control, eye);
+      label.append(el("label", { for: control.id }, caption), wrap);
+    } else label.append(el("span", {}, caption), control);
     if (hint) { const id = `hint-${key}`; label.append(el("small", { id }, hint)); control.setAttribute("aria-describedby", id); }
     inputs.set(key, control);
     return label;
@@ -156,10 +175,15 @@ function showForm(m: { key: string; driver: string; fields: Field[]; tunnel: boo
   const env = selectOf(envOptions);
   const newEnvName = text(""); newEnvName.setAttribute("maxlength", "24"); newEnvName.placeholder = "qa";
   const newEnvProt = selectOf([["confirm", msg("Ask before every write")], ["readOnly", msg("Block writes")], ["none", msg("No protection")]]);
+  if (editing) {
+    if (m.environments.includes(editing.environment)) env.value = editing.environment;
+    else { env.value = "__new__"; newEnvName.value = editing.environment; }
+  }
   const general = el("fieldset"); general.append(el("legend", {}, msg("General")), row("name", msg("Connection name"), name, undefined, true), row("env", msg("Environment"), env));
   const newEnvRow = el("div", { class: "newenv", hidden: "" });
   newEnvRow.append(row("env.name", msg("New environment name"), newEnvName, msg("Lowercase letters, digits and dashes"), true), row("env.prot", msg("Protection"), newEnvProt));
   env.addEventListener("change", () => { newEnvRow.hidden = env.value !== "__new__"; });
+  newEnvRow.hidden = env.value !== "__new__";
   general.append(newEnvRow);
 
   const conn = el("fieldset"); conn.append(el("legend", {}, msg("Connection")));
@@ -234,14 +258,19 @@ function showForm(m: { key: string; driver: string; fields: Field[]; tunnel: boo
     (inputs.get("net.proxyPort") as HTMLInputElement).value = via.value === "http" ? "3128" : "1080";
   };
   via.addEventListener("change", syncNet);
+  if (editing) {
+    via.value = editing.via; syncNet();
+    for (const [k, v] of Object.entries(editing.net)) { const i = inputs.get(`net.${k}`); if (i) i.value = v; }
+    auth.value = editing.net["sshAuth"] === "pw" ? "pw" : "key"; keyRows.hidden = auth.value !== "key"; pwRows.hidden = auth.value !== "pw";
+  }
   auth.addEventListener("change", () => { keyRows.hidden = auth.value !== "key"; pwRows.hidden = auth.value !== "pw"; });
 
   const status = el("p", { class: "status", role: "status" });
   const test = iconButton("plug", msg("Test connection"), undefined, { text: msg("Test connection") });
-  const save = iconButton("save", msg("Save connection"), undefined, { primary: true, text: msg("Save connection") });
+  const save = iconButton("save", editing ? msg("Save changes") : msg("Save connection"), undefined, { primary: true, text: editing ? msg("Save changes") : msg("Save connection") });
   const force = iconButton("check", msg("Save without connecting"), undefined, { hidden: true, text: msg("Save without connecting") });
-  const done = iconButton("plus", msg("Add another connection"), undefined, { hidden: true, text: msg("Add another connection") });
-  done.addEventListener("click", showGrid);
+  const done = iconButton(editing ? "rows" : "plus", editing ? msg("Saved connections") : msg("Add another connection"), undefined, { hidden: true, text: editing ? msg("Saved connections") : msg("Add another connection") });
+  done.addEventListener("click", editing ? showSaved : showGrid);
   const buttons = el("div", { class: "buttons" }); buttons.append(save, test, force, done);
 
   const collect = (forceSave: boolean) => {
@@ -250,7 +279,7 @@ function showForm(m: { key: string; driver: string; fields: Field[]; tunnel: boo
       if (k.startsWith("v.")) values[k.slice(2)] = i instanceof HTMLInputElement && i.type === "checkbox" ? i.checked : i.value;
       else if (k.startsWith("net.")) netv[k.slice(4)] = i.value;
     }
-    return { key: m.key, name: name.value, environment: env.value === "__new__" ? newEnvName.value.trim().toLowerCase() : env.value, ...(env.value === "__new__" ? { newEnvProtection: newEnvProt.value } : {}), values, via: via.value, net: netv, force: forceSave };
+    return { key: m.key, name: name.value, environment: env.value === "__new__" ? newEnvName.value.trim().toLowerCase() : env.value, ...(env.value === "__new__" ? { newEnvProtection: newEnvProt.value } : {}), values, via: via.value, net: netv, force: forceSave, ...(editing ? { editId: editing.id } : {}) };
   };
   const busy = (b: boolean) => { for (const x of [test, save, force]) (x as HTMLButtonElement).disabled = b; };
   const send = (type: "test" | "save", forceSave = false) => {

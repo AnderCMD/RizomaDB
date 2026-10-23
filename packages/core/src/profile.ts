@@ -9,6 +9,8 @@ export const ConnectionProfile = z.object({
   driver: z.string().min(1),
   environment: Environment.default("dev"),
   readOnly: z.boolean().default(false),
+  /** Set on purpose to allow writes in an environment that is read-only by default (prod). Policy layers can still forbid them. */
+  writable: z.boolean().optional(),
   /** Non-secret driver options (host, port, database, path...). May use ${env:VAR}. */
   options: z.record(z.string(), z.unknown()).default({}),
   /** Option keys whose values live in the secret store, never here. */

@@ -75,7 +75,7 @@ button.engine-card:hover { border-color: var(--vscode-focusBorder); background: 
 .form-head { display: flex; align-items: center; gap: 12px; }
 .connect-form fieldset { border: 1px solid var(--vscode-panel-border); border-radius: 6px; padding: 8px 14px 12px; margin: 0; display: grid; gap: 10px; }
 .connect-form legend { font-weight: 600; padding: 0 6px; }
-.field { display: grid; gap: 3px; } .field small, .check small { color: var(--vscode-descriptionForeground, var(--vscode-foreground)); }
+.field { display: grid; gap: 3px; } .field .pwd { display: flex; gap: 4px; align-items: center; } .field .pwd input { flex: 1; min-width: 0; } .field small, .check small { color: var(--vscode-descriptionForeground, var(--vscode-foreground)); }
 .field input, .field select { padding: 4px 6px; font: inherit; box-sizing: border-box; width: 100%; color: var(--vscode-input-foreground); background: var(--vscode-input-background); border: 1px solid var(--vscode-input-border, var(--vscode-panel-border)); }
 .field select { color: var(--vscode-dropdown-foreground); background: var(--vscode-dropdown-background); }
 .field input:focus-visible, .field select:focus-visible, .search input:focus-visible, button.engine-card:focus-visible, .connect-form button:focus-visible, .check input:focus-visible { outline: 2px solid var(--vscode-focusBorder); outline-offset: 1px; }

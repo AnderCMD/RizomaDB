@@ -44,6 +44,12 @@ Most engines with a JDBC driver show a **JDBC URL** box at the top of the form. 
 
 The same reader is used by **RizomaDB: Import Connections From Other Tools…** when you give it a `jdbc:` URL or when a DBeaver file contains one.
 
+## Edit a saved connection
+In **Saved connections**, press the pencil on a card. The same form opens filled in, with the password and the tunnel or proxy settings; use the eye button next to a password to show or hide it. **Save changes** keeps the connection's id, tags and read-only choice. If the connection is open it is closed so the next connect uses the new values. Press **Test connection** first if you want to check the changes: a failed test never touches the saved connection. Connections that come from a shared catalog cannot be edited here.
+
+## Read-only and editable
+The lock button on a saved connection (or **RizomaDB: Toggle Read-Only**) switches it between read-only and editable. Connections in `prod` start read-only; switching one to editable asks you to confirm, and every write on it still asks for confirmation. A policy (team, project or user file, or an environment set to "Block writes") that forbids writes cannot be overridden this way: the lock explains that a policy blocks it. The setting *Production is read-only by default* turns the starting state off for all `prod` connections.
+
 ## Saved connections
 The second tab of the same screen lists the connections you have. Each card shows the engine's logo, the environment, whether it is read-only or shared, the target (`host:port`) and its **database**, and whether it is connected. A **● Active** badge marks the one in use. The buttons connect or disconnect, open a new query, toggle read-only and delete.
 

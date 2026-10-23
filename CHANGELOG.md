@@ -11,6 +11,17 @@ English · [Español](CHANGELOG.es.md)
 
 All notable changes are listed here, newest first. The format follows [Keep a Changelog](https://keepachangelog.com/). Nothing has been published yet.
 
+## [1.1.1] — 2026-10-22
+
+### Added
+- **Edit a saved connection** (pencil on its card), including its password and tunnel or proxy settings.
+- A **show/hide eye** on every password field.
+- A `prod` connection can be switched between read-only and editable (with confirmation); policies that forbid writes still win.
+
+### Fixed
+- Oracle servers older than 12.1 now get a clear message instead of NJS-138.
+- Slow start with open connections: the tree no longer reconnects restored nodes at startup, redraws once instead of once per connection, remembers each connection's answers, and the history file is trimmed 30 s after start without parsing every entry.
+
 ## [1.1.0] — 2026-10-22
 
 ### Added

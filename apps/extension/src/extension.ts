@@ -95,6 +95,8 @@ export async function activate(ctx: vscode.ExtensionContext) {
   };
   // ---- policy: built-in < team settings < project file (trusted workspaces only) < user file; the strictest layer always wins ----
   let effective: EffectivePolicy = defaultEffectivePolicy;
+  let setProd: (v: boolean) => void = () => {};
+  let prodReadOnly = true;  // the built-in default now lives on the connection (see ConnectionManager.prodReadOnly), not in the policy layers
   const policy = () => effective;
   const policyOutput = vscode.window.createOutputChannel("RizomaDB policy");
   const reloadPolicy = async () => {
@@ -103,8 +105,10 @@ export async function activate(ctx: vscode.ExtensionContext) {
       ...(vscode.workspace.isTrusted ? folders.map((f) => ({ label: `project ${f.name}`, path: join(f.uri.fsPath, ".rizomadb", "policy.json") })) : []),
       { label: "user", path: join(ctx.globalStorageUri.fsPath, "policy.json") },
     ];
-    const r = await loadPolicy({ builtinProdReadOnly: cfg().get<boolean>("security.prodReadOnlyByDefault", true), files, inline: [{ label: "team (settings)", value: cfg().get("policy.team") }, { label: "environments (settings)", value: customEnvironmentPolicy(cfg().get("environments")) }] });
+    const r = await loadPolicy({ builtinProdReadOnly: false, files, inline: [{ label: "team (settings)", value: cfg().get("policy.team") }, { label: "environments (settings)", value: customEnvironmentPolicy(cfg().get("environments")) }] });
     effective = r.policy;
+    prodReadOnly = cfg().get<boolean>("security.prodReadOnlyByDefault", true);
+    setProd(prodReadOnly);
     policyOutput.clear();
     policyOutput.appendLine(r.loaded.length ? `Policy layers loaded: ${r.loaded.join(", ")}` : "Policy: built-in defaults only.");
     if (!vscode.workspace.isTrusted && folders.length) policyOutput.appendLine("Workspace is not trusted: project policy and catalog are not loaded.");
@@ -142,6 +146,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
   };
   const mgr = new ConnectionManager(ctx.globalState, secrets, makeRegistry(vscode.Uri.joinPath(ctx.extensionUri, "dist", "driverWorker.cjs").fsPath), policy, process.env, tunnelFactory, { ...(cfg().get<boolean>("audit.enabled", true) ? { audit } : {}), approve,
     promptSecret: async (p, key) => vscode.window.showInputBox({ title: t("{0}: {1}", p.name, key), prompt: t("This shared connection does not store secrets. Your answer stays in your own secure storage."), password: /pass|secret|token|key/i.test(key), ignoreFocusOut: true }) });
+  setProd = (v) => { mgr.prodReadOnly = v; }; setProd(prodReadOnly);
   const reloadCatalog = async () => {
     const folders = vscode.workspace.workspaceFolders ?? [];
     const team = cfg().get<string>("catalog.teamFile");
@@ -159,7 +164,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
     vscode.workspace.onDidGrantWorkspaceTrust(() => void reloadPolicy()), vscode.workspace.onDidChangeConfiguration((e) => { if (e.affectsConfiguration("rizomadb.security") || e.affectsConfiguration("rizomadb.environments") || e.affectsConfiguration("rizomadb.policy")) void reloadPolicy(); }));
   const history = new History(join(ctx.globalStorageUri.fsPath, "history.jsonl"));
   const favorites = new Favorites(join(ctx.globalStorageUri.fsPath, "favorites.json"));
-  void history.prune(cfg().get<number>("history.retentionDays", 90));
+  setTimeout(() => { void history.prune(cfg().get<number>("history.retentionDays", 90)).catch(() => {}); }, 30_000);  // not at startup: it reads the whole history file
 
   const explorer = new Explorer(mgr);
   // The connection in use: the one bound to the active query editor, else the last one that ran something.
@@ -338,7 +343,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
   registerNotebooks(ctx, mgr, policy, cfg, () => pickConnection());
   const editorToolsRef: { current?: { refresh: () => void } } = {};
   const refreshStatus = () => {
-    explorer.refresh(); activeEmitter.fire(); editorToolsRef.current?.refresh();
+    explorer.redraw(); activeEmitter.fire(); editorToolsRef.current?.refresh();
     const p = mgr.get(activeId() ?? "");
     if (!p) { if (!mgr.list().length) { status.hide(); return; } status.text = `$(database) ${t("No connection")}`; status.tooltip = t("Select connection for this editor"); status.show(); return; }
     const db = databaseOf(p), engine = engineOf(p)?.name ?? p.driver;
@@ -702,7 +707,12 @@ export async function activate(ctx: vscode.ExtensionContext) {
   reg("rizomadb.discardChanges", () => { session?.s.pending.clear(); pushPending(); });
   reg("rizomadb.toggleReadOnly", async (n: Node) => {
     if (n.kind !== "connection") return;
-    await mgr.update(n.profile.id, { readOnly: !n.profile.readOnly });
+    const p = n.profile;
+    if (mgr.isShared(p.id)) { void vscode.window.showInformationMessage(t("This connection comes from a shared catalog and cannot be changed here.")); return; }
+    if (!mgr.isReadOnly(p)) { await mgr.setEditable(p.id, false); return; }
+    if (mgr.policyLocked(p)) { void vscode.window.showWarningMessage(t("A policy blocks writes in the “{0}” environment, so this connection cannot be made editable.", p.environment)); return; }
+    if (p.environment === "prod" && !(await vscode.window.showWarningMessage(t("Allow writes on “{0}”? It is a prod connection; every write will still ask for confirmation.", p.name), { modal: true }, t("Allow writes")))) return;
+    await mgr.setEditable(p.id, true);
   });
   reg("rizomadb.buildQuery", async (n: Node) => {
     if (n?.kind !== "connection") return;

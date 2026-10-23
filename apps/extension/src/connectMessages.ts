@@ -16,6 +16,8 @@ export const ConnectForm = z.object({
   net: z.record(z.string().check(z.maxLength(40)), short),
   /** After a failed connection test: store the profile anyway. */
   force: z.boolean(),
+  /** Set when an existing connection is being edited: saving replaces it. */
+  editId: z.optional(z.string().check(z.maxLength(100))),
 });
 export type ConnectForm = z.infer<typeof ConnectForm>;
 
@@ -24,7 +26,7 @@ export const ConnectToHost = z.discriminatedUnion("type", [
   z.object({ v: z.literal(1), type: z.literal("pick"), key: z.string().check(z.minLength(1), z.maxLength(40)) }),
   z.object({ v: z.literal(1), type: z.literal("test"), form: ConnectForm }),
   z.object({ v: z.literal(1), type: z.literal("save"), form: ConnectForm }),
-  z.object({ v: z.literal(1), type: z.literal("conn"), action: z.enum(["connect", "disconnect", "query", "readonly", "delete"]), id: z.string().check(z.minLength(1), z.maxLength(100)) }),
+  z.object({ v: z.literal(1), type: z.literal("conn"), action: z.enum(["connect", "disconnect", "query", "readonly", "delete", "edit"]), id: z.string().check(z.minLength(1), z.maxLength(100)) }),
 ]);
 
 export const HostToConnect = z.discriminatedUnion("type", [
@@ -33,6 +35,8 @@ export const HostToConnect = z.discriminatedUnion("type", [
   z.object({ v: z.literal(1), type: z.literal("form"), key: z.string(), driver: z.string(), fields: z.array(z.object({
     key: z.string(), title: z.string(), description: z.optional(z.string()), kind: z.enum(["text", "number", "boolean"]), required: z.boolean(), secret: z.boolean(),
     value: z.union([z.string(), z.boolean()]),
-  })), tunnel: z.boolean(), defaultName: z.string(), environments: z.array(z.string()) }),
+  })), tunnel: z.boolean(), defaultName: z.string(), environments: z.array(z.string()),
+    /** The saved connection being edited, with its values (including secrets, which the person may reveal). */
+    edit: z.optional(z.object({ id: z.string(), name: z.string(), environment: z.string(), via: z.enum(["none", "ssh", "http", "socks5"]), net: z.record(z.string(), z.string()) })) }),
   z.object({ v: z.literal(1), type: z.literal("result"), action: z.enum(["test", "save"]), ok: z.boolean(), message: z.string(), field: z.optional(z.string()), canForce: z.optional(z.boolean()) }),
 ]);

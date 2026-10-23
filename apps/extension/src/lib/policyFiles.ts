@@ -16,7 +16,7 @@ export interface LoadedPolicy { policy: EffectivePolicy; errors: string[]; loade
 const FAIL_CLOSED: PolicyFile = { version: 1, environments: {}, defaults: { readOnly: true }, disable: [], maskColumns: [] };
 
 export async function loadPolicy(src: PolicySources): Promise<LoadedPolicy> {
-  const layers: PolicyFile[] = [src.builtinProdReadOnly ? builtInPolicy : { ...builtInPolicy, environments: { staging: builtInPolicy.environments.staging ?? {} } }];
+  const layers: PolicyFile[] = [src.builtinProdReadOnly ? builtInPolicy : { ...builtInPolicy, environments: { staging: builtInPolicy.environments.staging ?? {}, prod: { confirmDestructive: true, confirmWrites: true } } }];
   const errors: string[] = [], loaded: string[] = [];
   for (const f of src.files) {
     let text: string;

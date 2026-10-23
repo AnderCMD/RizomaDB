@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { randomBytes, randomUUID } from "node:crypto";
 import type { JsonSchemaProp } from "@rizomadb/driver-api";
+import type { ConnectionProfile } from "@rizomadb/core";
 import type { ConnectionManager } from "../lib/connections.js";
 import { ENGINES, type Engine } from "../engineCatalog.js";
 import { ENGINE_LOGOS } from "../engineLogos.js";
@@ -45,6 +46,25 @@ export function openConnectionScreen(ctx: vscode.ExtensionContext, mgr: Connecti
   const sub = mgr.onChange(sendConnections), sub2 = active.onChange(sendConnections);
   panel.onDidDispose(() => { sub.dispose(); sub2.dispose(); });
 
+
+  /** The form for an engine: empty with the engine's usual defaults, or filled with a saved connection when `editing` is given. */
+  const sendForm = async (engine: Engine, editing?: ConnectionProfile) => {
+    const driver = await mgr.loadDriver(engine.driver);
+    const props = Object.entries(driver.connectionSchema.properties) as [string, JsonSchemaProp][];
+    const saved = editing ? { ...(editing.options as Record<string, unknown>), ...(await mgr.secretValues(editing.id)) } : undefined;
+    const fields = props.filter(([k]) => k !== "readOnly").map(([key, prop]) => {
+      const preset = saved ? saved[key] : engine.defaults?.[key] ?? prop.default;  // each engine presets its usual local host, port and user; fields the engine does not need stay empty and optional
+      return {
+        key, title: fieldText(prop.title), ...(prop.description ? { description: fieldText(prop.description) } : {}),
+        kind: prop.type === "boolean" ? "boolean" as const : prop.type === "number" ? "number" as const : "text" as const,
+        required: driver.connectionSchema.required?.includes(key) ?? false, secret: !!prop.secret,
+        value: prop.type === "boolean" ? preset === true : preset === undefined ? "" : String(preset),
+      };
+    });
+    post({ v: 1, type: "form", key: engine.key, driver: engine.driver, fields, tunnel: props.some(([k]) => k === "host"), defaultName: editing?.name ?? engine.name, environments: [...BUILTIN_ENVIRONMENTS, ...customEnvironments(vscode.workspace.getConfiguration("rizomadb").get("environments")).map((x) => x.name)],
+      ...(editing && saved ? { edit: { id: editing.id, name: editing.name, environment: editing.environment, ...networkOf(saved) } } : {}) });
+  };
+
   w.onDidReceiveMessage(async (raw: unknown) => {
     const p = ConnectToHost.safeParse(raw); if (!p.success) return;
     const msg = p.data;
@@ -55,6 +75,12 @@ export function openConnectionScreen(ctx: vscode.ExtensionContext, mgr: Connecti
     }
     if (msg.type === "conn") {
       const profile = mgr.get(msg.id); if (!profile) return;
+      if (msg.action === "edit") {
+        const engine = engineOfProfile(profile) && engineOf(engineOfProfile(profile)!.key);
+        if (mgr.isShared(profile.id)) void vscode.window.showInformationMessage(t("This connection comes from a shared catalog and cannot be changed here."));
+        else if (engine) await sendForm(engine, profile);
+        return;
+      }
       const node = { kind: "connection", profile };
       try {
         if (msg.action === "connect") await vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: t("Connecting…") }, async () => { const c = await mgr.connect(profile.id); await c.ping(); });
@@ -66,22 +92,7 @@ export function openConnectionScreen(ctx: vscode.ExtensionContext, mgr: Connecti
       sendConnections();
       return;
     }
-    if (msg.type === "pick") {
-      const engine = engineOf(msg.key); if (!engine) return;
-      const driver = await mgr.loadDriver(engine.driver);
-      const props = Object.entries(driver.connectionSchema.properties) as [string, JsonSchemaProp][];
-      const fields = props.filter(([k]) => k !== "readOnly").map(([key, prop]) => {
-        const preset = engine.defaults?.[key] ?? prop.default;  // each engine presets its usual local host, port and user; fields the engine does not need stay empty and optional
-        return {
-          key, title: fieldText(prop.title), ...(prop.description ? { description: fieldText(prop.description) } : {}),
-          kind: prop.type === "boolean" ? "boolean" as const : prop.type === "number" ? "number" as const : "text" as const,
-          required: driver.connectionSchema.required?.includes(key) ?? false, secret: !!prop.secret,
-          value: prop.type === "boolean" ? preset === true : preset === undefined ? "" : String(preset),
-        };
-      });
-      post({ v: 1, type: "form", key: engine.key, driver: engine.driver, fields, tunnel: props.some(([k]) => k === "host"), defaultName: engine.name, environments: [...BUILTIN_ENVIRONMENTS, ...customEnvironments(vscode.workspace.getConfiguration("rizomadb").get("environments")).map((x) => x.name)] });
-      return;
-    }
+    if (msg.type === "pick") { const engine = engineOf(msg.key); if (engine) await sendForm(engine); return; }
 
     const action = msg.type, form = msg.form;
     const reply = (ok: boolean, message: string, extra: { field?: string; canForce?: boolean } = {}) => post({ v: 1, type: "result", action, ok, message, ...extra });
@@ -101,7 +112,9 @@ export function openConnectionScreen(ctx: vscode.ExtensionContext, mgr: Connecti
         list.push({ name: form.environment, protection: form.newEnvProtection ?? "confirm" });
         await cfgEnv.update("environments", list, vscode.ConfigurationTarget.Global);
       }
-      const id = randomUUID();
+      const editId = form.editId, editing = editId ? mgr.get(editId) : undefined;
+      if (editId && (!editing || mgr.isShared(editId))) throw new FieldError(t("This connection can no longer be edited."));
+      const id = randomUUID();  // a connection being edited is tried under a temporary id, so a failed attempt never damages the saved one
       await mgr.add({ id, ...input });
       const probe = () => vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: t("Testing connection…") }, async () => { const c = await mgr.connect(id); await c.ping(); });
       if (action === "test" || !form.force) {
@@ -111,6 +124,12 @@ export function openConnectionScreen(ctx: vscode.ExtensionContext, mgr: Connecti
           return reply(false, t("Could not connect: {0}", friendly((e as Error).message)), action === "save" ? { canForce: true } : {});
         }
         if (action === "test") { await mgr.remove(id); return reply(true, t("Connection successful.")); }
+      }
+      if (editId) {
+        await mgr.remove(id);
+        const { readOnly: _r, tags: _g, ...rest } = input; void _r; void _g;
+        await mgr.replace(editId, rest);
+        return reply(true, t("Saved the changes to {0}.", input.name));
       }
       reply(true, form.force ? t("Saved {0} without connecting.", input.name) : t("Saved and connected to {0}.", input.name));
     } catch (e) {
@@ -158,4 +177,19 @@ async function buildProfile(mgr: ConnectionManager, engine: Engine, form: Connec
     }
   }
   return { name, driver: engine.driver, environment: form.environment, readOnly: false, tags: [`engine:${engine.key}`], secretKeys, values };
+}
+
+/** The tunnel and proxy settings stored on a profile, as the form's "Network path" fields. */
+function networkOf(o: Record<string, unknown>): { via: "none" | "ssh" | "http" | "socks5"; net: Record<string, string> } {
+  const g = (k: string) => (o[k] === undefined ? undefined : String(o[k]));
+  const net: Record<string, string> = {};
+  const set = (to: string, from: string) => { const v = g(from); if (v !== undefined) net[to] = v; };
+  if (g("ssh.host")) {
+    set("sshHost", "ssh.host"); set("sshPort", "ssh.port"); set("sshUser", "ssh.username"); set("sshPassword", "ssh.password"); set("sshKeyPath", "ssh.keyPath"); set("sshPassphrase", "ssh.passphrase");
+    net["sshAuth"] = g("ssh.password") !== undefined ? "pw" : "key";
+    return { via: "ssh", net };
+  }
+  const type = g("proxy.type");
+  if (type === "http" || type === "socks5") { set("proxyHost", "proxy.host"); set("proxyPort", "proxy.port"); set("proxyUser", "proxy.username"); set("proxyPassword", "proxy.password"); return { via: type, net }; }
+  return { via: "none", net };
 }

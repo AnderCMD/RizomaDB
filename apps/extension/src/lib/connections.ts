@@ -25,6 +25,9 @@ export class ConnectionManager {
   /** Secret values seen while connecting, per connection, so messages can be scrubbed. */
   private known = new Map<string, string[]>();
   private listeners = new Set<() => void>();
+  /** The built-in default: connections in `prod` are read-only unless they were switched to editable on purpose. */
+  prodReadOnly = true;
+  private parsed: { raw: unknown[]; out: ConnectionProfile[] } | undefined;
 
   constructor(
     private state: Memento, private secrets: SecretStore, private registry: DriverRegistry,
@@ -49,8 +52,11 @@ export class ConnectionManager {
 
   private userProfiles(): ConnectionProfile[] {
     const raw = this.state.get<unknown[]>(KEY, []);
+    // The tree, status bar and webviews ask for the profiles constantly: parse the stored list again only when it changed.
+    if (this.parsed?.raw === raw) return this.parsed.out;
     const out: ConnectionProfile[] = [];
     for (const r of raw) { try { out.push(parseProfile(r)); } catch { /* ignore invalid stored profile */ } }
+    this.parsed = { raw, out };
     return out;
   }
   list(): ConnectionProfile[] {
@@ -68,7 +74,7 @@ export class ConnectionManager {
     return profile;
   }
 
-  async update(id: string, patch: Partial<Pick<ConnectionProfile, "readOnly" | "name" | "environment">>) {
+  async update(id: string, patch: Partial<Pick<ConnectionProfile, "readOnly" | "writable" | "name" | "environment">>) {
     const cur = this.get(id);
     if (!cur) return;
     if (this.isShared(id)) throw new Error(`This connection is managed by the ${this.sourceOf(id)} catalog and cannot be changed here.`);
@@ -88,7 +94,36 @@ export class ConnectionManager {
 
   /** The effective read-only flag: profile setting OR environment policy. */
   isReadOnly(p: ConnectionProfile) {
-    return p.readOnly || !!ruleFor(this.getPolicy(), p.environment).readOnly;
+    return p.readOnly || this.policyLocked(p) || this.lockedByDefault(p);
+  }
+  /** A policy layer (team, project, user, custom environment) forbids writes here: the connection cannot be switched to editable. */
+  policyLocked(p: ConnectionProfile) { return !!ruleFor(this.getPolicy(), p.environment).readOnly; }
+  private lockedByDefault(p: ConnectionProfile) { return this.prodReadOnly && p.environment === "prod" && !p.writable; }
+  /** Makes the connection editable (or read-only again). Returns false when a policy forbids writes. */
+  async setEditable(id: string, editable: boolean): Promise<boolean> {
+    const p = this.get(id); if (!p) return false;
+    if (editable) {
+      if (this.policyLocked(p)) return false;
+      await this.update(id, { readOnly: false, writable: true });
+    } else await this.update(id, { readOnly: true, writable: false });
+    return true;
+  }
+
+  /** Replaces a saved connection with edited values, keeping its id, tags and read-only choice; secrets no longer used are deleted. */
+  async replace(id: string, p: Omit<ConnectionProfile, "id" | "options" | "secretKeys" | "tags" | "readOnly" | "writable"> & { values: Record<string, unknown>; secretKeys: string[] }) {
+    const cur = this.get(id);
+    if (!cur) throw new Error(`Unknown connection: ${id}`);
+    if (this.isShared(id)) throw new Error(`This connection is managed by the ${this.sourceOf(id)} catalog and cannot be changed here.`);
+    await this.disconnect(id);
+    for (const k of cur.secretKeys) if (!p.secretKeys.includes(k)) await this.secrets.delete(`rizomadb/${id}/${k}`);
+    return this.add({ ...p, id, tags: cur.tags, readOnly: cur.readOnly, ...(p.environment === cur.environment && cur.writable ? { writable: true } : {}) });
+  }
+
+  /** The saved secret values of a connection, for the edit form. */
+  async secretValues(id: string): Promise<Record<string, string>> {
+    const out: Record<string, string> = {};
+    for (const k of this.get(id)?.secretKeys ?? []) { const v = await this.secrets.get(`rizomadb/${id}/${k}`); if (v !== undefined) out[k] = v; }
+    return out;
   }
 
   isConnected(id: string) { return this.open.has(id); }

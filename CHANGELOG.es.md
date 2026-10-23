@@ -11,6 +11,17 @@
 
 Aquí se listan los cambios notables, del más nuevo al más antiguo. El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/). Todavía no se ha publicado nada.
 
+## [1.1.1] — 2026-10-22
+
+### Añadido
+- **Editar una conexión guardada** (lápiz en su tarjeta), con su contraseña y sus ajustes de túnel o proxy.
+- Un **ojo para mostrar u ocultar** en cada campo de contraseña.
+- Una conexión `prod` se puede alternar entre solo lectura y editable (con confirmación); las políticas que prohíben escribir siguen mandando.
+
+### Corregido
+- Los servidores Oracle anteriores a 12.1 ahora reciben un mensaje claro en lugar de NJS-138.
+- Arranque lento con conexiones abiertas: el árbol ya no reconecta los nodos restaurados al iniciar, se redibuja una vez en lugar de una por conexión, recuerda las respuestas de cada conexión, y el historial se recorta 30 s después del inicio sin analizar cada entrada.
+
 ## [1.1.0] — 2026-10-22
 
 ### Añadido

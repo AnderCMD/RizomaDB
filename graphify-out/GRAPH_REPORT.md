@@ -1,7 +1,7 @@
 # Graph Report - RizomaDB  (2026-10-22)
 
 ## Corpus Check
-- 507 files · ~321,581 words
+- 507 files · ~321,728 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `b77b54d1`
+- Built from commit: `813325ef`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -1350,7 +1350,7 @@ Cohesion: 0.50
 Nodes (3): Comparación honesta, Dónde RizomaDB no es (todavía) competitivo, Dónde se diferencia por diseño
 
 ## Knowledge Gaps
-- **1868 isolated node(s):** `Añadido`, `Notas`, `Corregido`, `Cambiado`, `Corregido` (+1863 more)
+- **1868 isolated node(s):** `Rule`, `RULES`, `Authentication and transport`, `Capabilities`, `Type notes` (+1863 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **49 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -1358,12 +1358,12 @@ Nodes (3): Comparación honesta, Dónde RizomaDB no es (todavía) competitivo, D
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `k()` connect `settings.ts` to `nosqlCommands.ts`, `completion.ts`, `mongodb/src/index.ts`, `activate`, `tr`, `firestore/src/index.ts`, `core/src/index.ts`, `dynamodb/src/index.ts`, `policyFiles.test.ts`, `elasticsearch/src/index.ts`, `designer.ts`, `influxdb3/src/index.ts`, `engines.integration.test.mts`?**
-  _High betweenness centrality (0.094) - this node is a cross-community bridge._
+  _High betweenness centrality (0.096) - this node is a cross-community bridge._
 - **Why does `Value` connect `Value` to `export.ts`, `mongodb/src/index.ts`, `PendingEdits`, `lib.test.ts`, `types.ts`, `hydradb/src/index.ts`, `redis/src/index.ts`, `ExecuteRequest`, `tools.test.ts`, `neo4j/src/index.ts`, `server.ts`, `influxdb3/src/index.ts`, `mssql/src/index.ts`, `engines.integration.test.mts`?**
-  _High betweenness centrality (0.090) - this node is a cross-community bridge._
-- **Why does `mongodb` connect `mongodb/src/index.ts` to `keywords`?**
-  _High betweenness centrality (0.054) - this node is a cross-community bridge._
-- **What connects `Añadido`, `Notas`, `Corregido` to the rest of the system?**
+  _High betweenness centrality (0.092) - this node is a cross-community bridge._
+- **Why does `keywords` connect `keywords` to `mongodb/src/index.ts`, `extension/package.json`?**
+  _High betweenness centrality (0.062) - this node is a cross-community bridge._
+- **What connects `Rule`, `RULES`, `Authentication and transport` to the rest of the system?**
   _1868 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `main.ts` be split into smaller, more focused modules?**
   _Cohesion score 0.02407667134174848 - nodes in this community are weakly interconnected._

@@ -1032,5 +1032,15 @@
  "Only for old-style databases that have a SID instead of a service name": "Solo para bases antiguas que tienen un SID en lugar de un nombre de servicio",
  "Oracle needs a service name or a SID.": "Oracle necesita un nombre de servicio o un SID.",
  "The host and SID may only contain letters, digits and . _ $ # -": "El host y el SID solo pueden contener letras, dígitos y . _ $ # -",
- "This Oracle Database version is too old: RizomaDB connects without the Oracle Client (thin mode), which needs Oracle Database 12.1 or later.": "Esta versión de Oracle Database es demasiado antigua: RizomaDB se conecta sin el cliente de Oracle (modo thin), que requiere Oracle Database 12.1 o posterior."
+ "This Oracle Database version is too old: RizomaDB connects without the Oracle Client (thin mode), which needs Oracle Database 12.1 or later.": "Esta versión de Oracle Database es demasiado antigua: RizomaDB se conecta sin el cliente de Oracle (modo thin), que requiere Oracle Database 12.1 o posterior.",
+ "This connection comes from a shared catalog and cannot be changed here.": "Esta conexión viene de un catálogo compartido y no se puede cambiar aquí.",
+ "A policy blocks writes in the “{0}” environment, so this connection cannot be made editable.": "Una política bloquea las escrituras en el entorno «{0}», así que esta conexión no se puede hacer editable.",
+ "Allow writes on “{0}”? It is a prod connection; every write will still ask for confirmation.": "¿Permitir escrituras en «{0}»? Es una conexión de producción; cada escritura seguirá pidiendo confirmación.",
+ "Back to saved connections": "Volver a las conexiones guardadas",
+ "Edit connection": "Editar conexión",
+ "Show password": "Mostrar contraseña",
+ "Hide password": "Ocultar contraseña",
+ "Save changes": "Guardar cambios",
+ "This connection can no longer be edited.": "Esta conexión ya no se puede editar.",
+ "Saved the changes to {0}.": "Se guardaron los cambios de {0}."
 }
