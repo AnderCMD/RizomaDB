@@ -881,16 +881,6 @@ export async function activate(ctx: vscode.ExtensionContext) {
     vscode.window.createTreeView("rizomadb.connections", { treeDataProvider: explorer, showCollapseAll: true }),
     vscode.window.onDidChangeActiveTextEditor(refreshStatus),
     mgr.onChange(refreshStatus), status, cancelItem,
-    vscode.languages.registerCodeLensProvider([{ language: "sql" }, { language: "rizomadb-mongo" }, { language: "rizomadb-redis" }, { language: "rizomadb-es" }, { language: "rizomadb-cypher" }], {
-      provideCodeLenses(doc) {
-        const p = mgr.get(docConn(doc) ?? "");
-        const r = new vscode.Range(0, 0, 0, 0);
-        return [
-          new vscode.CodeLens(r, { title: p ? `$(database) [${p.environment}] ${p.name}` : `$(database) ${t("Select connection")}`, command: "rizomadb.selectConnection" }),
-          new vscode.CodeLens(r, { title: `$(play) ${t("Run")}`, command: "rizomadb.runQuery" }),
-        ];
-      },
-    }),
     { dispose: () => void mgr.disposeAll() },
   );
   editorToolsRef.current = registerEditorTools(ctx, { label: (doc) => { const p = mgr.get(docConn(doc) ?? ""); if (!p) return undefined; const db = databaseOf(p); return `[${p.environment.toUpperCase()}] ${p.name}${db ? ` · ${db}` : ""}`; } });

@@ -11,6 +11,12 @@ English · [Español](CHANGELOG.es.md)
 
 All notable changes are listed here, newest first. The format follows [Keep a Changelog](https://keepachangelog.com/). Nothing has been published yet.
 
+## [Unreleased]
+
+### Fixed
+- Query editors showed the connection and Run lenses twice; they now appear once.
+- Opening a table on an Oracle server with a very large data dictionary is faster (the primary key is looked up with one query restricted to the table instead of one per column); checked on 19,000 tables across 120 schemas and a 3-million-row table.
+
 ## [1.2.3] — 2026-10-23
 
 ### Fixed

@@ -11,6 +11,12 @@
 
 Aquí se listan los cambios notables, del más nuevo al más antiguo. El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/). Todavía no se ha publicado nada.
 
+## [Sin publicar]
+
+### Corregido
+- Los editores de consultas mostraban dos veces los botones de conexión y Ejecutar; ahora aparecen una vez.
+- Abrir una tabla en un servidor Oracle con un diccionario de datos muy grande es más rápido (la clave primaria se busca con una consulta limitada a la tabla en lugar de una por columna); comprobado con 19.000 tablas en 120 esquemas y una tabla de 3 millones de filas.
+
 ## [1.2.3] — 2026-10-23
 
 ### Corregido

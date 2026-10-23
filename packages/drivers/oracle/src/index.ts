@@ -171,9 +171,12 @@ class OracleConnection implements Connection {
         const rows = await this.rows(
           `select c.column_name n, c.data_type || case when c.data_type in ('VARCHAR2','CHAR','NVARCHAR2') then '(' || c.char_length || ')' when c.data_type = 'NUMBER' and c.data_precision is not null then '(' || c.data_precision || case when c.data_scale is not null and c.data_scale <> 0 then ',' || c.data_scale else '' end || ')' else '' end t,
                   c.nullable nl, c.data_default d,
-                  (select count(*) from all_cons_columns cc join all_constraints k on k.owner = cc.owner and k.constraint_name = cc.constraint_name
-                    where k.constraint_type = 'P' and cc.owner = c.owner and cc.table_name = c.table_name and cc.column_name = c.column_name) pk
-           from all_tab_columns c where c.owner = coalesce(:s, sys_context('USERENV','CURRENT_SCHEMA')) and c.table_name = :t order by c.column_id`, { s: ref.schema ?? null, t: ref.name });
+                  case when pk.column_name is null then 0 else 1 end pk
+           from all_tab_columns c
+           left join (select cc.column_name from all_cons_columns cc join all_constraints k on k.owner = cc.owner and k.constraint_name = cc.constraint_name
+                       where k.constraint_type = 'P' and k.owner = coalesce(:s, sys_context('USERENV','CURRENT_SCHEMA')) and k.table_name = :t
+                         and cc.owner = coalesce(:s, sys_context('USERENV','CURRENT_SCHEMA')) and cc.table_name = :t) pk on pk.column_name = c.column_name
+           where c.owner = coalesce(:s, sys_context('USERENV','CURRENT_SCHEMA')) and c.table_name = :t order by c.column_id`, { s: ref.schema ?? null, t: ref.name });
         if (rows.length === 0) throw new DriverError("unknown", `Table not found: ${ref.name}`);
         return {
           name: ref.name, ...(ref.schema ? { schema: ref.schema } : {}), kind: "table",
