@@ -11,6 +11,11 @@
 
 Aquí se listan los cambios notables, del más nuevo al más antiguo. El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/). Todavía no se ha publicado nada.
 
+## [1.0.2] — 2026-10-22
+
+### Corregido
+- Se quitaron dos insignias del Marketplace que shields.io ya no sirve.
+
 ## [1.0.1] — 2026-10-22
 
 ### Cambiado

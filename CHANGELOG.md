@@ -11,6 +11,11 @@ English · [Español](CHANGELOG.es.md)
 
 All notable changes are listed here, newest first. The format follows [Keep a Changelog](https://keepachangelog.com/). Nothing has been published yet.
 
+## [1.0.2] — 2026-10-22
+
+### Fixed
+- Removed two Marketplace badges that shields.io no longer serves.
+
 ## [1.0.1] — 2026-10-22
 
 ### Changed

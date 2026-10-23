@@ -5,8 +5,6 @@
 <p align="center"><strong>All your databases, one place. Free.</strong></p>
 
 <p align="center">
-  <a href="https://marketplace.visualstudio.com/items?itemName=AnderCMD.rizomadb"><img src="https://img.shields.io/visual-studio-marketplace/v/AnderCMD.rizomadb?label=Marketplace" alt="Marketplace version"></a>
-  <a href="https://marketplace.visualstudio.com/items?itemName=AnderCMD.rizomadb"><img src="https://img.shields.io/visual-studio-marketplace/i/AnderCMD.rizomadb" alt="Installs"></a>
   <a href="https://github.com/AnderCMD/RizomaDB/blob/main/LICENSE"><img src="https://img.shields.io/github/license/AnderCMD/RizomaDB" alt="License"></a>
 </p>
 
