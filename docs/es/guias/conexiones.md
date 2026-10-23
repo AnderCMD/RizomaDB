@@ -39,6 +39,9 @@ Nada se conecta al iniciar VS Code: una conexión se abre la primera vez que la 
 
 Para cambiarla, haz clic en el nombre de la conexión en la barra de estado (abajo a la izquierda) o ejecuta **RizomaDB: Elegir conexión para este editor**. La lista marca la que está en uso, las ya conectadas y las de solo lectura. Con un editor de consultas abierto, la elección vale para ese editor, así que dos editores pueden usar dos bases Oracle distintas a la vez. Si un servidor no responde, el intento se abandona a los 45 segundos en lugar de quedarse «conectando».
 
+## Bases de datos con miles de tablas
+Un nodo del árbol lista las primeras 2.000 tablas y termina con una fila «…y N más». Para llegar a cualquier tabla, ejecuta **Abrir datos de la tabla** desde la paleta de comandos: pide una conexión (y un esquema) y luego puedes escribir para acotar la lista. En un esquema con más de 1.500 tablas, el autocompletado SQL conoce los nombres de las tablas pero no sus columnas, para no leer todo el catálogo.
+
 ## La conexión en uso
 La conexión *activa* es la asociada al editor de consultas en el que estás, o la última que ejecutó algo. La barra de estado la muestra como `[ENTORNO] nombre · base de datos`; haz clic para cambiar la conexión del editor actual.
 

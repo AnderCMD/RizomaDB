@@ -64,6 +64,9 @@ Nothing connects when VS Code starts: a connection opens the first time you expa
 
 To change it, click the connection name in the status bar (bottom left) or run **RizomaDB: Select Connection for This Editor**. The list marks the one in use, the ones already connected and the read-only ones. With a query editor open the choice applies to that editor, so two editors can use two different Oracle databases at once. If a server does not answer, the attempt is abandoned after 45 seconds instead of staying "connecting".
 
+## Databases with thousands of tables
+A tree node lists the first 2,000 tables and ends with an "…and N more" row. To reach any table, run **Open Table Data** from the command palette: it asks for a connection (and schema), then lets you type to narrow the list. In a schema with more than 1,500 tables, SQL completion knows the table names but not their columns, so it does not read the whole catalogue.
+
 ## The connection in use
 The *active* connection is the one bound to the query editor you are in, or the last one that ran something. The status bar shows it as `[ENV] name · database`; click it to change the connection of the current editor.
 

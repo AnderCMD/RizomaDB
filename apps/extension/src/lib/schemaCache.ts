@@ -2,6 +2,10 @@ import { SchemaIndex } from "@rizomadb/sql";
 import type { TableInfo, ForeignKey } from "@rizomadb/driver-api";
 import type { ConnectionManager } from "./connections.js";
 
+/** Above this many tables in a schema, completion uses table names only. */
+const BIG_SCHEMA_TABLES = 1500;
+const MAX_NAMES_ONLY = 5000;
+
 /** Lazily loaded, invalidatable schema snapshots per connection (feeds completion and diagnostics). */
 export class SchemaCache {
   private cache = new Map<string, Promise<SchemaIndex>>();
@@ -39,13 +43,16 @@ export class SchemaCache {
     const schemas = driver.capabilities.schemas ? this.pick(await api.listSchemas(), this.mgr.get(id)) : [undefined];
     const tables: TableInfo[] = [], fks: ForeignKey[] = [];
     for (const s of schemas) {
-      if (api.describeSchema) {
+      // Names first: a schema with thousands of tables is not worth reading every column of (the answer alone can freeze the host), so completion gets table names only.
+      const names = await api.listTables(s);
+      const big = names.length > BIG_SCHEMA_TABLES;
+      if (api.describeSchema && !big) {
         const t = await api.describeSchema(s);
         tables.push(...t.map((x) => ({ ...x, ...(s ? { schema: s } : {}) })));
       } else {
-        for (const t of await api.listTables(s)) tables.push({ ...t, ...(s ? { schema: s } : {}) });
+        for (const t of names.slice(0, MAX_NAMES_ONLY)) tables.push({ ...t, ...(s ? { schema: s } : {}) });
       }
-      if (api.foreignKeys) fks.push(...await api.foreignKeys(s).catch(() => []));
+      if (api.foreignKeys && !big) fks.push(...await api.foreignKeys(s).catch(() => []));
     }
     return new SchemaIndex(tables, fks);
   }

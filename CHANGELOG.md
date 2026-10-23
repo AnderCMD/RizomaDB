@@ -14,6 +14,7 @@ All notable changes are listed here, newest first. The format follows [Keep a Ch
 ## [Unreleased]
 
 ### Fixed
+- Very large databases no longer freeze the extension: a node lists at most 2,000 tables (the rest are reached with **Open Table Data**, which now works from the command palette and searches every table), and completion reads only table names, not every column, when a schema has more than 1,500 tables.
 - VS Code no longer connects to the databases of restored editors at startup just to underline errors, and a server that never answers is given up on after 45 s (20 s for the Oracle network connection) instead of leaving the extension waiting forever.
 
 ### Changed

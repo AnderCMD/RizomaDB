@@ -557,8 +557,23 @@ export async function activate(ctx: vscode.ExtensionContext) {
   });
   reg("rizomadb.openGuide", async (step?: string) => { openGuide(ctx, typeof step === "string" ? step : undefined); });
   reg("rizomadb.cancelQuery", () => running?.abort());
-  reg("rizomadb.openTable", async (n: Node) => {
-    if (n.kind !== "table") return;
+  reg("rizomadb.openTable", async (given?: Node) => {
+    // From the command palette (or the "…and N more" row) there is no table yet: search every table of a connection.
+    let n = given;
+    if (n?.kind !== "table") {
+      const id = await pickConnection(); const profile = id ? mgr.get(id) : undefined; if (!profile) return;
+      const conn = await mgr.connect(profile.id), api = conn.introspect(), drv = await mgr.loadDriver(profile.driver);
+      let schema: string | undefined;
+      if (drv.capabilities.schemas) {
+        const s = await vscode.window.showQuickPick((await api.listSchemas()).map((x) => ({ label: x })), { title: t("Schema"), matchOnDescription: true }); if (!s) return;
+        schema = s.label;
+      }
+      const list = await api.listTables(schema);
+      const shown = list.slice(0, 20000);
+      const pick = await vscode.window.showQuickPick(shown.map((x) => ({ label: x.name, description: x.kind === "view" ? t("view") : "", info: x })), { title: shown.length < list.length ? t("Table (first {0} of {1}: type to narrow)", shown.length, list.length) : t("Table"), matchOnDescription: true });
+      if (!pick) return;
+      n = { kind: "table", profile, ...(schema ? { schema } : {}), name: pick.info.name, isView: pick.info.kind === "view" };
+    }
     const profile = n.profile;
     const conn = await mgr.connect(profile.id);
     const plugin = await mgr.loadDriver(profile.driver);

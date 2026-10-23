@@ -1047,5 +1047,10 @@
  "Pinned: the next query opens in a new tab": "Fijada: la siguiente consulta se abre en otra pestaña",
  "In use now": "En uso ahora",
  "Not connected yet: it connects when you run something": "Aún sin conectar: se conecta cuando ejecutes algo",
- "Filter and order in the database": "Filtrar y ordenar en la base de datos"
+ "Filter and order in the database": "Filtrar y ordenar en la base de datos",
+ "…and {0} more": "…y {0} más",
+ "Schema": "Esquema",
+ "view": "vista",
+ "Table (first {0} of {1}: type to narrow)": "Tabla (las primeras {0} de {1}: escribe para acotar)",
+ "run Open Table Data to search all of them": "ejecuta «Abrir datos de la tabla» para buscarlas todas"
 }

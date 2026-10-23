@@ -39,6 +39,8 @@ export function engineOf(p: ConnectionProfile) {
 
 /** How long after activation a collapsed-then-restored node is not connected automatically. */
 const RESTORE_GRACE_MS = 5000;
+/** Most tables listed under one node. */
+const MAX_TREE_ITEMS = 2000;
 
 export class Explorer implements vscode.TreeDataProvider<Node> {
   private ev = new vscode.EventEmitter<Node | undefined>();
@@ -112,7 +114,12 @@ export class Explorer implements vscode.TreeDataProvider<Node> {
     if (n.kind === "group") return n.profiles.map((profile) => ({ kind: "connection", profile }));
     try {
       if (n.kind === "column") return [];
-      if (n.kind === "category") return n.items.map((x) => ({ kind: "table", profile: n.profile, ...(n.schema ? { schema: n.schema } : {}), name: x.name, isView: x.kind === "view" }));
+      if (n.kind === "category") {
+        // A database with tens of thousands of tables would freeze the window while the tree is built: show a first slice and say how to reach the rest.
+        const shown = n.items.slice(0, MAX_TREE_ITEMS).map((x): Node => ({ kind: "table", profile: n.profile, ...(n.schema ? { schema: n.schema } : {}), name: x.name, isView: x.kind === "view" }));
+        if (n.items.length > MAX_TREE_ITEMS) shown.push({ kind: "column", label: t("…and {0} more", n.items.length - MAX_TREE_ITEMS), detail: t("run Open Table Data to search all of them"), pk: false });
+        return shown;
+      }
       // VS Code re-expands the nodes that were open last time as soon as the view appears. Connecting every one of them (tunnels, TLS,
       // drivers) at startup made the window slow, so in the first seconds a connection that is not open yet shows nothing: expanding it again connects.
       if (!this.mgr.isConnected(n.profile.id) && Date.now() - this.startedAt < RESTORE_GRACE_MS) return [];
