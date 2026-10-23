@@ -22,7 +22,7 @@ class FieldError extends Error { constructor(message: string, readonly field?: s
 export function openConnectionScreen(ctx: vscode.ExtensionContext, mgr: ConnectionManager, active: { get: () => string | undefined; onChange: vscode.Event<void> }) {
   if (current) { current.reveal(); return; }
   const root = vscode.Uri.joinPath(ctx.extensionUri, "dist");
-  const panel = vscode.window.createWebviewPanel("rizomadb.connect", t("New connection"), vscode.ViewColumn.Active, { enableScripts: true, localResourceRoots: [root] });
+  const panel = vscode.window.createWebviewPanel("rizomadb.connect", t("New connection"), vscode.ViewColumn.Active, { enableScripts: true, retainContextWhenHidden: true, localResourceRoots: [root] });
   current = panel;
   panel.onDidDispose(() => { current = undefined; });
   panel.iconPath = vscode.Uri.joinPath(ctx.extensionUri, "media", "icon.png");

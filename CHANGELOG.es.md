@@ -14,6 +14,7 @@ Aquí se listan los cambios notables, del más nuevo al más antiguo. El formato
 ## [Sin publicar]
 
 ### Corregido
+- Cambiar a otra pestaña del editor mientras creas o editas una conexión (o un diseño de tabla, los ajustes, el historial o la guía) ya no devuelve esa pantalla a su primera página: conserva lo que habías escrito.
 - Las bases de datos muy grandes ya no congelan la extensión: un nodo lista como máximo 2.000 tablas (el resto se alcanza con **Abrir datos de la tabla**, que ahora funciona desde la paleta de comandos y busca entre todas las tablas), y el autocompletado lee solo los nombres de tablas, no todas las columnas, cuando un esquema tiene más de 1.500 tablas.
 - VS Code ya no se conecta al iniciar a las bases de los editores restaurados solo para subrayar errores, y un servidor que nunca responde se abandona a los 45 s (20 s para la conexión de red de Oracle) en lugar de dejar la extensión esperando para siempre.
 

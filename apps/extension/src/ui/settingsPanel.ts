@@ -61,7 +61,7 @@ function contributed(ctx: vscode.ExtensionContext): Record<string, Prop> {
 export function openSettingsScreen(ctx: vscode.ExtensionContext) {
   if (current) { current.reveal(); return; }
   const root = vscode.Uri.joinPath(ctx.extensionUri, "dist");
-  const panel = vscode.window.createWebviewPanel("rizomadb.settings", t("RizomaDB settings"), vscode.ViewColumn.Active, { enableScripts: true, localResourceRoots: [root] });
+  const panel = vscode.window.createWebviewPanel("rizomadb.settings", t("RizomaDB settings"), vscode.ViewColumn.Active, { enableScripts: true, retainContextWhenHidden: true, localResourceRoots: [root] });
   current = panel;
   panel.iconPath = vscode.Uri.joinPath(ctx.extensionUri, "media", "icon.png");
   const nonce = randomBytes(16).toString("base64"), w = panel.webview;

@@ -15,7 +15,7 @@ export function openHistoryScreen(
 ) {
   if (current) { current.reveal(); return; }
   const root = vscode.Uri.joinPath(ctx.extensionUri, "dist");
-  const panel = vscode.window.createWebviewPanel("rizomadb.history", t("Query history"), vscode.ViewColumn.Active, { enableScripts: true, localResourceRoots: [root] });
+  const panel = vscode.window.createWebviewPanel("rizomadb.history", t("Query history"), vscode.ViewColumn.Active, { enableScripts: true, retainContextWhenHidden: true, localResourceRoots: [root] });
   current = panel; panel.onDidDispose(() => { current = undefined; });
   panel.iconPath = vscode.Uri.joinPath(ctx.extensionUri, "media", "icon.png");
   const nonce = randomBytes(16).toString("base64"), w = panel.webview;

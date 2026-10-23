@@ -27,7 +27,7 @@ const toTable = (d: DesignTable): TableM => ({
 export function openDesigner(ctx: vscode.ExtensionContext, mgr: ConnectionManager, policy: () => EffectivePolicy, profileId: string, current: SchemaModel, existingName?: string, onApplied?: () => void) {
   const profile = mgr.get(profileId)!, dialect = profile.driver as Dialect;
   const root = vscode.Uri.joinPath(ctx.extensionUri, "dist");
-  const panel = vscode.window.createWebviewPanel("rizomadb.designer", existingName ? t("Table: {0}", existingName) : t("New table"), vscode.ViewColumn.Active, { enableScripts: true, localResourceRoots: [root] });
+  const panel = vscode.window.createWebviewPanel("rizomadb.designer", existingName ? t("Table: {0}", existingName) : t("New table"), vscode.ViewColumn.Active, { enableScripts: true, retainContextWhenHidden: true, localResourceRoots: [root] });
   const nonce = randomBytes(16).toString("base64"), w = panel.webview;
   w.html = `<!doctype html><html lang="${effectiveLanguage()}"><head><meta charset="utf-8">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${w.cspSource}; script-src 'nonce-${nonce}';">
