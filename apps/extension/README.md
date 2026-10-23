@@ -32,6 +32,13 @@ Click the RizomaDB icon, press **+**, and pick your engine by its logo. The form
 
 ![New connection screen with every supported engine](https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/screenshots/connect-engines.png)
 
+![Paste a JDBC URL to fill the form; the password has a show/hide eye](https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/screenshots/connect-jdbc.png)
+
+- **Paste a JDBC URL** to fill the form (Oracle, PostgreSQL, MySQL, SQL Server and more); a password in the URL goes to the password field.
+- **Edit a saved connection** at any time, and switch a `prod` connection between read-only and editable (with confirmation) from its lock.
+
+![Saved connections with edit, read-only lock and delete](https://raw.githubusercontent.com/AnderCMD/RizomaDB/main/assets/screenshots/saved-connections.png)
+
 - **Environments with protection**: `prod` is read-only by default and `staging` asks before every write.
 - **SSH tunnels** (including jump hosts with strict host-key checking), **HTTP and SOCKS5 proxies**.
 - **Shared catalogs without secrets** for teams, and **encrypted connection files** you can send safely.

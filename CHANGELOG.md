@@ -11,6 +11,11 @@ English · [Español](CHANGELOG.es.md)
 
 All notable changes are listed here, newest first. The format follows [Keep a Changelog](https://keepachangelog.com/). Nothing has been published yet.
 
+## [Unreleased]
+
+### Changed
+- Documentation and site: the home page now has a gallery of screenshots (results grid, pending changes, JDBC form, saved connections, ER diagram, plans, history, light theme); the troubleshooting page covers old Oracle servers, the VS Code service-worker error and huge databases; the screenshots are retaken with the compact header (`scripts/take-screenshots.mjs`).
+
 ## [1.2.2] — 2026-10-23
 
 ### Fixed

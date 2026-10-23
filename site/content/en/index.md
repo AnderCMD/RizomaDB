@@ -18,11 +18,37 @@ features:
   - { icon: "🌍", title: "English and Spanish", details: "Switch the language inside the extension, and follow the built-in guide that takes you by the hand.", link: /en/guides/language-and-settings }
 ---
 
-::: warning Version 1.0.0
-RizomaDB 1.0.0 is on the VS Code Marketplace (Open VSX is not published yet), but some things are not confirmed. The [honest comparison](/en/market/honest-comparison) and the [acceptance checklist](/en/release/v1-checklist) say exactly what is and is not verified.
+::: warning Version 1.2
+RizomaDB 1.2 is on the VS Code Marketplace (Open VSX is not published yet), but some things are not confirmed. The [honest comparison](/en/market/honest-comparison) and the [acceptance checklist](/en/release/v1-checklist) say exactly what is and is not verified.
 
 **Cloud services are not confirmed.** RizomaDB has only been tested against local engines and official emulators, never against a real cloud account (AWS, Google Cloud, MongoDB Atlas, managed PostgreSQL/MySQL). Test with a read-only user or a throwaway database before relying on it: see [Cloud and managed services](/en/engines/#cloud-and-managed-services-not-confirmed).
 :::
+
+## See it
+
+<div class="shots">
+
+![The results grid: sort, filter, record panel and column statistics](/screenshots/grid-results.png)
+
+![Pending changes: edited cells, a deleted row and a new row waiting to be applied](/screenshots/grid-pending-changes.png)
+
+![New connection: paste a JDBC URL to fill the form, with a show/hide eye on the password](/screenshots/connect-jdbc.png)
+
+![Saved connections with edit, read-only lock and delete](/screenshots/saved-connections.png)
+
+![Every supported engine on the New connection screen](/screenshots/connect-engines.png)
+
+![ER diagram drawn from your foreign keys](/screenshots/er-diagram.png)
+
+![Explain plan with the slow node highlighted](/screenshots/explain-plan.png)
+
+![Query history with starred queries](/screenshots/query-history.png)
+
+![The same grid in a light theme](/screenshots/grid-light-theme.png)
+
+</div>
+
+*These are renders of the extension's own screens with sample data, not captures of a VS Code window.*
 
 ## Where to start
 - New here: [Getting started](/en/guides/getting-started), then [Connections](/en/guides/connections).

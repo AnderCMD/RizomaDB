@@ -1,6 +1,9 @@
 // Copies the repository docs into the site tree so there is a single source of truth.
 import { cpSync, mkdirSync, rmSync } from "node:fs";
 const copy = (from, to) => { rmSync(to, { recursive: true, force: true }); mkdirSync(to, { recursive: true }); cpSync(from, to, { recursive: true }); };
+// The screenshots live in assets/screenshots (the Marketplace page uses them too); the site serves a copy.
+copy("../assets/screenshots", "content/public/screenshots");
+for (const f of ["README.md", "README.es.md"]) rmSync(`content/public/screenshots/${f}`, { force: true });
 // English
 for (const d of ["guides", "engines", "enterprise", "security", "market", "drivers", "reference", "design", "release", "legal"]) copy(`../docs/${d}`, `content/en/${d}`);
 cpSync("../docs/ci-cd.md", "content/en/ci-cd.md");

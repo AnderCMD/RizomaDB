@@ -11,6 +11,11 @@
 
 Aquí se listan los cambios notables, del más nuevo al más antiguo. El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/). Todavía no se ha publicado nada.
 
+## [Sin publicar]
+
+### Cambiado
+- Documentación y sitio: la portada tiene ahora una galería de capturas (rejilla de resultados, cambios pendientes, formulario JDBC, conexiones guardadas, diagrama ER, planes, historial, tema claro); la página de solución de problemas cubre servidores Oracle antiguos, el error del service worker de VS Code y las bases enormes; las capturas se vuelven a tomar con el encabezado compacto (`scripts/take-screenshots.mjs`).
+
 ## [1.2.2] — 2026-10-23
 
 ### Corregido

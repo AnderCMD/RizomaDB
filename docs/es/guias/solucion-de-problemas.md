@@ -20,4 +20,12 @@
 
 **Una pantalla está en el idioma equivocado.** Cambia `rizomadb.language` y reabre las pantallas abiertas. Los nombres de comandos y ajustes siguen el idioma de VS Code.
 
+**Oracle dice «NJS-138» o que el servidor es demasiado antiguo.** RizomaDB se conecta sin el cliente de Oracle, que necesita Oracle Database 12.1 o posterior. Los servidores más antiguos no se admiten.
+
+**Una pantalla dice «Could not register service worker» o se queda en blanco.** Es un problema de VS Code, no de la extensión: cierra todas las ventanas de VS Code y ábrelo de nuevo. Si se repite, cierra VS Code por completo y borra la carpeta de caché `Service Worker` (en macOS, `~/Library/Application Support/Code/Service Worker`).
+
+**La ventana se pone lenta o se congela con una base de datos enorme.** Un nodo lista como máximo 2.000 tablas (usa **Abrir datos de la tabla** desde la paleta de comandos para llegar a cualquiera), y el autocompletado SQL lee solo nombres de tablas en esquemas de más de 1.500 tablas. Un servidor que no responde se abandona a los 45 segundos. Si aun así pasa, dinos el motor, cuántas tablas tiene y qué hiciste justo antes.
+
+**El formulario de conexión volvía a «Nueva conexión» al cambiar de pestaña.** Corregido en 1.2.2: la pantalla ahora conserva lo que escribiste. Actualiza la extensión.
+
 ¿Sigues atascado? El canal de salida *RizomaDB policy* y la barra de estado muestran qué está bloqueando una acción. Abre una incidencia con el motor, la versión y los pasos.

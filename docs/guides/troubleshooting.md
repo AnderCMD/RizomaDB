@@ -20,4 +20,12 @@
 
 **A screen is in the wrong language.** Set `rizomadb.language`; reopen open screens. Command and setting names follow VS Code's language.
 
+**Oracle says "NJS-138" or that the server is too old.** RizomaDB connects without the Oracle Client, which needs Oracle Database 12.1 or later. Older servers are not supported.
+
+**A screen says "Could not register service worker" or stays blank.** This is a VS Code problem, not an extension one: close every VS Code window and open it again. If it repeats, quit VS Code and delete its `Service Worker` cache folder (on macOS, `~/Library/Application Support/Code/Service Worker`).
+
+**The window slows down or freezes with a huge database.** A node lists at most 2,000 tables (use **Open Table Data** from the command palette to reach any table), and SQL completion reads only table names in schemas of more than 1,500 tables. A server that does not answer is abandoned after 45 seconds. If it still happens, tell us the engine, how many tables it has and what you did just before.
+
+**My connection form went back to "New connection" when I changed tab.** Fixed in 1.2.2: the screen now keeps what you typed. Update the extension.
+
 Still stuck? The *RizomaDB policy* output channel and the status bar show what is blocking an action. Please open an issue with the engine, version and the steps.

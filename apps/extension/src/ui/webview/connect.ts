@@ -214,7 +214,7 @@ function showForm(m: { key: string; driver: string; fields: Field[]; tunnel: boo
         if (r.name && name.value === m.defaultName) name.value = r.name;
         url.value = "";
         urlStatus.className = "status ok";
-        urlStatus.textContent = [msg("The form was filled from the URL."), ...r.notes.map((n) => msg(n.template, ...(n.args ?? [])))].join(" ");
+        urlStatus.textContent = "✓ " + [msg("The form was filled from the URL."), ...r.notes.map((n) => msg(n.template, ...(n.args ?? [])))].join(" ");
       } catch (e) {
         urlStatus.className = "status err";
         urlStatus.textContent = e instanceof JdbcUrlError ? msg(e.template, ...e.args) : (e as Error).message;

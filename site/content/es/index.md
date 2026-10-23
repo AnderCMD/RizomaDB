@@ -18,11 +18,37 @@ features:
   - { icon: "🌍", title: "Español e inglés", details: "Cambia el idioma dentro de la extensión y sigue la guía integrada que te lleva de la mano.", link: /es/guias/idioma-y-ajustes }
 ---
 
-::: warning Versión 1.0.0
-RizomaDB 1.0.0 está en el Marketplace de VS Code (Open VSX aún no está publicado), pero hay cosas sin confirmar. La [lista de aceptación](/es/release/lista-de-aceptacion-v1) y la [comparación honesta](/es/mercado/comparacion-honesta) dicen exactamente qué está y qué no está verificado.
+::: warning Versión 1.2
+RizomaDB 1.2 está en el Marketplace de VS Code (Open VSX aún no está publicado), pero hay cosas sin confirmar. La [lista de aceptación](/es/release/lista-de-aceptacion-v1) y la [comparación honesta](/es/mercado/comparacion-honesta) dicen exactamente qué está y qué no está verificado.
 
 **Los servicios en la nube no están confirmados.** RizomaDB solo se ha probado con motores locales y emuladores oficiales, nunca con una cuenta real en la nube (AWS, Google Cloud, MongoDB Atlas, PostgreSQL/MySQL gestionados). Pruébalo con un usuario de solo lectura o una base de datos desechable antes de depender de él: ver [Nube y servicios gestionados](/es/motores/#nube-y-servicios-gestionados-sin-confirmar).
 :::
+
+## Míralo
+
+<div class="shots">
+
+![La rejilla de resultados: orden, filtros, panel de registro y estadísticas de columna](/screenshots/grid-results.png)
+
+![Cambios pendientes: celdas editadas, una fila borrada y una nueva esperando aplicarse](/screenshots/grid-pending-changes.png)
+
+![Nueva conexión: pega una URL JDBC para rellenar el formulario, con un ojo para mostrar u ocultar la contraseña](/screenshots/connect-jdbc.png)
+
+![Conexiones guardadas con editar, candado de solo lectura y borrar](/screenshots/saved-connections.png)
+
+![Todos los motores en la pantalla Nueva conexión](/screenshots/connect-engines.png)
+
+![Diagrama ER dibujado con tus claves foráneas](/screenshots/er-diagram.png)
+
+![Plan de ejecución con el nodo lento resaltado](/screenshots/explain-plan.png)
+
+![Historial de consultas con favoritas](/screenshots/query-history.png)
+
+![La misma rejilla en un tema claro](/screenshots/grid-light-theme.png)
+
+</div>
+
+*Son representaciones de las pantallas de la propia extensión con datos de ejemplo, no capturas de una ventana de VS Code.*
 
 ## Por dónde empezar
 - Si eres nuevo: [Primeros pasos](/es/guias/primeros-pasos) y luego [Conexiones](/es/guias/conexiones).

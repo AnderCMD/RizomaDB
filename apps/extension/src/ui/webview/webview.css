@@ -353,3 +353,5 @@ button.engine-card .logo.bare { margin: 0 2px; }
 .tbrow #tools .field-icon { height: 26px; padding: 0 8px; } .tbrow #tools .field-icon input { width: 130px; }
 .tbrow #find-count:empty { display: none; }
 .tbrow #toolbar .grow { display: none; }
+#status { white-space: nowrap; }
+.connect-form fieldset > .ib { justify-self: start; }

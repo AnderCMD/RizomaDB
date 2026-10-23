@@ -8,6 +8,7 @@ sbom.cdx.json
 test/a11y/out
 site/.vitepress/cache
 site/content/en/*/
+site/content/public/screenshots/
 site/content/es/*/
 .soak
 

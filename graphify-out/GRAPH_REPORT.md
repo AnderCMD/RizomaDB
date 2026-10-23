@@ -1,16 +1,16 @@
 # Graph Report - RizomaDB  (2026-10-22)
 
 ## Corpus Check
-- 509 files · ~327,539 words
+- 509 files · ~327,542 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 4392 nodes · 6593 edges · 333 communities (282 shown, 51 thin omitted)
+- 4392 nodes · 6593 edges · 338 communities (287 shown, 51 thin omitted)
 - Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 112 edges (avg confidence: 0.64)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `2e28ad2b`
+- Built from commit: `7ad81127`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -58,7 +58,7 @@
 - settings.ts
 - redis/package.json
 - core/src/index.ts
-- AGENTS.md
+- Design guide
 - tools.test.ts
 - mongodb/package.json
 - cassandra/package.json
@@ -214,7 +214,7 @@
 - The results grid
 - Changelog
 - ClickHouse
-- Design guide
+- AGENTS.md
 - DuckDB
 - MongoDB
 - SQL Server
@@ -236,8 +236,11 @@
 - The query editor
 - smoke-vsix-duckdb.mjs
 - index.cjs
+- CI/CD
 - Deployment
+- Editing data
 - renderPane
+- Policies
 - test-engines/src/index.ts
 - Política de seguridad
 - pg
@@ -245,7 +248,9 @@
 - categories
 - galleryBanner
 - renderBody
+- Ayuda a probar RizomaDB
 - Honest comparison
+- Help test RizomaDB
 - lista-de-aceptacion-v1.md
 - Guía de diseño
 - PostgreSQL
@@ -256,7 +261,7 @@
 - repository
 - @rizomadb/sql
 - zod
-- keyboard.md
+- Using RizomaDB with the keyboard
 - audit.md
 - dependency-policy.md
 - GOVERNANCE.md
@@ -344,7 +349,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (333 total, 51 thin omitted)
+## Communities (338 total, 51 thin omitted)
 
 ### Community 0 - "main.ts"
 Cohesion: 0.03
@@ -471,8 +476,8 @@ Cohesion: 0.30
 Nodes (12): LogoShape, esc(), hasGradient(), logoDataUri(), logoSvg(), node(), adaptHex(), hex() (+4 more)
 
 ### Community 31 - "README.es.md"
-Cohesion: 0.08
-Nodes (18): Escribir un driver, Ayuda a probar RizomaDB, Cómo probar con seguridad, Cómo reportar, Lo más útil, Solución de problemas, Referencia de ajustes, Referencia de comandos (+10 more)
+Cohesion: 0.09
+Nodes (14): Escribir un driver, Solución de problemas, Referencia de ajustes, Referencia de comandos, Matriz de capacidades por motor, Notas, Modelo de amenazas (STRIDE) — borrador inicial, Third-party licenses (production dependencies) (+6 more)
 
 ### Community 32 - "build-brand.mjs"
 Cohesion: 0.10
@@ -500,7 +505,7 @@ Nodes (16): batchLimits(), ConversionError, convertCell(), convertNonString(), C
 
 ### Community 38 - "Registro de cambios"
 Cohesion: 0.09
-Nodes (22): [1.0.0] — 2026-10-22, [1.0.1] — 2026-10-22, [1.0.2] — 2026-10-22, [1.1.0] — 2026-10-22, [1.2.0] — 2026-10-22, [1.2.1] — 2026-10-22, Añadido, Añadido (+14 more)
+Nodes (22): [1.0.0] — 2026-10-22, [1.0.1] — 2026-10-22, [1.0.2] — 2026-10-22, [1.1.0] — 2026-10-22, [1.2.0] — 2026-10-22, [1.2.1] — 2026-10-22, [1.2.2] — 2026-10-23, Añadido (+14 more)
 
 ### Community 39 - "postgres/package.json"
 Cohesion: 0.09
@@ -518,9 +523,9 @@ Nodes (21): ioredis, dependencies, ioredis, @rizomadb/driver-api, devDependencie
 Cohesion: 0.16
 Nodes (11): ConnectionProfile, Environment, parseProfile(), redactObject(), redactString(), expandVariables(), MemorySecretStore, resolveConfig() (+3 more)
 
-### Community 43 - "AGENTS.md"
-Cohesion: 0.25
-Nodes (7): Commands, Conventions, Layout, Map first: use the graph, Rules that are not negotiable, Verify before you say "done", What this is
+### Community 43 - "Design guide"
+Cohesion: 0.20
+Nodes (10): Accessibility (required), Adding a screen: checklist, Building blocks (`src/ui/webview/ui.ts`), Colour and state, Design guide, Layout patterns, Logos, Principles (+2 more)
 
 ### Community 44 - "tools.test.ts"
 Cohesion: 0.16
@@ -535,8 +540,8 @@ Cohesion: 0.10
 Nodes (20): cassandra-driver, dependencies, cassandra-driver, @rizomadb/driver-api, devDependencies, fast-check, exports, ./meta (+12 more)
 
 ### Community 47 - "README.md"
-Cohesion: 0.07
-Nodes (23): Writing a driver, Custom environments, Format (`version: 1`), Policies, What is guaranteed, and how, Changing structure, Editing data, How (+15 more)
+Cohesion: 0.09
+Nodes (14): Writing a driver, Troubleshooting, Commands reference, Engine capability matrix, Notes, Settings reference, Threat model (STRIDE) — initial draft, Development (+6 more)
 
 ### Community 48 - "influxdb3/src/index.ts"
 Cohesion: 0.11
@@ -1100,15 +1105,15 @@ Nodes (11): Anatomy, Cells, rows and the record panel, Copy and save, Filtering 
 
 ### Community 197 - "Changelog"
 Cohesion: 0.09
-Nodes (22): [1.0.0] — 2026-10-22, [1.0.1] — 2026-10-22, [1.0.2] — 2026-10-22, [1.1.0] — 2026-10-22, [1.2.0] — 2026-10-22, [1.2.1] — 2026-10-22, Added, Added (+14 more)
+Nodes (22): [1.0.0] — 2026-10-22, [1.0.1] — 2026-10-22, [1.0.2] — 2026-10-22, [1.1.0] — 2026-10-22, [1.2.0] — 2026-10-22, [1.2.1] — 2026-10-22, [1.2.2] — 2026-10-23, Added (+14 more)
 
 ### Community 198 - "ClickHouse"
 Cohesion: 0.20
 Nodes (9): Authentication and transport, Capabilities, ClickHouse, Driver license, External tools, Read-only enforcement, Running the integration tests, Table screen (filter, paging, column menu) (+1 more)
 
-### Community 199 - "Design guide"
-Cohesion: 0.08
-Nodes (22): Contributing, Contribuir, CI/CD, Local equivalents, Making a release, Repository settings, Verifying a release package, Accessibility (required) (+14 more)
+### Community 199 - "AGENTS.md"
+Cohesion: 0.11
+Nodes (14): Commands, Conventions, Layout, Map first: use the graph, Rules that are not negotiable, Verify before you say "done", What this is, Contributing (+6 more)
 
 ### Community 200 - "DuckDB"
 Cohesion: 0.22
@@ -1174,13 +1179,25 @@ Nodes (9): Build a query without typing SQL, History, Notebooks, Parameters, Res
 Cohesion: 0.33
 Nodes (4): dir, timer, [vsix, expect = "ok"], worker
 
+### Community 251 - "CI/CD"
+Cohesion: 0.33
+Nodes (5): CI/CD, Local equivalents, Making a release, Repository settings, Verifying a release package
+
 ### Community 252 - "Deployment"
 Cohesion: 0.29
 Nodes (6): Air-gapped / offline, Deployment, Mass installation, Proxies and internal certificates, Shared connection catalogs, Workspace Trust
 
+### Community 253 - "Editing data"
+Cohesion: 0.33
+Nodes (6): Changing structure, Editing data, How, Review and apply, Save each edit immediately, What can be edited
+
 ### Community 254 - "renderPane"
 Cohesion: 0.40
 Nodes (5): chipNode(), dtable(), renderPane(), setTab(), TabId
+
+### Community 255 - "Policies"
+Cohesion: 0.50
+Nodes (4): Custom environments, Format (`version: 1`), Policies, What is guaranteed, and how
 
 ### Community 256 - "test-engines/src/index.ts"
 Cohesion: 0.22
@@ -1206,13 +1223,21 @@ Nodes (3): galleryBanner, color, theme
 Cohesion: 0.17
 Nodes (27): announce(), beginEdit(), cellMenu(), csvCell(), deleteSelected(), findAll(), formatMenu(), goTo() (+19 more)
 
+### Community 263 - "Ayuda a probar RizomaDB"
+Cohesion: 0.50
+Nodes (4): Ayuda a probar RizomaDB, Cómo probar con seguridad, Cómo reportar, Lo más útil
+
 ### Community 264 - "Honest comparison"
 Cohesion: 0.50
 Nodes (3): Honest comparison, Where it differs by design, Where RizomaDB is not (yet) competitive
 
+### Community 265 - "Help test RizomaDB"
+Cohesion: 0.50
+Nodes (4): Help test RizomaDB, How to report, How to test safely, What is most useful
+
 ### Community 266 - "lista-de-aceptacion-v1.md"
-Cohesion: 0.12
-Nodes (12): Lista de aceptación v1.0 — estado real (2026-10-22), Help test RizomaDB, How to report, How to test safely, What is most useful, v1.0 acceptance checklist — real status (2026-10-22), After 1.0.0, Después de la 1.0.0 (+4 more)
+Cohesion: 0.16
+Nodes (8): Lista de aceptación v1.0 — estado real (2026-10-22), v1.0 acceptance checklist — real status (2026-10-22), After 1.0.0, Después de la 1.0.0, Hoja de ruta, No planificado, Not planned, Roadmap
 
 ### Community 267 - "Guía de diseño"
 Cohesion: 0.20
@@ -1230,9 +1255,9 @@ Nodes (17): Connect to any engine, Edit in place, review, then apply, Explore an
 Cohesion: 0.67
 Nodes (3): repository, type, url
 
-### Community 280 - "keyboard.md"
-Cohesion: 0.25
-Nodes (6): How this was checked, In the editor, In the results grid, Moving around, Using RizomaDB with the keyboard, Accessibility check (axe-core)
+### Community 280 - "Using RizomaDB with the keyboard"
+Cohesion: 0.40
+Nodes (5): How this was checked, In the editor, In the results grid, Moving around, Using RizomaDB with the keyboard
 
 ### Community 285 - "Apache Cassandra / ScyllaDB"
 Cohesion: 0.20
@@ -1354,12 +1379,12 @@ Nodes (3): Comparación honesta, Dónde RizomaDB no es (todavía) competitivo, D
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `k()` connect `settings.ts` to `nosqlCommands.ts`, `completion.ts`, `mongodb/src/index.ts`, `firestore/src/index.ts`, `core/src/index.ts`, `dynamodb/src/index.ts`, `policyFiles.test.ts`, `webview/er.ts`, `influxdb3/src/index.ts`, `ui.ts`, `elasticsearch/src/index.ts`, `designer.ts`, `engines.integration.test.mts`?**
-  _High betweenness centrality (0.089) - this node is a cross-community bridge._
 - **Why does `Value` connect `Value` to `export.ts`, `mongodb/src/index.ts`, `PendingEdits`, `types.ts`, `hydradb/src/index.ts`, `redis/src/index.ts`, `extension.ts`, `tools.test.ts`, `neo4j/src/index.ts`, `influxdb3/src/index.ts`, `trino/src/index.ts`, `server.ts`, `mssql/src/index.ts`, `engines.integration.test.mts`?**
-  _High betweenness centrality (0.083) - this node is a cross-community bridge._
-- **Why does `keywords` connect `keywords` to `mongodb/src/index.ts`, `extension/package.json`?**
-  _High betweenness centrality (0.053) - this node is a cross-community bridge._
+  _High betweenness centrality (0.087) - this node is a cross-community bridge._
+- **Why does `k()` connect `settings.ts` to `nosqlCommands.ts`, `completion.ts`, `mongodb/src/index.ts`, `firestore/src/index.ts`, `core/src/index.ts`, `dynamodb/src/index.ts`, `policyFiles.test.ts`, `webview/er.ts`, `influxdb3/src/index.ts`, `ui.ts`, `elasticsearch/src/index.ts`, `designer.ts`, `engines.integration.test.mts`?**
+  _High betweenness centrality (0.087) - this node is a cross-community bridge._
+- **Why does `formatValue()` connect `extension.ts` to `nosqlCommands.ts`, `Value`, `lib.test.ts`, `ConnectionManager`?**
+  _High betweenness centrality (0.051) - this node is a cross-community bridge._
 - **What connects `Corregido`, `Cambiado`, `Cambiado` to the rest of the system?**
   _1895 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `main.ts` be split into smaller, more focused modules?**
