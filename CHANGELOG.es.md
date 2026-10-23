@@ -11,7 +11,7 @@
 
 Aquí se listan los cambios notables, del más nuevo al más antiguo. El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/). Todavía no se ha publicado nada.
 
-## [Sin publicar]
+## [1.2.2] — 2026-10-23
 
 ### Corregido
 - Cambiar a otra pestaña del editor mientras creas o editas una conexión (o un diseño de tabla, los ajustes, el historial o la guía) ya no devuelve esa pantalla a su primera página: conserva lo que habías escrito.

@@ -11,7 +11,7 @@ English · [Español](CHANGELOG.es.md)
 
 All notable changes are listed here, newest first. The format follows [Keep a Changelog](https://keepachangelog.com/). Nothing has been published yet.
 
-## [Unreleased]
+## [1.2.2] — 2026-10-23
 
 ### Fixed
 - Switching to another editor tab while creating or editing a connection (or a table design, settings, history or the guide) no longer sends that screen back to its first page: it keeps what you had typed.
