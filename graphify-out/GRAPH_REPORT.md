@@ -1,7 +1,7 @@
-# Graph Report - RizomaDB  (2026-10-22)
+# Graph Report - RizomaDB  (2026-10-23)
 
 ## Corpus Check
-- 513 files · ~330,228 words
+- 513 files · ~330,231 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `196a91a3`
+- Built from commit: `9efd6f78`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -507,7 +507,7 @@ Nodes (16): batchLimits(), ConversionError, convertCell(), convertNonString(), C
 
 ### Community 38 - "Registro de cambios"
 Cohesion: 0.08
-Nodes (25): [1.0.0] — 2026-10-22, [1.0.1] — 2026-10-22, [1.0.2] — 2026-10-22, [1.1.0] — 2026-10-22, [1.2.0] — 2026-10-22, [1.2.1] — 2026-10-22, [1.2.2] — 2026-10-23, Añadido (+17 more)
+Nodes (25): [1.0.0] — 2026-10-22, [1.0.1] — 2026-10-22, [1.0.2] — 2026-10-22, [1.1.0] — 2026-10-22, [1.2.0] — 2026-10-22, [1.2.1] — 2026-10-22, [1.2.2] — 2026-10-23, [1.2.3] — 2026-10-23 (+17 more)
 
 ### Community 39 - "postgres/package.json"
 Cohesion: 0.09
@@ -1107,7 +1107,7 @@ Nodes (11): Anatomy, Cells, rows and the record panel, Copy and save, Filtering 
 
 ### Community 197 - "Changelog"
 Cohesion: 0.08
-Nodes (25): [1.0.0] — 2026-10-22, [1.0.1] — 2026-10-22, [1.0.2] — 2026-10-22, [1.1.0] — 2026-10-22, [1.2.0] — 2026-10-22, [1.2.1] — 2026-10-22, [1.2.2] — 2026-10-23, Added (+17 more)
+Nodes (25): [1.0.0] — 2026-10-22, [1.0.1] — 2026-10-22, [1.0.2] — 2026-10-22, [1.1.0] — 2026-10-22, [1.2.0] — 2026-10-22, [1.2.1] — 2026-10-22, [1.2.2] — 2026-10-23, [1.2.3] — 2026-10-23 (+17 more)
 
 ### Community 198 - "ClickHouse"
 Cohesion: 0.20
@@ -1378,11 +1378,11 @@ Nodes (3): Comparación honesta, Dónde RizomaDB no es (todavía) competitivo, D
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `k()` connect `k` to `nosqlCommands.ts`, `ui.ts`, `mongodb/src/index.ts`, `completion.ts`, `settings.ts`, `firestore/src/index.ts`, `dynamodb/src/index.ts`, `webview/er.ts`, `influxdb3/src/index.ts`, `elasticsearch/src/index.ts`, `designer.ts`, `engines.integration.test.mts`?**
-  _High betweenness centrality (0.096) - this node is a cross-community bridge._
+  _High betweenness centrality (0.091) - this node is a cross-community bridge._
 - **Why does `Value` connect `Value` to `export.ts`, `mongodb/src/index.ts`, `PendingEdits`, `lib.test.ts`, `types.ts`, `hydradb/src/index.ts`, `redis/src/index.ts`, `ExecuteRequest`, `tools.test.ts`, `neo4j/src/index.ts`, `influxdb3/src/index.ts`, `trino/src/index.ts`, `server.ts`, `mssql/src/index.ts`, `engines.integration.test.mts`?**
-  _High betweenness centrality (0.094) - this node is a cross-community bridge._
-- **Why does `keywords` connect `keywords` to `mongodb/src/index.ts`, `extension/package.json`?**
-  _High betweenness centrality (0.066) - this node is a cross-community bridge._
+  _High betweenness centrality (0.088) - this node is a cross-community bridge._
+- **Why does `mongodb` connect `mongodb/src/index.ts` to `keywords`?**
+  _High betweenness centrality (0.053) - this node is a cross-community bridge._
 - **What connects `Corregido`, `Cambiado`, `Corregido` to the rest of the system?**
   _1904 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `main.ts` be split into smaller, more focused modules?**
