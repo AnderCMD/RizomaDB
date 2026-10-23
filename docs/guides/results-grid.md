@@ -17,6 +17,8 @@ Opening a table or running a query shows the rows in a grid built for exploring.
 Change the text and press the play button or **Ctrl/⌘+Enter** to run it; **Esc** puts the original back. Edited text is a **new query**: it no longer says which table it shows, so its result is read-only. If you have pending edits you are asked before they are discarded. Unchanged text just re-runs the table view. The other two buttons copy the query or open it in a normal editor.
 
 ## Filtering in the database
+The condition and order boxes are folded to leave room for the results: press the filter-and-order button in the toolbar to open them. A filter that is active keeps them open.
+
 For tables, a bar under the query line changes the statement itself, so paging and editing keep working:
 
 | Engine | Filter box | Order box |

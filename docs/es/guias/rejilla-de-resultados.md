@@ -17,6 +17,8 @@ Abrir una tabla o ejecutar una consulta muestra las filas en una rejilla hecha p
 Cambia el texto y pulsa el botón de reproducir o **Ctrl/⌘+Enter** para ejecutarla; **Esc** devuelve el original. El texto editado es una **consulta nueva**: ya no dice qué tabla muestra, así que su resultado es de solo lectura. Si tienes ediciones pendientes se te pregunta antes de descartarlas. El texto sin cambios solo vuelve a ejecutar la vista de la tabla. Los otros dos botones copian la consulta o la abren en un editor normal.
 
 ## Filtrar en la base de datos
+Las cajas de condición y orden están plegadas para dejar espacio a los resultados: pulsa el botón de filtrar y ordenar de la barra para abrirlas. Un filtro activo las mantiene abiertas.
+
 Para las tablas, una barra bajo la línea de consulta cambia la propia sentencia, así que la paginación y la edición siguen funcionando:
 
 | Motor | Cuadro de filtro | Cuadro de orden |

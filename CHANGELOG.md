@@ -17,6 +17,7 @@ All notable changes are listed here, newest first. The format follows [Keep a Ch
 - VS Code no longer connects to the databases of restored editors at startup just to underline errors, and a server that never answers is given up on after 45 s (20 s for the Oracle network connection) instead of leaving the extension waiting forever.
 
 ### Changed
+- **A more compact results header**: the title and the table tabs share one row, the query line is slimmer, the search tools and the edit buttons share one row, and the database filter (condition and order) stays folded behind a button until you need it. An active filter keeps it open. The results start about half as far down the screen.
 - The connection picker marks the one in use, the connected ones and the read-only ones, and works without an editor open.
 
 ## [1.2.1] — 2026-10-22

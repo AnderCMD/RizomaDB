@@ -17,6 +17,7 @@ Aquí se listan los cambios notables, del más nuevo al más antiguo. El formato
 - VS Code ya no se conecta al iniciar a las bases de los editores restaurados solo para subrayar errores, y un servidor que nunca responde se abandona a los 45 s (20 s para la conexión de red de Oracle) en lugar de dejar la extensión esperando para siempre.
 
 ### Cambiado
+- **Un encabezado de resultados más compacto**: el título y las pestañas de la tabla comparten una fila, la línea de la consulta es más delgada, las herramientas de búsqueda y los botones de edición comparten una fila, y el filtro de la base de datos (condición y orden) queda plegado tras un botón hasta que lo necesites. Un filtro activo lo mantiene abierto. Los resultados empiezan aproximadamente a la mitad de altura que antes.
 - El selector de conexión marca la que está en uso, las conectadas y las de solo lectura, y funciona sin un editor abierto.
 
 ## [1.2.1] — 2026-10-22

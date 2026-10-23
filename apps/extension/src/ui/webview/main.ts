@@ -60,7 +60,7 @@ const statusEl = el("span", { id: "status", role: "status", class: "chip" }, tr(
 const cancelBtn = iconButton("stop", tr("Cancel running query"), () => send({ type: "cancel" }), { hidden: true, danger: true });
 const header = el("div", { class: "tb hdr" });
 const connBox = el("span", { class: "conn", hidden: "" });
-header.append(connBox, titleEl, statusEl, el("span", { class: "grow" }), cancelBtn);
+header.append(connBox, titleEl, statusEl, el("span", { class: "grow" }), cancelBtn);  // the table tabs join this row (see below): one line instead of two
 const sqlInput = el("textarea", { class: "sqlinput", rows: "1", spellcheck: "false", "aria-label": tr("Query (editable)") });
 const growSql = () => { sqlInput.style.height = "auto"; sqlInput.style.height = `${Math.min(sqlInput.scrollHeight, 160)}px`; };
 const runEdited = () => send({ type: "runSql", sql: sqlInput.value });
@@ -76,6 +76,10 @@ const findInput = el("input", { id: "find", type: "search", placeholder: tr("Fin
 const findCount = el("span", { id: "find-count", role: "status", class: "muted" });
 const findBox = el("label", { class: "field-icon" }); findBox.append(icon("search", 14), findInput);
 const btnFilter = iconButton("filter", tr("Filter by column"), () => toggleFilters(), { pressed: false });
+// The database filter (condition + order) stays folded until asked for, so the results get the room.
+let filterAvail = false, whereOpen = false;
+const syncFilterBar = () => { filterBar.hidden = !filterAvail || !(whereOpen || whereInput.value.trim() !== "" || orderInput.value.trim() !== ""); btnWhere.setAttribute("aria-pressed", String(!filterBar.hidden)); };
+const btnWhere = iconButton("sortAsc", tr("Filter and order in the database"), () => { if (whereInput.value.trim() || orderInput.value.trim()) { whereInput.focus(); return; } whereOpen = !whereOpen; syncFilterBar(); if (!filterBar.hidden) whereInput.focus(); }, { pressed: false });
 const btnColumns = iconButton("columns", tr("Show or hide columns"), () => columnsMenu(btnColumns));
 const btnDetail = iconButton("panel", tr("Record panel (Alt+Enter)"), () => toggleDetail(), { pressed: false });
 const btnDensity = iconButton("rows", tr("Compact rows"), () => setCompact(!document.body.classList.contains("compact")), { pressed: false });
@@ -85,7 +89,7 @@ const btnPin = iconButton("pin", tr("Keep these results: the next query opens in
 const btnRefresh = iconButton("refresh", tr("Run again"), () => send({ type: "refresh" }));
 const btnKeys = iconButton("keyboard", tr("Keyboard shortcuts"), () => showShortcuts());
 const tools = el("div", { id: "tools", class: "tb", role: "toolbar", "aria-label": tr("Result tools") });
-tools.append(findBox, iconButton("up", tr("Previous match"), () => step(-1)), iconButton("down", tr("Next match"), () => step(1)), findCount, el("span", { class: "grow" }), btnFilter, btnColumns, btnDetail, btnDensity, btnCopy, btnSave, btnPin, btnRefresh, btnKeys);
+tools.append(findBox, iconButton("up", tr("Previous match"), () => step(-1)), iconButton("down", tr("Next match"), () => step(1)), findCount, el("span", { class: "grow" }), btnWhere, btnFilter, btnColumns, btnDetail, btnDensity, btnCopy, btnSave, btnPin, btnRefresh, btnKeys);
 
 const btnDelete = iconButton("trash", tr("Delete or restore selected rows"), () => deleteSelected(), { danger: true });
 const btnUndo = iconButton("undo", tr("Undo"), () => send({ type: "undo" })), btnRedo = iconButton("redo", tr("Redo"), () => send({ type: "redo" }));
@@ -140,14 +144,18 @@ const FILTER_HINTS: Record<string, [string, string]> = {
   cypher: [tr("Filter (condition on n), e.g. n.age > 30"), tr("Order by, e.g. n.name")],
 };
 function buildFilterBar(f?: { kind: string; where: string; order: string }) {
-  filterBar.hidden = !f;
-  if (!f) return;
+  filterAvail = !!f;
+  if (!f) { syncFilterBar(); return; }
   const [w, o] = FILTER_HINTS[f.kind] ?? FILTER_HINTS["sql"]!;
   whereInput.placeholder = w; whereInput.setAttribute("aria-label", w); orderInput.placeholder = o; orderInput.setAttribute("aria-label", o);
   whereInput.value = f.where; orderInput.value = f.order;
+  syncFilterBar();  // a filter that is active keeps the bar open
 }
-app.append(header, tabsBar, sqlBar, filterBar, tools, editBar, errorBox, split, pane, foot, live);
-const dataParts = [sqlBar, filterBar, tools, editBar, errorBox, split, foot];
+header.insertBefore(tabsBar, header.querySelector(".grow"));
+// Search/tools and the edit buttons share one row (the edit side wraps under on narrow windows).
+const actionRow = el("div", { class: "tbrow" }); actionRow.append(tools, editBar);
+app.append(header, sqlBar, filterBar, actionRow, errorBox, split, pane, foot, live);
+const dataParts = [sqlBar, filterBar, actionRow, errorBox, split, foot];
 
 const announce = (s: string) => { live.textContent = s; };
 let toastT = 0;
@@ -668,6 +676,7 @@ function setToolbar(count: number, canUndo: boolean, canRedo: boolean) {
   btnUndo.disabled = !canUndo; btnRedo.disabled = !canRedo;
   for (const b of [btnReview, btnApply, btnDiscard]) b.disabled = count === 0;
   pendingEl.textContent = count ? tr("{0} pending change(s)", count) : tr("No pending changes");
+  pendingEl.classList.toggle("sr-only", count === 0);  // announced to screen readers, but takes no room when there is nothing to say
 }
 
 // ---- table tabs ----

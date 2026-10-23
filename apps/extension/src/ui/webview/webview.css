@@ -337,3 +337,19 @@ button.engine-card .logo.bare { margin: 0 2px; }
 .hbar-track { display: block; height: 8px; border-radius: 999px; background: var(--rz-surface-2, rgba(128,128,128,.18)); overflow: hidden; }
 .hbar-fill { display: block; height: 100%; border-radius: 999px; background: var(--vscode-progressBar-background, var(--vscode-button-background, #0e639c)); }
 .hbar-n { color: var(--rz-muted); font-variant-numeric: tabular-nums; }
+
+/* ---- compact results header: the results are what matters ---- */
+.hdr { padding: 4px 12px; gap: 8px; }
+.hdr .tabs { padding: 0; margin: 0 0 0 6px; background: none; border: none; gap: 2px; }
+.hdr .tab { padding: 2px 10px; }
+.hdr .tabs[hidden] { display: none; }
+.sqlbar { padding: 2px 12px; gap: 4px; }
+.sqlbar .sqlinput { padding: 1px 8px; line-height: 1.4; }
+.tbrow { display: flex; flex-wrap: wrap; align-items: center; border-bottom: 1px solid var(--rz-border); }
+.tbrow > #tools, .tbrow > #toolbar { border-bottom: none; padding: 2px 12px; flex: 1 1 auto; }
+.tbrow > #toolbar { flex: 0 1 auto; }
+.tbrow.tab-off { display: none !important; }
+.filterbar { padding: 3px 12px; }
+.tbrow #tools .field-icon { height: 26px; padding: 0 8px; } .tbrow #tools .field-icon input { width: 130px; }
+.tbrow #find-count:empty { display: none; }
+.tbrow #toolbar .grow { display: none; }
