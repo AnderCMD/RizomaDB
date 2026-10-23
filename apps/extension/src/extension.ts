@@ -376,7 +376,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
 
   /** The key columns to page a table by, when the user turned keyset paging on and the table and engine allow it. */
   async function keysetFor(profile: NonNullable<ReturnType<typeof mgr.get>>, conn: Awaited<ReturnType<typeof mgr.connect>>, ref: TableRef): Promise<KeysetState | undefined> {
-    if (!cfg().get<boolean>("query.keysetPaging", false) || !keysetSupported(profile.driver) || ref.isView) return undefined;
+    if (!cfg().get<boolean>("query.keysetPaging", true) || !keysetSupported(profile.driver) || ref.isView) return undefined;
     const info = await conn.introspect().describeTable({ name: ref.name, ...(ref.schema ? { schema: ref.schema } : {}) });
     const keys = (info.columns ?? []).filter((c) => c.primaryKey).map((c) => ({ name: c.name, quoted: conn.quoteIdent(c.name) }));
     return keys.length ? { keys } : undefined;

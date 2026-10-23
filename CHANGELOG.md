@@ -13,6 +13,9 @@ All notable changes are listed here, newest first. The format follows [Keep a Ch
 
 ## [Unreleased]
 
+### Changed
+- **Paging by primary key is now on by default** (`rizomadb.query.keysetPaging`): *Load more* on a big table no longer reads and discards every row already shown. Tables open sorted by their key; set the option to `false` for the engine's natural order.
+
 ### Fixed
 - Oracle servers with many schemas: reading the columns of a schema no longer runs one dictionary query per column, and completion loads only your own schema plus a few instead of up to 25.
 

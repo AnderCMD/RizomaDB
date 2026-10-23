@@ -698,7 +698,7 @@
         },
         "rizomadb.query.keysetPaging": {
           "type": "boolean",
-          "default": false,
+          "default": true,
           "markdownDescription": "%cfg.keysetPaging%"
         },
         "rizomadb.query.maxRows": {

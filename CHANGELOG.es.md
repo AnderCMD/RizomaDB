@@ -13,6 +13,9 @@ Aquí se listan los cambios notables, del más nuevo al más antiguo. El formato
 
 ## [Sin publicar]
 
+### Cambiado
+- **La paginación por clave primaria ahora está activada por defecto** (`rizomadb.query.keysetPaging`): «Cargar más» en una tabla grande ya no lee y descarta todas las filas mostradas. Las tablas se abren ordenadas por su clave; pon la opción en `false` para el orden natural del motor.
+
 ### Corregido
 - Servidores Oracle con muchos esquemas: leer las columnas de un esquema ya no lanza una consulta al diccionario por cada columna, y el autocompletado carga solo tu esquema y unos pocos más en lugar de hasta 25.
 
