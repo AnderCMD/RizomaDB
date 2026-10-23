@@ -24,11 +24,19 @@ export class SchemaCache {
     if (id) { this.cache.delete(id); this.ready.delete(id); } else { this.cache.clear(); this.ready.clear(); }
   }
 
+  /** Which schemas feed completion. A server with hundreds of them (Oracle) would load for minutes, so only the user's own plus a few. */
+  private pick(all: string[], profile: { options: Record<string, unknown> } | undefined): string[] {
+    const mine = String(profile?.options["user"] ?? profile?.options["database"] ?? "").toLowerCase();
+    const first = all.filter((s) => s.toLowerCase() === mine);
+    const rest = all.filter((s) => s.toLowerCase() !== mine);
+    return [...first, ...rest].slice(0, all.length > 50 ? Math.min(5, this.maxSchemas) : this.maxSchemas);
+  }
+
   private async load(id: string): Promise<SchemaIndex> {
     const conn = await this.mgr.connect(id);
     const api = conn.introspect();
     const driver = await this.mgr.loadDriver(this.mgr.get(id)!.driver);
-    const schemas = driver.capabilities.schemas ? (await api.listSchemas()).slice(0, this.maxSchemas) : [undefined];
+    const schemas = driver.capabilities.schemas ? this.pick(await api.listSchemas(), this.mgr.get(id)) : [undefined];
     const tables: TableInfo[] = [], fks: ForeignKey[] = [];
     for (const s of schemas) {
       if (api.describeSchema) {

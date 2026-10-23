@@ -11,6 +11,11 @@ English · [Español](CHANGELOG.es.md)
 
 All notable changes are listed here, newest first. The format follows [Keep a Changelog](https://keepachangelog.com/). Nothing has been published yet.
 
+## [Unreleased]
+
+### Fixed
+- Oracle servers with many schemas: reading the columns of a schema no longer runs one dictionary query per column, and completion loads only your own schema plus a few instead of up to 25.
+
 ## [1.2.0] — 2026-10-22
 
 ### Added

@@ -11,6 +11,11 @@
 
 Aquí se listan los cambios notables, del más nuevo al más antiguo. El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/). Todavía no se ha publicado nada.
 
+## [Sin publicar]
+
+### Corregido
+- Servidores Oracle con muchos esquemas: leer las columnas de un esquema ya no lanza una consulta al diccionario por cada columna, y el autocompletado carga solo tu esquema y unos pocos más en lugar de hasta 25.
+
 ## [1.2.0] — 2026-10-22
 
 ### Añadido

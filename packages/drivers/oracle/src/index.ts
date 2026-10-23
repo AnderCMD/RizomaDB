@@ -120,9 +120,10 @@ class OracleConnection implements Connection {
         const rows = await this.rows(
           `select c.table_name t, case when v.view_name is null then 'table' else 'view' end k, c.column_name n,
                   c.data_type || case when c.data_type in ('VARCHAR2','CHAR','NVARCHAR2') then '(' || c.char_length || ')' when c.data_type = 'NUMBER' and c.data_precision is not null then '(' || c.data_precision || case when c.data_scale is not null and c.data_scale <> 0 then ',' || c.data_scale else '' end || ')' else '' end ty, c.nullable nl, c.data_default d,
-                  (select count(*) from all_cons_columns cc join all_constraints k on k.owner = cc.owner and k.constraint_name = cc.constraint_name
-                    where k.constraint_type = 'P' and cc.owner = c.owner and cc.table_name = c.table_name and cc.column_name = c.column_name) pk
+                  case when pk.column_name is null then 0 else 1 end pk
            from all_tab_columns c left join all_views v on v.owner = c.owner and v.view_name = c.table_name
+           left join (select cc.table_name, cc.column_name from all_cons_columns cc join all_constraints k on k.owner = cc.owner and k.constraint_name = cc.constraint_name
+                       where k.constraint_type = 'P' and cc.owner = coalesce(:s, sys_context('USERENV','CURRENT_SCHEMA'))) pk on pk.table_name = c.table_name and pk.column_name = c.column_name
            where c.owner = coalesce(:s, sys_context('USERENV','CURRENT_SCHEMA')) order by c.table_name, c.column_id`, { s: schema ?? null });
         const out = new Map<string, TableInfo>();
         for (const r of rows) {
