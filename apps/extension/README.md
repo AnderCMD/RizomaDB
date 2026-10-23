@@ -35,7 +35,7 @@ Click the RizomaDB icon, press **+**, and pick your engine by its logo. The form
 - **Environments with protection**: `prod` is read-only by default and `staging` asks before every write.
 - **SSH tunnels** (including jump hosts with strict host-key checking), **HTTP and SOCKS5 proxies**.
 - **Shared catalogs without secrets** for teams, and **encrypted connection files** you can send safely.
-- **Import** connections from URIs, `~/.pgpass`, `~/.my.cnf`, DBeaver and SQLTools.
+- **Paste a JDBC URL** (Oracle, PostgreSQL, MySQL, SQL Server and more) to fill the form, or **import** connections from URIs, `~/.pgpass`, `~/.my.cnf`, DBeaver and SQLTools.
 
 ## Query in each engine's language
 
@@ -141,7 +141,7 @@ Found a security problem? See the [security policy](https://github.com/AnderCMD/
 
 ## Known limits
 
-Version 1.0.0 is honest about what it has not verified:
+This version is honest about what it has not verified:
 
 - **Real cloud accounts have never been tested** (AWS, Google Cloud, MongoDB Atlas, managed PostgreSQL/MySQL services). Try a read-only user or a throwaway database first.
 - Redshift, Snowflake and BigQuery are not implemented.

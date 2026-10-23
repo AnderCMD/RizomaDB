@@ -11,6 +11,16 @@ English · [Español](CHANGELOG.es.md)
 
 All notable changes are listed here, newest first. The format follows [Keep a Changelog](https://keepachangelog.com/). Nothing has been published yet.
 
+## [1.1.0] — 2026-10-22
+
+### Added
+- **Paste a JDBC URL** into the New connection form to fill the fields: Oracle (service name, SID, `user/password@…`, `DESCRIPTION`), PostgreSQL/CockroachDB/YugabyteDB, MySQL/MariaDB/TiDB, SQL Server, SQLite, DuckDB, ClickHouse, Trino, Cassandra, Elasticsearch/OpenSearch, Redis/Valkey, Neo4j and MongoDB. Passwords from the URL go to the password field only.
+- Oracle can connect with a **SID** (old-style databases), not only a service name.
+- Importing connections understands `jdbc:` URLs (including those inside DBeaver files).
+
+### Notes
+- Oracle OCI (thick) URLs, TNS aliases, TCPS and SQL Server integrated security are refused with an explanation. Connecting from a URL was tested against real PostgreSQL, MySQL, SQL Server and Oracle servers.
+
 ## [1.0.2] — 2026-10-22
 
 ### Fixed

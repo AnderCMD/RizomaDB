@@ -79,7 +79,7 @@ export function openConnectionScreen(ctx: vscode.ExtensionContext, mgr: Connecti
           value: prop.type === "boolean" ? preset === true : preset === undefined ? "" : String(preset),
         };
       });
-      post({ v: 1, type: "form", key: engine.key, fields, tunnel: props.some(([k]) => k === "host"), defaultName: engine.name, environments: [...BUILTIN_ENVIRONMENTS, ...customEnvironments(vscode.workspace.getConfiguration("rizomadb").get("environments")).map((x) => x.name)] });
+      post({ v: 1, type: "form", key: engine.key, driver: engine.driver, fields, tunnel: props.some(([k]) => k === "host"), defaultName: engine.name, environments: [...BUILTIN_ENVIRONMENTS, ...customEnvironments(vscode.workspace.getConfiguration("rizomadb").get("environments")).map((x) => x.name)] });
       return;
     }
 

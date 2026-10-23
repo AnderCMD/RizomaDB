@@ -8,6 +8,7 @@ import { parseConnectionUri, parseDBeaver, parseMyCnf, parsePgpass, parseSqlTool
 import { t } from "../i18n.js";
 import { NOTE_DBEAVER, NOTE_MONGO_URI, NOTE_SSLMODE } from "../lib/importers.js";
 import { friendly } from "./driverMessages.js";
+import { JdbcUrlError } from "../lib/jdbcUrl.js";
 
 /** The importers write their notes in English; shown translated. */
 const NOTES: Record<string, () => string> = {
@@ -16,6 +17,8 @@ const NOTES: Record<string, () => string> = {
   [NOTE_DBEAVER]: () => t("DBeaver keeps user names and passwords in an encrypted file; they were not imported. Enter them when you first connect."),
 };
 const note = (n: string) => NOTES[n]?.() ?? n;
+/** JDBC notes and errors are English templates that the webview strings already translate. */
+const jdbcText = (m: { template: string; args?: string[] | undefined }) => t(m.template, ...(m.args ?? []));
 
 
 /** Migration assistant: previews what it found, imports without secrets unless the user explicitly agrees. */
@@ -34,9 +37,9 @@ export function registerImportWizard(mgr: ConnectionManager, reg: (id: string, f
       else if (src.k === "mycnf") { const f = await pickFile(join(homedir(), ".my.cnf")); if (!f) return; found = parseMyCnf(await readFile(f, "utf8")); }
       else if (src.k === "dbeaver") { const f = await pickFile(); if (!f) return; found = parseDBeaver(JSON.parse(await readFile(f, "utf8"))); }
       else { const f = await pickFile(); if (!f) return; found = parseSqlTools(await readFile(f, "utf8")); }
-    } catch (e) { void vscode.window.showErrorMessage(t("Could not read the source: {0}", friendly((e as Error).message))); return; }
+    } catch (e) { void vscode.window.showErrorMessage(t("Could not read the source: {0}", e instanceof JdbcUrlError ? jdbcText(e) : friendly((e as Error).message))); return; }
     if (!found.length) { void vscode.window.showInformationMessage(t("No supported connections were found.")); return; }
-    const chosen = await vscode.window.showQuickPick(found.map((c, i) => ({ label: c.name, description: `${c.driver}${c.options.host ? ` · ${String(c.options.host)}` : ""}${Object.keys(c.secrets).length ? " · " + t("has a password") : ""}`, detail: c.notes.map(note).join(" "), picked: true, i })), { canPickMany: true, title: t("{0} connection(s) found: choose what to import", found.length) });
+    const chosen = await vscode.window.showQuickPick(found.map((c, i) => ({ label: c.name, description: `${c.driver}${c.options.host ? ` · ${String(c.options.host)}` : ""}${Object.keys(c.secrets).length ? " · " + t("has a password") : ""}`, detail: [...c.notes.map(note), ...(c.jdbcNotes ?? []).map(jdbcText)].join(" "), picked: true, i })), { canPickMany: true, title: t("{0} connection(s) found: choose what to import", found.length) });
     if (!chosen?.length) return;
     const withSecrets = found.filter((_, i) => chosen.some((c) => c.i === i)).some((c) => Object.keys(c.secrets).length);
     let keepSecrets = false;

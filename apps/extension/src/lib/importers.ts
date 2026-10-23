@@ -1,3 +1,4 @@
+import { parseJdbcUrl } from "./jdbcUrl.js";
 
 /** English source of the notes the importers attach; the UI translates them by these exact strings. */
 export const NOTE_MONGO_URI = "The connection string is stored as a secret because it may contain credentials.";
@@ -7,11 +8,13 @@ export const NOTE_DBEAVER = "DBeaver keeps user names and passwords in an encryp
 
 export interface ImportedConnection {
   name: string;
-  driver: "postgres" | "mysql" | "mssql" | "oracle" | "sqlite" | "mongodb" | "redis" | "clickhouse" | "elasticsearch";
+  driver: "postgres" | "mysql" | "mssql" | "oracle" | "sqlite" | "mongodb" | "redis" | "clickhouse" | "elasticsearch" | "duckdb" | "trino" | "cassandra" | "neo4j";
   options: Record<string, unknown>;
   /** Plain-text secrets found in the source (never written anywhere without consent). */
   secrets: Record<string, string>;
   notes: string[];
+  /** Notes from a JDBC URL, as English templates with their arguments, so the UI can translate them. */
+  jdbcNotes?: { template: string; args?: string[] }[];
 }
 
 const SCHEMES: Record<string, { driver: ImportedConnection["driver"]; port: number; tls?: boolean }> = {
@@ -27,8 +30,17 @@ const SCHEMES: Record<string, { driver: ImportedConnection["driver"]; port: numb
 
 const dec = (s: string) => { try { return decodeURIComponent(s); } catch { return s; } };
 
+/** A `jdbc:` URL, read by the dedicated parser (it knows Oracle, SQL Server and the other JDBC-only forms). */
+function fromJdbc(raw: string, name?: string): ImportedConnection {
+  const j = parseJdbcUrl(raw);
+  const options: Record<string, unknown> = {}, secrets: Record<string, string> = {};
+  for (const [k, v] of Object.entries(j.values)) { if (j.secretKeys.includes(k)) secrets[k] = String(v); else options[k] = v; }
+  return { name: name ?? j.name, driver: j.driver as ImportedConnection["driver"], options, secrets, notes: [], jdbcNotes: j.notes };
+}
+
 /** postgres://user:pass@host:5432/db?sslmode=require and friends. */
 export function parseConnectionUri(raw: string, name?: string): ImportedConnection {
+  if (/^jdbc:/i.test(raw.trim())) return fromJdbc(raw, name);
   const text = raw.trim().replace(/^jdbc:/i, "");
   const scheme = /^([a-z][a-z0-9+.-]*):/i.exec(text)?.[1]?.toLowerCase();
   const spec = scheme ? SCHEMES[scheme] : undefined;

@@ -21,11 +21,12 @@ export const meta: Omit<DriverPlugin, "connect"> = {
   selectTop: (t: string, n: number) => `SELECT * FROM ${t} FETCH FIRST ${n} ROWS ONLY`,
   placeholder: (i: number) => `:${i}`,
   connectionSchema: {
-    type: "object", required: ["host", "service", "user"],
+    type: "object", required: ["host", "user"],
     properties: {
       host: { type: "string", title: "Host", default: "localhost" },
       port: { type: "number", title: "Port", default: 1521 },
       service: { type: "string", title: "Service name", description: "e.g. FREEPDB1" },
+      sid: { type: "string", title: "SID", description: "Only for old-style databases that have a SID instead of a service name" },
       user: { type: "string", title: "User" },
       password: { type: "string", title: "Password", secret: true },
       readOnly: { type: "boolean", title: "Read-only", default: false },

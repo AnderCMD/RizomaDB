@@ -42,6 +42,8 @@ const TEXT: Record<string, () => string> = {
   "Read-only": () => t("Read-only"),
   "Region": () => t("Region"),
   "Required by the driver; see `SELECT data_center FROM system.local`": () => t("Required by the driver; see `SELECT data_center FROM system.local`"),
+  "SID": () => t("SID"),
+  "Only for old-style databases that have a SID instead of a service name": () => t("Only for old-style databases that have a SID instead of a service name"),
   "Secret access key": () => t("Secret access key"),
   "Service name": () => t("Service name"),
   "Session token (temporary credentials)": () => t("Session token (temporary credentials)"),

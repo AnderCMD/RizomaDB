@@ -1,4 +1,5 @@
 import { HostToConnect } from "../../connectMessages.js";
+import { JDBC_DRIVERS, JdbcUrlError, parseJdbcUrl } from "../../lib/jdbcUrl.js";
 import { tr as msg } from "./i18n.js";
 import { icon, iconButton, enableTips, engineLogo as logo } from "./ui.js";
 
@@ -127,7 +128,7 @@ function showGrid() {
   h1.focus();
 }
 
-function showForm(m: { key: string; fields: Field[]; tunnel: boolean; defaultName: string; environments: string[] }) {
+function showForm(m: { key: string; driver: string; fields: Field[]; tunnel: boolean; defaultName: string; environments: string[] }) {
   const engine = engines.find((e) => e.key === m.key)!;
   app.replaceChildren();
   const screen = el("form", { class: "screen connect-form", novalidate: "" });
@@ -169,6 +170,40 @@ function showForm(m: { key: string; fields: Field[]; tunnel: boolean; defaultNam
       if (f.description) { const id = `hint-${f.key}`; label.append(el("small", { id }, f.description)); c.setAttribute("aria-describedby", id); }
       inputs.set(`v.${f.key}`, c); conn.append(label);
     } else conn.append(row(`v.${f.key}`, f.title, text(String(f.value), f.secret), f.description, f.required));
+  }
+
+  if (JDBC_DRIVERS.has(m.driver)) {
+    const url = el("input", { type: "text", autocomplete: "off", spellcheck: "false", placeholder: "jdbc:…" });
+    const urlStatus = el("p", { class: "status", role: "status" });
+    const fill = iconButton("check", msg("Fill the form"), undefined, { text: msg("Fill the form") });
+    const apply = () => {
+      urlStatus.className = "status"; urlStatus.textContent = "";
+      try {
+        const r = parseJdbcUrl(url.value);
+        if (r.driver !== m.driver) throw new JdbcUrlError("This URL is for another kind of database ({0}): pick that engine first.", [r.driver]);
+        const host = r.values.host, hostIn_ = inputs.get("v.host");
+        if (host !== undefined && hostIn_) { (hostIn_ as HTMLInputElement).value = String(host); hostIn_.dispatchEvent(new Event("input")); }
+        for (const [k, v] of Object.entries(r.values)) {
+          const i = inputs.get(`v.${k}`); if (!i || k === "host") continue;
+          if (i instanceof HTMLInputElement && i.type === "checkbox") i.checked = v === true; else i.value = String(v);
+        }
+        if (r.name && name.value === m.defaultName) name.value = r.name;
+        url.value = "";
+        urlStatus.className = "status ok";
+        urlStatus.textContent = [msg("The form was filled from the URL."), ...r.notes.map((n) => msg(n.template, ...(n.args ?? [])))].join(" ");
+      } catch (e) {
+        urlStatus.className = "status err";
+        urlStatus.textContent = e instanceof JdbcUrlError ? msg(e.template, ...e.args) : (e as Error).message;
+        url.setAttribute("aria-invalid", "true"); return;
+      }
+      url.removeAttribute("aria-invalid");
+    };
+    fill.addEventListener("click", apply);
+    url.addEventListener("keydown", (ev) => { if (ev.key === "Enter") { ev.preventDefault(); apply(); } });
+    const urlRow = row("jdbc", msg("JDBC URL"), url, msg("Paste a URL that starts with jdbc: to fill in the fields below. The password, if any, goes to the password field."));
+    inputs.delete("jdbc");
+    conn.insertBefore(urlRow, conn.children[1] ?? null);
+    urlRow.after(fill, urlStatus);
   }
 
   // Local servers rarely speak TLS: follow the host field until the user decides about TLS themselves.

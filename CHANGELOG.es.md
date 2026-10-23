@@ -11,6 +11,16 @@
 
 Aquí se listan los cambios notables, del más nuevo al más antiguo. El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/). Todavía no se ha publicado nada.
 
+## [1.1.0] — 2026-10-22
+
+### Añadido
+- **Pegar una URL JDBC** en el formulario Nueva conexión para rellenar los campos: Oracle (nombre de servicio, SID, `usuario/contraseña@…`, `DESCRIPTION`), PostgreSQL/CockroachDB/YugabyteDB, MySQL/MariaDB/TiDB, SQL Server, SQLite, DuckDB, ClickHouse, Trino, Cassandra, Elasticsearch/OpenSearch, Redis/Valkey, Neo4j y MongoDB. Las contraseñas de la URL van solo al campo de contraseña.
+- Oracle puede conectar con un **SID** (bases antiguas), no solo con nombre de servicio.
+- Al importar conexiones se entienden las URL `jdbc:` (también las de archivos de DBeaver).
+
+### Notas
+- Las URL Oracle OCI (thick), los alias TNS, TCPS y la seguridad integrada de SQL Server se rechazan con una explicación. Conectar desde una URL se probó contra servidores reales de PostgreSQL, MySQL, SQL Server y Oracle.
+
 ## [1.0.2] — 2026-10-22
 
 ### Corregido

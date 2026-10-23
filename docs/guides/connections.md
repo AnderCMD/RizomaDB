@@ -25,6 +25,25 @@ New environments are saved in the `rizomadb.environments` setting, where you can
 ### Network path
 By default RizomaDB connects directly. Under **Network path** you can go through an **SSH tunnel** (key file or password, with strict host-key checking and a prompt for unknown hosts) or an **HTTP proxy** / **SOCKS5 proxy** (with optional user and password). A connection uses an SSH tunnel *or* a proxy, not both.
 
+## Paste a JDBC URL
+Most engines with a JDBC driver show a **JDBC URL** box at the top of the form. Paste a URL that starts with `jdbc:` and press **Fill the form** (or Enter): the host, port, database, user and options are copied into the fields below, and you can review them before saving. Nothing is connected or saved until you press **Test connection** or **Save connection**.
+
+| Engine | Forms understood |
+|---|---|
+| Oracle | `jdbc:oracle:thin:@//host:1521/service`, `@host:1521/service`, `@host:1521:SID` (old-style SID), `user/password@…` and a full `(DESCRIPTION=…)` (the first address is used) |
+| PostgreSQL, CockroachDB, YugabyteDB | `jdbc:postgresql://host:5432/db?sslmode=…&sslrootcert=…`, also `jdbc:postgresql:db` and several hosts (the first is used) |
+| MySQL, MariaDB, TiDB | `jdbc:mysql://…`, `jdbc:mariadb://…` with `sslMode`, `useSSL` and `verifyServerCertificate` |
+| SQL Server | `jdbc:sqlserver://host:1433;databaseName=db;user=…;encrypt=…;trustServerCertificate=…` |
+| SQLite, DuckDB | `jdbc:sqlite:/path/to/file.db`, `jdbc:duckdb:/path/to/file.db` |
+| ClickHouse, Trino, Cassandra, Elasticsearch/OpenSearch, Redis/Valkey, Neo4j, MongoDB | `jdbc:clickhouse://…`, `jdbc:trino://…/catalog/schema`, `jdbc:cassandra://…`, `jdbc:es://…`, `jdbc:redis://…`, `jdbc:neo4j://…`, `jdbc:mongodb://…` |
+
+- **Passwords.** A password inside the URL goes to the password field, never to the URL box, and is kept in VS Code's secret storage only when you save. The box is emptied after filling.
+- **What is refused, with a reason.** Oracle OCI (thick) URLs, TNS aliases and TCPS (TLS) are not supported; SQL Server integrated (Windows) security is not supported; a subprotocol RizomaDB has no connection for (for example DB2) is refused. A URL for another kind of database than the one you picked asks you to pick that engine first.
+- **Notes.** When something in the URL is not used (for example SQL Server's instance name, Neo4j's Bolt port or an unknown option) the form tells you what was ignored.
+- **Tested.** Reading every form above is covered by unit tests. Connecting from a URL was also tested against real PostgreSQL, MySQL, SQL Server and Oracle servers (service name, SID and descriptor); the other engines are tested as before, but not connected from a URL.
+
+The same reader is used by **RizomaDB: Import Connections From Other Tools…** when you give it a `jdbc:` URL or when a DBeaver file contains one.
+
 ## Saved connections
 The second tab of the same screen lists the connections you have. Each card shows the engine's logo, the environment, whether it is read-only or shared, the target (`host:port`) and its **database**, and whether it is connected. A **● Active** badge marks the one in use. The buttons connect or disconnect, open a new query, toggle read-only and delete.
 

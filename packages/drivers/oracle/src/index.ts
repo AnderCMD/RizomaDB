@@ -193,6 +193,16 @@ class OracleConnection implements Connection {
   async close() { await this.conn.close().catch(() => {}); }
 }
 
+const SAFE = /^[A-Za-z0-9_.$#-]+$/;
+/** host:port/service, or a DESCRIPTION for a SID (the easy-connect form has no SID syntax). Values go into a descriptor, so only plain name characters are accepted. */
+export function connectString(cfg: Record<string, unknown>): string {
+  const host = String(cfg.host ?? ""), port = Number(cfg.port ?? 1521), service = cfg.service ? String(cfg.service) : "", sid = cfg.sid ? String(cfg.sid) : "";
+  if (!service && !sid) throw new DriverError("syntax", "Oracle needs a service name or a SID.");
+  if (service) return `${host}:${port}/${service}`;
+  if (!SAFE.test(host) || !SAFE.test(sid)) throw new DriverError("syntax", "The host and SID may only contain letters, digits and . _ $ # -");
+  return `(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=${host})(PORT=${port}))(CONNECT_DATA=(SID=${sid})))`;
+}
+
 export const oracleDriver: DriverPlugin = {
   ...meta,
   async connect(cfg) {
@@ -200,7 +210,7 @@ export const oracleDriver: DriverPlugin = {
       // Thin mode (pure JS): no Oracle Client installation required.
       const conn = await oracledb.getConnection({
         user: cfg.user as string, password: (cfg.password as string | undefined) ?? "",
-        connectString: `${cfg.host as string}:${(cfg.port as number | undefined) ?? 1521}/${cfg.service as string}`,
+        connectString: connectString(cfg),
       });
       const v = await conn.execute("select banner_full b from v$version fetch first 1 rows only").catch(() => undefined);
       const banner = String((v?.rows as unknown[][] | undefined)?.[0]?.[0] ?? conn.oracleServerVersionString ?? "");

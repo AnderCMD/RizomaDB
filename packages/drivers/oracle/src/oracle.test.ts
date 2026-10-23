@@ -1,7 +1,8 @@
+import { describe, expect, it } from "vitest";
 import oracledb from "oracledb";
 import { randomBytes } from "node:crypto";
 import { engineUp, runConformance } from "@rizomadb/driver-api/conformance";
-import { oracleDriver } from "./index.js";
+import { connectString, oracleDriver } from "./index.js";
 
 const base = { host: "127.0.0.1", port: Number(process.env.RZ_ORACLE_PORT ?? 15219), service: "FREEPDB1", password: "rizoma_test" };
 
@@ -25,4 +26,18 @@ runConformance({
   bigintSql: "SELECT 9223372036854775807 AS big FROM dual",
   createTableSql: "CREATE TABLE conf_t (id NUMBER PRIMARY KEY, name VARCHAR2(100) NOT NULL)",
   badConfig: () => ({ ...base, user: "system", password: "wrong" }),
+});
+
+describe("connecting by SID", () => {
+  it("builds the descriptor and refuses unsafe names", () => {
+    expect(connectString({ host: "h", port: 1521, service: "svc" })).toBe("h:1521/svc");
+    expect(connectString({ host: "db.example.com", sid: "XE" })).toBe("(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=db.example.com)(PORT=1521))(CONNECT_DATA=(SID=XE)))");
+    expect(() => connectString({ host: "h" })).toThrow(/service name or a SID/);
+    expect(() => connectString({ host: "h", sid: "X)(EVIL=1" })).toThrow(/may only contain/);
+    expect(() => connectString({ host: "h)(ADDRESS=x", sid: "XE" })).toThrow(/may only contain/);
+  });
+  it.skipIf(!enabled)("connects to a real server by SID (the CDB root, SID FREE)", async () => {
+    const c = await oracleDriver.connect({ host: base.host, port: base.port, sid: "FREE", user: "system", password: base.password }, { log() {} });
+    try { expect(c.serverInfo.product).toBe("Oracle Database"); await c.ping(); } finally { await c.close(); }
+  });
 });

@@ -4,6 +4,8 @@ type Rule = [RegExp, (m: RegExpExecArray) => string];
 
 /** Messages the drivers, the guard, the policy and the editing code write themselves (not the database server's): shown in the UI language. */
 const RULES: Rule[] = [
+  [/Oracle needs a service name or a SID/, () => t("Oracle needs a service name or a SID.")],
+  [/The host and SID may only contain letters, digits and/, () => t("The host and SID may only contain letters, digits and . _ $ # -")],
   [/\$out\/\$merge writes to a collection/, () => t("$out/$merge writes to a collection")],
   [/Administration command/, () => t("Administration command")],
   [/Batch/, () => t("Batch")],
