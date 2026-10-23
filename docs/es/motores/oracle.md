@@ -5,7 +5,7 @@
 **Nivel:** 1 · **Versiones probadas en CI:** Oracle Free 23ai (probada); se espera 12c+
 
 ## Autenticación y transporte
-usuario/contraseña en modo thin (no hace falta Oracle Client); wallet/Kerberos NO están implementados. Conecta con un **nombre de servicio** o, para bases antiguas, un **SID**; ambos se pueden rellenar desde una URL `jdbc:oracle:thin:` (mira [Conexiones](../guias/conexiones.md#pegar-una-url-jdbc)). TCPS (TLS), alias TNS y URL OCI NO se admiten. Probado con Oracle Free 23ai por nombre de servicio, SID y descriptor
+usuario/contraseña en modo thin (no hace falta Oracle Client); wallet/Kerberos NO están implementados. Conecta con un **nombre de servicio** o, para bases antiguas, un **SID**; ambos se pueden rellenar desde una URL `jdbc:oracle:thin:` (mira [Conexiones](../guias/conexiones.md#pegar-una-url-jdbc)). TCPS (TLS), alias TNS y URL OCI NO se admiten. Requiere Oracle Database **12.1 o posterior** (los servidores más antiguos fallan con NJS-138; el modo «thick» con Oracle Client NO se admite). Probado con Oracle Free 23ai por nombre de servicio, SID y descriptor
 
 ## Capacidades
 Igual que PostgreSQL; EXPLAIN mediante PLAN_TABLE

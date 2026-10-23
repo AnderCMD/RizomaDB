@@ -22,6 +22,7 @@ function mapError(e: unknown): DriverError {
   else if ([1, 1400, 2290, 2291, 2292, 1407].includes(n)) kind = "constraint";
   else if (n === 1013 || /DPI-1067|call timeout|NJS-018|NJS-040/.test(msg) && /cancel/i.test(msg)) kind = "cancelled";
   else if ([12541, 12514, 12170, 12154, 12545, 3113, 3114, 3135, 12537].includes(n) || /NJS-503|NJS-500|DPY-6005|DPI-1080/.test(msg)) kind = "connection";
+  if (/NJS-138/.test(msg)) return new DriverError("connection", "This Oracle Database version is too old: RizomaDB connects without the Oracle Client (thin mode), which needs Oracle Database 12.1 or later.", opt);
   return new DriverError(kind, msg, opt);
 }
 

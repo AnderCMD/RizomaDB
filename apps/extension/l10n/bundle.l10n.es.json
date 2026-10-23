@@ -1031,5 +1031,6 @@
  "SID": "SID",
  "Only for old-style databases that have a SID instead of a service name": "Solo para bases antiguas que tienen un SID en lugar de un nombre de servicio",
  "Oracle needs a service name or a SID.": "Oracle necesita un nombre de servicio o un SID.",
- "The host and SID may only contain letters, digits and . _ $ # -": "El host y el SID solo pueden contener letras, dígitos y . _ $ # -"
+ "The host and SID may only contain letters, digits and . _ $ # -": "El host y el SID solo pueden contener letras, dígitos y . _ $ # -",
+ "This Oracle Database version is too old: RizomaDB connects without the Oracle Client (thin mode), which needs Oracle Database 12.1 or later.": "Esta versión de Oracle Database es demasiado antigua: RizomaDB se conecta sin el cliente de Oracle (modo thin), que requiere Oracle Database 12.1 o posterior."
 }

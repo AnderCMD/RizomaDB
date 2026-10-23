@@ -4,6 +4,7 @@ type Rule = [RegExp, (m: RegExpExecArray) => string];
 
 /** Messages the drivers, the guard, the policy and the editing code write themselves (not the database server's): shown in the UI language. */
 const RULES: Rule[] = [
+  [/This Oracle Database version is too old/, () => t("This Oracle Database version is too old: RizomaDB connects without the Oracle Client (thin mode), which needs Oracle Database 12.1 or later.")],
   [/Oracle needs a service name or a SID/, () => t("Oracle needs a service name or a SID.")],
   [/The host and SID may only contain letters, digits and/, () => t("The host and SID may only contain letters, digits and . _ $ # -")],
   [/\$out\/\$merge writes to a collection/, () => t("$out/$merge writes to a collection")],
