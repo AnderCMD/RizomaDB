@@ -11,7 +11,7 @@ English · [Español](CHANGELOG.es.md)
 
 All notable changes are listed here, newest first. The format follows [Keep a Changelog](https://keepachangelog.com/). Nothing has been published yet.
 
-## [Unreleased]
+## [1.2.1] — 2026-10-22
 
 ### Changed
 - **Paging by primary key is now on by default** (`rizomadb.query.keysetPaging`): *Load more* on a big table no longer reads and discards every row already shown. Tables open sorted by their key; set the option to `false` for the engine's natural order.

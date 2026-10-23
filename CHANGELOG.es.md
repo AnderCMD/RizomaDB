@@ -11,7 +11,7 @@
 
 Aquí se listan los cambios notables, del más nuevo al más antiguo. El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/). Todavía no se ha publicado nada.
 
-## [Sin publicar]
+## [1.2.1] — 2026-10-22
 
 ### Cambiado
 - **La paginación por clave primaria ahora está activada por defecto** (`rizomadb.query.keysetPaging`): «Cargar más» en una tabla grande ya no lee y descarta todas las filas mostradas. Las tablas se abren ordenadas por su clave; pon la opción en `false` para el orden natural del motor.
