@@ -1,4 +1,4 @@
-import { readFile } from "node:fs/promises";
+import { readTextWithin } from "./fsTimeout.js";
 import { builtInPolicy, mergePolicies, parsePolicy, type EffectivePolicy, type PolicyFile } from "@rizomadb/core";
 
 export interface PolicySources {
@@ -20,7 +20,7 @@ export async function loadPolicy(src: PolicySources): Promise<LoadedPolicy> {
   const errors: string[] = [], loaded: string[] = [];
   for (const f of src.files) {
     let text: string;
-    try { text = await readFile(f.path, "utf8"); } catch (e) { if ((e as NodeJS.ErrnoException).code === "ENOENT") continue; errors.push(`${f.label}: cannot read ${f.path}: ${(e as Error).message}`); layers.push(FAIL_CLOSED); continue; }
+    try { text = await readTextWithin(f.path); } catch (e) { if ((e as NodeJS.ErrnoException).code === "ENOENT") continue; errors.push(`${f.label}: cannot read ${f.path}: ${(e as Error).message}`); layers.push(FAIL_CLOSED); continue; }
     try { layers.push(parsePolicy(text)); loaded.push(f.label); } catch (e) { errors.push(`${f.label} (${f.path}): ${(e as Error).message}`); layers.push(FAIL_CLOSED); }
   }
   for (const i of src.inline ?? []) {

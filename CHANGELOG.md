@@ -13,6 +13,9 @@ All notable changes are listed here, newest first. The format follows [Keep a Ch
 
 ## [Unreleased]
 
+### Fixed
+- Start-up no longer waits for the policy and shared-connection files: the extension's commands and screens are ready at once (writes stay blocked until the policy has been read), a file on an unavailable folder is given up on after 8 s, and the "RizomaDB policy" output says how long each step took. Connections in the tree are no longer re-expanded (and so connected) automatically when VS Code restarts.
+
 ### Changed
 - Documentation and site: the home page now has a gallery of screenshots (results grid, pending changes, JDBC form, saved connections, ER diagram, plans, history, light theme); the troubleshooting page covers old Oracle servers, the VS Code service-worker error and huge databases; the screenshots are retaken with the compact header (`scripts/take-screenshots.mjs`).
 

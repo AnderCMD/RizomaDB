@@ -1,4 +1,4 @@
-import { readFile } from "node:fs/promises";
+import { readTextWithin } from "./fsTimeout.js";
 import { z } from "zod";
 import { ConnectionProfile, redactObject, REDACTED, type ConnectionProfile as Profile } from "@rizomadb/core";
 
@@ -25,7 +25,7 @@ export async function loadCatalog(files: { source: string; path: string }[]): Pr
   const out: CatalogResult = { connections: [], errors: [] };
   for (const f of files) {
     let text: string;
-    try { text = await readFile(f.path, "utf8"); } catch (e) { if ((e as NodeJS.ErrnoException).code !== "ENOENT") out.errors.push(`${f.source}: cannot read ${f.path}`); continue; }
+    try { text = await readTextWithin(f.path); } catch (e) { if ((e as NodeJS.ErrnoException).code !== "ENOENT") out.errors.push(`${f.source}: cannot read ${f.path}`); continue; }
     let parsed: z.infer<typeof CatalogFile>;
     try { parsed = CatalogFile.parse(JSON.parse(text)); } catch (e) { out.errors.push(`${f.source} (${f.path}): ${e instanceof z.ZodError ? e.issues.map((i) => `${i.path.join(".")}: ${i.message}`).join("; ") : (e as Error).message}`); continue; }
     for (const c of parsed.connections) {

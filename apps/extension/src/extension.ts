@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { join } from "node:path";
-import { applyChanges, AuditLog, decideEffective, defaultEffectivePolicy, EditError, featureEnabled, generate, type EditTarget, type EffectivePolicy, type SecretStore } from "@rizomadb/core";
+import { applyChanges, AuditLog, builtInPolicy, decideEffective, mergePolicies, EditError, featureEnabled, generate, type EditTarget, type EffectivePolicy, type SecretStore } from "@rizomadb/core";
 import { loadPolicy } from "./lib/policyFiles.js";
 import { loadCatalog } from "./lib/catalog.js";
 import type { ColumnInfo, Value } from "@rizomadb/driver-api";
@@ -94,7 +94,8 @@ export async function activate(ctx: vscode.ExtensionContext) {
     delete: async (k) => ctx.secrets.delete(k),
   };
   // ---- policy: built-in < team settings < project file (trusted workspaces only) < user file; the strictest layer always wins ----
-  let effective: EffectivePolicy = defaultEffectivePolicy;
+  // Until the policy files have been read nothing may write: start-up must not wait for the disk, and it must not fail open either.
+  let effective: EffectivePolicy = mergePolicies(builtInPolicy, { version: 1, environments: {}, defaults: { readOnly: true }, disable: [], maskColumns: [] });
   let setProd: (v: boolean) => void = () => {};
   let prodReadOnly = true;  // the built-in default now lives on the connection (see ConnectionManager.prodReadOnly), not in the policy layers
   const policy = () => effective;
@@ -115,7 +116,8 @@ export async function activate(ctx: vscode.ExtensionContext) {
     for (const e of r.errors) policyOutput.appendLine(`ERROR ${e}`);
     if (r.errors.length) void vscode.window.showErrorMessage(t("RizomaDB policy has errors, so writes are blocked until it is fixed (see the 'RizomaDB policy' output)."), t("Show")).then((a) => { if (a) policyOutput.show(); });
   };
-  await reloadPolicy();
+  const started = Date.now();
+  void reloadPolicy().then(() => policyOutput.appendLine(`Policy ready after ${Date.now() - started} ms`), (err) => policyOutput.appendLine(`ERROR reading the policy: ${(err as Error).message}`));
   const audit = new AuditLog({ file: cfg().get<string>("audit.path") || join(ctx.globalStorageUri.fsPath, "audit.jsonl"), includeValues: cfg().get<boolean>("audit.includeValues", false) });
   pendingAudit = audit;
   const approve = async (name: string, reason: string, statement: string) => {
@@ -156,7 +158,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
     for (const e of r.errors) policyOutput.appendLine(`CATALOG ${e}`);
     if (r.errors.length) void vscode.window.showWarningMessage(t("Some shared connections were not loaded (see the 'RizomaDB policy' output)."), t("Show")).then((a) => { if (a) policyOutput.show(); });
   };
-  await reloadCatalog();
+  void reloadCatalog().then(() => policyOutput.appendLine(`Shared connections ready after ${Date.now() - started} ms`), (err) => policyOutput.appendLine(`ERROR reading shared connections: ${(err as Error).message}`));
   ctx.subscriptions.push(watcher2(reloadCatalog));
   function watcher2(fn: () => Promise<void>) { const w = vscode.workspace.createFileSystemWatcher("**/.rizomadb/connections.json"); w.onDidChange(() => void fn()); w.onDidCreate(() => void fn()); w.onDidDelete(() => void fn()); vscode.workspace.onDidGrantWorkspaceTrust(() => void fn()); return w; }
   const watcher = vscode.workspace.createFileSystemWatcher("**/.rizomadb/{policy,connections}.json");

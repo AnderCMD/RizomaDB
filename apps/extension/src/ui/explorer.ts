@@ -48,6 +48,8 @@ export class Explorer implements vscode.TreeDataProvider<Node> {
   /** Which connection is active right now (set by the extension). */
   activeId: () => string | undefined = () => undefined;
   private readonly startedAt = Date.now();
+  /** Part of every connection node id: VS Code re-expands nodes it remembers by id, and connecting every remembered connection at start-up is what froze the window. */
+  private readonly session = Math.random().toString(36).slice(2, 8);
   /** What each open connection answered, so a refresh caused by another connection does not query every expanded node again. */
   private cache = new WeakMap<object, Map<string, Node[]>>();
   private timer: ReturnType<typeof setTimeout> | undefined;
@@ -75,6 +77,7 @@ export class Explorer implements vscode.TreeDataProvider<Node> {
     if (n.kind === "connection") {
       const p = n.profile, ro = this.mgr.isReadOnly(p), connected = this.mgr.isConnected(p.id);
       const it = new vscode.TreeItem(p.name, vscode.TreeItemCollapsibleState.Collapsed);
+      it.id = `${p.id}@${this.session}`;
       // Environment is conveyed by text as well as colour (WCAG: not colour alone).
       const src = this.mgr.sourceOf(p.id);
       const db = databaseOf(p), isActive = this.activeId() === p.id;
