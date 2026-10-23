@@ -8,6 +8,8 @@ export interface PolicySources {
   files: { label: string; path: string }[];
   /** Inline layers, e.g. from VS Code settings pushed by an administrator. */
   inline?: { label: string; value: unknown }[];
+  /** How a file is read (defaults to Node's file system). The extension passes VS Code's, so a stalled network folder cannot occupy the extension host's own file threads. */
+  read?: (path: string) => Promise<string>;
 }
 
 export interface LoadedPolicy { policy: EffectivePolicy; errors: string[]; loaded: string[] }
@@ -16,11 +18,12 @@ export interface LoadedPolicy { policy: EffectivePolicy; errors: string[]; loade
 const FAIL_CLOSED: PolicyFile = { version: 1, environments: {}, defaults: { readOnly: true }, disable: [], maskColumns: [] };
 
 export async function loadPolicy(src: PolicySources): Promise<LoadedPolicy> {
+  const read = src.read ?? readTextWithin;
   const layers: PolicyFile[] = [src.builtinProdReadOnly ? builtInPolicy : { ...builtInPolicy, environments: { staging: builtInPolicy.environments.staging ?? {}, prod: { confirmDestructive: true, confirmWrites: true } } }];
   const errors: string[] = [], loaded: string[] = [];
   for (const f of src.files) {
     let text: string;
-    try { text = await readTextWithin(f.path); } catch (e) { if ((e as NodeJS.ErrnoException).code === "ENOENT") continue; errors.push(`${f.label}: cannot read ${f.path}: ${(e as Error).message}`); layers.push(FAIL_CLOSED); continue; }
+    try { text = await read(f.path); } catch (e) { if ((e as NodeJS.ErrnoException).code === "ENOENT") continue; errors.push(`${f.label}: cannot read ${f.path}: ${(e as Error).message}`); layers.push(FAIL_CLOSED); continue; }
     try { layers.push(parsePolicy(text)); loaded.push(f.label); } catch (e) { errors.push(`${f.label} (${f.path}): ${(e as Error).message}`); layers.push(FAIL_CLOSED); }
   }
   for (const i of src.inline ?? []) {

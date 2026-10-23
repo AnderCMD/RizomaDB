@@ -21,11 +21,11 @@ export function findSecrets(p: Profile): string[] {
   return hits;
 }
 
-export async function loadCatalog(files: { source: string; path: string }[]): Promise<CatalogResult> {
+export async function loadCatalog(files: { source: string; path: string }[], read: (path: string) => Promise<string> = readTextWithin): Promise<CatalogResult> {
   const out: CatalogResult = { connections: [], errors: [] };
   for (const f of files) {
     let text: string;
-    try { text = await readTextWithin(f.path); } catch (e) { if ((e as NodeJS.ErrnoException).code !== "ENOENT") out.errors.push(`${f.source}: cannot read ${f.path}`); continue; }
+    try { text = await read(f.path); } catch (e) { if ((e as NodeJS.ErrnoException).code !== "ENOENT") out.errors.push(`${f.source}: cannot read ${f.path}`); continue; }
     let parsed: z.infer<typeof CatalogFile>;
     try { parsed = CatalogFile.parse(JSON.parse(text)); } catch (e) { out.errors.push(`${f.source} (${f.path}): ${e instanceof z.ZodError ? e.issues.map((i) => `${i.path.join(".")}: ${i.message}`).join("; ") : (e as Error).message}`); continue; }
     for (const c of parsed.connections) {

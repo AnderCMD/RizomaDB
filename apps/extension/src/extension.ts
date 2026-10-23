@@ -100,13 +100,22 @@ export async function activate(ctx: vscode.ExtensionContext) {
   let prodReadOnly = true;  // the built-in default now lives on the connection (see ConnectionManager.prodReadOnly), not in the policy layers
   const policy = () => effective;
   const policyOutput = vscode.window.createOutputChannel("RizomaDB policy");
+  // Workspace files are read through VS Code's file service: a folder on a network drive or cloud sync that stops answering would otherwise hold the
+  // extension host's few file threads and freeze every extension ("unresponsive"). Each read gives up after 8 s.
+  const readViaVsCode = (path: string): Promise<string> => new Promise<string>((resolve, reject) => {
+    const timer = setTimeout(() => reject(Object.assign(new Error("timed out after 8 s (is the folder available?)"), { code: "ETIMEDOUT" })), 8000);
+    vscode.workspace.fs.readFile(vscode.Uri.file(path)).then((b) => { clearTimeout(timer); resolve(Buffer.from(b).toString("utf8")); }, (err: unknown) => {
+      clearTimeout(timer);
+      reject(err instanceof vscode.FileSystemError && err.code === "FileNotFound" ? Object.assign(new Error("not found"), { code: "ENOENT" }) : err);
+    });
+  });
   const reloadPolicy = async () => {
     const folders = vscode.workspace.workspaceFolders ?? [];
     const files = [
       ...(vscode.workspace.isTrusted ? folders.map((f) => ({ label: `project ${f.name}`, path: join(f.uri.fsPath, ".rizomadb", "policy.json") })) : []),
       { label: "user", path: join(ctx.globalStorageUri.fsPath, "policy.json") },
     ];
-    const r = await loadPolicy({ builtinProdReadOnly: false, files, inline: [{ label: "team (settings)", value: cfg().get("policy.team") }, { label: "environments (settings)", value: customEnvironmentPolicy(cfg().get("environments")) }] });
+    const r = await loadPolicy({ builtinProdReadOnly: false, read: readViaVsCode, files, inline: [{ label: "team (settings)", value: cfg().get("policy.team") }, { label: "environments (settings)", value: customEnvironmentPolicy(cfg().get("environments")) }] });
     effective = r.policy;
     prodReadOnly = cfg().get<boolean>("security.prodReadOnlyByDefault", true);
     setProd(prodReadOnly);
@@ -153,7 +162,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
     const folders = vscode.workspace.workspaceFolders ?? [];
     const team = cfg().get<string>("catalog.teamFile");
     const files = [...(team ? [{ source: "team", path: team }] : []), ...(vscode.workspace.isTrusted ? folders.map((f) => ({ source: `project ${f.name}`, path: join(f.uri.fsPath, ".rizomadb", "connections.json") })) : [])];
-    const r = await loadCatalog(files);
+    const r = await loadCatalog(files, readViaVsCode);
     mgr.setCatalog(r.connections);
     for (const e of r.errors) policyOutput.appendLine(`CATALOG ${e}`);
     if (r.errors.length) void vscode.window.showWarningMessage(t("Some shared connections were not loaded (see the 'RizomaDB policy' output)."), t("Show")).then((a) => { if (a) policyOutput.show(); });

@@ -14,6 +14,7 @@ All notable changes are listed here, newest first. The format follows [Keep a Ch
 ## [Unreleased]
 
 ### Fixed
+- The policy and shared-connection files of the workspace are read through VS Code's file service instead of Node's, so a folder on a network drive or cloud sync that stops answering can no longer tie up the extension host's file threads and make VS Code report it as unresponsive.
 - Start-up no longer waits for the policy and shared-connection files: the extension's commands and screens are ready at once (writes stay blocked until the policy has been read), a file on an unavailable folder is given up on after 8 s, and the "RizomaDB policy" output says how long each step took. Connections in the tree are no longer re-expanded (and so connected) automatically when VS Code restarts.
 
 ### Changed
