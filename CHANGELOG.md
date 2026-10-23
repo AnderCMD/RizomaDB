@@ -11,7 +11,7 @@ English · [Español](CHANGELOG.es.md)
 
 All notable changes are listed here, newest first. The format follows [Keep a Changelog](https://keepachangelog.com/). Nothing has been published yet.
 
-## [Unreleased]
+## [1.2.4] — 2026-10-23
 
 ### Fixed
 - Query editors showed the connection and Run lenses twice; they now appear once.

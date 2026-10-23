@@ -11,7 +11,7 @@
 
 Aquí se listan los cambios notables, del más nuevo al más antiguo. El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/). Todavía no se ha publicado nada.
 
-## [Sin publicar]
+## [1.2.4] — 2026-10-23
 
 ### Corregido
 - Los editores de consultas mostraban dos veces los botones de conexión y Ejecutar; ahora aparecen una vez.
