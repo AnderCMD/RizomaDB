@@ -1,7 +1,7 @@
 # Graph Report - RizomaDB  (2026-10-23)
 
 ## Corpus Check
-- 513 files · ~329,646 words
+- 513 files · ~329,649 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `2af89cdc`
+- Built from commit: `a2433322`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -328,13 +328,13 @@
 - [1.0.0] — 2026-10-22
 - Ayuda a probar RizomaDB
 - [1.0.1] — 2026-10-22
-- [1.1.0] — 2026-10-22
-- [1.2.1] — 2026-10-22
-- [1.2.3] — 2026-10-23
-- [1.1.0] — 2026-10-22
 - [1.2.0] — 2026-10-22
 - [1.2.1] — 2026-10-22
 - [1.2.2] — 2026-10-23
+- [1.1.0] — 2026-10-22
+- [1.2.0] — 2026-10-22
+- [1.2.1] — 2026-10-22
+- [1.2.3] — 2026-10-23
 - matriz-de-motores.md
 - rizomadb.audit.includeValues
 - licencias-de-terceros.md
@@ -524,7 +524,7 @@ Nodes (16): batchLimits(), ConversionError, convertCell(), convertNonString(), C
 
 ### Community 38 - "Registro de cambios"
 Cohesion: 0.18
-Nodes (11): [1.0.1] — 2026-10-22, [1.0.2] — 2026-10-22, [1.2.3] — 2026-10-23, Cambiado, Cambiado, Corregido, Corregido, Corregido (+3 more)
+Nodes (11): [1.0.1] — 2026-10-22, [1.0.2] — 2026-10-22, [1.2.2] — 2026-10-23, [1.2.4] — 2026-10-23, Cambiado, Cambiado, Corregido, Corregido (+3 more)
 
 ### Community 39 - "postgres/package.json"
 Cohesion: 0.09
@@ -1120,7 +1120,7 @@ Nodes (11): Anatomy, Cells, rows and the record panel, Copy and save, Filtering 
 
 ### Community 197 - "Changelog"
 Cohesion: 0.18
-Nodes (11): [1.0.2] — 2026-10-22, [1.2.0] — 2026-10-22, [1.2.2] — 2026-10-23, Added, Changed, Changelog, Fixed, Fixed (+3 more)
+Nodes (11): [1.0.2] — 2026-10-22, [1.1.0] — 2026-10-22, [1.2.3] — 2026-10-23, [1.2.4] — 2026-10-23, Added, Changed, Changelog, Fixed (+3 more)
 
 ### Community 198 - "ClickHouse"
 Cohesion: 0.20
@@ -1406,17 +1406,17 @@ Nodes (4): Ayuda a probar RizomaDB, Cómo probar con seguridad, Cómo reportar, 
 Cohesion: 0.67
 Nodes (3): [1.0.1] — 2026-10-22, Changed, Fixed
 
-### Community 346 - "[1.1.0] — 2026-10-22"
+### Community 346 - "[1.2.0] — 2026-10-22"
 Cohesion: 0.67
-Nodes (3): [1.1.0] — 2026-10-22, Added, Notes
+Nodes (3): [1.2.0] — 2026-10-22, Added, Fixed
 
 ### Community 347 - "[1.2.1] — 2026-10-22"
 Cohesion: 0.67
 Nodes (3): [1.2.1] — 2026-10-22, Changed, Fixed
 
-### Community 348 - "[1.2.3] — 2026-10-23"
+### Community 348 - "[1.2.2] — 2026-10-23"
 Cohesion: 0.67
-Nodes (3): [1.2.3] — 2026-10-23, Changed, Fixed
+Nodes (3): [1.2.2] — 2026-10-23, Changed, Fixed
 
 ### Community 349 - "[1.1.0] — 2026-10-22"
 Cohesion: 0.67
@@ -1430,9 +1430,9 @@ Nodes (3): [1.2.0] — 2026-10-22, Añadido, Corregido
 Cohesion: 0.67
 Nodes (3): [1.2.1] — 2026-10-22, Cambiado, Corregido
 
-### Community 352 - "[1.2.2] — 2026-10-23"
+### Community 352 - "[1.2.3] — 2026-10-23"
 Cohesion: 0.67
-Nodes (3): [1.2.2] — 2026-10-23, Cambiado, Corregido
+Nodes (3): [1.2.3] — 2026-10-23, Cambiado, Corregido
 
 ### Community 360 - "rizomadb.audit.includeValues"
 Cohesion: 0.50
@@ -1451,11 +1451,11 @@ Nodes (3): Comparación honesta, Dónde RizomaDB no es (todavía) competitivo, D
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `k()` connect `k` to `ui.ts`, `completion.ts`, `mongodb/src/index.ts`, `MongoConnection`, `settings.ts`, `firestore/src/index.ts`, `dynamodb/src/index.ts`, `webview/er.ts`, `influxdb3/src/index.ts`, `elasticsearch/src/index.ts`, `designer.ts`, `nosqlCommands.ts`, `engines.integration.test.mts`?**
-  _High betweenness centrality (0.093) - this node is a cross-community bridge._
+  _High betweenness centrality (0.091) - this node is a cross-community bridge._
 - **Why does `Value` connect `Value` to `export.ts`, `mongodb/src/index.ts`, `PendingEdits`, `lib.test.ts`, `types.ts`, `hydradb/src/index.ts`, `redis/src/index.ts`, `ExecuteRequest`, `tools.test.ts`, `neo4j/src/index.ts`, `trino/src/index.ts`, `server.ts`, `mssql/src/index.ts`, `engines.integration.test.mts`?**
-  _High betweenness centrality (0.082) - this node is a cross-community bridge._
+  _High betweenness centrality (0.079) - this node is a cross-community bridge._
 - **Why does `mongodb` connect `parserCore.ts` to `mongodb/src/index.ts`, `keywords`?**
-  _High betweenness centrality (0.055) - this node is a cross-community bridge._
+  _High betweenness centrality (0.051) - this node is a cross-community bridge._
 - **What connects `Corregido`, `Corregido`, `Cambiado` to the rest of the system?**
   _1906 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `main.ts` be split into smaller, more focused modules?**

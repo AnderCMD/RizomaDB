@@ -11,6 +11,11 @@ English · [Español](CHANGELOG.es.md)
 
 All notable changes are listed here, newest first. The format follows [Keep a Changelog](https://keepachangelog.com/). Nothing has been published yet.
 
+## [Unreleased]
+
+### Fixed
+- SQL files larger than 1 MB (data dumps, generated scripts) are no longer analysed for error underlining and completion on every keystroke, which could stall the extension host for seconds on a slow machine.
+
 ## [1.2.4] — 2026-10-23
 
 ### Fixed

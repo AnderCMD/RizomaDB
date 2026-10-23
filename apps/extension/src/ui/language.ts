@@ -8,6 +8,9 @@ const KIND: Record<CompletionKind, vscode.CompletionItemKind> = {
   function: vscode.CompletionItemKind.Function, schema: vscode.CompletionItemKind.Module, alias: vscode.CompletionItemKind.Variable, join: vscode.CompletionItemKind.Snippet,
 };
 
+/** Past this many characters a file (a data dump, a generated script) is not analysed: parsing it on every keystroke would stall the extension host. */
+export const MAX_ANALYSED_CHARS = 1_000_000;
+
 export function registerLanguage(ctx: vscode.ExtensionContext, mgr: ConnectionManager, cache: SchemaCache, docConn: (d: vscode.TextDocument) => string | undefined) {
   const dialectOf = (d: vscode.TextDocument) => {
     const p = mgr.get(docConn(d) ?? "");
@@ -16,6 +19,7 @@ export function registerLanguage(ctx: vscode.ExtensionContext, mgr: ConnectionMa
 
   ctx.subscriptions.push(vscode.languages.registerCompletionItemProvider({ language: "sql" }, {
     async provideCompletionItems(doc, pos) {
+      if (doc.getText().length > MAX_ANALYSED_CHARS) return [];
       const { profile, dialect } = dialectOf(doc);
       const schema = profile ? await cache.get(profile.id).catch(() => undefined) : undefined;
       const { SchemaIndex } = await import("@rizomadb/sql");
@@ -34,6 +38,7 @@ export function registerLanguage(ctx: vscode.ExtensionContext, mgr: ConnectionMa
   const timers = new Map<string, NodeJS.Timeout>();
   const refresh = (doc: vscode.TextDocument) => {
     if (doc.languageId !== "sql") return;
+    if (doc.getText().length > MAX_ANALYSED_CHARS) { collection.delete(doc.uri); return; }
     const { profile, dialect } = dialectOf(doc);
     const schema = profile ? cache.peek(profile.id) : undefined;
     // Diagnostics never open a connection by themselves (restoring editors at startup used to connect and read the whole schema of every bound one): they use the schema once a connection is open.

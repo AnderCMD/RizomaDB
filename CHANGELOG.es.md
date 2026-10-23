@@ -11,6 +11,11 @@
 
 Aquí se listan los cambios notables, del más nuevo al más antiguo. El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/). Todavía no se ha publicado nada.
 
+## [Sin publicar]
+
+### Corregido
+- Los archivos SQL de más de 1 MB (volcados de datos, scripts generados) ya no se analizan en cada pulsación para subrayar errores y autocompletar, lo que podía detener el host de extensiones durante segundos en una máquina lenta.
+
 ## [1.2.4] — 2026-10-23
 
 ### Corregido

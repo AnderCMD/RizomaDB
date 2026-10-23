@@ -26,6 +26,8 @@
 
 **The window slows down or freezes with a huge database.** A node lists at most 2,000 tables (use **Open Table Data** from the command palette to reach any table), and SQL completion reads only table names in schemas of more than 1,500 tables. A server that does not answer is abandoned after 45 seconds. If it still happens, tell us the engine, how many tables it has and what you did just before.
 
+**A big `.sql` file (a data dump) has no error underlining or completion.** Files larger than 1 MB are not analysed, because doing it on every keystroke would stall VS Code. The Run buttons and running statements still work.
+
 **My connection form went back to "New connection" when I changed tab.** Fixed in 1.2.2: the screen now keeps what you typed. Update the extension.
 
 Still stuck? The *RizomaDB policy* output channel and the status bar show what is blocking an action. Please open an issue with the engine, version and the steps.
