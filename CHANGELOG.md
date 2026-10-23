@@ -11,7 +11,7 @@ English · [Español](CHANGELOG.es.md)
 
 All notable changes are listed here, newest first. The format follows [Keep a Changelog](https://keepachangelog.com/). Nothing has been published yet.
 
-## [Unreleased]
+## [1.2.3] — 2026-10-23
 
 ### Fixed
 - The policy and shared-connection files of the workspace are read through VS Code's file service instead of Node's, so a folder on a network drive or cloud sync that stops answering can no longer tie up the extension host's file threads and make VS Code report it as unresponsive.

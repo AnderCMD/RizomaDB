@@ -11,7 +11,7 @@
 
 Aquí se listan los cambios notables, del más nuevo al más antiguo. El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/). Todavía no se ha publicado nada.
 
-## [Sin publicar]
+## [1.2.3] — 2026-10-23
 
 ### Corregido
 - Los archivos de política y de conexiones compartidas del workspace se leen con el servicio de archivos de VS Code en lugar del de Node, así que una carpeta en una unidad de red o de sincronización en la nube que deja de responder ya no puede ocupar los hilos de archivos del host de extensiones ni hacer que VS Code lo marque como sin respuesta.

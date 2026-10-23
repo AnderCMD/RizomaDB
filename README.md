@@ -13,7 +13,7 @@ English · [Español](README.es.md)
 
 A multi-engine database client for VS Code (and VSCodium, Cursor, Windsurf): Apache-2.0, no telemetry, no accounts, no locked features. [Documentation site](https://andercmd.github.io/RizomaDB/en/)
 
-> **Status: 1.2.2.** Available on the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=AnderCMD.rizomadb) and as a VSIX attached to each [GitHub release](https://github.com/AnderCMD/RizomaDB/releases) (Open VSX is not published yet). It builds, installs and passes its tests against real engines, and the project owner did a manual screen-reader pass on macOS, Windows and Linux with no problems found. Some things are **not confirmed**, above all real cloud accounts: see the honest [acceptance checklist](docs/release/v1-checklist.md).
+> **Status: 1.2.3.** Available on the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=AnderCMD.rizomadb) and as a VSIX attached to each [GitHub release](https://github.com/AnderCMD/RizomaDB/releases) (Open VSX is not published yet). It builds, installs and passes its tests against real engines, and the project owner did a manual screen-reader pass on macOS, Windows and Linux with no problems found. Some things are **not confirmed**, above all real cloud accounts: see the honest [acceptance checklist](docs/release/v1-checklist.md).
 
 ## What it does
 - **Connect** to 25 engines from a screen of logos, with the usual host, port and user already filled in (or paste a JDBC URL); environments (`dev`, `staging`, `prod` or your own) with protection; SSH tunnels and HTTP/SOCKS5 proxies; secrets only in VS Code's secret storage. Connections are grouped by type in the tree, with the active one and its database in the status bar.
@@ -28,11 +28,11 @@ A multi-engine database client for VS Code (and VSCodium, Cursor, Windsurf): Apa
 Tested against real servers: PostgreSQL (and CockroachDB, YugabyteDB), MySQL/MariaDB (and TiDB), SQL Server, Oracle, SQLite, MongoDB, Redis/Valkey, ClickHouse, Elasticsearch/OpenSearch, DuckDB, Neo4j, DynamoDB (Local), InfluxDB 2 and 3, Cassandra/ScyllaDB, Firestore (emulator), Trino, and **HydraDB (experimental)**. What each one supports is in the [capability matrix](docs/reference/engine-matrix.md); limits are on each engine's page in [docs/engines](docs/engines/README.md). **Not confirmed:** real cloud accounts (AWS, Google Cloud, MongoDB Atlas and managed PostgreSQL/MySQL services) have never been tested, so test with a read-only user or a throwaway database before relying on them; Redshift, Snowflake and BigQuery are not implemented. See [Cloud and managed services](docs/engines/README.md#cloud-and-managed-services-not-confirmed).
 
 ## Install
-Install **RizomaDB** from the VS Code Marketplace (search for "RizomaDB", or run `code --install-extension AnderCMD.rizomadb`), or download the `.vsix` from the latest [release](https://github.com/AnderCMD/RizomaDB/releases) and run `code --install-extension rizomadb-1.2.2.vsix`. To build it yourself:
+Install **RizomaDB** from the VS Code Marketplace (search for "RizomaDB", or run `code --install-extension AnderCMD.rizomadb`), or download the `.vsix` from the latest [release](https://github.com/AnderCMD/RizomaDB/releases) and run `code --install-extension rizomadb-1.2.3.vsix`. To build it yourself:
 ```bash
 pnpm install
 pnpm --filter rizomadb package
-code --install-extension apps/extension/rizomadb-1.2.2.vsix
+code --install-extension apps/extension/rizomadb-1.2.3.vsix
 ```
 Then click the RizomaDB icon, or run **RizomaDB: Open the Guide**. Full walk-through: [Getting started](docs/guides/getting-started.md).
 
