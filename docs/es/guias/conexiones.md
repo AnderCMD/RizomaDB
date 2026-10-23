@@ -34,6 +34,11 @@ La segunda pestaña de la misma pantalla lista las conexiones que tienes. Cada t
 - Bajo una conexión: **Tablas** (o Colecciones, Claves, Índices, Etiquetas, Mediciones, según el motor) con su cantidad, y **Vistas**.
 - Pasa el mouse sobre una fila para ver botones rápidos. El título de la vista tiene botones para nueva conexión, actualizar, importar, configuración, la guía y **contraer todo**.
 
+## Varias conexiones: cuál se usa
+Nada se conecta al iniciar VS Code: una conexión se abre la primera vez que la expandes, ejecutas una consulta o pulsas **Conectar**. La conexión **en uso** es la ligada al editor de consultas que estás viendo; si no hay ninguna ligada, es la última en la que ejecutaste algo. Un editor nuevo pregunta qué conexión usar la primera vez que ejecutas una consulta.
+
+Para cambiarla, haz clic en el nombre de la conexión en la barra de estado (abajo a la izquierda) o ejecuta **RizomaDB: Elegir conexión para este editor**. La lista marca la que está en uso, las ya conectadas y las de solo lectura. Con un editor de consultas abierto, la elección vale para ese editor, así que dos editores pueden usar dos bases Oracle distintas a la vez. Si un servidor no responde, el intento se abandona a los 45 segundos en lugar de quedarse «conectando».
+
 ## La conexión en uso
 La conexión *activa* es la asociada al editor de consultas en el que estás, o la última que ejecutó algo. La barra de estado la muestra como `[ENTORNO] nombre · base de datos`; haz clic para cambiar la conexión del editor actual.
 

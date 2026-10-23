@@ -60,3 +60,18 @@ describe("editing a saved connection", () => {
     expect(mgr.isReadOnly(mgr.get("p")!)).toBe(true);
   });
 });
+
+describe("a server that never answers", () => {
+  it("fails after the timeout and lets the next attempt start fresh, closing a late connection", async () => {
+    let calls = 0, closed = 0;
+    const slow = { id: "slow", connectionSchema: { type: "object", properties: {} }, capabilities: {}, connect: () => new Promise((res) => { calls++; setTimeout(() => res({ close: async () => { closed++; }, introspect: () => ({}) }), calls === 1 ? 120 : 1); }) };
+    const mgr = new ConnectionManager(memento(), new MemorySecretStore(), { slow: async () => slow as never }, () => defaultEffectivePolicy, {});
+    mgr.connectTimeoutMs = 40;
+    await mgr.add({ id: "s", name: "slow db", environment: "dev", driver: "slow", readOnly: false, tags: [], secretKeys: [], values: {} });
+    await expect(mgr.connect("s")).rejects.toThrow(/Timed out after/);
+    expect(mgr.isConnected("s")).toBe(false);
+    await new Promise((r) => setTimeout(r, 150));
+    expect(closed).toBe(1);
+    await expect(mgr.connect("s")).resolves.toBeDefined();
+  });
+});

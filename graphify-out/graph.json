@@ -26,15 +26,15 @@
       "norm_label": "registro de cambios"
     },
     {
-      "label": "[Sin publicar]",
+      "label": "[1.2.1] \u2014 2026-10-22",
       "file_type": "document",
       "source_file": "CHANGELOG.es.md",
       "source_location": "L14",
       "_origin": "ast",
-      "id": "changelog_es_sin_publicar",
+      "id": "changelog_es_1_2_1_2026_10_22",
       "community": 203,
       "community_name": "Registro de cambios",
-      "norm_label": "[sin publicar]"
+      "norm_label": "[1.2.1] \u2014 2026-10-22"
     },
     {
       "label": "Cambiado",
@@ -246,15 +246,15 @@
       "norm_label": "changelog"
     },
     {
-      "label": "[Unreleased]",
+      "label": "[1.2.1] \u2014 2026-10-22",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
       "source_location": "L14",
       "_origin": "ast",
-      "id": "changelog_unreleased",
+      "id": "changelog_1_2_1_2026_10_22",
       "community": 197,
       "community_name": "Changelog",
-      "norm_label": "[unreleased]"
+      "norm_label": "[1.2.1] \u2014 2026-10-22"
     },
     {
       "label": "Changed",
@@ -442,6 +442,160 @@
       "community": 197,
       "community_name": "Changelog",
       "norm_label": "known limits"
+    },
+    {
+      "label": "README.es.md",
+      "file_type": "document",
+      "source_file": "README.es.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "readme_es",
+      "community": 31,
+      "community_name": "README.es.md",
+      "norm_label": "readme.es.md"
+    },
+    {
+      "label": "Qu\u00e9 hace",
+      "file_type": "document",
+      "source_file": "README.es.md",
+      "source_location": "L18",
+      "_origin": "ast",
+      "id": "readme_es_qu\u00e9_hace",
+      "community": 31,
+      "community_name": "README.es.md",
+      "norm_label": "que hace"
+    },
+    {
+      "label": "Motores",
+      "file_type": "document",
+      "source_file": "README.es.md",
+      "source_location": "L27",
+      "_origin": "ast",
+      "id": "readme_es_motores",
+      "community": 31,
+      "community_name": "README.es.md",
+      "norm_label": "motores"
+    },
+    {
+      "label": "Instalar",
+      "file_type": "document",
+      "source_file": "README.es.md",
+      "source_location": "L30",
+      "_origin": "ast",
+      "id": "readme_es_instalar",
+      "community": 31,
+      "community_name": "README.es.md",
+      "norm_label": "instalar"
+    },
+    {
+      "label": "Documentaci\u00f3n",
+      "file_type": "document",
+      "source_file": "README.es.md",
+      "source_location": "L39",
+      "_origin": "ast",
+      "id": "readme_es_documentaci\u00f3n",
+      "community": 31,
+      "community_name": "README.es.md",
+      "norm_label": "documentacion"
+    },
+    {
+      "label": "Desarrollo",
+      "file_type": "document",
+      "source_file": "README.es.md",
+      "source_location": "L42",
+      "_origin": "ast",
+      "id": "readme_es_desarrollo",
+      "community": 31,
+      "community_name": "README.es.md",
+      "norm_label": "desarrollo"
+    },
+    {
+      "label": "Licencia",
+      "file_type": "document",
+      "source_file": "README.es.md",
+      "source_location": "L51",
+      "_origin": "ast",
+      "id": "readme_es_licencia",
+      "community": 31,
+      "community_name": "README.es.md",
+      "norm_label": "licencia"
+    },
+    {
+      "label": "README.md",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "readme",
+      "community": 47,
+      "community_name": "README.md",
+      "norm_label": "readme.md"
+    },
+    {
+      "label": "What it does",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L18",
+      "_origin": "ast",
+      "id": "readme_what_it_does",
+      "community": 47,
+      "community_name": "README.md",
+      "norm_label": "what it does"
+    },
+    {
+      "label": "Engines",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L27",
+      "_origin": "ast",
+      "id": "readme_engines",
+      "community": 47,
+      "community_name": "README.md",
+      "norm_label": "engines"
+    },
+    {
+      "label": "Install",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L30",
+      "_origin": "ast",
+      "id": "readme_install",
+      "community": 47,
+      "community_name": "README.md",
+      "norm_label": "install"
+    },
+    {
+      "label": "Documentation",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L39",
+      "_origin": "ast",
+      "id": "readme_documentation",
+      "community": 47,
+      "community_name": "README.md",
+      "norm_label": "documentation"
+    },
+    {
+      "label": "Development",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L42",
+      "_origin": "ast",
+      "id": "readme_development",
+      "community": 47,
+      "community_name": "README.md",
+      "norm_label": "development"
+    },
+    {
+      "label": "License",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L51",
+      "_origin": "ast",
+      "id": "readme_license",
+      "community": 47,
+      "community_name": "README.md",
+      "norm_label": "license"
     },
     {
       "label": "extension/package.json",
@@ -3425,15 +3579,235 @@
       "norm_label": "onlanguage:rizomadb-cypher"
     },
     {
+      "label": "primeros-pasos.md",
+      "file_type": "document",
+      "source_file": "docs/es/guias/primeros-pasos.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "docs_es_guias_primeros_pasos",
+      "community": 31,
+      "community_name": "README.es.md",
+      "norm_label": "primeros-pasos.md"
+    },
+    {
+      "label": "Primeros pasos",
+      "file_type": "document",
+      "source_file": "docs/es/guias/primeros-pasos.md",
+      "source_location": "L3",
+      "_origin": "ast",
+      "id": "docs_es_guias_primeros_pasos_primeros_pasos",
+      "community": 209,
+      "community_name": "Primeros pasos",
+      "norm_label": "primeros pasos"
+    },
+    {
+      "label": "1. Instalar",
+      "file_type": "document",
+      "source_file": "docs/es/guias/primeros-pasos.md",
+      "source_location": "L7",
+      "_origin": "ast",
+      "id": "docs_es_guias_primeros_pasos_1_instalar",
+      "community": 209,
+      "community_name": "Primeros pasos",
+      "norm_label": "1. instalar"
+    },
+    {
+      "label": "2. Crear una conexi\u00f3n",
+      "file_type": "document",
+      "source_file": "docs/es/guias/primeros-pasos.md",
+      "source_location": "L23",
+      "_origin": "ast",
+      "id": "docs_es_guias_primeros_pasos_2_crear_una_conexi\u00f3n",
+      "community": 209,
+      "community_name": "Primeros pasos",
+      "norm_label": "2. crear una conexion"
+    },
+    {
+      "label": "3. Explorar",
+      "file_type": "document",
+      "source_file": "docs/es/guias/primeros-pasos.md",
+      "source_location": "L30",
+      "_origin": "ast",
+      "id": "docs_es_guias_primeros_pasos_3_explorar",
+      "community": 209,
+      "community_name": "Primeros pasos",
+      "norm_label": "3. explorar"
+    },
+    {
+      "label": "4. Abrir una tabla",
+      "file_type": "document",
+      "source_file": "docs/es/guias/primeros-pasos.md",
+      "source_location": "L33",
+      "_origin": "ast",
+      "id": "docs_es_guias_primeros_pasos_4_abrir_una_tabla",
+      "community": 209,
+      "community_name": "Primeros pasos",
+      "norm_label": "4. abrir una tabla"
+    },
+    {
+      "label": "5. Ejecutar una consulta",
+      "file_type": "document",
+      "source_file": "docs/es/guias/primeros-pasos.md",
+      "source_location": "L36",
+      "_origin": "ast",
+      "id": "docs_es_guias_primeros_pasos_5_ejecutar_una_consulta",
+      "community": 209,
+      "community_name": "Primeros pasos",
+      "norm_label": "5. ejecutar una consulta"
+    },
+    {
+      "label": "6. Editar un valor",
+      "file_type": "document",
+      "source_file": "docs/es/guias/primeros-pasos.md",
+      "source_location": "L39",
+      "_origin": "ast",
+      "id": "docs_es_guias_primeros_pasos_6_editar_un_valor",
+      "community": 209,
+      "community_name": "Primeros pasos",
+      "norm_label": "6. editar un valor"
+    },
+    {
+      "label": "7. Hazlo tuyo",
+      "file_type": "document",
+      "source_file": "docs/es/guias/primeros-pasos.md",
+      "source_location": "L42",
+      "_origin": "ast",
+      "id": "docs_es_guias_primeros_pasos_7_hazlo_tuyo",
+      "community": 209,
+      "community_name": "Primeros pasos",
+      "norm_label": "7. hazlo tuyo"
+    },
+    {
+      "label": "Conviene saber",
+      "file_type": "document",
+      "source_file": "docs/es/guias/primeros-pasos.md",
+      "source_location": "L45",
+      "_origin": "ast",
+      "id": "docs_es_guias_primeros_pasos_conviene_saber",
+      "community": 209,
+      "community_name": "Primeros pasos",
+      "norm_label": "conviene saber"
+    },
+    {
+      "label": "getting-started.md",
+      "file_type": "document",
+      "source_file": "docs/guides/getting-started.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "docs_guides_getting_started",
+      "community": 47,
+      "community_name": "README.md",
+      "norm_label": "getting-started.md"
+    },
+    {
+      "label": "Getting started",
+      "file_type": "document",
+      "source_file": "docs/guides/getting-started.md",
+      "source_location": "L3",
+      "_origin": "ast",
+      "id": "docs_guides_getting_started_getting_started",
+      "community": 111,
+      "community_name": "Getting started",
+      "norm_label": "getting started"
+    },
+    {
+      "label": "1. Install",
+      "file_type": "document",
+      "source_file": "docs/guides/getting-started.md",
+      "source_location": "L7",
+      "_origin": "ast",
+      "id": "docs_guides_getting_started_1_install",
+      "community": 111,
+      "community_name": "Getting started",
+      "norm_label": "1. install"
+    },
+    {
+      "label": "2. Create a connection",
+      "file_type": "document",
+      "source_file": "docs/guides/getting-started.md",
+      "source_location": "L23",
+      "_origin": "ast",
+      "id": "docs_guides_getting_started_2_create_a_connection",
+      "community": 111,
+      "community_name": "Getting started",
+      "norm_label": "2. create a connection"
+    },
+    {
+      "label": "3. Explore",
+      "file_type": "document",
+      "source_file": "docs/guides/getting-started.md",
+      "source_location": "L30",
+      "_origin": "ast",
+      "id": "docs_guides_getting_started_3_explore",
+      "community": 111,
+      "community_name": "Getting started",
+      "norm_label": "3. explore"
+    },
+    {
+      "label": "4. Open a table",
+      "file_type": "document",
+      "source_file": "docs/guides/getting-started.md",
+      "source_location": "L33",
+      "_origin": "ast",
+      "id": "docs_guides_getting_started_4_open_a_table",
+      "community": 111,
+      "community_name": "Getting started",
+      "norm_label": "4. open a table"
+    },
+    {
+      "label": "5. Run a query",
+      "file_type": "document",
+      "source_file": "docs/guides/getting-started.md",
+      "source_location": "L36",
+      "_origin": "ast",
+      "id": "docs_guides_getting_started_5_run_a_query",
+      "community": 111,
+      "community_name": "Getting started",
+      "norm_label": "5. run a query"
+    },
+    {
+      "label": "6. Edit a value",
+      "file_type": "document",
+      "source_file": "docs/guides/getting-started.md",
+      "source_location": "L39",
+      "_origin": "ast",
+      "id": "docs_guides_getting_started_6_edit_a_value",
+      "community": 111,
+      "community_name": "Getting started",
+      "norm_label": "6. edit a value"
+    },
+    {
+      "label": "7. Make it yours",
+      "file_type": "document",
+      "source_file": "docs/guides/getting-started.md",
+      "source_location": "L42",
+      "_origin": "ast",
+      "id": "docs_guides_getting_started_7_make_it_yours",
+      "community": 111,
+      "community_name": "Getting started",
+      "norm_label": "7. make it yours"
+    },
+    {
+      "label": "Good to know",
+      "file_type": "document",
+      "source_file": "docs/guides/getting-started.md",
+      "source_location": "L45",
+      "_origin": "ast",
+      "id": "docs_guides_getting_started_good_to_know",
+      "community": 111,
+      "community_name": "Getting started",
+      "norm_label": "good to know"
+    },
+    {
       "label": "extension.ts",
       "file_type": "code",
       "source_file": "apps/extension/src/extension.ts",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "apps_extension_src_extension",
       "community": 84,
       "community_name": "extension.ts",
-      "norm_label": "extension.ts"
+      "norm_label": "extension.ts",
+      "id": "apps_extension_src_extension"
     },
     {
       "label": "cfg()",
@@ -3441,10 +3815,10 @@
       "source_file": "apps/extension/src/extension.ts",
       "source_location": "L62",
       "_origin": "ast",
-      "id": "apps_extension_src_extension_cfg",
       "community": 84,
       "community_name": "extension.ts",
-      "norm_label": "cfg()"
+      "norm_label": "cfg()",
+      "id": "apps_extension_src_extension_cfg"
     },
     {
       "label": "makeRegistry()",
@@ -3452,10 +3826,10 @@
       "source_file": "apps/extension/src/extension.ts",
       "source_location": "L65",
       "_origin": "ast",
-      "id": "apps_extension_src_extension_makeregistry",
       "community": 84,
       "community_name": "extension.ts",
-      "norm_label": "makeregistry()"
+      "norm_label": "makeregistry()",
+      "id": "apps_extension_src_extension_makeregistry"
     },
     {
       "label": "activate()",
@@ -3463,10 +3837,10 @@
       "source_file": "apps/extension/src/extension.ts",
       "source_location": "L88",
       "_origin": "ast",
-      "id": "apps_extension_src_extension_activate",
       "community": 84,
       "community_name": "extension.ts",
-      "norm_label": "activate()"
+      "norm_label": "activate()",
+      "id": "apps_extension_src_extension_activate"
     },
     {
       "label": "deactivate()",
@@ -3474,10 +3848,10 @@
       "source_file": "apps/extension/src/extension.ts",
       "source_location": "L875",
       "_origin": "ast",
-      "id": "apps_extension_src_extension_deactivate",
       "community": 84,
       "community_name": "extension.ts",
-      "norm_label": "deactivate()"
+      "norm_label": "deactivate()",
+      "id": "apps_extension_src_extension_deactivate"
     },
     {
       "label": "rejilla-de-resultados.md",
@@ -3485,10 +3859,10 @@
       "source_file": "docs/es/guias/rejilla-de-resultados.md",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "docs_es_guias_rejilla_de_resultados",
       "community": 31,
       "community_name": "README.es.md",
-      "norm_label": "rejilla-de-resultados.md"
+      "norm_label": "rejilla-de-resultados.md",
+      "id": "docs_es_guias_rejilla_de_resultados"
     },
     {
       "label": "La rejilla de resultados",
@@ -3496,10 +3870,10 @@
       "source_file": "docs/es/guias/rejilla-de-resultados.md",
       "source_location": "L3",
       "_origin": "ast",
-      "id": "docs_es_guias_rejilla_de_resultados_la_rejilla_de_resultados",
       "community": 195,
       "community_name": "La rejilla de resultados",
-      "norm_label": "la rejilla de resultados"
+      "norm_label": "la rejilla de resultados",
+      "id": "docs_es_guias_rejilla_de_resultados_la_rejilla_de_resultados"
     },
     {
       "label": "Anatom\u00eda",
@@ -3507,10 +3881,10 @@
       "source_file": "docs/es/guias/rejilla-de-resultados.md",
       "source_location": "L7",
       "_origin": "ast",
-      "id": "docs_es_guias_rejilla_de_resultados_anatom\u00eda",
       "community": 195,
       "community_name": "La rejilla de resultados",
-      "norm_label": "anatomia"
+      "norm_label": "anatomia",
+      "id": "docs_es_guias_rejilla_de_resultados_anatom\u00eda"
     },
     {
       "label": "La l\u00ednea de consulta",
@@ -3518,10 +3892,10 @@
       "source_file": "docs/es/guias/rejilla-de-resultados.md",
       "source_location": "L16",
       "_origin": "ast",
-      "id": "docs_es_guias_rejilla_de_resultados_la_l\u00ednea_de_consulta",
       "community": 195,
       "community_name": "La rejilla de resultados",
-      "norm_label": "la linea de consulta"
+      "norm_label": "la linea de consulta",
+      "id": "docs_es_guias_rejilla_de_resultados_la_l\u00ednea_de_consulta"
     },
     {
       "label": "Filtrar en la base de datos",
@@ -3529,10 +3903,10 @@
       "source_file": "docs/es/guias/rejilla-de-resultados.md",
       "source_location": "L19",
       "_origin": "ast",
-      "id": "docs_es_guias_rejilla_de_resultados_filtrar_en_la_base_de_datos",
       "community": 195,
       "community_name": "La rejilla de resultados",
-      "norm_label": "filtrar en la base de datos"
+      "norm_label": "filtrar en la base de datos",
+      "id": "docs_es_guias_rejilla_de_resultados_filtrar_en_la_base_de_datos"
     },
     {
       "label": "Trabajar con columnas",
@@ -3540,10 +3914,10 @@
       "source_file": "docs/es/guias/rejilla-de-resultados.md",
       "source_location": "L31",
       "_origin": "ast",
-      "id": "docs_es_guias_rejilla_de_resultados_trabajar_con_columnas",
       "community": 195,
       "community_name": "La rejilla de resultados",
-      "norm_label": "trabajar con columnas"
+      "norm_label": "trabajar con columnas",
+      "id": "docs_es_guias_rejilla_de_resultados_trabajar_con_columnas"
     },
     {
       "label": "Celdas, filas y el panel de registro",
@@ -3551,10 +3925,10 @@
       "source_file": "docs/es/guias/rejilla-de-resultados.md",
       "source_location": "L36",
       "_origin": "ast",
-      "id": "docs_es_guias_rejilla_de_resultados_celdas_filas_y_el_panel_de_registro",
       "community": 195,
       "community_name": "La rejilla de resultados",
-      "norm_label": "celdas, filas y el panel de registro"
+      "norm_label": "celdas, filas y el panel de registro",
+      "id": "docs_es_guias_rejilla_de_resultados_celdas_filas_y_el_panel_de_registro"
     },
     {
       "label": "Copiar y guardar",
@@ -3562,10 +3936,10 @@
       "source_file": "docs/es/guias/rejilla-de-resultados.md",
       "source_location": "L42",
       "_origin": "ast",
-      "id": "docs_es_guias_rejilla_de_resultados_copiar_y_guardar",
       "community": 195,
       "community_name": "La rejilla de resultados",
-      "norm_label": "copiar y guardar"
+      "norm_label": "copiar y guardar",
+      "id": "docs_es_guias_rejilla_de_resultados_copiar_y_guardar"
     },
     {
       "label": "Paginaci\u00f3n",
@@ -3573,10 +3947,10 @@
       "source_file": "docs/es/guias/rejilla-de-resultados.md",
       "source_location": "L45",
       "_origin": "ast",
-      "id": "docs_es_guias_rejilla_de_resultados_paginaci\u00f3n",
       "community": 195,
       "community_name": "La rejilla de resultados",
-      "norm_label": "paginacion"
+      "norm_label": "paginacion",
+      "id": "docs_es_guias_rejilla_de_resultados_paginaci\u00f3n"
     },
     {
       "label": "Fijar una pesta\u00f1a de resultados",
@@ -3584,10 +3958,10 @@
       "source_file": "docs/es/guias/rejilla-de-resultados.md",
       "source_location": "L52",
       "_origin": "ast",
-      "id": "docs_es_guias_rejilla_de_resultados_fijar_una_pesta\u00f1a_de_resultados",
       "community": 195,
       "community_name": "La rejilla de resultados",
-      "norm_label": "fijar una pestana de resultados"
+      "norm_label": "fijar una pestana de resultados",
+      "id": "docs_es_guias_rejilla_de_resultados_fijar_una_pesta\u00f1a_de_resultados"
     },
     {
       "label": "D\u00f3nde se abren los resultados",
@@ -3595,10 +3969,10 @@
       "source_file": "docs/es/guias/rejilla-de-resultados.md",
       "source_location": "L55",
       "_origin": "ast",
-      "id": "docs_es_guias_rejilla_de_resultados_d\u00f3nde_se_abren_los_resultados",
       "community": 195,
       "community_name": "La rejilla de resultados",
-      "norm_label": "donde se abren los resultados"
+      "norm_label": "donde se abren los resultados",
+      "id": "docs_es_guias_rejilla_de_resultados_d\u00f3nde_se_abren_los_resultados"
     },
     {
       "label": "Atajos",
@@ -3606,10 +3980,10 @@
       "source_file": "docs/es/guias/rejilla-de-resultados.md",
       "source_location": "L58",
       "_origin": "ast",
-      "id": "docs_es_guias_rejilla_de_resultados_atajos",
       "community": 195,
       "community_name": "La rejilla de resultados",
-      "norm_label": "atajos"
+      "norm_label": "atajos",
+      "id": "docs_es_guias_rejilla_de_resultados_atajos"
     },
     {
       "label": "ajustes.md",
@@ -3617,10 +3991,10 @@
       "source_file": "docs/es/referencia/ajustes.md",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "docs_es_referencia_ajustes",
       "community": 31,
       "community_name": "README.es.md",
-      "norm_label": "ajustes.md"
+      "norm_label": "ajustes.md",
+      "id": "docs_es_referencia_ajustes"
     },
     {
       "label": "Referencia de ajustes",
@@ -3628,10 +4002,10 @@
       "source_file": "docs/es/referencia/ajustes.md",
       "source_location": "L3",
       "_origin": "ast",
-      "id": "docs_es_referencia_ajustes_referencia_de_ajustes",
       "community": 31,
       "community_name": "README.es.md",
-      "norm_label": "referencia de ajustes"
+      "norm_label": "referencia de ajustes",
+      "id": "docs_es_referencia_ajustes_referencia_de_ajustes"
     },
     {
       "label": "results-grid.md",
@@ -3639,10 +4013,10 @@
       "source_file": "docs/guides/results-grid.md",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "docs_guides_results_grid",
       "community": 47,
       "community_name": "README.md",
-      "norm_label": "results-grid.md"
+      "norm_label": "results-grid.md",
+      "id": "docs_guides_results_grid"
     },
     {
       "label": "The results grid",
@@ -3650,10 +4024,10 @@
       "source_file": "docs/guides/results-grid.md",
       "source_location": "L3",
       "_origin": "ast",
-      "id": "docs_guides_results_grid_the_results_grid",
       "community": 196,
       "community_name": "The results grid",
-      "norm_label": "the results grid"
+      "norm_label": "the results grid",
+      "id": "docs_guides_results_grid_the_results_grid"
     },
     {
       "label": "Anatomy",
@@ -3661,10 +4035,10 @@
       "source_file": "docs/guides/results-grid.md",
       "source_location": "L7",
       "_origin": "ast",
-      "id": "docs_guides_results_grid_anatomy",
       "community": 196,
       "community_name": "The results grid",
-      "norm_label": "anatomy"
+      "norm_label": "anatomy",
+      "id": "docs_guides_results_grid_anatomy"
     },
     {
       "label": "The query line",
@@ -3672,10 +4046,10 @@
       "source_file": "docs/guides/results-grid.md",
       "source_location": "L16",
       "_origin": "ast",
-      "id": "docs_guides_results_grid_the_query_line",
       "community": 196,
       "community_name": "The results grid",
-      "norm_label": "the query line"
+      "norm_label": "the query line",
+      "id": "docs_guides_results_grid_the_query_line"
     },
     {
       "label": "Filtering in the database",
@@ -3683,10 +4057,10 @@
       "source_file": "docs/guides/results-grid.md",
       "source_location": "L19",
       "_origin": "ast",
-      "id": "docs_guides_results_grid_filtering_in_the_database",
       "community": 196,
       "community_name": "The results grid",
-      "norm_label": "filtering in the database"
+      "norm_label": "filtering in the database",
+      "id": "docs_guides_results_grid_filtering_in_the_database"
     },
     {
       "label": "Working with columns",
@@ -3694,10 +4068,10 @@
       "source_file": "docs/guides/results-grid.md",
       "source_location": "L31",
       "_origin": "ast",
-      "id": "docs_guides_results_grid_working_with_columns",
       "community": 196,
       "community_name": "The results grid",
-      "norm_label": "working with columns"
+      "norm_label": "working with columns",
+      "id": "docs_guides_results_grid_working_with_columns"
     },
     {
       "label": "Cells, rows and the record panel",
@@ -3705,10 +4079,10 @@
       "source_file": "docs/guides/results-grid.md",
       "source_location": "L36",
       "_origin": "ast",
-      "id": "docs_guides_results_grid_cells_rows_and_the_record_panel",
       "community": 196,
       "community_name": "The results grid",
-      "norm_label": "cells, rows and the record panel"
+      "norm_label": "cells, rows and the record panel",
+      "id": "docs_guides_results_grid_cells_rows_and_the_record_panel"
     },
     {
       "label": "Copy and save",
@@ -3716,10 +4090,10 @@
       "source_file": "docs/guides/results-grid.md",
       "source_location": "L42",
       "_origin": "ast",
-      "id": "docs_guides_results_grid_copy_and_save",
       "community": 196,
       "community_name": "The results grid",
-      "norm_label": "copy and save"
+      "norm_label": "copy and save",
+      "id": "docs_guides_results_grid_copy_and_save"
     },
     {
       "label": "Paging",
@@ -3727,10 +4101,10 @@
       "source_file": "docs/guides/results-grid.md",
       "source_location": "L45",
       "_origin": "ast",
-      "id": "docs_guides_results_grid_paging",
       "community": 196,
       "community_name": "The results grid",
-      "norm_label": "paging"
+      "norm_label": "paging",
+      "id": "docs_guides_results_grid_paging"
     },
     {
       "label": "Pin a results tab",
@@ -3738,10 +4112,10 @@
       "source_file": "docs/guides/results-grid.md",
       "source_location": "L52",
       "_origin": "ast",
-      "id": "docs_guides_results_grid_pin_a_results_tab",
       "community": 196,
       "community_name": "The results grid",
-      "norm_label": "pin a results tab"
+      "norm_label": "pin a results tab",
+      "id": "docs_guides_results_grid_pin_a_results_tab"
     },
     {
       "label": "Where results open",
@@ -3749,10 +4123,10 @@
       "source_file": "docs/guides/results-grid.md",
       "source_location": "L55",
       "_origin": "ast",
-      "id": "docs_guides_results_grid_where_results_open",
       "community": 196,
       "community_name": "The results grid",
-      "norm_label": "where results open"
+      "norm_label": "where results open",
+      "id": "docs_guides_results_grid_where_results_open"
     },
     {
       "label": "Shortcuts",
@@ -3760,10 +4134,10 @@
       "source_file": "docs/guides/results-grid.md",
       "source_location": "L58",
       "_origin": "ast",
-      "id": "docs_guides_results_grid_shortcuts",
       "community": 196,
       "community_name": "The results grid",
-      "norm_label": "shortcuts"
+      "norm_label": "shortcuts",
+      "id": "docs_guides_results_grid_shortcuts"
     },
     {
       "label": "settings.md",
@@ -3771,10 +4145,10 @@
       "source_file": "docs/reference/settings.md",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "docs_reference_settings",
       "community": 47,
       "community_name": "README.md",
-      "norm_label": "settings.md"
+      "norm_label": "settings.md",
+      "id": "docs_reference_settings"
     },
     {
       "label": "Settings reference",
@@ -3782,10 +4156,10 @@
       "source_file": "docs/reference/settings.md",
       "source_location": "L3",
       "_origin": "ast",
-      "id": "docs_reference_settings_settings_reference",
       "community": 47,
       "community_name": "README.md",
-      "norm_label": "settings reference"
+      "norm_label": "settings reference",
+      "id": "docs_reference_settings_settings_reference"
     },
     {
       "label": "schemaCache.ts",
@@ -4116,160 +4490,6 @@
       "community_name": "oracle/src/index.ts",
       "norm_label": "oracledriver",
       "id": "packages_drivers_oracle_src_index_oracledriver"
-    },
-    {
-      "label": "README.es.md",
-      "file_type": "document",
-      "source_file": "README.es.md",
-      "source_location": "L1",
-      "_origin": "ast",
-      "community": 31,
-      "community_name": "README.es.md",
-      "norm_label": "readme.es.md",
-      "id": "readme_es"
-    },
-    {
-      "label": "Qu\u00e9 hace",
-      "file_type": "document",
-      "source_file": "README.es.md",
-      "source_location": "L18",
-      "_origin": "ast",
-      "community": 31,
-      "community_name": "README.es.md",
-      "norm_label": "que hace",
-      "id": "readme_es_qu\u00e9_hace"
-    },
-    {
-      "label": "Motores",
-      "file_type": "document",
-      "source_file": "README.es.md",
-      "source_location": "L27",
-      "_origin": "ast",
-      "community": 31,
-      "community_name": "README.es.md",
-      "norm_label": "motores",
-      "id": "readme_es_motores"
-    },
-    {
-      "label": "Instalar",
-      "file_type": "document",
-      "source_file": "README.es.md",
-      "source_location": "L30",
-      "_origin": "ast",
-      "community": 31,
-      "community_name": "README.es.md",
-      "norm_label": "instalar",
-      "id": "readme_es_instalar"
-    },
-    {
-      "label": "Documentaci\u00f3n",
-      "file_type": "document",
-      "source_file": "README.es.md",
-      "source_location": "L39",
-      "_origin": "ast",
-      "community": 31,
-      "community_name": "README.es.md",
-      "norm_label": "documentacion",
-      "id": "readme_es_documentaci\u00f3n"
-    },
-    {
-      "label": "Desarrollo",
-      "file_type": "document",
-      "source_file": "README.es.md",
-      "source_location": "L42",
-      "_origin": "ast",
-      "community": 31,
-      "community_name": "README.es.md",
-      "norm_label": "desarrollo",
-      "id": "readme_es_desarrollo"
-    },
-    {
-      "label": "Licencia",
-      "file_type": "document",
-      "source_file": "README.es.md",
-      "source_location": "L51",
-      "_origin": "ast",
-      "community": 31,
-      "community_name": "README.es.md",
-      "norm_label": "licencia",
-      "id": "readme_es_licencia"
-    },
-    {
-      "label": "README.md",
-      "file_type": "document",
-      "source_file": "README.md",
-      "source_location": "L1",
-      "_origin": "ast",
-      "community": 47,
-      "community_name": "README.md",
-      "norm_label": "readme.md",
-      "id": "readme"
-    },
-    {
-      "label": "What it does",
-      "file_type": "document",
-      "source_file": "README.md",
-      "source_location": "L18",
-      "_origin": "ast",
-      "community": 47,
-      "community_name": "README.md",
-      "norm_label": "what it does",
-      "id": "readme_what_it_does"
-    },
-    {
-      "label": "Engines",
-      "file_type": "document",
-      "source_file": "README.md",
-      "source_location": "L27",
-      "_origin": "ast",
-      "community": 47,
-      "community_name": "README.md",
-      "norm_label": "engines",
-      "id": "readme_engines"
-    },
-    {
-      "label": "Install",
-      "file_type": "document",
-      "source_file": "README.md",
-      "source_location": "L30",
-      "_origin": "ast",
-      "community": 47,
-      "community_name": "README.md",
-      "norm_label": "install",
-      "id": "readme_install"
-    },
-    {
-      "label": "Documentation",
-      "file_type": "document",
-      "source_file": "README.md",
-      "source_location": "L39",
-      "_origin": "ast",
-      "community": 47,
-      "community_name": "README.md",
-      "norm_label": "documentation",
-      "id": "readme_documentation"
-    },
-    {
-      "label": "Development",
-      "file_type": "document",
-      "source_file": "README.md",
-      "source_location": "L42",
-      "_origin": "ast",
-      "community": 47,
-      "community_name": "README.md",
-      "norm_label": "development",
-      "id": "readme_development"
-    },
-    {
-      "label": "License",
-      "file_type": "document",
-      "source_file": "README.md",
-      "source_location": "L51",
-      "_origin": "ast",
-      "community": 47,
-      "community_name": "README.md",
-      "norm_label": "license",
-      "id": "readme_license"
     },
     {
       "label": "jdbcUrl.test.ts",
@@ -6426,226 +6646,6 @@
       "community_name": "t",
       "norm_label": "i18nblock()",
       "id": "apps_extension_src_ui_webviewstrings_i18nblock"
-    },
-    {
-      "label": "primeros-pasos.md",
-      "file_type": "document",
-      "source_file": "docs/es/guias/primeros-pasos.md",
-      "source_location": "L1",
-      "_origin": "ast",
-      "community": 31,
-      "community_name": "README.es.md",
-      "norm_label": "primeros-pasos.md",
-      "id": "docs_es_guias_primeros_pasos"
-    },
-    {
-      "label": "Primeros pasos",
-      "file_type": "document",
-      "source_file": "docs/es/guias/primeros-pasos.md",
-      "source_location": "L3",
-      "_origin": "ast",
-      "community": 209,
-      "community_name": "Primeros pasos",
-      "norm_label": "primeros pasos",
-      "id": "docs_es_guias_primeros_pasos_primeros_pasos"
-    },
-    {
-      "label": "1. Instalar",
-      "file_type": "document",
-      "source_file": "docs/es/guias/primeros-pasos.md",
-      "source_location": "L7",
-      "_origin": "ast",
-      "community": 209,
-      "community_name": "Primeros pasos",
-      "norm_label": "1. instalar",
-      "id": "docs_es_guias_primeros_pasos_1_instalar"
-    },
-    {
-      "label": "2. Crear una conexi\u00f3n",
-      "file_type": "document",
-      "source_file": "docs/es/guias/primeros-pasos.md",
-      "source_location": "L23",
-      "_origin": "ast",
-      "community": 209,
-      "community_name": "Primeros pasos",
-      "norm_label": "2. crear una conexion",
-      "id": "docs_es_guias_primeros_pasos_2_crear_una_conexi\u00f3n"
-    },
-    {
-      "label": "3. Explorar",
-      "file_type": "document",
-      "source_file": "docs/es/guias/primeros-pasos.md",
-      "source_location": "L30",
-      "_origin": "ast",
-      "community": 209,
-      "community_name": "Primeros pasos",
-      "norm_label": "3. explorar",
-      "id": "docs_es_guias_primeros_pasos_3_explorar"
-    },
-    {
-      "label": "4. Abrir una tabla",
-      "file_type": "document",
-      "source_file": "docs/es/guias/primeros-pasos.md",
-      "source_location": "L33",
-      "_origin": "ast",
-      "community": 209,
-      "community_name": "Primeros pasos",
-      "norm_label": "4. abrir una tabla",
-      "id": "docs_es_guias_primeros_pasos_4_abrir_una_tabla"
-    },
-    {
-      "label": "5. Ejecutar una consulta",
-      "file_type": "document",
-      "source_file": "docs/es/guias/primeros-pasos.md",
-      "source_location": "L36",
-      "_origin": "ast",
-      "community": 209,
-      "community_name": "Primeros pasos",
-      "norm_label": "5. ejecutar una consulta",
-      "id": "docs_es_guias_primeros_pasos_5_ejecutar_una_consulta"
-    },
-    {
-      "label": "6. Editar un valor",
-      "file_type": "document",
-      "source_file": "docs/es/guias/primeros-pasos.md",
-      "source_location": "L39",
-      "_origin": "ast",
-      "community": 209,
-      "community_name": "Primeros pasos",
-      "norm_label": "6. editar un valor",
-      "id": "docs_es_guias_primeros_pasos_6_editar_un_valor"
-    },
-    {
-      "label": "7. Hazlo tuyo",
-      "file_type": "document",
-      "source_file": "docs/es/guias/primeros-pasos.md",
-      "source_location": "L42",
-      "_origin": "ast",
-      "community": 209,
-      "community_name": "Primeros pasos",
-      "norm_label": "7. hazlo tuyo",
-      "id": "docs_es_guias_primeros_pasos_7_hazlo_tuyo"
-    },
-    {
-      "label": "Conviene saber",
-      "file_type": "document",
-      "source_file": "docs/es/guias/primeros-pasos.md",
-      "source_location": "L45",
-      "_origin": "ast",
-      "community": 209,
-      "community_name": "Primeros pasos",
-      "norm_label": "conviene saber",
-      "id": "docs_es_guias_primeros_pasos_conviene_saber"
-    },
-    {
-      "label": "getting-started.md",
-      "file_type": "document",
-      "source_file": "docs/guides/getting-started.md",
-      "source_location": "L1",
-      "_origin": "ast",
-      "community": 47,
-      "community_name": "README.md",
-      "norm_label": "getting-started.md",
-      "id": "docs_guides_getting_started"
-    },
-    {
-      "label": "Getting started",
-      "file_type": "document",
-      "source_file": "docs/guides/getting-started.md",
-      "source_location": "L3",
-      "_origin": "ast",
-      "community": 111,
-      "community_name": "Getting started",
-      "norm_label": "getting started",
-      "id": "docs_guides_getting_started_getting_started"
-    },
-    {
-      "label": "1. Install",
-      "file_type": "document",
-      "source_file": "docs/guides/getting-started.md",
-      "source_location": "L7",
-      "_origin": "ast",
-      "community": 111,
-      "community_name": "Getting started",
-      "norm_label": "1. install",
-      "id": "docs_guides_getting_started_1_install"
-    },
-    {
-      "label": "2. Create a connection",
-      "file_type": "document",
-      "source_file": "docs/guides/getting-started.md",
-      "source_location": "L23",
-      "_origin": "ast",
-      "community": 111,
-      "community_name": "Getting started",
-      "norm_label": "2. create a connection",
-      "id": "docs_guides_getting_started_2_create_a_connection"
-    },
-    {
-      "label": "3. Explore",
-      "file_type": "document",
-      "source_file": "docs/guides/getting-started.md",
-      "source_location": "L30",
-      "_origin": "ast",
-      "community": 111,
-      "community_name": "Getting started",
-      "norm_label": "3. explore",
-      "id": "docs_guides_getting_started_3_explore"
-    },
-    {
-      "label": "4. Open a table",
-      "file_type": "document",
-      "source_file": "docs/guides/getting-started.md",
-      "source_location": "L33",
-      "_origin": "ast",
-      "community": 111,
-      "community_name": "Getting started",
-      "norm_label": "4. open a table",
-      "id": "docs_guides_getting_started_4_open_a_table"
-    },
-    {
-      "label": "5. Run a query",
-      "file_type": "document",
-      "source_file": "docs/guides/getting-started.md",
-      "source_location": "L36",
-      "_origin": "ast",
-      "community": 111,
-      "community_name": "Getting started",
-      "norm_label": "5. run a query",
-      "id": "docs_guides_getting_started_5_run_a_query"
-    },
-    {
-      "label": "6. Edit a value",
-      "file_type": "document",
-      "source_file": "docs/guides/getting-started.md",
-      "source_location": "L39",
-      "_origin": "ast",
-      "community": 111,
-      "community_name": "Getting started",
-      "norm_label": "6. edit a value",
-      "id": "docs_guides_getting_started_6_edit_a_value"
-    },
-    {
-      "label": "7. Make it yours",
-      "file_type": "document",
-      "source_file": "docs/guides/getting-started.md",
-      "source_location": "L42",
-      "_origin": "ast",
-      "community": 111,
-      "community_name": "Getting started",
-      "norm_label": "7. make it yours",
-      "id": "docs_guides_getting_started_7_make_it_yours"
-    },
-    {
-      "label": "Good to know",
-      "file_type": "document",
-      "source_file": "docs/guides/getting-started.md",
-      "source_location": "L45",
-      "_origin": "ast",
-      "community": 111,
-      "community_name": "Getting started",
-      "norm_label": "good to know",
-      "id": "docs_guides_getting_started_good_to_know"
     },
     {
       "label": "connectMessages.ts",
@@ -48181,9 +48181,9 @@
       "source_location": "L52",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "readme_es",
-      "target": "changelog_es"
+      "target": "changelog_es",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -48248,7 +48248,7 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "changelog_es_registro_de_cambios",
-      "target": "changelog_es_sin_publicar",
+      "target": "changelog_es_1_2_1_2026_10_22",
       "confidence_score": 1.0
     },
     {
@@ -48258,7 +48258,7 @@
       "source_location": "L16",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "changelog_es_sin_publicar",
+      "source": "changelog_es_1_2_1_2026_10_22",
       "target": "changelog_es_cambiado",
       "confidence_score": 1.0
     },
@@ -48269,7 +48269,7 @@
       "source_location": "L19",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "changelog_es_sin_publicar",
+      "source": "changelog_es_1_2_1_2026_10_22",
       "target": "changelog_es_corregido",
       "confidence_score": 1.0
     },
@@ -48412,9 +48412,9 @@
       "source_location": "L52",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "readme",
-      "target": "changelog"
+      "target": "changelog",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -48479,7 +48479,7 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "changelog_changelog",
-      "target": "changelog_unreleased",
+      "target": "changelog_1_2_1_2026_10_22",
       "confidence_score": 1.0
     },
     {
@@ -48489,7 +48489,7 @@
       "source_location": "L16",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "changelog_unreleased",
+      "source": "changelog_1_2_1_2026_10_22",
       "target": "changelog_changed",
       "confidence_score": 1.0
     },
@@ -48500,7 +48500,7 @@
       "source_location": "L19",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "changelog_unreleased",
+      "source": "changelog_1_2_1_2026_10_22",
       "target": "changelog_fixed",
       "confidence_score": 1.0
     },
@@ -48612,6 +48612,677 @@
       "_origin": "ast",
       "source": "changelog_1_0_0_2026_10_22",
       "target": "changelog_known_limits",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L12",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme",
+      "target": "readme_es",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.es.md",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme_es",
+      "target": "agents",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.es.md",
+      "source_location": "L52",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme_es",
+      "target": "code_of_conduct_es",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.es.md",
+      "source_location": "L49",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme_es",
+      "target": "contributing_es",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.es.md",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme_es",
+      "target": "docs_es_ci_cd",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.es.md",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme_es",
+      "target": "docs_es_design_guia_de_diseno",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.es.md",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme_es",
+      "target": "docs_es_drivers_crear_un_driver",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.es.md",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme_es",
+      "target": "docs_es_empresa_politicas",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.es.md",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme_es",
+      "target": "docs_es_guias_ayuda_a_probar",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.es.md",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme_es",
+      "target": "docs_es_guias_conexiones",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.es.md",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme_es",
+      "target": "docs_es_guias_edicion_de_datos",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.es.md",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme_es",
+      "target": "docs_es_guias_editor_de_consultas",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.es.md",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme_es",
+      "target": "docs_es_guias_idioma_y_ajustes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.es.md",
+      "source_location": "L37",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme_es",
+      "target": "docs_es_guias_primeros_pasos",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.es.md",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme_es",
+      "target": "docs_es_guias_rejilla_de_resultados",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.es.md",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme_es",
+      "target": "docs_es_guias_solucion_de_problemas",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.es.md",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme_es",
+      "target": "docs_es_guias_teclado",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.es.md",
+      "source_location": "L28",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme_es",
+      "target": "docs_es_motores_readme",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.es.md",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme_es",
+      "target": "docs_es_referencia_ajustes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.es.md",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme_es",
+      "target": "docs_es_referencia_comandos",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.es.md",
+      "source_location": "L28",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme_es",
+      "target": "docs_es_referencia_matriz_de_motores",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.es.md",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme_es",
+      "target": "docs_es_release_lista_de_aceptacion_v1",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.es.md",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme_es",
+      "target": "docs_es_seguridad_modelo_de_amenazas",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.es.md",
+      "source_location": "L52",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme_es",
+      "target": "docs_legal_third_party_licenses",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.es.md",
+      "source_location": "L42",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme_es",
+      "target": "readme_es_desarrollo",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.es.md",
+      "source_location": "L39",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme_es",
+      "target": "readme_es_documentaci\u00f3n",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.es.md",
+      "source_location": "L30",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme_es",
+      "target": "readme_es_instalar",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.es.md",
+      "source_location": "L51",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme_es",
+      "target": "readme_es_licencia",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.es.md",
+      "source_location": "L27",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme_es",
+      "target": "readme_es_motores",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.es.md",
+      "source_location": "L18",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme_es",
+      "target": "readme_es_qu\u00e9_hace",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.es.md",
+      "source_location": "L52",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme_es",
+      "target": "security_es",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "AGENTS.md",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "agents",
+      "target": "readme"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L52",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme",
+      "target": "code_of_conduct",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L49",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme",
+      "target": "contributing",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme",
+      "target": "docs_ci_cd",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme",
+      "target": "docs_design_design_guide",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme",
+      "target": "docs_drivers_authoring",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L28",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme",
+      "target": "docs_engines_readme",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme",
+      "target": "docs_enterprise_policy",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme",
+      "target": "docs_guides_connections",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme",
+      "target": "docs_guides_editing_data",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L37",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme",
+      "target": "docs_guides_getting_started",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme",
+      "target": "docs_guides_help_test",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme",
+      "target": "docs_guides_keyboard",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme",
+      "target": "docs_guides_language_and_settings",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme",
+      "target": "docs_guides_query_editor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme",
+      "target": "docs_guides_results_grid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme",
+      "target": "docs_guides_troubleshooting",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L52",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme",
+      "target": "docs_legal_third_party_licenses",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme",
+      "target": "docs_reference_commands",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L28",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme",
+      "target": "docs_reference_engine_matrix",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme",
+      "target": "docs_reference_settings",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme",
+      "target": "docs_release_v1_checklist",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme",
+      "target": "docs_security_threat_model",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L42",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme",
+      "target": "readme_development",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L39",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme",
+      "target": "readme_documentation",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L27",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme",
+      "target": "readme_engines",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L30",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme",
+      "target": "readme_install",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L51",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme",
+      "target": "readme_license",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L18",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme",
+      "target": "readme_what_it_does",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L52",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "readme",
+      "target": "security",
       "confidence_score": 1.0
     },
     {
@@ -51678,6 +52349,336 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/es/guias/primeros-pasos.md",
+      "source_location": "L27",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_es_guias_primeros_pasos",
+      "target": "docs_es_guias_conexiones",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/es/guias/primeros-pasos.md",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_es_guias_primeros_pasos",
+      "target": "docs_es_guias_edicion_de_datos",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/es/guias/primeros-pasos.md",
+      "source_location": "L37",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_es_guias_primeros_pasos",
+      "target": "docs_es_guias_editor_de_consultas",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/es/guias/primeros-pasos.md",
+      "source_location": "L43",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_es_guias_primeros_pasos",
+      "target": "docs_es_guias_idioma_y_ajustes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/es/guias/primeros-pasos.md",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_es_guias_primeros_pasos",
+      "target": "docs_es_guias_primeros_pasos_primeros_pasos",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/es/guias/primeros-pasos.md",
+      "source_location": "L34",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_es_guias_primeros_pasos",
+      "target": "docs_es_guias_rejilla_de_resultados",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/es/guias/primeros-pasos.md",
+      "source_location": "L47",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_es_guias_primeros_pasos",
+      "target": "docs_es_guias_solucion_de_problemas",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/es/guias/primeros-pasos.md",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_es_guias_primeros_pasos_primeros_pasos",
+      "target": "docs_es_guias_primeros_pasos_1_instalar",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/es/guias/primeros-pasos.md",
+      "source_location": "L23",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_es_guias_primeros_pasos_primeros_pasos",
+      "target": "docs_es_guias_primeros_pasos_2_crear_una_conexi\u00f3n",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/es/guias/primeros-pasos.md",
+      "source_location": "L30",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_es_guias_primeros_pasos_primeros_pasos",
+      "target": "docs_es_guias_primeros_pasos_3_explorar",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/es/guias/primeros-pasos.md",
+      "source_location": "L33",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_es_guias_primeros_pasos_primeros_pasos",
+      "target": "docs_es_guias_primeros_pasos_4_abrir_una_tabla",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/es/guias/primeros-pasos.md",
+      "source_location": "L36",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_es_guias_primeros_pasos_primeros_pasos",
+      "target": "docs_es_guias_primeros_pasos_5_ejecutar_una_consulta",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/es/guias/primeros-pasos.md",
+      "source_location": "L39",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_es_guias_primeros_pasos_primeros_pasos",
+      "target": "docs_es_guias_primeros_pasos_6_editar_un_valor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/es/guias/primeros-pasos.md",
+      "source_location": "L42",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_es_guias_primeros_pasos_primeros_pasos",
+      "target": "docs_es_guias_primeros_pasos_7_hazlo_tuyo",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/es/guias/primeros-pasos.md",
+      "source_location": "L45",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_es_guias_primeros_pasos_primeros_pasos",
+      "target": "docs_es_guias_primeros_pasos_conviene_saber",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/guides/getting-started.md",
+      "source_location": "L27",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_guides_getting_started",
+      "target": "docs_guides_connections",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/guides/getting-started.md",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_guides_getting_started",
+      "target": "docs_guides_editing_data",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/guides/getting-started.md",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_guides_getting_started",
+      "target": "docs_guides_getting_started_getting_started",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/guides/getting-started.md",
+      "source_location": "L43",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_guides_getting_started",
+      "target": "docs_guides_language_and_settings",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/guides/getting-started.md",
+      "source_location": "L37",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_guides_getting_started",
+      "target": "docs_guides_query_editor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/guides/getting-started.md",
+      "source_location": "L34",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_guides_getting_started",
+      "target": "docs_guides_results_grid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/guides/getting-started.md",
+      "source_location": "L47",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_guides_getting_started",
+      "target": "docs_guides_troubleshooting",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/guides/getting-started.md",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_guides_getting_started_getting_started",
+      "target": "docs_guides_getting_started_1_install",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/guides/getting-started.md",
+      "source_location": "L23",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_guides_getting_started_getting_started",
+      "target": "docs_guides_getting_started_2_create_a_connection",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/guides/getting-started.md",
+      "source_location": "L30",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_guides_getting_started_getting_started",
+      "target": "docs_guides_getting_started_3_explore",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/guides/getting-started.md",
+      "source_location": "L33",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_guides_getting_started_getting_started",
+      "target": "docs_guides_getting_started_4_open_a_table",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/guides/getting-started.md",
+      "source_location": "L36",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_guides_getting_started_getting_started",
+      "target": "docs_guides_getting_started_5_run_a_query",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/guides/getting-started.md",
+      "source_location": "L39",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_guides_getting_started_getting_started",
+      "target": "docs_guides_getting_started_6_edit_a_value",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/guides/getting-started.md",
+      "source_location": "L42",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_guides_getting_started_getting_started",
+      "target": "docs_guides_getting_started_7_make_it_yours",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/guides/getting-started.md",
+      "source_location": "L45",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "docs_guides_getting_started_getting_started",
+      "target": "docs_guides_getting_started_good_to_know",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -51685,9 +52686,9 @@
       "source_location": "L21",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_enginelogos",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_enginelogos"
     },
     {
       "relation": "imports",
@@ -51697,9 +52698,9 @@
       "source_location": "L21",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_enginelogos_engine_logos",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_enginelogos_engine_logos"
     },
     {
       "relation": "contains",
@@ -51708,9 +52709,9 @@
       "source_location": "L88",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_extension_activate",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_extension_activate"
     },
     {
       "relation": "contains",
@@ -51719,9 +52720,9 @@
       "source_location": "L62",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_extension_cfg",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_extension_cfg"
     },
     {
       "relation": "contains",
@@ -51730,9 +52731,9 @@
       "source_location": "L875",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_extension_deactivate",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_extension_deactivate"
     },
     {
       "relation": "contains",
@@ -51741,9 +52742,9 @@
       "source_location": "L65",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_extension_makeregistry",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_extension_makeregistry"
     },
     {
       "relation": "imports_from",
@@ -51753,9 +52754,9 @@
       "source_location": "L60",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_i18n",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_i18n"
     },
     {
       "relation": "imports",
@@ -51765,9 +52766,9 @@
       "source_location": "L60",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_i18n_initi18n",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_i18n_initi18n"
     },
     {
       "relation": "imports",
@@ -51777,9 +52778,9 @@
       "source_location": "L60",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_i18n_t",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_i18n_t"
     },
     {
       "relation": "imports_from",
@@ -51789,9 +52790,9 @@
       "source_location": "L5",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_catalog",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_catalog"
     },
     {
       "relation": "imports",
@@ -51801,9 +52802,9 @@
       "source_location": "L5",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_catalog_loadcatalog",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_catalog_loadcatalog"
     },
     {
       "relation": "imports_from",
@@ -51813,9 +52814,9 @@
       "source_location": "L11",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_commandat",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_commandat"
     },
     {
       "relation": "imports",
@@ -51825,9 +52826,9 @@
       "source_location": "L11",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_commandat_commandat",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_commandat_commandat"
     },
     {
       "relation": "imports",
@@ -51837,9 +52838,9 @@
       "source_location": "L11",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_commandat_isquerylanguage",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_commandat_isquerylanguage"
     },
     {
       "relation": "imports_from",
@@ -51849,9 +52850,9 @@
       "source_location": "L29",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_connectioninfo",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_connectioninfo"
     },
     {
       "relation": "imports",
@@ -51861,9 +52862,9 @@
       "source_location": "L29",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_connectioninfo_databaseof",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_connectioninfo_databaseof"
     },
     {
       "relation": "imports_from",
@@ -51873,9 +52874,9 @@
       "source_location": "L7",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_connections",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_connections"
     },
     {
       "relation": "imports",
@@ -51885,9 +52886,9 @@
       "source_location": "L7",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_connections_connectionmanager",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_connections_connectionmanager"
     },
     {
       "relation": "imports",
@@ -51897,9 +52898,9 @@
       "source_location": "L7",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_connections_driverregistry",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_connections_driverregistry"
     },
     {
       "relation": "imports",
@@ -51909,9 +52910,9 @@
       "source_location": "L7",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_connections_tunnelfactory",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_connections_tunnelfactory"
     },
     {
       "relation": "imports_from",
@@ -51921,9 +52922,9 @@
       "source_location": "L26",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_encryptedcatalog",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_encryptedcatalog"
     },
     {
       "relation": "imports",
@@ -51933,9 +52934,9 @@
       "source_location": "L26",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_encryptedcatalog_seal",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_encryptedcatalog_seal"
     },
     {
       "relation": "imports",
@@ -51945,9 +52946,9 @@
       "source_location": "L26",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_encryptedcatalog_sealedcatalogerror",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_encryptedcatalog_sealedcatalogerror"
     },
     {
       "relation": "imports",
@@ -51957,9 +52958,9 @@
       "source_location": "L26",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_encryptedcatalog_unseal",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_encryptedcatalog_unseal"
     },
     {
       "relation": "imports_from",
@@ -51969,9 +52970,9 @@
       "source_location": "L28",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_environments",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_environments"
     },
     {
       "relation": "imports",
@@ -51981,9 +52982,9 @@
       "source_location": "L28",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_environments_customenvironmentpolicy",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_environments_customenvironmentpolicy"
     },
     {
       "relation": "imports_from",
@@ -51993,9 +52994,9 @@
       "source_location": "L24",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_favorites",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_favorites"
     },
     {
       "relation": "imports",
@@ -52005,9 +53006,9 @@
       "source_location": "L24",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_favorites_favorites",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_favorites_favorites"
     },
     {
       "relation": "imports_from",
@@ -52017,9 +53018,9 @@
       "source_location": "L12",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_format",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_format"
     },
     {
       "relation": "imports",
@@ -52029,9 +53030,9 @@
       "source_location": "L12",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_format_formatvalue",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_format_formatvalue"
     },
     {
       "relation": "imports_from",
@@ -52041,9 +53042,9 @@
       "source_location": "L9",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_history",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_history"
     },
     {
       "relation": "imports",
@@ -52053,9 +53054,9 @@
       "source_location": "L9",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_history_history",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_history_history"
     },
     {
       "relation": "imports_from",
@@ -52065,9 +53066,9 @@
       "source_location": "L32",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_keysetpaging",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_keysetpaging"
     },
     {
       "relation": "imports",
@@ -52077,9 +53078,9 @@
       "source_location": "L32",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_keysetpaging_keysetkey",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_keysetpaging_keysetkey"
     },
     {
       "relation": "imports",
@@ -52089,9 +53090,9 @@
       "source_location": "L32",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_keysetpaging_keysetorder",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_keysetpaging_keysetorder"
     },
     {
       "relation": "imports",
@@ -52101,9 +53102,9 @@
       "source_location": "L32",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_keysetpaging_keysetstatement",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_keysetpaging_keysetstatement"
     },
     {
       "relation": "imports",
@@ -52113,9 +53114,9 @@
       "source_location": "L32",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_keysetpaging_keysetsupported",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_keysetpaging_keysetsupported"
     },
     {
       "relation": "imports",
@@ -52125,9 +53126,9 @@
       "source_location": "L32",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_keysetpaging_lastkey",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_keysetpaging_lastkey"
     },
     {
       "relation": "imports_from",
@@ -52137,9 +53138,9 @@
       "source_location": "L36",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_logosvg",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_logosvg"
     },
     {
       "relation": "imports",
@@ -52149,9 +53150,9 @@
       "source_location": "L36",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_logosvg_logosvg",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_logosvg_logosvg"
     },
     {
       "relation": "imports_from",
@@ -52161,9 +53162,9 @@
       "source_location": "L4",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_policyfiles",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_policyfiles"
     },
     {
       "relation": "imports",
@@ -52173,9 +53174,9 @@
       "source_location": "L4",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_policyfiles_loadpolicy",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_policyfiles_loadpolicy"
     },
     {
       "relation": "imports_from",
@@ -52185,9 +53186,9 @@
       "source_location": "L25",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_querybuilder",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_querybuilder"
     },
     {
       "relation": "imports",
@@ -52197,9 +53198,9 @@
       "source_location": "L25",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_querybuilder_buildererror",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_querybuilder_buildererror"
     },
     {
       "relation": "imports",
@@ -52209,9 +53210,9 @@
       "source_location": "L25",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_querybuilder_buildselect",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_querybuilder_buildselect"
     },
     {
       "relation": "imports",
@@ -52221,9 +53222,9 @@
       "source_location": "L25",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_querybuilder_condition",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_querybuilder_condition"
     },
     {
       "relation": "imports",
@@ -52233,9 +53234,9 @@
       "source_location": "L25",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_querybuilder_kindofnative",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_querybuilder_kindofnative"
     },
     {
       "relation": "imports",
@@ -52245,9 +53246,9 @@
       "source_location": "L25",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_querybuilder_operators",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_querybuilder_operators"
     },
     {
       "relation": "imports_from",
@@ -52257,9 +53258,9 @@
       "source_location": "L27",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_readonlyuser",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_readonlyuser"
     },
     {
       "relation": "imports",
@@ -52269,9 +53270,9 @@
       "source_location": "L27",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_readonlyuser_readonlyusererror",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_readonlyuser_readonlyusererror"
     },
     {
       "relation": "imports",
@@ -52281,9 +53282,9 @@
       "source_location": "L27",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_readonlyuser_readonlyuserscript",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_readonlyuser_readonlyuserscript"
     },
     {
       "relation": "imports",
@@ -52293,9 +53294,9 @@
       "source_location": "L27",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_readonlyuser_supportsreadonlyuser",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_readonlyuser_supportsreadonlyuser"
     },
     {
       "relation": "imports_from",
@@ -52305,9 +53306,9 @@
       "source_location": "L8",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_runner",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_runner"
     },
     {
       "relation": "imports",
@@ -52317,9 +53318,9 @@
       "source_location": "L8",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_runner_runevent",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_runner_runevent"
     },
     {
       "relation": "imports",
@@ -52329,9 +53330,9 @@
       "source_location": "L8",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_runner_runstatement",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_runner_runstatement"
     },
     {
       "relation": "imports_from",
@@ -52341,9 +53342,9 @@
       "source_location": "L52",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_schemacache",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_schemacache"
     },
     {
       "relation": "imports",
@@ -52353,9 +53354,9 @@
       "source_location": "L52",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_schemacache_dialect_of",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_schemacache_dialect_of"
     },
     {
       "relation": "imports",
@@ -52365,9 +53366,9 @@
       "source_location": "L52",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_schemacache_schemacache",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_schemacache_schemacache"
     },
     {
       "relation": "imports_from",
@@ -52377,9 +53378,9 @@
       "source_location": "L43",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_schemamodel",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_schemamodel"
     },
     {
       "relation": "imports",
@@ -52389,9 +53390,9 @@
       "source_location": "L43",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_schemamodel_describechanges",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_schemamodel_describechanges"
     },
     {
       "relation": "imports",
@@ -52401,9 +53402,9 @@
       "source_location": "L43",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_schemamodel_loadmodel",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_schemamodel_loadmodel"
     },
     {
       "relation": "imports",
@@ -52413,9 +53414,9 @@
       "source_location": "L43",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_schemamodel_missingfkindexes",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_schemamodel_missingfkindexes"
     },
     {
       "relation": "imports_from",
@@ -52425,9 +53426,9 @@
       "source_location": "L10",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_splitter",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_splitter"
     },
     {
       "relation": "imports",
@@ -52437,9 +53438,9 @@
       "source_location": "L10",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_splitter_splitstatements",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_splitter_splitstatements"
     },
     {
       "relation": "imports",
@@ -52449,9 +53450,9 @@
       "source_location": "L10",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_splitter_statementat",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_splitter_statementat"
     },
     {
       "relation": "imports_from",
@@ -52461,9 +53462,9 @@
       "source_location": "L34",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_statements",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_statements"
     },
     {
       "relation": "imports",
@@ -52473,9 +53474,9 @@
       "source_location": "L34",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_statements_statementranges",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_statements_statementranges"
     },
     {
       "relation": "imports_from",
@@ -52485,9 +53486,9 @@
       "source_location": "L22",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_tableproperties",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_tableproperties"
     },
     {
       "relation": "imports",
@@ -52497,9 +53498,9 @@
       "source_location": "L22",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_tableproperties_tableproperties",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_tableproperties_tableproperties"
     },
     {
       "relation": "imports_from",
@@ -52509,9 +53510,9 @@
       "source_location": "L31",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_tablequery",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_tablequery"
     },
     {
       "relation": "imports",
@@ -52521,9 +53522,9 @@
       "source_location": "L31",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_tablequery_buildtablequery",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_tablequery_buildtablequery"
     },
     {
       "relation": "imports",
@@ -52533,9 +53534,9 @@
       "source_location": "L31",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_tablequery_filtererror",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_tablequery_filtererror"
     },
     {
       "relation": "imports",
@@ -52545,9 +53546,9 @@
       "source_location": "L31",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_tablequery_filterkindof",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_tablequery_filterkindof"
     },
     {
       "relation": "imports_from",
@@ -52557,9 +53558,9 @@
       "source_location": "L15",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_tablesession",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_tablesession"
     },
     {
       "relation": "imports",
@@ -52569,9 +53570,9 @@
       "source_location": "L15",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_tablesession_inputerror",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_tablesession_inputerror"
     },
     {
       "relation": "imports",
@@ -52581,9 +53582,9 @@
       "source_location": "L15",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_lib_tablesession_tablesession",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_lib_tablesession_tablesession"
     },
     {
       "relation": "imports_from",
@@ -52593,9 +53594,9 @@
       "source_location": "L48",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_ui_admincommands",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_ui_admincommands"
     },
     {
       "relation": "imports",
@@ -52605,9 +53606,9 @@
       "source_location": "L48",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_ui_admincommands_registeradmincommands",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_ui_admincommands_registeradmincommands"
     },
     {
       "relation": "imports_from",
@@ -52617,9 +53618,9 @@
       "source_location": "L49",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_ui_aicommands",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_ui_aicommands"
     },
     {
       "relation": "imports",
@@ -52629,9 +53630,9 @@
       "source_location": "L49",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_ui_aicommands_registeraicommands",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_ui_aicommands_registeraicommands"
     },
     {
       "relation": "imports_from",
@@ -52641,9 +53642,9 @@
       "source_location": "L19",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_ui_columnactions",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_ui_columnactions"
     },
     {
       "relation": "imports",
@@ -52653,9 +53654,9 @@
       "source_location": "L19",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_ui_columnactions_runcolumnaction",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_ui_columnactions_runcolumnaction"
     },
     {
       "relation": "imports_from",
@@ -52665,9 +53666,9 @@
       "source_location": "L17",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_ui_connectionpanel",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_ui_connectionpanel"
     },
     {
       "relation": "imports",
@@ -52677,9 +53678,9 @@
       "source_location": "L17",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_ui_connectionpanel_openconnectionscreen",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_ui_connectionpanel_openconnectionscreen"
     },
     {
       "relation": "imports_from",
@@ -52689,9 +53690,9 @@
       "source_location": "L46",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_ui_datacommands",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_ui_datacommands"
     },
     {
       "relation": "imports",
@@ -52701,9 +53702,9 @@
       "source_location": "L46",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_ui_datacommands_registerdatacommands",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_ui_datacommands_registerdatacommands"
     },
     {
       "relation": "imports_from",
@@ -52713,9 +53714,9 @@
       "source_location": "L42",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_ui_designerpanel",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_ui_designerpanel"
     },
     {
       "relation": "imports",
@@ -52725,9 +53726,9 @@
       "source_location": "L42",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_ui_designerpanel_opendesigner",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_ui_designerpanel_opendesigner"
     },
     {
       "relation": "imports_from",
@@ -52737,9 +53738,9 @@
       "source_location": "L30",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_ui_drivermessages",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_ui_drivermessages"
     },
     {
       "relation": "imports",
@@ -52749,9 +53750,9 @@
       "source_location": "L30",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_ui_drivermessages_friendly",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_ui_drivermessages_friendly"
     },
     {
       "relation": "imports",
@@ -52761,9 +53762,9 @@
       "source_location": "L30",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_ui_drivermessages_friendlyreasons",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_ui_drivermessages_friendlyreasons"
     },
     {
       "relation": "imports_from",
@@ -52773,9 +53774,9 @@
       "source_location": "L33",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_ui_editortools",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_ui_editortools"
     },
     {
       "relation": "imports",
@@ -52785,9 +53786,9 @@
       "source_location": "L33",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_ui_editortools_registereditortools",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_ui_editortools_registereditortools"
     },
     {
       "relation": "imports_from",
@@ -52797,9 +53798,9 @@
       "source_location": "L41",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_ui_erpanel",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_ui_erpanel"
     },
     {
       "relation": "imports",
@@ -52809,9 +53810,9 @@
       "source_location": "L41",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_ui_erpanel_shower",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_ui_erpanel_shower"
     },
     {
       "relation": "imports_from",
@@ -52821,9 +53822,9 @@
       "source_location": "L20",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_ui_explorer",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_ui_explorer"
     },
     {
       "relation": "imports",
@@ -52833,9 +53834,9 @@
       "source_location": "L20",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_ui_explorer_engineof",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_ui_explorer_engineof"
     },
     {
       "relation": "imports",
@@ -52845,9 +53846,9 @@
       "source_location": "L13",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_ui_explorer_explorer",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_ui_explorer_explorer"
     },
     {
       "relation": "imports",
@@ -52857,9 +53858,9 @@
       "source_location": "L13",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_ui_explorer_node",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_ui_explorer_node"
     },
     {
       "relation": "imports_from",
@@ -52869,9 +53870,9 @@
       "source_location": "L35",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_ui_guidepanel",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_ui_guidepanel"
     },
     {
       "relation": "imports",
@@ -52881,9 +53882,9 @@
       "source_location": "L35",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_ui_guidepanel_offerguideonce",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_ui_guidepanel_offerguideonce"
     },
     {
       "relation": "imports",
@@ -52893,9 +53894,9 @@
       "source_location": "L35",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_ui_guidepanel_openguide",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_ui_guidepanel_openguide"
     },
     {
       "relation": "imports_from",
@@ -52905,9 +53906,9 @@
       "source_location": "L23",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_ui_historypanel",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_ui_historypanel"
     },
     {
       "relation": "imports",
@@ -52917,9 +53918,9 @@
       "source_location": "L23",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_ui_historypanel_openhistoryscreen",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_ui_historypanel_openhistoryscreen"
     },
     {
       "relation": "imports_from",
@@ -52929,9 +53930,9 @@
       "source_location": "L51",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_ui_importwizard",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_ui_importwizard"
     },
     {
       "relation": "imports",
@@ -52941,9 +53942,9 @@
       "source_location": "L51",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_ui_importwizard_registerimportwizard",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_ui_importwizard_registerimportwizard"
     },
     {
       "relation": "imports_from",
@@ -52953,9 +53954,9 @@
       "source_location": "L38",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_ui_language",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_ui_language"
     },
     {
       "relation": "imports",
@@ -52965,9 +53966,9 @@
       "source_location": "L38",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_ui_language_registerlanguage",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_ui_language_registerlanguage"
     },
     {
       "relation": "imports_from",
@@ -52977,9 +53978,9 @@
       "source_location": "L50",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_ui_mcpprovider",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_ui_mcpprovider"
     },
     {
       "relation": "imports",
@@ -52989,9 +53990,9 @@
       "source_location": "L50",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_ui_mcpprovider_registermcpprovider",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_ui_mcpprovider_registermcpprovider"
     },
     {
       "relation": "imports_from",
@@ -53001,9 +54002,9 @@
       "source_location": "L47",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_ui_nosqlcommands",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_ui_nosqlcommands"
     },
     {
       "relation": "imports",
@@ -53013,9 +54014,9 @@
       "source_location": "L47",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_ui_nosqlcommands_registernosqlcommands",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_ui_nosqlcommands_registernosqlcommands"
     },
     {
       "relation": "imports_from",
@@ -53025,9 +54026,9 @@
       "source_location": "L40",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_ui_notebook",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_ui_notebook"
     },
     {
       "relation": "imports",
@@ -53037,9 +54038,9 @@
       "source_location": "L40",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_ui_notebook_registernotebooks",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_ui_notebook_registernotebooks"
     },
     {
       "relation": "imports_from",
@@ -53049,9 +54050,9 @@
       "source_location": "L39",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_ui_planpanel",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_ui_planpanel"
     },
     {
       "relation": "imports",
@@ -53061,9 +54062,9 @@
       "source_location": "L39",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_ui_planpanel_planpanel",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_ui_planpanel_planpanel"
     },
     {
       "relation": "imports_from",
@@ -53073,9 +54074,9 @@
       "source_location": "L14",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_ui_resultspanel",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_ui_resultspanel"
     },
     {
       "relation": "imports",
@@ -53085,9 +54086,9 @@
       "source_location": "L14",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_ui_resultspanel_resultspanel",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_ui_resultspanel_resultspanel"
     },
     {
       "relation": "imports_from",
@@ -53097,9 +54098,9 @@
       "source_location": "L18",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_ui_settingspanel",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_ui_settingspanel"
     },
     {
       "relation": "imports",
@@ -53109,9 +54110,9 @@
       "source_location": "L18",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_ui_settingspanel_opensettingsscreen",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_ui_settingspanel_opensettingsscreen"
     },
     {
       "relation": "imports_from",
@@ -53121,9 +54122,9 @@
       "source_location": "L16",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_ui_wizard",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_ui_wizard"
     },
     {
       "relation": "imports",
@@ -53133,9 +54134,9 @@
       "source_location": "L16",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_ui_wizard_newconnectionwizard",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_ui_wizard_newconnectionwizard"
     },
     {
       "relation": "imports_from",
@@ -53145,9 +54146,9 @@
       "source_location": "L59",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_worker_workerdriver",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_worker_workerdriver"
     },
     {
       "relation": "imports",
@@ -53157,9 +54158,9 @@
       "source_location": "L59",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "apps_extension_src_worker_workerdriver_workerdriver",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_worker_workerdriver_workerdriver"
     },
     {
       "relation": "imports_from",
@@ -53169,9 +54170,9 @@
       "source_location": "L1",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension",
-      "target": "ref_vscode",
-      "confidence_score": 1.0
+      "target": "ref_vscode"
     },
     {
       "relation": "calls",
@@ -53181,9 +54182,9 @@
       "source_location": "L108",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension_activate",
-      "target": "apps_extension_src_extension_cfg",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_extension_cfg"
     },
     {
       "relation": "calls",
@@ -53193,9 +54194,9 @@
       "source_location": "L147",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "apps_extension_src_extension_activate",
-      "target": "apps_extension_src_extension_makeregistry",
-      "confidence_score": 1.0
+      "target": "apps_extension_src_extension_makeregistry"
     },
     {
       "relation": "references",
@@ -53220,26 +54221,15 @@
       "target": "docs_es_guias_rejilla_de_resultados"
     },
     {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/es/guias/primeros-pasos.md",
-      "source_location": "L34",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "docs_es_guias_primeros_pasos",
-      "target": "docs_es_guias_rejilla_de_resultados"
-    },
-    {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/es/guias/rejilla-de-resultados.md",
       "source_location": "L3",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "docs_es_guias_rejilla_de_resultados",
-      "target": "docs_es_guias_rejilla_de_resultados_la_rejilla_de_resultados",
-      "confidence_score": 1.0
+      "target": "docs_es_guias_rejilla_de_resultados_la_rejilla_de_resultados"
     },
     {
       "relation": "references",
@@ -53253,26 +54243,15 @@
       "target": "docs_es_guias_rejilla_de_resultados"
     },
     {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.es.md",
-      "source_location": "L40",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme_es",
-      "target": "docs_es_guias_rejilla_de_resultados"
-    },
-    {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/es/guias/rejilla-de-resultados.md",
       "source_location": "L7",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "docs_es_guias_rejilla_de_resultados_la_rejilla_de_resultados",
-      "target": "docs_es_guias_rejilla_de_resultados_anatom\u00eda",
-      "confidence_score": 1.0
+      "target": "docs_es_guias_rejilla_de_resultados_anatom\u00eda"
     },
     {
       "relation": "contains",
@@ -53281,9 +54260,9 @@
       "source_location": "L58",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "docs_es_guias_rejilla_de_resultados_la_rejilla_de_resultados",
-      "target": "docs_es_guias_rejilla_de_resultados_atajos",
-      "confidence_score": 1.0
+      "target": "docs_es_guias_rejilla_de_resultados_atajos"
     },
     {
       "relation": "contains",
@@ -53292,9 +54271,9 @@
       "source_location": "L36",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "docs_es_guias_rejilla_de_resultados_la_rejilla_de_resultados",
-      "target": "docs_es_guias_rejilla_de_resultados_celdas_filas_y_el_panel_de_registro",
-      "confidence_score": 1.0
+      "target": "docs_es_guias_rejilla_de_resultados_celdas_filas_y_el_panel_de_registro"
     },
     {
       "relation": "contains",
@@ -53303,9 +54282,9 @@
       "source_location": "L42",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "docs_es_guias_rejilla_de_resultados_la_rejilla_de_resultados",
-      "target": "docs_es_guias_rejilla_de_resultados_copiar_y_guardar",
-      "confidence_score": 1.0
+      "target": "docs_es_guias_rejilla_de_resultados_copiar_y_guardar"
     },
     {
       "relation": "contains",
@@ -53314,9 +54293,9 @@
       "source_location": "L55",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "docs_es_guias_rejilla_de_resultados_la_rejilla_de_resultados",
-      "target": "docs_es_guias_rejilla_de_resultados_d\u00f3nde_se_abren_los_resultados",
-      "confidence_score": 1.0
+      "target": "docs_es_guias_rejilla_de_resultados_d\u00f3nde_se_abren_los_resultados"
     },
     {
       "relation": "contains",
@@ -53325,9 +54304,9 @@
       "source_location": "L52",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "docs_es_guias_rejilla_de_resultados_la_rejilla_de_resultados",
-      "target": "docs_es_guias_rejilla_de_resultados_fijar_una_pesta\u00f1a_de_resultados",
-      "confidence_score": 1.0
+      "target": "docs_es_guias_rejilla_de_resultados_fijar_una_pesta\u00f1a_de_resultados"
     },
     {
       "relation": "contains",
@@ -53336,9 +54315,9 @@
       "source_location": "L19",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "docs_es_guias_rejilla_de_resultados_la_rejilla_de_resultados",
-      "target": "docs_es_guias_rejilla_de_resultados_filtrar_en_la_base_de_datos",
-      "confidence_score": 1.0
+      "target": "docs_es_guias_rejilla_de_resultados_filtrar_en_la_base_de_datos"
     },
     {
       "relation": "contains",
@@ -53347,9 +54326,9 @@
       "source_location": "L16",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "docs_es_guias_rejilla_de_resultados_la_rejilla_de_resultados",
-      "target": "docs_es_guias_rejilla_de_resultados_la_l\u00ednea_de_consulta",
-      "confidence_score": 1.0
+      "target": "docs_es_guias_rejilla_de_resultados_la_l\u00ednea_de_consulta"
     },
     {
       "relation": "contains",
@@ -53358,9 +54337,9 @@
       "source_location": "L45",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "docs_es_guias_rejilla_de_resultados_la_rejilla_de_resultados",
-      "target": "docs_es_guias_rejilla_de_resultados_paginaci\u00f3n",
-      "confidence_score": 1.0
+      "target": "docs_es_guias_rejilla_de_resultados_paginaci\u00f3n"
     },
     {
       "relation": "contains",
@@ -53369,9 +54348,9 @@
       "source_location": "L31",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "docs_es_guias_rejilla_de_resultados_la_rejilla_de_resultados",
-      "target": "docs_es_guias_rejilla_de_resultados_trabajar_con_columnas",
-      "confidence_score": 1.0
+      "target": "docs_es_guias_rejilla_de_resultados_trabajar_con_columnas"
     },
     {
       "relation": "references",
@@ -53391,20 +54370,9 @@
       "source_location": "L3",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "docs_es_referencia_ajustes",
-      "target": "docs_es_referencia_ajustes_referencia_de_ajustes",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.es.md",
-      "source_location": "L40",
-      "weight": 1.0,
-      "_origin": "ast",
       "confidence_score": 1.0,
-      "source": "readme_es",
-      "target": "docs_es_referencia_ajustes"
+      "source": "docs_es_referencia_ajustes",
+      "target": "docs_es_referencia_ajustes_referencia_de_ajustes"
     },
     {
       "relation": "references",
@@ -53415,17 +54383,6 @@
       "_origin": "ast",
       "confidence_score": 1.0,
       "source": "docs_guides_editing_data",
-      "target": "docs_guides_results_grid"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/guides/getting-started.md",
-      "source_location": "L34",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "docs_guides_getting_started",
       "target": "docs_guides_results_grid"
     },
     {
@@ -53457,20 +54414,9 @@
       "source_location": "L3",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "docs_guides_results_grid",
-      "target": "docs_guides_results_grid_the_results_grid",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.md",
-      "source_location": "L40",
-      "weight": 1.0,
-      "_origin": "ast",
       "confidence_score": 1.0,
-      "source": "readme",
-      "target": "docs_guides_results_grid"
+      "source": "docs_guides_results_grid",
+      "target": "docs_guides_results_grid_the_results_grid"
     },
     {
       "relation": "contains",
@@ -53479,9 +54425,9 @@
       "source_location": "L7",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "docs_guides_results_grid_the_results_grid",
-      "target": "docs_guides_results_grid_anatomy",
-      "confidence_score": 1.0
+      "target": "docs_guides_results_grid_anatomy"
     },
     {
       "relation": "contains",
@@ -53490,9 +54436,9 @@
       "source_location": "L36",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "docs_guides_results_grid_the_results_grid",
-      "target": "docs_guides_results_grid_cells_rows_and_the_record_panel",
-      "confidence_score": 1.0
+      "target": "docs_guides_results_grid_cells_rows_and_the_record_panel"
     },
     {
       "relation": "contains",
@@ -53501,9 +54447,9 @@
       "source_location": "L42",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "docs_guides_results_grid_the_results_grid",
-      "target": "docs_guides_results_grid_copy_and_save",
-      "confidence_score": 1.0
+      "target": "docs_guides_results_grid_copy_and_save"
     },
     {
       "relation": "contains",
@@ -53512,9 +54458,9 @@
       "source_location": "L19",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "docs_guides_results_grid_the_results_grid",
-      "target": "docs_guides_results_grid_filtering_in_the_database",
-      "confidence_score": 1.0
+      "target": "docs_guides_results_grid_filtering_in_the_database"
     },
     {
       "relation": "contains",
@@ -53523,9 +54469,9 @@
       "source_location": "L45",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "docs_guides_results_grid_the_results_grid",
-      "target": "docs_guides_results_grid_paging",
-      "confidence_score": 1.0
+      "target": "docs_guides_results_grid_paging"
     },
     {
       "relation": "contains",
@@ -53534,9 +54480,9 @@
       "source_location": "L52",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "docs_guides_results_grid_the_results_grid",
-      "target": "docs_guides_results_grid_pin_a_results_tab",
-      "confidence_score": 1.0
+      "target": "docs_guides_results_grid_pin_a_results_tab"
     },
     {
       "relation": "contains",
@@ -53545,9 +54491,9 @@
       "source_location": "L58",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "docs_guides_results_grid_the_results_grid",
-      "target": "docs_guides_results_grid_shortcuts",
-      "confidence_score": 1.0
+      "target": "docs_guides_results_grid_shortcuts"
     },
     {
       "relation": "contains",
@@ -53556,9 +54502,9 @@
       "source_location": "L16",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "docs_guides_results_grid_the_results_grid",
-      "target": "docs_guides_results_grid_the_query_line",
-      "confidence_score": 1.0
+      "target": "docs_guides_results_grid_the_query_line"
     },
     {
       "relation": "contains",
@@ -53567,9 +54513,9 @@
       "source_location": "L55",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "docs_guides_results_grid_the_results_grid",
-      "target": "docs_guides_results_grid_where_results_open",
-      "confidence_score": 1.0
+      "target": "docs_guides_results_grid_where_results_open"
     },
     {
       "relation": "contains",
@@ -53578,9 +54524,9 @@
       "source_location": "L31",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "docs_guides_results_grid_the_results_grid",
-      "target": "docs_guides_results_grid_working_with_columns",
-      "confidence_score": 1.0
+      "target": "docs_guides_results_grid_working_with_columns"
     },
     {
       "relation": "references",
@@ -53600,20 +54546,9 @@
       "source_location": "L3",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "docs_reference_settings",
-      "target": "docs_reference_settings_settings_reference",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.md",
-      "source_location": "L40",
-      "weight": 1.0,
-      "_origin": "ast",
       "confidence_score": 1.0,
-      "source": "readme",
-      "target": "docs_reference_settings"
+      "source": "docs_reference_settings",
+      "target": "docs_reference_settings_settings_reference"
     },
     {
       "relation": "imports_from",
@@ -54318,633 +55253,6 @@
       "confidence_score": 1.0,
       "source": "packages_drivers_oracle_src_oracle_test",
       "target": "packages_drivers_oracle_src_index_oracledriver"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.md",
-      "source_location": "L12",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme",
-      "target": "readme_es"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.es.md",
-      "source_location": "L40",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme_es",
-      "target": "agents"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.es.md",
-      "source_location": "L52",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme_es",
-      "target": "code_of_conduct_es"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.es.md",
-      "source_location": "L49",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme_es",
-      "target": "contributing_es"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.es.md",
-      "source_location": "L40",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme_es",
-      "target": "docs_es_ci_cd"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.es.md",
-      "source_location": "L40",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme_es",
-      "target": "docs_es_design_guia_de_diseno"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.es.md",
-      "source_location": "L40",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme_es",
-      "target": "docs_es_drivers_crear_un_driver"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.es.md",
-      "source_location": "L40",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme_es",
-      "target": "docs_es_empresa_politicas"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.es.md",
-      "source_location": "L40",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme_es",
-      "target": "docs_es_guias_ayuda_a_probar"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.es.md",
-      "source_location": "L40",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme_es",
-      "target": "docs_es_guias_conexiones"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.es.md",
-      "source_location": "L40",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme_es",
-      "target": "docs_es_guias_edicion_de_datos"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.es.md",
-      "source_location": "L40",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme_es",
-      "target": "docs_es_guias_editor_de_consultas"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.es.md",
-      "source_location": "L40",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme_es",
-      "target": "docs_es_guias_idioma_y_ajustes"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.es.md",
-      "source_location": "L37",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme_es",
-      "target": "docs_es_guias_primeros_pasos"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.es.md",
-      "source_location": "L40",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme_es",
-      "target": "docs_es_guias_solucion_de_problemas"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.es.md",
-      "source_location": "L40",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme_es",
-      "target": "docs_es_guias_teclado"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.es.md",
-      "source_location": "L28",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme_es",
-      "target": "docs_es_motores_readme"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.es.md",
-      "source_location": "L40",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme_es",
-      "target": "docs_es_referencia_comandos"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.es.md",
-      "source_location": "L28",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme_es",
-      "target": "docs_es_referencia_matriz_de_motores"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.es.md",
-      "source_location": "L16",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme_es",
-      "target": "docs_es_release_lista_de_aceptacion_v1"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.es.md",
-      "source_location": "L40",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme_es",
-      "target": "docs_es_seguridad_modelo_de_amenazas"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.es.md",
-      "source_location": "L52",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme_es",
-      "target": "docs_legal_third_party_licenses"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "README.es.md",
-      "source_location": "L42",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme_es",
-      "target": "readme_es_desarrollo"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "README.es.md",
-      "source_location": "L39",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme_es",
-      "target": "readme_es_documentaci\u00f3n"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "README.es.md",
-      "source_location": "L30",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme_es",
-      "target": "readme_es_instalar"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "README.es.md",
-      "source_location": "L51",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme_es",
-      "target": "readme_es_licencia"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "README.es.md",
-      "source_location": "L27",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme_es",
-      "target": "readme_es_motores"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "README.es.md",
-      "source_location": "L18",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme_es",
-      "target": "readme_es_qu\u00e9_hace"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.es.md",
-      "source_location": "L52",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme_es",
-      "target": "security_es"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "AGENTS.md",
-      "source_location": "L3",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "agents",
-      "target": "readme"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.md",
-      "source_location": "L52",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme",
-      "target": "code_of_conduct"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.md",
-      "source_location": "L49",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme",
-      "target": "contributing"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.md",
-      "source_location": "L40",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme",
-      "target": "docs_ci_cd"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.md",
-      "source_location": "L40",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme",
-      "target": "docs_design_design_guide"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.md",
-      "source_location": "L40",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme",
-      "target": "docs_drivers_authoring"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.md",
-      "source_location": "L28",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme",
-      "target": "docs_engines_readme"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.md",
-      "source_location": "L40",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme",
-      "target": "docs_enterprise_policy"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.md",
-      "source_location": "L40",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme",
-      "target": "docs_guides_connections"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.md",
-      "source_location": "L40",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme",
-      "target": "docs_guides_editing_data"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.md",
-      "source_location": "L37",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme",
-      "target": "docs_guides_getting_started"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.md",
-      "source_location": "L40",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme",
-      "target": "docs_guides_help_test"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.md",
-      "source_location": "L40",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme",
-      "target": "docs_guides_keyboard"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.md",
-      "source_location": "L40",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme",
-      "target": "docs_guides_language_and_settings"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.md",
-      "source_location": "L40",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme",
-      "target": "docs_guides_query_editor"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.md",
-      "source_location": "L40",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme",
-      "target": "docs_guides_troubleshooting"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.md",
-      "source_location": "L52",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme",
-      "target": "docs_legal_third_party_licenses"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.md",
-      "source_location": "L40",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme",
-      "target": "docs_reference_commands"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.md",
-      "source_location": "L28",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme",
-      "target": "docs_reference_engine_matrix"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.md",
-      "source_location": "L16",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme",
-      "target": "docs_release_v1_checklist"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.md",
-      "source_location": "L40",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme",
-      "target": "docs_security_threat_model"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "README.md",
-      "source_location": "L42",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme",
-      "target": "readme_development"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "README.md",
-      "source_location": "L39",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme",
-      "target": "readme_documentation"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "README.md",
-      "source_location": "L27",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme",
-      "target": "readme_engines"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "README.md",
-      "source_location": "L30",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme",
-      "target": "readme_install"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "README.md",
-      "source_location": "L51",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme",
-      "target": "readme_license"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "README.md",
-      "source_location": "L18",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme",
-      "target": "readme_what_it_does"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.md",
-      "source_location": "L52",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "readme",
-      "target": "security"
     },
     {
       "relation": "imports_from",
@@ -60797,314 +61105,6 @@
       "_origin": "ast",
       "source": "apps_extension_src_ui_settingspanel_opensettingsscreen",
       "target": "apps_extension_src_ui_webviewstrings_i18nblock"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/es/guias/primeros-pasos.md",
-      "source_location": "L27",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "docs_es_guias_primeros_pasos",
-      "target": "docs_es_guias_conexiones"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/es/guias/primeros-pasos.md",
-      "source_location": "L40",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "docs_es_guias_primeros_pasos",
-      "target": "docs_es_guias_edicion_de_datos"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/es/guias/primeros-pasos.md",
-      "source_location": "L37",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "docs_es_guias_primeros_pasos",
-      "target": "docs_es_guias_editor_de_consultas"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/es/guias/primeros-pasos.md",
-      "source_location": "L43",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "docs_es_guias_primeros_pasos",
-      "target": "docs_es_guias_idioma_y_ajustes"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/es/guias/primeros-pasos.md",
-      "source_location": "L3",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "docs_es_guias_primeros_pasos",
-      "target": "docs_es_guias_primeros_pasos_primeros_pasos"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/es/guias/primeros-pasos.md",
-      "source_location": "L47",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "docs_es_guias_primeros_pasos",
-      "target": "docs_es_guias_solucion_de_problemas"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/es/guias/primeros-pasos.md",
-      "source_location": "L7",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "docs_es_guias_primeros_pasos_primeros_pasos",
-      "target": "docs_es_guias_primeros_pasos_1_instalar"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/es/guias/primeros-pasos.md",
-      "source_location": "L23",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "docs_es_guias_primeros_pasos_primeros_pasos",
-      "target": "docs_es_guias_primeros_pasos_2_crear_una_conexi\u00f3n"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/es/guias/primeros-pasos.md",
-      "source_location": "L30",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "docs_es_guias_primeros_pasos_primeros_pasos",
-      "target": "docs_es_guias_primeros_pasos_3_explorar"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/es/guias/primeros-pasos.md",
-      "source_location": "L33",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "docs_es_guias_primeros_pasos_primeros_pasos",
-      "target": "docs_es_guias_primeros_pasos_4_abrir_una_tabla"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/es/guias/primeros-pasos.md",
-      "source_location": "L36",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "docs_es_guias_primeros_pasos_primeros_pasos",
-      "target": "docs_es_guias_primeros_pasos_5_ejecutar_una_consulta"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/es/guias/primeros-pasos.md",
-      "source_location": "L39",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "docs_es_guias_primeros_pasos_primeros_pasos",
-      "target": "docs_es_guias_primeros_pasos_6_editar_un_valor"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/es/guias/primeros-pasos.md",
-      "source_location": "L42",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "docs_es_guias_primeros_pasos_primeros_pasos",
-      "target": "docs_es_guias_primeros_pasos_7_hazlo_tuyo"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/es/guias/primeros-pasos.md",
-      "source_location": "L45",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "docs_es_guias_primeros_pasos_primeros_pasos",
-      "target": "docs_es_guias_primeros_pasos_conviene_saber"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/guides/getting-started.md",
-      "source_location": "L27",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "docs_guides_getting_started",
-      "target": "docs_guides_connections"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/guides/getting-started.md",
-      "source_location": "L40",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "docs_guides_getting_started",
-      "target": "docs_guides_editing_data"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/guides/getting-started.md",
-      "source_location": "L3",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "docs_guides_getting_started",
-      "target": "docs_guides_getting_started_getting_started"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/guides/getting-started.md",
-      "source_location": "L43",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "docs_guides_getting_started",
-      "target": "docs_guides_language_and_settings"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/guides/getting-started.md",
-      "source_location": "L37",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "docs_guides_getting_started",
-      "target": "docs_guides_query_editor"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/guides/getting-started.md",
-      "source_location": "L47",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "docs_guides_getting_started",
-      "target": "docs_guides_troubleshooting"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/guides/getting-started.md",
-      "source_location": "L7",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "docs_guides_getting_started_getting_started",
-      "target": "docs_guides_getting_started_1_install"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/guides/getting-started.md",
-      "source_location": "L23",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "docs_guides_getting_started_getting_started",
-      "target": "docs_guides_getting_started_2_create_a_connection"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/guides/getting-started.md",
-      "source_location": "L30",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "docs_guides_getting_started_getting_started",
-      "target": "docs_guides_getting_started_3_explore"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/guides/getting-started.md",
-      "source_location": "L33",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "docs_guides_getting_started_getting_started",
-      "target": "docs_guides_getting_started_4_open_a_table"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/guides/getting-started.md",
-      "source_location": "L36",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "docs_guides_getting_started_getting_started",
-      "target": "docs_guides_getting_started_5_run_a_query"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/guides/getting-started.md",
-      "source_location": "L39",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "docs_guides_getting_started_getting_started",
-      "target": "docs_guides_getting_started_6_edit_a_value"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/guides/getting-started.md",
-      "source_location": "L42",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "docs_guides_getting_started_getting_started",
-      "target": "docs_guides_getting_started_7_make_it_yours"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/guides/getting-started.md",
-      "source_location": "L45",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "docs_guides_getting_started_getting_started",
-      "target": "docs_guides_getting_started_good_to_know"
     },
     {
       "relation": "contains",
@@ -123938,5 +123938,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "fac9a95028d2e924af876b68b51ced65e5877737"
+  "built_at_commit": "a64e3dc600a3ac6d1f41b7954a13c8e1a8473def"
 }

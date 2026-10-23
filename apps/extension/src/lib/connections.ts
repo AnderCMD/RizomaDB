@@ -15,6 +15,17 @@ export type TunnelFactory = (ssh: SshSettings, target: { host: string; port: num
 export type DriverRegistry = Record<string, () => Promise<DriverPlugin>>;
 
 const KEY = "rizomadb.profiles";
+/** A server that never answers must not leave the connection "connecting" forever (every later request would wait on it). */
+const CONNECT_TIMEOUT_MS = 45_000;
+
+/** Rejects after `ms`; if the work still finishes later, `onLate` gets the result so it can be closed instead of leaking. */
+function within<T>(ms: number, what: string, work: Promise<T>, onLate: (late: T) => void): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    let done = false;
+    const timer = setTimeout(() => { done = true; reject(new Error(`Timed out after ${ms / 1000} s connecting to ${what}.`)); }, ms);
+    work.then((v) => { clearTimeout(timer); if (done) onLate(v); else { done = true; resolve(v); } }, (e) => { clearTimeout(timer); if (!done) { done = true; reject(e); } });
+  });
+}
 
 export type CatalogProfile = ConnectionProfile & { source: string };
 
@@ -27,6 +38,8 @@ export class ConnectionManager {
   private listeners = new Set<() => void>();
   /** The built-in default: connections in `prod` are read-only unless they were switched to editable on purpose. */
   prodReadOnly = true;
+  /** How long a driver or tunnel may take to answer before the attempt is abandoned. */
+  connectTimeoutMs = CONNECT_TIMEOUT_MS;
   private parsed: { raw: unknown[]; out: ConnectionProfile[] } | undefined;
 
   constructor(
@@ -149,7 +162,7 @@ export class ConnectionManager {
       if (ssh && proxy) throw new Error("Choose either an SSH tunnel or a proxy for this connection, not both.");
       if (proxy) {
         const defaultPort = Number((driver.connectionSchema.properties.port as { default?: unknown } | undefined)?.default ?? 0);
-        const tunnel = await openProxyTunnel({ proxy, target: { host: String(cfg.host), port: Number(cfg.port ?? defaultPort) } });
+        const tunnel = await within(this.connectTimeoutMs, `the proxy for "${p.name}"`, openProxyTunnel({ proxy, target: { host: String(cfg.host), port: Number(cfg.port ?? defaultPort) } }), (t) => void t.close().catch(() => {}));
         this.tunnels.set(id, tunnel);
         cfg.host = "127.0.0.1"; cfg.port = tunnel.localPort;
       }
@@ -157,12 +170,12 @@ export class ConnectionManager {
         if (!this.openSsh) throw new Error("SSH tunnels are not available in this environment");
         const defaultPort = Number((driver.connectionSchema.properties.port as { default?: unknown } | undefined)?.default ?? 0);
         const target = { host: String(cfg.host), port: Number(cfg.port ?? defaultPort) };
-        const tunnel = await this.openSsh(ssh, target);
+        const tunnel = await within(this.connectTimeoutMs, `the SSH tunnel for "${p.name}"`, this.openSsh(ssh, target), (t) => void t.close().catch(() => {}));
         this.tunnels.set(id, tunnel);
         cfg.host = "127.0.0.1"; cfg.port = tunnel.localPort;
       }
       try {
-        const raw = await driver.connect(cfg, { log: () => {} });
+        const raw = await within(this.connectTimeoutMs, `"${p.name}"`, driver.connect(cfg, { log: () => {} }), (c) => void c.close().catch(() => {}));
         // Every feature receives this guarded connection: one policy check and one audit trail for all of them.
         return guardConnection(raw, {
           plugin: driver, connectionId: id, connectionName: p.name, environment: p.environment,

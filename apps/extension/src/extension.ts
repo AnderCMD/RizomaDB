@@ -357,8 +357,8 @@ export async function activate(ctx: vscode.ExtensionContext) {
     const list = mgr.list();
     if (!list.length) { return newConnectionWizard(mgr); }
     const pick = await vscode.window.showQuickPick(
-      [...list.map((p) => ({ label: p.name, description: `[${p.environment}] ${p.driver}`, id: p.id })), { label: `$(add) ${t("New connection…")}`, id: "" }],
-      { title: t("Select connection") });
+      [...list.map((p) => ({ label: `${p.id === activeId() ? "$(check) " : mgr.isConnected(p.id) ? "$(plug) " : ""}${p.name}`, description: `[${p.environment}] ${p.driver}${mgr.isReadOnly(p) ? " 🔒" : ""}`, detail: p.id === activeId() ? t("In use now") : mgr.isConnected(p.id) ? t("Connected") : t("Not connected yet: it connects when you run something"), id: p.id })), { label: `$(add) ${t("New connection…")}`, id: "" }],
+      { title: t("Select connection"), matchOnDescription: true });
     if (!pick) return;
     return pick.id || newConnectionWizard(mgr);
   }
@@ -504,9 +504,12 @@ export async function activate(ctx: vscode.ExtensionContext) {
     refreshStatus();
   });
   reg("rizomadb.selectConnection", async () => {
-    const d = editorDoc(); if (!d) return;
+    const d = editorDoc();
     const id = await pickConnection();
-    if (id) { await ctx.workspaceState.update(`doc:${d.uri.toString()}`, id); refreshStatus(); }
+    if (!id) return;
+    // With a query editor open the choice is stored for that editor; without one it becomes the connection in use.
+    if (d && isQueryLanguage(d.languageId)) await ctx.workspaceState.update(`doc:${d.uri.toString()}`, id); else lastUsedId = id;
+    refreshStatus();
   });
   reg("rizomadb.runQuery", async () => {
     const ed = vscode.window.activeTextEditor; if (!ed) return;

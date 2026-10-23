@@ -36,7 +36,8 @@ export function registerLanguage(ctx: vscode.ExtensionContext, mgr: ConnectionMa
     if (doc.languageId !== "sql") return;
     const { profile, dialect } = dialectOf(doc);
     const schema = profile ? cache.peek(profile.id) : undefined;
-    if (profile && !schema) void cache.get(profile.id).then(() => refresh(doc), () => {});
+    // Diagnostics never open a connection by themselves (restoring editors at startup used to connect and read the whole schema of every bound one): they use the schema once a connection is open.
+    if (profile && !schema && mgr.isConnected(profile.id)) void cache.get(profile.id).then(() => refresh(doc), () => {});
     collection.set(doc.uri, diagnose(doc.getText(), dialect, schema).map((d) => {
       const x = new vscode.Diagnostic(new vscode.Range(doc.positionAt(d.start), doc.positionAt(d.end)), d.message,
         d.severity === "error" ? vscode.DiagnosticSeverity.Error : d.severity === "warning" ? vscode.DiagnosticSeverity.Warning : vscode.DiagnosticSeverity.Information);

@@ -11,6 +11,14 @@
 
 Aquí se listan los cambios notables, del más nuevo al más antiguo. El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/). Todavía no se ha publicado nada.
 
+## [Sin publicar]
+
+### Corregido
+- VS Code ya no se conecta al iniciar a las bases de los editores restaurados solo para subrayar errores, y un servidor que nunca responde se abandona a los 45 s (20 s para la conexión de red de Oracle) en lugar de dejar la extensión esperando para siempre.
+
+### Cambiado
+- El selector de conexión marca la que está en uso, las conectadas y las de solo lectura, y funciona sin un editor abierto.
+
 ## [1.2.1] — 2026-10-22
 
 ### Cambiado

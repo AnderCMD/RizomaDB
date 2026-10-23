@@ -212,7 +212,7 @@ export const oracleDriver: DriverPlugin = {
       // Thin mode (pure JS): no Oracle Client installation required.
       const conn = await oracledb.getConnection({
         user: cfg.user as string, password: (cfg.password as string | undefined) ?? "",
-        connectString: connectString(cfg),
+        connectString: connectString(cfg), transportConnectTimeout: 20,
       });
       const v = await conn.execute("select banner_full b from v$version fetch first 1 rows only").catch(() => undefined);
       const banner = String((v?.rows as unknown[][] | undefined)?.[0]?.[0] ?? conn.oracleServerVersionString ?? "");

@@ -59,6 +59,11 @@ The second tab of the same screen lists the connections you have. Each card show
 - Under a connection: **Tables** (or Collections, Keys, Indices, Labels, Measurements, depending on the engine) with a count, and **Views**.
 - Hover a row for quick buttons. The view title has buttons for new connection, refresh, import, settings, the guide and **collapse all**.
 
+## Several connections: which one is used
+Nothing connects when VS Code starts: a connection opens the first time you expand it, run a query or press **Connect**. The connection **in use** is the one bound to the query editor you are looking at; with no editor bound it is the last one you ran something on. A new editor asks which connection to use when you first run a query.
+
+To change it, click the connection name in the status bar (bottom left) or run **RizomaDB: Select Connection for This Editor**. The list marks the one in use, the ones already connected and the read-only ones. With a query editor open the choice applies to that editor, so two editors can use two different Oracle databases at once. If a server does not answer, the attempt is abandoned after 45 seconds instead of staying "connecting".
+
 ## The connection in use
 The *active* connection is the one bound to the query editor you are in, or the last one that ran something. The status bar shows it as `[ENV] name · database`; click it to change the connection of the current editor.
 

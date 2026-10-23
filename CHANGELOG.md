@@ -11,6 +11,14 @@ English · [Español](CHANGELOG.es.md)
 
 All notable changes are listed here, newest first. The format follows [Keep a Changelog](https://keepachangelog.com/). Nothing has been published yet.
 
+## [Unreleased]
+
+### Fixed
+- VS Code no longer connects to the databases of restored editors at startup just to underline errors, and a server that never answers is given up on after 45 s (20 s for the Oracle network connection) instead of leaving the extension waiting forever.
+
+### Changed
+- The connection picker marks the one in use, the connected ones and the read-only ones, and works without an editor open.
+
 ## [1.2.1] — 2026-10-22
 
 ### Changed
