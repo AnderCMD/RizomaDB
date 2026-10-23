@@ -81,10 +81,11 @@ const btnDetail = iconButton("panel", tr("Record panel (Alt+Enter)"), () => togg
 const btnDensity = iconButton("rows", tr("Compact rows"), () => setCompact(!document.body.classList.contains("compact")), { pressed: false });
 const btnCopy = iconButton("copy", tr("Copy results as…"), () => formatMenu(btnCopy, "copy"));
 const btnSave = iconButton("download", tr("Save results as…"), () => formatMenu(btnSave, "save"));
+const btnPin = iconButton("pin", tr("Keep these results: the next query opens in a new tab"), () => { send({ type: "pin" }); btnPin.setAttribute("aria-pressed", "true"); btnPin.disabled = true; btnPin.setAttribute("data-tip", tr("Pinned: the next query opens in a new tab")); }, { pressed: false });
 const btnRefresh = iconButton("refresh", tr("Run again"), () => send({ type: "refresh" }));
 const btnKeys = iconButton("keyboard", tr("Keyboard shortcuts"), () => showShortcuts());
 const tools = el("div", { id: "tools", class: "tb", role: "toolbar", "aria-label": tr("Result tools") });
-tools.append(findBox, iconButton("up", tr("Previous match"), () => step(-1)), iconButton("down", tr("Next match"), () => step(1)), findCount, el("span", { class: "grow" }), btnFilter, btnColumns, btnDetail, btnDensity, btnCopy, btnSave, btnRefresh, btnKeys);
+tools.append(findBox, iconButton("up", tr("Previous match"), () => step(-1)), iconButton("down", tr("Next match"), () => step(1)), findCount, el("span", { class: "grow" }), btnFilter, btnColumns, btnDetail, btnDensity, btnCopy, btnSave, btnPin, btnRefresh, btnKeys);
 
 const btnDelete = iconButton("trash", tr("Delete or restore selected rows"), () => deleteSelected(), { danger: true });
 const btnUndo = iconButton("undo", tr("Undo"), () => send({ type: "undo" })), btnRedo = iconButton("redo", tr("Redo"), () => send({ type: "redo" }));

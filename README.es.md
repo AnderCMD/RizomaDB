@@ -13,7 +13,7 @@
 
 Un cliente de bases de datos multimotor para VS Code (y VSCodium, Cursor, Windsurf): Apache-2.0, sin telemetría, sin cuentas, sin funciones bloqueadas. [Sitio de documentación](https://andercmd.github.io/RizomaDB/es/)
 
-> **Estado: 1.1.0.** Disponible en el [Marketplace de VS Code](https://marketplace.visualstudio.com/items?itemName=AnderCMD.rizomadb) y como VSIX adjunto a cada [release de GitHub](https://github.com/AnderCMD/RizomaDB/releases) (Open VSX aún no está publicado). Compila, se instala y pasa sus pruebas contra motores reales, y el responsable del proyecto hizo una revisión manual con lector de pantalla en macOS, Windows y Linux sin encontrar problemas. Algunas cosas **no están confirmadas**, sobre todo las cuentas reales en la nube: mira la [lista de aceptación](docs/es/release/lista-de-aceptacion-v1.md), que es honesta.
+> **Estado: 1.2.0.** Disponible en el [Marketplace de VS Code](https://marketplace.visualstudio.com/items?itemName=AnderCMD.rizomadb) y como VSIX adjunto a cada [release de GitHub](https://github.com/AnderCMD/RizomaDB/releases) (Open VSX aún no está publicado). Compila, se instala y pasa sus pruebas contra motores reales, y el responsable del proyecto hizo una revisión manual con lector de pantalla en macOS, Windows y Linux sin encontrar problemas. Algunas cosas **no están confirmadas**, sobre todo las cuentas reales en la nube: mira la [lista de aceptación](docs/es/release/lista-de-aceptacion-v1.md), que es honesta.
 
 ## Qué hace
 - **Conecta** con 25 motores desde una pantalla de logos, con el host, puerto y usuario habituales ya rellenados (o pega una URL JDBC); entornos (`dev`, `staging`, `prod` o los tuyos) con protección; túneles SSH y proxies HTTP/SOCKS5; secretos solo en el almacén de secretos de VS Code. Las conexiones se agrupan por tipo en el árbol, con la activa y su base de datos en la barra de estado.
@@ -28,11 +28,11 @@ Un cliente de bases de datos multimotor para VS Code (y VSCodium, Cursor, Windsu
 Probados contra servidores reales: PostgreSQL (y CockroachDB, YugabyteDB), MySQL/MariaDB (y TiDB), SQL Server, Oracle, SQLite, MongoDB, Redis/Valkey, ClickHouse, Elasticsearch/OpenSearch, DuckDB, Neo4j, DynamoDB (Local), InfluxDB 2 y 3, Cassandra/ScyllaDB, Firestore (emulador), Trino y **HydraDB (experimental)**. Lo que admite cada uno está en la [matriz de capacidades](docs/es/referencia/matriz-de-motores.md); los límites están en la página de cada motor en [docs/es/motores](docs/es/motores/README.md). **Sin confirmar:** nunca se han probado cuentas reales en la nube (AWS, Google Cloud, MongoDB Atlas ni servicios gestionados de PostgreSQL/MySQL); pruébalos con un usuario de solo lectura o una base de datos desechable antes de depender de ellos. Redshift, Snowflake y BigQuery no están implementados. Ver [Nube y servicios gestionados](docs/es/motores/README.md#nube-y-servicios-gestionados-sin-confirmar).
 
 ## Instalar
-Instala **RizomaDB** desde el Marketplace de VS Code (busca «RizomaDB», o ejecuta `code --install-extension AnderCMD.rizomadb`), o descarga el `.vsix` del último [release](https://github.com/AnderCMD/RizomaDB/releases) y ejecuta `code --install-extension rizomadb-1.1.0.vsix`. Para construirlo tú:
+Instala **RizomaDB** desde el Marketplace de VS Code (busca «RizomaDB», o ejecuta `code --install-extension AnderCMD.rizomadb`), o descarga el `.vsix` del último [release](https://github.com/AnderCMD/RizomaDB/releases) y ejecuta `code --install-extension rizomadb-1.2.0.vsix`. Para construirlo tú:
 ```bash
 pnpm install
 pnpm --filter rizomadb package
-code --install-extension apps/extension/rizomadb-1.1.0.vsix
+code --install-extension apps/extension/rizomadb-1.2.0.vsix
 ```
 Luego haz clic en el icono de RizomaDB, o ejecuta **RizomaDB: Abrir la guía**. Recorrido completo: [Primeros pasos](docs/es/guias/primeros-pasos.md).
 

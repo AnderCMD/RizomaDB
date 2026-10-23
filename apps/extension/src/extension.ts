@@ -196,6 +196,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
   };
   async function onWebviewMessage(m: import("./messages.js").WebviewToHost) {
     if (m.type === "cancel") { running?.abort(); return; }
+    if (m.type === "pin") { session = undefined; results.pin(); return; }
     if (m.type === "openText") {
       const doc = await vscode.workspace.openTextDocument({ language: "sql", content: m.text });
       if (lastRun) await ctx.workspaceState.update(`doc:${doc.uri.toString()}`, lastRun.id);

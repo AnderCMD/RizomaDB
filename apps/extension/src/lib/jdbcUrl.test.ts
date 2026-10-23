@@ -155,3 +155,15 @@ describe("importing a JDBC URL", () => {
     expect(() => parseConnectionUri("jdbc:db2://h:50000/x")).toThrow(/db2/);
   });
 });
+
+describe("hostile or broken input", () => {
+  it("only ever fails with a JdbcUrlError, never another exception", () => {
+    const parts = ["jdbc:", "oracle:thin:", "postgresql:", "mysql:", "sqlserver:", "mongodb:", "neo4j:", "es:", "//", "@", "/", ":", ";", "?", "&", "=", "(", ")", "DESCRIPTION", "ADDRESS", "HOST", "PORT", "%zz", "%", "[::1]", "[", "]", "a", "99999", "-1", "user/pw@", "\u0000", "\n", " ", "ssl=true", "--"];
+    let seed = 12345; const rnd = () => (seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff;
+    for (let i = 0; i < 4000; i++) {
+      let s = "jdbc:" + Array.from({ length: 1 + Math.floor(rnd() * 12) }, () => parts[Math.floor(rnd() * parts.length)]).join("");
+      if (i % 7 === 0) s = s.slice(0, Math.floor(rnd() * s.length));
+      try { parseJdbcUrl(s); } catch (e) { if (!(e instanceof JdbcUrlError)) throw new Error(`non-JdbcUrlError for ${JSON.stringify(s)}: ${String(e)}`, { cause: e }); }
+    }
+  });
+});

@@ -233,7 +233,7 @@ function showForm(m: { key: string; driver: string; fields: Field[]; tunnel: boo
   // Local servers rarely speak TLS: follow the host field until the user decides about TLS themselves.
   const hostIn = inputs.get("v.host") as HTMLInputElement | undefined, sslIn = inputs.get("v.ssl") as HTMLInputElement | undefined;
   if (hostIn && sslIn) {
-    const sslDefault = sslIn.checked; let touched = false;
+    const sslDefault = sslIn.checked; let touched = !!editing;  // a saved connection keeps the TLS choice it was saved with
     const loopback = () => /^(localhost|127\.\d+\.\d+\.\d+|::1|\[::1\])$/i.test(hostIn.value.trim());
     const follow = () => { if (!touched) sslIn.checked = loopback() ? false : sslDefault; };
     sslIn.addEventListener("change", () => { touched = true; });

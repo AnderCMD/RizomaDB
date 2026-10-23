@@ -33,6 +33,7 @@ export type HostToWebview = z.infer<typeof HostToWebview>;
 
 export const WebviewToHost = z.discriminatedUnion("type", [
   z.object({ v: z.literal(1), type: z.literal("cancel") }),
+  z.object({ v: z.literal(1), type: z.literal("pin") }),
   z.object({ v: z.literal(1), type: z.literal("edit"), row: z.number(), col: z.number(), text: Cell }),
   z.object({ v: z.literal(1), type: z.literal("editMany"), cells: z.array(z.object({ row: z.number(), col: z.number(), text: Cell })).check(z.maxLength(5000)) }),
   z.object({ v: z.literal(1), type: z.literal("toggleDelete"), row: z.number() }),

@@ -1042,5 +1042,7 @@
  "Hide password": "Ocultar contraseña",
  "Save changes": "Guardar cambios",
  "This connection can no longer be edited.": "Esta conexión ya no se puede editar.",
- "Saved the changes to {0}.": "Se guardaron los cambios de {0}."
+ "Saved the changes to {0}.": "Se guardaron los cambios de {0}.",
+ "Keep these results: the next query opens in a new tab": "Conservar estos resultados: la siguiente consulta se abre en otra pestaña",
+ "Pinned: the next query opens in a new tab": "Fijada: la siguiente consulta se abre en otra pestaña"
 }

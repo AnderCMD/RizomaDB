@@ -49,6 +49,9 @@ Cómo funciona, con honestidad: la consulta se vuelve a ejecutar y se saltan las
 
 Opcional y desactivado por defecto: activa `rizomadb.query.keysetPaging` y la tabla se abre ordenada por su clave primaria, y «Cargar más» pide a la base de datos las filas **posteriores** a la última clave en vez de saltar filas, así que las páginas profundas siguen tan rápidas como la primera. Está probado en SQLite, PostgreSQL, MySQL, SQL Server y Oracle; los demás motores, las tablas sin clave primaria, las claves que no son números o texto y un orden propio escrito en el filtro siguen saltando filas. Como la tabla queda ordenada por su clave, el orden de las filas difiere del orden natural del motor.
 
+## Fijar una pestaña de resultados
+Pulsa la **chincheta** de la barra de resultados (o ejecuta **RizomaDB: Fijar pestaña de resultados**) para conservar los resultados que estás viendo. La pestaña se queda como está y la siguiente consulta se abre en otra pestaña de resultados. Una pestaña fijada lleva 📌 en el título; ciérrala cuando ya no la necesites.
+
 ## Dónde se abren los resultados
 `rizomadb.results.location`: `bottom` (la mitad inferior bajo el editor, por defecto), `full` (toda el área del editor) o `beside`.
 

@@ -37,6 +37,7 @@ export interface JdbcConnection {
 /** The drivers a JDBC URL can fill in. */
 export const JDBC_DRIVERS: ReadonlySet<string> = new Set(["postgres", "mysql", "mssql", "oracle", "sqlite", "duckdb", "clickhouse", "trino", "cassandra", "elasticsearch", "redis", "neo4j", "mongodb"]);
 
+const safeDecode = (s: string): string => { try { return decodeURIComponent(s); } catch { return s; } };
 const dec = (s: string): string => { try { return decodeURIComponent(s.replace(/\+/g, " ")); } catch { return s; } };
 const truthy = (v: string | undefined): boolean => v !== undefined && ["true", "1", "yes", "on", "required", "require"].includes(v.toLowerCase());
 const falsy = (v: string | undefined): boolean => v !== undefined && ["false", "0", "no", "off", "disabled", "disable"].includes(v.toLowerCase());
@@ -164,7 +165,7 @@ function parseHostUrl(rest: string, sub: string, defaults: { port: number; drive
   if (!a.host && defaults.driver === "postgres") a.host = "localhost";   // jdbc:postgresql:///db means this machine
   if (!a.host) throw new JdbcUrlError(ERR_MALFORMED, ["no host"]);
   const q = a.rest.indexOf("?");
-  const path = decodeURIComponent((q < 0 ? a.rest : a.rest.slice(0, q)).replace(/^\//, "").replace(/;.*$/, "") || "");
+  const path = safeDecode((q < 0 ? a.rest : a.rest.slice(0, q)).replace(/^\//, "").replace(/;.*$/, "") || "");
   const p = params(q < 0 ? (a.rest.includes(";") ? a.rest.slice(a.rest.indexOf(";") + 1) : "") : a.rest.slice(q + 1), /[&;]/);
   const unused = new Set(p.keys()), notes: JdbcConnection["notes"] = [];
   const values: JdbcConnection["values"] = { host: a.host, port: a.port ?? defaults.port };
@@ -289,6 +290,10 @@ function parseElastic(rest: string, sub: string): JdbcConnection {
 
 /** Reads a JDBC URL. Throws {@link JdbcUrlError} for anything it cannot turn into a connection. */
 export function parseJdbcUrl(raw: string): JdbcConnection {
+  try { return parse(raw); } catch (e) { throw e instanceof JdbcUrlError ? e : new JdbcUrlError(ERR_MALFORMED, [e instanceof Error ? e.message : "unexpected input"]); }
+}
+
+function parse(raw: string): JdbcConnection {
   const text = raw.trim();
   if (!/^jdbc:/i.test(text)) throw new JdbcUrlError(ERR_NOT_JDBC);
   const rest = text.slice(5);
@@ -321,7 +326,7 @@ function parseHostUrlOrShort(rest: string, sub: string, defaults: { port: number
   const body = rest.slice(sub.length + 1);
   if (body.startsWith("//")) return parseHostUrl(rest, sub, defaults);
   const q = body.indexOf("?");
-  const db = decodeURIComponent((q < 0 ? body : body.slice(0, q)).replace(/^\/?/, ""));
+  const db = safeDecode((q < 0 ? body : body.slice(0, q)).replace(/^\/?/, ""));
   const p = params(q < 0 ? "" : body.slice(q + 1), /[&;]/);
   const unused = new Set(p.keys()), notes: JdbcConnection["notes"] = [];
   const values: JdbcConnection["values"] = { host: "localhost", port: defaults.port };
