@@ -29,7 +29,9 @@ jobs:
       - uses: actions/attest-build-provenance@v2
         with: { subject-path: "*.vsix" }
       - uses: actions/upload-artifact@v4
-        with: { name: release, path: "*.vsix\nSHA256SUMS\nsbom.cdx.json" }
+        # Only used as a provenance backup within this job; the files themselves are
+        # attached to the GitHub Release right below. No need to keep this 90 days.
+        with: { name: release, path: "*.vsix\nSHA256SUMS\nsbom.cdx.json", retention-days: 1 }
       - name: Release notes from the changelog
         if: startsWith(github.ref, 'refs/tags/')
         run: |
