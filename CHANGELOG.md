@@ -13,6 +13,9 @@ All notable changes are listed here, newest first. The format follows [Keep a Ch
 
 ## [Unreleased]
 
+### Changed
+- Documentation and site no longer say the extension is on the VS Code Marketplace: Microsoft removed it after 1.2.4 was approved, said it will not be reinstated and gave no reason. It is distributed as a VSIX on each GitHub release.
+
 ### Fixed
 - SQL files larger than 1 MB (data dumps, generated scripts) are no longer analysed for error underlining and completion on every keystroke, which could stall the extension host for seconds on a slow machine.
 

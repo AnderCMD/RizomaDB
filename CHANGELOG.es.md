@@ -13,6 +13,9 @@ Aquí se listan los cambios notables, del más nuevo al más antiguo. El formato
 
 ## [Sin publicar]
 
+### Cambiado
+- La documentación y el sitio ya no dicen que la extensión esté en el Marketplace de VS Code: Microsoft la retiró tras aprobar la 1.2.4, indicó que no la restablecerá y no dio un motivo. Se distribuye como VSIX en cada release de GitHub.
+
 ### Corregido
 - Los archivos SQL de más de 1 MB (volcados de datos, scripts generados) ya no se analizan en cada pulsación para subrayar errores y autocompletar, lo que podía detener el host de extensiones durante segundos en una máquina lenta.
 

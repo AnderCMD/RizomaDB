@@ -1,5 +1,5 @@
 name: Release
-# Builds the packages, attests their provenance and attaches them to the GitHub release of a tag. The Marketplace upload is done by hand (see docs/ci-cd.md).
+# Builds the packages, attests their provenance and attaches them to the GitHub release of a tag. The release is the distribution channel (see docs/ci-cd.md).
 on:
   push: { tags: ["v*"] }
   workflow_dispatch:

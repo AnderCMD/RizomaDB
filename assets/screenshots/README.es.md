@@ -2,7 +2,7 @@
 
 [English](README.md)
 
-Las imágenes que usa la página del Marketplace (`apps/extension/README.md`). Son renders de las pantallas reales (webviews) de la extensión, construidas con el mismo código, con **datos de ejemplo** y las variables de color Dark+ y Light+ de VS Code, tomadas en un navegador. No son capturas de una ventana de VS Code.
+Las imágenes que usa el README de la extensión (`apps/extension/README.md`) y el sitio. Son renders de las pantallas reales (webviews) de la extensión, construidas con el mismo código, con **datos de ejemplo** y las variables de color Dark+ y Light+ de VS Code, tomadas en un navegador. No son capturas de una ventana de VS Code.
 
 Para volver a tomar de una vez las imágenes de la rejilla y de las conexiones: `pnpm build && node scripts/take-screenshots.mjs` (necesita Google Chrome). Las demás imágenes se vuelven a tomar a mano así.
 

@@ -2,7 +2,7 @@
 
 [Español](README.es.md)
 
-The images used by the Marketplace page (`apps/extension/README.md`). They are renders of the real webview screens of the extension (built from the same code) with **sample data** and VS Code's Dark+ and Light+ colour variables, taken in a browser. They are not captures of a VS Code window.
+The images used by the extension README (`apps/extension/README.md`) and the site. They are renders of the real webview screens of the extension (built from the same code) with **sample data** and VS Code's Dark+ and Light+ colour variables, taken in a browser. They are not captures of a VS Code window.
 
 To retake the grid and connection images in one go: `pnpm build && node scripts/take-screenshots.mjs` (needs Google Chrome). The other images are retaken by hand as follows.
 

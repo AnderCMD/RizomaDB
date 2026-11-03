@@ -6,7 +6,7 @@ How a change travels from a branch to users, and what is automatic.
 
 ```
 feature branch ──PR──▶ dev ──PR (Promote workflow)──▶ main ──▶ docs site (GitHub Pages)
-                                                         └──tag v*──▶ Release workflow ──▶ (manual approval) marketplaces
+                                                         └──tag v*──▶ Release workflow ──▶ (GitHub release)             
 ```
 
 | Workflow | Runs on | What it does |
@@ -14,9 +14,9 @@ feature branch ──PR──▶ dev ──PR (Promote workflow)──▶ main �
 | `ci.yml` | push and pull request to `main` or `dev` | lint, build, typecheck, licence audit, a check that the generated reference pages are current, the test suites against real engine containers (a second job, `engines-extra`, starts CockroachDB, YugabyteDB, InfluxDB 3, Firestore and HydraDB from the compose file), benchmarks, builds the VSIX and keeps it as an artifact (14 days), builds the docs site, builds and smoke-tests the linux-x64 platform VSIX (`platform-package`), scans for secrets (gitleaks) and runs CodeQL. A newer push replaces a run in progress. |
 | `pages.yml` | push to `main` that touches `docs/`, `site/` or the workflow, or manual | builds the VitePress site (English and Spanish) and deploys it to GitHub Pages. |
 | `promote.yml` | manual | opens the pull request `dev` → `main` if dev has commits main lacks. |
-| `release.yml` | tag `v*`, or manual | builds the universal VSIX and one VSIX per platform (with DuckDB's native library), checks their size, generates the SBOM and checksums, attests provenance and attaches them to the GitHub release (the notes come from `CHANGELOG.md`). **It publishes nothing to a marketplace: the VSIX is uploaded by hand at https://marketplace.visualstudio.com/manage.** |
+| `release.yml` | tag `v*`, or manual | builds the universal VSIX and one VSIX per platform (with DuckDB's native library), checks their size, generates the SBOM and checksums, attests provenance and attaches them to the GitHub release (the notes come from `CHANGELOG.md`). **It publishes nothing to a marketplace: the GitHub release is the distribution channel.** |
 
-Nothing is published to a marketplace or registry automatically. Open VSX is not published yet.
+Nothing is published to a marketplace or registry. The extension is not on the VS Code Marketplace (removed by Microsoft) or on Open VSX.
 
 ## Repository settings
 These are repository settings, not code, so the workflows do not apply them. Applied on 2026-10-22:
@@ -32,8 +32,7 @@ Not enabled: letting GitHub Actions create pull requests (Settings → Actions �
 1. Bump `version` in `apps/extension/package.json` and add a `## [x.y.z] — date` section to `CHANGELOG.md` and `CHANGELOG.es.md` (the GitHub release notes are taken from the English one).
 2. With CI green on `main`, tag it: `git tag -a vX.Y.Z -m "RizomaDB X.Y.Z" && git push origin vX.Y.Z`. The *Release* workflow builds the universal VSIX and the six per-platform ones and attaches them, with `SHA256SUMS`, the SBOM and the build-provenance attestation, to the GitHub release.
 3. Download `rizomadb-X.Y.Z.vsix` from the release and check it (`shasum -a 256 -c SHA256SUMS --ignore-missing` and `gh attestation verify rizomadb-X.Y.Z.vsix --repo AnderCMD/RizomaDB`).
-4. Upload that file by hand at https://marketplace.visualstudio.com/manage (*New extension → Visual Studio Code* the first time; for a new version use the extension's ⋯ menu → *Update*). Verification takes a few minutes. Publishing is manual because automated publishing is not available to the owner.
-5. Open VSX is not published yet.
+4. The release on GitHub is the distribution channel. The extension is **not** on the VS Code Marketplace (Microsoft removed it and will not reinstate it) and is not on Open VSX, so there is nothing to upload.
 
 ## Verifying a release package
 Each VSIX in a release comes with `SHA256SUMS`, an SBOM (`sbom.cdx.json`) and a GitHub build-provenance attestation. To check a download:
