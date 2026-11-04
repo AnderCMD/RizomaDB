@@ -58,4 +58,4 @@ jobs:
         run: |
           f=$(ls rizomadb-client-[0-9]*.vsix)
           test "$(echo "$f" | wc -l)" = 1
-          npx --yes @vscode/vsce@4.0.0 publish --oidc --skip-duplicate --packagePath "$f"
+          npx --yes @vscode/vsce@4.1.0 publish --oidc --skip-duplicate --packagePath "$f"
