@@ -122,7 +122,7 @@ Open **RizomaDB: Open Settings** for a screen with every setting: language, wher
 
 Every engine above was tested against a real server or an official emulator running locally (DynamoDB Local, the Firestore emulator). **What each engine supports differs**: row editing, for example, works for SQL engines and MongoDB. See the [capability matrix](https://andercmd.github.io/RizomaDB/en/reference/engine-matrix).
 
-¹ DuckDB uses a native library that is not in this package. Download the `rizomadb-<platform>.vsix` for your system from the [GitHub release](https://github.com/AnderCMD/RizomaDB/releases) if you need DuckDB.
+¹ DuckDB uses a native library that is not in this package. Download the `rizomadb-client-<platform>.vsix` for your system from the [GitHub release](https://github.com/AnderCMD/RizomaDB/releases) if you need DuckDB.
 
 ## Getting started
 

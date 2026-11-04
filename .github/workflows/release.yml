@@ -1,5 +1,5 @@
 name: Release
-# Builds the packages, attests their provenance and attaches them to the GitHub release of a tag. The release is the distribution channel (see docs/ci-cd.md).
+# Builds the packages, attests their provenance and attaches them to the GitHub release of a tag. The Marketplace job below then publishes the universal VSIX through trusted publishing (OIDC, no token), but only after the owner approves the `marketplace` environment (see docs/ci-cd.md).
 on:
   push: { tags: ["v*"] }
   workflow_dispatch:
@@ -14,7 +14,7 @@ jobs:
         with: { node-version: 24, cache: pnpm }
       - run: pnpm install --frozen-lockfile
       - run: pnpm build && pnpm audit:licenses --check
-      - run: pnpm --filter rizomadb package
+      - run: pnpm --filter rizomadb-client package
       - run: node scripts/check-vsix-size.mjs apps/extension/*.vsix 8
       # One VSIX per platform, each carrying DuckDB's native library (docs/engines/duckdb.md): the universal one above stays small and has no DuckDB.
       - name: Platform packages
@@ -41,3 +41,21 @@ jobs:
       - uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with: { files: "*.vsix\nSHA256SUMS\nsbom.cdx.json", body_path: release-notes.md, make_latest: true }
+  marketplace:
+    # Needs the owner's approval: the `marketplace` environment has a required reviewer. Its name is also what the Marketplace's trusted-publishing policy checks.
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    environment: marketplace
+    permissions: { contents: read, id-token: write }
+    steps:
+      - uses: actions/setup-node@v7
+        with: { node-version: 24 }
+      - uses: actions/download-artifact@v4
+        with: { name: release }
+      # The universal package only (no DuckDB native library); the per-platform ones stay on the GitHub release.
+      - name: Publish to the Marketplace
+        run: |
+          f=$(ls rizomadb-client-[0-9]*.vsix)
+          test "$(echo "$f" | wc -l)" = 1
+          npx --yes @vscode/vsce@4.0.0 publish --oidc --skip-duplicate --packagePath "$f"

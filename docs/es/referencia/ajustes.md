@@ -18,6 +18,7 @@ Todos los ajustes de la extensión. Abre la pantalla de configuración con **Riz
 | `rizomadb.query.keysetPaging` | boolean | `true` | Pagina las tablas por su clave primaria en vez de saltar filas. «Cargar más» empieza justo después de la última fila, así que sigue rápido en tablas grandes. Al abrir una tabla se ordena por su clave. Solo SQLite, PostgreSQL, MySQL, SQL Server y Oracle; los demás motores y las tablas sin clave primaria siguen saltando filas. Un orden propio en el filtro también salta filas. |
 | `rizomadb.query.maxRows` | number | `100000` | Máximo de filas que se conservan en una vista de resultados sumando todas las páginas cargadas. |
 | `rizomadb.query.timeoutSeconds` | number | `0` | Tiempo de espera de consultas en segundos (0 = sin límite). |
+| `rizomadb.connections.idleMinutes` | number | `30` | Cierra una conexión que nadie ha usado durante estos minutos; se reconecta la próxima vez que la uses (0 = no cerrar automáticamente). |
 | `rizomadb.history.enabled` | boolean | `true` | Registrar las sentencias ejecutadas en un historial local (los secretos se redactan). |
 | `rizomadb.history.retentionDays` | number | `90` | Días que se conservan las entradas del historial. |
 | `rizomadb.edit.applyImmediately` | boolean | `false` | Guarda cada edición de celda en cuanto la confirmas, sin pulsar Aplicar. En conexiones `dev` se aplica sin preguntar; los demás entornos siguen preguntando, y las políticas y el solo lectura siempre se respetan. |

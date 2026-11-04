@@ -56,6 +56,13 @@ export class Explorer implements vscode.TreeDataProvider<Node> {
   // Connecting, disconnecting or editing fires many changes in a row (and one per connection when the window restores them): redraw once.
   constructor(private mgr: ConnectionManager) { mgr.onChange(() => { clearTimeout(this.timer); this.timer = setTimeout(() => this.ev.fire(undefined), 150); }); }
   /** Redraw the tree (icons, active marker) without asking the databases again. */
+  /** Bumped when a connection is closed on purpose: a new tree id makes VS Code show the node collapsed again, so redrawing does not reopen (and so reconnect) it. */
+  private epoch = new Map<string, number>();
+  collapse(id?: string) {
+    if (id) this.epoch.set(id, (this.epoch.get(id) ?? 0) + 1);
+    else for (const p of this.mgr.list()) this.epoch.set(p.id, (this.epoch.get(p.id) ?? 0) + 1);
+    this.redraw();
+  }
   redraw() { clearTimeout(this.timer); this.timer = setTimeout(() => this.ev.fire(undefined), 150); }
   /** Explicit refresh (the user asked, or a schema change happened): forget the cached answers too. */
   refresh() { this.cache = new WeakMap(); clearTimeout(this.timer); this.ev.fire(undefined); }
@@ -75,16 +82,17 @@ export class Explorer implements vscode.TreeDataProvider<Node> {
       it.contextValue = "group"; return it;
     }
     if (n.kind === "connection") {
-      const p = n.profile, ro = this.mgr.isReadOnly(p), connected = this.mgr.isConnected(p.id);
+      const p = n.profile, ro = this.mgr.isReadOnly(p), connected = this.mgr.isConnected(p.id), connecting = this.mgr.isConnecting(p.id);
       const it = new vscode.TreeItem(p.name, vscode.TreeItemCollapsibleState.Collapsed);
-      it.id = `${p.id}@${this.session}`;
+      it.id = `${p.id}@${this.session}.${this.epoch.get(p.id) ?? 0}`;
       // Environment is conveyed by text as well as colour (WCAG: not colour alone).
       const src = this.mgr.sourceOf(p.id);
       const db = databaseOf(p), isActive = this.activeId() === p.id;
-      it.description = `${isActive ? "● " : ""}[${p.environment.toUpperCase()}]${db ? ` · ${db}` : ""}${src ? ` · ${src}` : ""}${ro ? " · " + t("read-only") : ""}${connected ? "" : " · " + t("disconnected")}`;
+      const state = connected ? t("connected") : connecting ? t("connecting…") : t("disconnected");
+      it.description = `${isActive ? "● " : ""}${state} · [${p.environment.toUpperCase()}]${db ? ` · ${db}` : ""}${src ? ` · ${src}` : ""}${ro ? " · " + t("read-only") : ""}`;
       it.iconPath = this.icon(p);
-      it.contextValue = "connection";
-      it.tooltip = `${p.name} (${engineOf(p)?.name ?? p.driver}) — ${p.environment}${db ? ` — ${db}` : ""}${isActive ? ` — ${t("Active connection")}` : ""}`;
+      it.contextValue = connected ? "connection.on" : "connection.off";
+      it.tooltip = `${p.name} (${engineOf(p)?.name ?? p.driver}) — ${p.environment}${db ? ` — ${db}` : ""}${isActive ? ` — ${t("Active connection")}` : ""} — ${connected ? t("Connected") : connecting ? t("Connecting…") : t("disconnected")}`;
       return it;
     }
     if (n.kind === "schema") {

@@ -24,8 +24,8 @@ A free (Apache-2.0), no-telemetry, multi-engine database client for VS Code. pnp
 ```bash
 pnpm install
 pnpm lint && pnpm build && pnpm typecheck && pnpm test      # must pass
-pnpm --filter rizomadb test:e2e                              # real VS Code
-pnpm --filter rizomadb package                               # builds drivers first, then the VSIX
+pnpm --filter rizomadb-client test:e2e                              # real VS Code
+pnpm --filter rizomadb-client package                               # builds drivers first, then the VSIX
 node scripts/gen-reference.mjs                               # after changing settings, commands or driver capabilities (CI runs --check)
 node scripts/gen-logos.mjs <dir-with-icon-packages>          # regenerates engineLogos.ts
 ```
@@ -48,7 +48,7 @@ Engine suites skip when their engine is down locally and **fail in CI** (`RZ_REQ
 - Commits: Conventional Commits (`feat:`, `fix:`, `docs:`, `ci:`). Work on a branch → PR into `dev`; `dev` → `main` by PR (see `docs/ci-cd.md`).
 - New driver: pass `runConformance`, add `docs/engines/<id>.md`, register it in `extension.ts`, `worker/driverWorker.ts`, `engineCatalog.ts`, `scripts/gen-reference.mjs`, and `docker-compose.yml` if it has an image. Read-only mode must be enforced by the server where possible, otherwise by a default-deny classifier — and say which in the docs.
 - New setting or command: declare it in `package.json` and both `package.nls*.json`, give it a title in `settingsPanel.ts` if it is a setting, then regenerate the references.
-- Packaging uses the **built** driver packages: after changing a driver run `pnpm --filter rizomadb package` (it builds dependencies), not just esbuild.
+- Packaging uses the **built** driver packages: after changing a driver run `pnpm --filter rizomadb-client package` (it builds dependencies), not just esbuild.
 - Design: follow [docs/design/design-guide.md](docs/design/design-guide.md).
 
 ## Verify before you say "done"

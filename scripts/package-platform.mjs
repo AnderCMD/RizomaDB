@@ -46,7 +46,7 @@ try {
   // The two JS packages find each other by name, so lay them out the way npm would.
   for (const n of ["node-api", "node-bindings"]) rmSync(join(stage, n, "node_modules"), { recursive: true, force: true });
   mkdirSync(out, { recursive: true });
-  const file = join(out, `rizomadb-${target}.vsix`);
+  const file = join(out, `rizomadb-client-${target}.vsix`);
   run("pnpm", ["exec", "vsce", "package", "--no-dependencies", "--target", target, "-o", file], ext);
   if (!existsSync(file)) throw new Error("vsce did not produce the file");
   console.log(file);

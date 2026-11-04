@@ -20,6 +20,8 @@ Every command, as it appears in the command palette (⇧⌘P / Ctrl+Shift+P) und
 | `rizomadb.importCatalog` | Import Connections (Encrypted)… | — |
 | `rizomadb.readOnlyUser` | Generate Read-Only User Script… | — |
 | `rizomadb.disconnect` | Disconnect | — |
+| `rizomadb.connect` | Connect | — |
+| `rizomadb.disconnectAll` | Disconnect all | — |
 | `rizomadb.deleteConnection` | Delete Connection | — |
 | `rizomadb.refresh` | Refresh | — |
 | `rizomadb.reviewPendingChanges` | Review Pending Changes | — |

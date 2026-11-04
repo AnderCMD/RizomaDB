@@ -111,7 +111,7 @@ button.primary { color: var(--vscode-button-foreground); background: var(--vscod
 button.primary:hover:not(:disabled) { background: var(--vscode-button-hoverBackground, var(--vscode-button-background)); }
 header { background: var(--rz-surface); padding: 8px 14px; gap: 14px; }
 header h1, h1#title { font-weight: 600; }
-#status { color: var(--rz-muted); }
+#status:not(.chip) { color: var(--rz-muted); }
 #toolbar, #tools { padding: 6px 14px; gap: 6px; border-bottom: 1px solid var(--rz-border); display: flex; align-items: center; flex-wrap: wrap; }
 #tools .spacer { flex: 1; }
 #tools .find input { width: 220px; padding: 3px 8px; border-radius: 6px; color: var(--vscode-input-foreground); background: var(--vscode-input-background); border: 1px solid var(--vscode-input-border, var(--rz-border)); font: inherit; }

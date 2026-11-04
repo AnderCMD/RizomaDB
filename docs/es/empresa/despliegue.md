@@ -4,7 +4,7 @@
 
 ## Sin conexión / entornos aislados
 * La extensión **no hace conexiones de red propias**: sin telemetría, sin comprobación de actualizaciones, sin configuración remota. Una prueba (`apps/extension/src/activation.test.ts`) falla si la activación abre un socket o si el código de la extensión o de core importa módulos de red.
-* Instala desde un VSIX (`code --install-extension rizomadb-x.y.z.vsix`) o desde un espejo interno de Open VSX. Verifica `SHA256SUMS` y la atestación de procedencia de la compilación adjunta a cada versión.
+* Instala desde un VSIX (`code --install-extension rizomadb-client-x.y.z.vsix`) o desde un espejo interno de Open VSX. Verifica `SHA256SUMS` y la atestación de procedencia de la compilación adjunta a cada versión.
 * Fija la versión en tu herramienta de gestión; las actualizaciones son explícitas.
 
 ## Instalación masiva
