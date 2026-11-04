@@ -10,6 +10,9 @@ user/password via thin mode (no Oracle Client needed); wallet/Kerberos NOT imple
 ## Capabilities
 Same as PostgreSQL; EXPLAIN via PLAN_TABLE
 
+## Dictionary reads
+Schema, completion and the tree read the data dictionary (`ALL_*` views) through the same session as your statements, so each read is limited to 30 seconds (a timeout is reported as such, not as a hang). A failed or slow schema read is not retried for 2 minutes.
+
 ## Type notes
 NUMBER read as text and converted (exact); CLOB as text
 

@@ -14,7 +14,7 @@ Haz clic derecho en una conexión SQL y elige **Construir una consulta…**: eli
 | Ejecutar la selección | **Ctrl+Shift+Enter** (⌘+Shift+Enter) |
 | Ejecutar todas las sentencias | Lente **Ejecutar todo (N)** al inicio del archivo, o **RizomaDB: Ejecutar todas las sentencias** |
 | Explicar el plan (motores SQL que lo soportan) | Lente **Explicar**, o **RizomaDB: Explicar el plan de consulta** |
-| Cancelar | **RizomaDB: Cancelar la consulta en curso**, o el botón de parar en la cabecera de resultados |
+| Cancelar | **RizomaDB: Cancelar la consulta en curso**, el botón de parar en la cabecera de resultados, o el elemento *Ejecutando… clic para cancelar* de la barra de estado. Si el motor no se detiene en 1,5 segundos, la ejecución se abandona, la pantalla se libera y esa conexión se cierra (se reconecta en la siguiente ejecución) |
 
 **Ejecutar todo** corre las sentencias en orden y se detiene en el primer error. Fuera de `dev` pide confirmación antes, una vez para todo el archivo. Cada sentencia sigue pasando por la política y el registro de auditoría por separado.
 

@@ -20,6 +20,12 @@
 
 **A screen is in the wrong language.** Set `rizomadb.language`; reopen open screens. Command and setting names follow VS Code's language.
 
+**Every Run button says a query is already running.** An engine that ignored Cancel used to leave the run open forever. Now it is abandoned 1.5 seconds after you cancel (or after `rizomadb.query.timeoutSeconds`) and that connection is closed; run again and it reconnects. If you still see it, run **RizomaDB: Disconnect All**.
+
+**Oracle is slow or stalls when a file opens.** Completion and diagnostics read the data dictionary through the same session as your statements. Each of those reads is now limited to 30 seconds and, if it fails or is too slow, it is not retried for 2 minutes. Statements you run yourself are not limited by that.
+
+**A connection I was using shows as disconnected.** After `rizomadb.connections.idleMinutes` minutes without use (30 by default) it is closed on purpose; press **Reconnect** in the notification or just run something. Set the setting to `0` to keep connections open.
+
 **Oracle says "NJS-138" or that the server is too old.** RizomaDB connects without the Oracle Client, which needs Oracle Database 12.1 or later. Older servers are not supported.
 
 **A screen says "Could not register service worker" or stays blank.** This is a VS Code problem, not an extension one: close every VS Code window and open it again. If it repeats, quit VS Code and delete its `Service Worker` cache folder (on macOS, `~/Library/Application Support/Code/Service Worker`).

@@ -10,6 +10,9 @@ usuario/contraseña en modo thin (no hace falta Oracle Client); wallet/Kerberos 
 ## Capacidades
 Igual que PostgreSQL; EXPLAIN mediante PLAN_TABLE
 
+## Lecturas del diccionario
+El esquema, el autocompletado y el árbol leen el diccionario de datos (vistas `ALL_*`) por la misma sesión que tus sentencias, así que cada lectura está limitada a 30 segundos (un tiempo agotado se informa como tal, no como un cuelgue). Una lectura de esquema fallida o lenta no se reintenta durante 2 minutos.
+
 ## Notas de tipos
 NUMBER se lee como texto y se convierte (exacto); CLOB como texto
 

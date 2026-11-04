@@ -20,6 +20,12 @@
 
 **Una pantalla está en el idioma equivocado.** Cambia `rizomadb.language` y reabre las pantallas abiertas. Los nombres de comandos y ajustes siguen el idioma de VS Code.
 
+**Todos los botones de ejecutar dicen que ya hay una consulta en curso.** Un motor que ignoraba Cancelar dejaba la ejecución abierta para siempre. Ahora se abandona 1,5 segundos después de cancelar (o tras `rizomadb.query.timeoutSeconds`) y esa conexión se cierra; vuelve a ejecutar y se reconecta. Si aun así lo ves, ejecuta **RizomaDB: Desconectar todas**.
+
+**Oracle va lento o se detiene al abrir un archivo.** El autocompletado y los diagnósticos leen el diccionario de datos por la misma sesión que tus sentencias. Cada una de esas lecturas está limitada a 30 segundos y, si falla o es demasiado lenta, no se reintenta durante 2 minutos. Las sentencias que ejecutas tú no tienen ese límite.
+
+**Una conexión que usaba aparece como desconectada.** Tras `rizomadb.connections.idleMinutes` minutos sin uso (30 por defecto) se cierra a propósito; pulsa **Reconectar** en la notificación o simplemente ejecuta algo. Pon el ajuste en `0` para mantener las conexiones abiertas.
+
 **Oracle dice «NJS-138» o que el servidor es demasiado antiguo.** RizomaDB se conecta sin el cliente de Oracle, que necesita Oracle Database 12.1 o posterior. Los servidores más antiguos no se admiten.
 
 **Una pantalla dice «Could not register service worker» o se queda en blanco.** Es un problema de VS Code, no de la extensión: cierra todas las ventanas de VS Code y ábrelo de nuevo. Si se repite, cierra VS Code por completo y borra la carpeta de caché `Service Worker` (en macOS, `~/Library/Application Support/Code/Service Worker`).
