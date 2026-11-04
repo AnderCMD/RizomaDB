@@ -1,6 +1,6 @@
 {
-  "name": "rizomadb",
-  "displayName": "RizomaDB — Database Client",
+  "name": "rizomadb-client",
+  "displayName": "RizomaDB Client for Databases",
   "description": "%description%",
   "version": "1.2.4",
   "repository": { "type": "git", "url": "https://github.com/AnderCMD/RizomaDB.git" },
@@ -144,6 +144,18 @@
       {
         "command": "rizomadb.disconnect",
         "title": "%cmd.disconnect%",
+        "category": "RizomaDB",
+        "icon": "$(debug-disconnect)"
+      },
+      {
+        "command": "rizomadb.connect",
+        "title": "%cmd.connect%",
+        "category": "RizomaDB",
+        "icon": "$(plug)"
+      },
+      {
+        "command": "rizomadb.disconnectAll",
+        "title": "%cmd.disconnectAll%",
         "category": "RizomaDB"
       },
       {
@@ -423,12 +435,12 @@
       "view/item/context": [
         {
           "command": "rizomadb.newQuery",
-          "when": "view == rizomadb.connections && viewItem == connection",
+          "when": "view == rizomadb.connections && viewItem =~ /^connection/",
           "group": "inline@1"
         },
         {
           "command": "rizomadb.refresh",
-          "when": "view == rizomadb.connections && (viewItem == connection || viewItem == schema || viewItem == category)",
+          "when": "view == rizomadb.connections && (viewItem =~ /^connection/ || viewItem == schema || viewItem == category)",
           "group": "inline@2"
         },
         {
@@ -438,27 +450,33 @@
         },
         {
           "command": "rizomadb.newQuery",
-          "when": "view == rizomadb.connections && viewItem == connection"
+          "when": "view == rizomadb.connections && viewItem =~ /^connection/"
         },
         {
           "command": "rizomadb.toggleReadOnly",
-          "when": "view == rizomadb.connections && viewItem == connection"
+          "when": "view == rizomadb.connections && viewItem =~ /^connection/"
         },
         {
           "command": "rizomadb.readOnlyUser",
-          "when": "view == rizomadb.connections && viewItem == connection"
+          "when": "view == rizomadb.connections && viewItem =~ /^connection/"
         },
         {
           "command": "rizomadb.buildQuery",
-          "when": "view == rizomadb.connections && viewItem == connection"
+          "when": "view == rizomadb.connections && viewItem =~ /^connection/"
         },
         {
           "command": "rizomadb.disconnect",
-          "when": "view == rizomadb.connections && viewItem == connection"
+          "when": "view == rizomadb.connections && viewItem == connection.on",
+          "group": "inline@2"
+        },
+        {
+          "command": "rizomadb.connect",
+          "when": "view == rizomadb.connections && viewItem == connection.off",
+          "group": "inline@2"
         },
         {
           "command": "rizomadb.deleteConnection",
-          "when": "view == rizomadb.connections && viewItem == connection"
+          "when": "view == rizomadb.connections && viewItem =~ /^connection/"
         },
         {
           "command": "rizomadb.openTable",
@@ -470,32 +488,32 @@
         },
         {
           "command": "rizomadb.showER",
-          "when": "view == rizomadb.connections && viewItem == connection",
+          "when": "view == rizomadb.connections && viewItem =~ /^connection/",
           "group": "schema"
         },
         {
           "command": "rizomadb.designTable",
-          "when": "view == rizomadb.connections && viewItem == connection",
+          "when": "view == rizomadb.connections && viewItem =~ /^connection/",
           "group": "schema"
         },
         {
           "command": "rizomadb.compareSchemas",
-          "when": "view == rizomadb.connections && viewItem == connection",
+          "when": "view == rizomadb.connections && viewItem =~ /^connection/",
           "group": "schema"
         },
         {
           "command": "rizomadb.generateDocs",
-          "when": "view == rizomadb.connections && viewItem == connection",
+          "when": "view == rizomadb.connections && viewItem =~ /^connection/",
           "group": "schema"
         },
         {
           "command": "rizomadb.suggestIndexes",
-          "when": "view == rizomadb.connections && viewItem == connection",
+          "when": "view == rizomadb.connections && viewItem =~ /^connection/",
           "group": "schema"
         },
         {
           "command": "rizomadb.exportSchemaSnapshot",
-          "when": "view == rizomadb.connections && viewItem == connection",
+          "when": "view == rizomadb.connections && viewItem =~ /^connection/",
           "group": "schema"
         },
         {
@@ -525,12 +543,12 @@
         },
         {
           "command": "rizomadb.backup",
-          "when": "view == rizomadb.connections && viewItem == connection",
+          "when": "view == rizomadb.connections && viewItem =~ /^connection/",
           "group": "data"
         },
         {
           "command": "rizomadb.restore",
-          "when": "view == rizomadb.connections && viewItem == connection",
+          "when": "view == rizomadb.connections && viewItem =~ /^connection/",
           "group": "data"
         },
         {
@@ -570,7 +588,7 @@
         },
         {
           "command": "rizomadb.admin",
-          "when": "view == rizomadb.connections && viewItem == connection",
+          "when": "view == rizomadb.connections && viewItem =~ /^connection/",
           "group": "admin"
         },
         {
@@ -712,6 +730,12 @@
           "default": 0,
           "minimum": 0,
           "markdownDescription": "%cfg.timeout%"
+        },
+        "rizomadb.connections.idleMinutes": {
+          "type": "number",
+          "default": 30,
+          "minimum": 0,
+          "markdownDescription": "%cfg.idleMinutes%"
         },
         "rizomadb.history.enabled": {
           "type": "boolean",
@@ -950,7 +974,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
     "test:e2e": "node e2e/run.mjs",
-    "package": "turbo run build --filter=rizomadb && vsce package --no-dependencies"
+    "package": "turbo run build --filter=rizomadb-client && vsce package --no-dependencies"
   },
   "dependencies": {
     "@rizomadb/admin": "workspace:*",

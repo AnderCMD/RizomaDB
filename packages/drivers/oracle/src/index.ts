@@ -22,9 +22,13 @@ function mapError(e: unknown): DriverError {
   else if ([1, 1400, 2290, 2291, 2292, 1407].includes(n)) kind = "constraint";
   else if (n === 1013 || /DPI-1067|call timeout|NJS-018|NJS-040/.test(msg) && /cancel/i.test(msg)) kind = "cancelled";
   else if ([12541, 12514, 12170, 12154, 12545, 3113, 3114, 3135, 12537].includes(n) || /NJS-503|NJS-500|DPY-6005|DPI-1080/.test(msg)) kind = "connection";
+  if (/DPI-1067|call timeout/i.test(msg) && !/cancel/i.test(msg)) return new DriverError("timeout", "Oracle did not answer in time (the call timed out). The data dictionary of this database may be very large; try again or narrow the schema.", opt);
   if (/NJS-138/.test(msg)) return new DriverError("connection", "This Oracle Database version is too old: RizomaDB connects without the Oracle Client (thin mode), which needs Oracle Database 12.1 or later.", opt);
   return new DriverError(kind, msg, opt);
 }
+
+/** Dictionary reads (schema, completion, explorer) share the one session with the user's statements, so a slow one would queue everything behind it: bound each. */
+const INTROSPECTION_TIMEOUT_MS = 30_000, BANNER_TIMEOUT_MS = 10_000;
 
 const WRITE_RE = /\b(insert|update|delete|merge|drop|alter|create|truncate|grant|revoke|begin|declare|call|exec|execute|lock|commit|rollback|savepoint|rename|comment|purge|flashback|audit)\b/i;
 export function isReadOnlySafe(sql: string): boolean {
@@ -111,8 +115,11 @@ class OracleConnection implements Connection {
   execute(req: ExecuteRequest, signal: AbortSignal) { return run(this.conn, this.state, req, signal); }
   quoteIdent = quoteIdent;
   private async rows(sql: string, binds: Record<string, unknown> = {}): Promise<Record<string, unknown>[]> {
+    const previous = this.conn.callTimeout;
+    this.conn.callTimeout = INTROSPECTION_TIMEOUT_MS;
     try { return (await this.conn.execute(sql, binds as oracledb.BindParameters, { outFormat: oracledb.OUT_FORMAT_OBJECT })).rows as Record<string, unknown>[]; }
     catch (e) { throw mapError(e); }
+    finally { this.conn.callTimeout = previous; }
   }
   introspect(): IntrospectionApi {
     return {
@@ -217,7 +224,9 @@ export const oracleDriver: DriverPlugin = {
         user: cfg.user as string, password: (cfg.password as string | undefined) ?? "",
         connectString: connectString(cfg), transportConnectTimeout: 20,
       });
+      conn.callTimeout = BANNER_TIMEOUT_MS;
       const v = await conn.execute("select banner_full b from v$version fetch first 1 rows only").catch(() => undefined);
+      conn.callTimeout = 0;
       const banner = String((v?.rows as unknown[][] | undefined)?.[0]?.[0] ?? conn.oracleServerVersionString ?? "");
       return new OracleConnection(conn, { product: "Oracle Database", version: conn.oracleServerVersionString ?? banner }, !!cfg.readOnly);
     } catch (e) { throw mapError(e); }

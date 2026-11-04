@@ -3,7 +3,7 @@ const vscode = require("vscode");
 const assert = require("node:assert");
 
 exports.run = async function run() {
-  const ext = vscode.extensions.all.find((e) => e.packageJSON.name === "rizomadb");
+  const ext = vscode.extensions.all.find((e) => e.packageJSON.name === "rizomadb-client");
   assert.ok(ext, "extension is installed in the dev host");
   const started = performance.now();
   await ext.activate();

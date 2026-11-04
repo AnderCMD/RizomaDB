@@ -359,16 +359,28 @@ export async function activate(ctx: vscode.ExtensionContext) {
     const p = mgr.get(activeId() ?? "");
     if (!p) { if (!mgr.list().length) { status.hide(); return; } status.text = `$(database) ${t("No connection")}`; status.tooltip = t("Select connection for this editor"); status.show(); return; }
     const db = databaseOf(p), engine = engineOf(p)?.name ?? p.driver;
-    status.text = `$(database) [${p.environment.toUpperCase()}] ${p.name}${db ? ` · ${db}` : ""}${mgr.isReadOnly(p) ? " 🔒" : ""}${mgr.isConnected(p.id) ? "" : ` (${t("disconnected")})`}`;
-    status.tooltip = new vscode.MarkdownString(`**${p.name}** — ${engine}\n\n${db ? `${t("Database")}: \`${db}\`\n\n` : ""}${t("Environment")}: ${p.environment}${mgr.isReadOnly(p) ? ` · ${t("read-only")}` : ""}\n\n${t("Click to change the connection of this editor")}`);
+    const st = mgr.stateOf(p.id), icon = st === "connected" ? "plug" : st === "connecting" ? "sync~spin" : "debug-disconnect";
+    status.text = `$(${icon}) [${p.environment.toUpperCase()}] ${p.name}${db ? ` · ${db}` : ""}${mgr.isReadOnly(p) ? " 🔒" : ""}${st === "connected" ? "" : ` (${st === "connecting" ? t("connecting…") : t("disconnected")})`}`;
+    const open = mgr.list().filter((x) => mgr.isConnected(x.id)).length;
+    status.tooltip = new vscode.MarkdownString(`**${p.name}** — ${engine} · ${st === "connected" ? t("Connected") : st === "connecting" ? t("Connecting…") : t("disconnected")}\n\n${db ? `${t("Database")}: \`${db}\`\n\n` : ""}${t("Environment")}: ${p.environment}${mgr.isReadOnly(p) ? ` · ${t("read-only")}` : ""}\n\n${t("Open connections: {0}", open)}\n\n${t("Click to change the connection of this editor")}`);
     status.show();
   };
+
+  mgr.isBusy = (id) => !!running && lastRun?.id === id;
+  mgr.setIdleMinutes(cfg().get<number>("connections.idleMinutes", 30));
+  ctx.subscriptions.push(
+    mgr.onClosed((id, reason) => {
+      const p = mgr.get(id); schemaCache.invalidate(id); explorer.collapse(id);
+      if (reason === "idle" && p) void vscode.window.showInformationMessage(t("Closed {0} after {1} minutes without use. It reconnects when you use it again.", p.name, cfg().get<number>("connections.idleMinutes", 30)), t("Reconnect")).then((a) => { if (a === t("Reconnect")) void mgr.connect(id).catch(() => {}); });
+    }),
+    vscode.workspace.onDidChangeConfiguration((e) => { if (e.affectsConfiguration("rizomadb.connections.idleMinutes")) mgr.setIdleMinutes(cfg().get<number>("connections.idleMinutes", 30)); }),
+  );
 
   async function pickConnection(): Promise<string | undefined> {
     const list = mgr.list();
     if (!list.length) { return newConnectionWizard(mgr); }
     const pick = await vscode.window.showQuickPick(
-      [...list.map((p) => ({ label: `${p.id === activeId() ? "$(check) " : mgr.isConnected(p.id) ? "$(plug) " : ""}${p.name}`, description: `[${p.environment}] ${p.driver}${mgr.isReadOnly(p) ? " 🔒" : ""}`, detail: p.id === activeId() ? t("In use now") : mgr.isConnected(p.id) ? t("Connected") : t("Not connected yet: it connects when you run something"), id: p.id })), { label: `$(add) ${t("New connection…")}`, id: "" }],
+      [...list.map((p) => ({ label: `${p.id === activeId() ? "$(check) " : mgr.isConnected(p.id) ? "$(plug) " : mgr.isConnecting(p.id) ? "$(sync~spin) " : ""}${p.name}`, description: `[${p.environment}] ${p.driver}${mgr.isReadOnly(p) ? " 🔒" : ""}`, detail: p.id === activeId() ? t("In use now") : mgr.isConnected(p.id) ? t("Connected") : t("Not connected yet: it connects when you run something"), id: p.id })), { label: `$(add) ${t("New connection…")}`, id: "" }],
       { title: t("Select connection"), matchOnDescription: true });
     if (!pick) return;
     return pick.id || newConnectionWizard(mgr);
@@ -448,6 +460,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
         onEvent: emit,
       });
       result = out.status;
+      if (out.stuck) { void mgr.disconnect(id); void vscode.window.showWarningMessage(t("The engine did not stop the statement, so the connection was closed. It reconnects on the next run.")); }
       if (out.status === "ok" && /^\s*(create|alter|drop|rename|truncate)\b/i.test(sql)) { schemaCache.invalidate(id); lang.refreshAll(); void vscode.commands.executeCommand("rizomadb.refresh"); }
       if (edit && out.status === "ok") {
         const ts = new TableSession(edit.target, cols, rawRows);
@@ -817,7 +830,18 @@ export async function activate(ctx: vscode.ExtensionContext) {
       await vscode.window.showTextDocument(doc, { viewColumn: vscode.ViewColumn.Beside });
     } catch (e) { void vscode.window.showErrorMessage(e instanceof ReadOnlyUserError ? t("That name cannot be used in the script.") : (e as Error).message); }
   });
-  reg("rizomadb.disconnect", (n: Node) => { if (n.kind === "connection") return mgr.disconnect(n.profile.id); });
+  reg("rizomadb.disconnect", async (n: Node) => { if (n.kind === "connection") { await mgr.disconnect(n.profile.id); schemaCache.invalidate(n.profile.id); explorer.collapse(n.profile.id); } });
+  reg("rizomadb.connect", async (n: Node) => {
+    if (n.kind !== "connection") return;
+    try { await vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: t("Connecting to {0}…", n.profile.name) }, () => mgr.connect(n.profile.id)); }
+    catch (e) { void vscode.window.showErrorMessage(t("Could not connect to {0}: {1}", n.profile.name, friendly((e as Error).message))); }
+  });
+  reg("rizomadb.disconnectAll", async () => {
+    const open = mgr.list().filter((p) => mgr.isConnected(p.id) || mgr.isConnecting(p.id));
+    await Promise.all(open.map((p) => mgr.disconnect(p.id)));
+    schemaCache.invalidate(); explorer.collapse();
+    void vscode.window.showInformationMessage(open.length ? t("Disconnected {0} connections.", open.length) : t("No connection was open."));
+  });
   reg("rizomadb.deleteConnection", async (n: Node) => {
     if (n.kind !== "connection") return;
     if (mgr.isShared(n.profile.id)) { void vscode.window.showInformationMessage(t("'{0}' comes from the {1} catalog: edit the catalog file to remove it.", n.profile.name, mgr.sourceOf(n.profile.id) ?? "shared")); return; }

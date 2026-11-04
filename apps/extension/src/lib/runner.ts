@@ -29,7 +29,12 @@ export interface RunOptions {
 export interface RunOutcome {
   status: "ok" | "error" | "cancelled" | "blocked";
   rowCount: number; durationMs: number; error?: string;
+  /** The driver did not stop after being cancelled: the caller should drop that connection. */
+  stuck?: boolean;
 }
+
+/** How long a driver gets to honour an abort before the run is abandoned, so a driver that ignores the signal cannot lock the UI. */
+export const ABORT_GRACE_MS = 1500;
 
 /** Single path for every statement the UI runs: policy first, then the driver. */
 export async function runStatement(o: RunOptions): Promise<RunOutcome> {
@@ -52,9 +57,20 @@ export async function runStatement(o: RunOptions): Promise<RunOutcome> {
   const onAbort = () => ac.abort();
   o.signal.addEventListener("abort", onAbort, { once: true });
   const timer = o.timeoutMs ? setTimeout(() => { timedOut = true; ac.abort(); }, o.timeoutMs) : undefined;
-  let rowCount = 0, toSkip = o.skip ?? 0;
+  let rowCount = 0, toSkip = o.skip ?? 0, stuck = false;
+  const it = o.conn.execute({ sql: o.sql, ...(o.params ? { params: o.params } : {}), maxRows: toSkip + o.maxRows + 1 }, ac.signal)[Symbol.asyncIterator]();
+  const abandoned = new Promise<"abandoned">((resolve) => {
+    const arm = () => { const g = setTimeout(() => resolve("abandoned"), ABORT_GRACE_MS); g.unref?.(); };
+    if (ac.signal.aborted) arm(); else ac.signal.addEventListener("abort", arm, { once: true });
+  });
   try {
-    for await (const ev of o.conn.execute({ sql: o.sql, ...(o.params ? { params: o.params } : {}), maxRows: toSkip + o.maxRows + 1 }, ac.signal)) {
+    for (;;) {
+      const pending = it.next();
+      pending.catch(() => {});
+      const step = await Promise.race([pending, abandoned]);
+      if (step === "abandoned") { stuck = true; void Promise.resolve(it.return?.()).catch(() => {}); throw new DriverError("cancelled", "The engine did not stop the statement; the connection was dropped."); }
+      if (step.done) break;
+      const ev = step.value;
       if (ev.type === "columns") o.onEvent({ type: "start", sql: o.sql, columns: ev.columns });
       else if (ev.type === "rows") {
         let batch = ev.rows;
@@ -70,6 +86,16 @@ export async function runStatement(o: RunOptions): Promise<RunOutcome> {
     }
     return { status: "ok", rowCount, durationMs: performance.now() - t0 };
   } catch (e) {
+    // Close the stream and wait for it: a cancel still in flight on the engine would otherwise hit the next statement (bounded, in case the driver never finishes).
+    if (!stuck) await Promise.race([Promise.resolve(it.return?.()).catch(() => {}), new Promise<void>((r) => { const g = setTimeout(r, ABORT_GRACE_MS); g.unref?.(); })]);
+    const out = await failed(e);
+    return stuck ? { ...out, stuck: true } : out;
+  } finally {
+    if (timer) clearTimeout(timer);
+    o.signal.removeEventListener("abort", onAbort);
+  }
+
+  async function failed(e: unknown): Promise<RunOutcome> {
     const durationMs = performance.now() - t0;
     if (rowCount >= o.maxRows && e instanceof DriverError && e.kind === "cancelled" && !o.signal.aborted && !timedOut) {
       o.onEvent({ type: "done", rowCount, durationMs, truncated: true });
@@ -82,8 +108,5 @@ export async function runStatement(o: RunOptions): Promise<RunOutcome> {
     }
     o.onEvent({ type: "error", kind: err.kind, message: err.message, ...(err.position !== undefined ? { position: err.position } : {}) });
     return { status: err.kind === "cancelled" ? "cancelled" : "error", rowCount, durationMs, error: err.message };
-  } finally {
-    if (timer) clearTimeout(timer);
-    o.signal.removeEventListener("abort", onAbort);
   }
 }
