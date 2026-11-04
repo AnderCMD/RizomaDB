@@ -13,10 +13,18 @@ Aquí se listan los cambios notables, del más nuevo al más antiguo. El formato
 
 ## [Sin publicar]
 
+### Añadido
+- El flujo *Release* tiene un job `marketplace` que publica el VSIX universal en el Marketplace de VS Code mediante publicación de confianza (OIDC, sin token). Solo corre con etiquetas y espera la aprobación de la persona responsable del entorno `marketplace`. Sin probar todavía: ningún release lo ha ejecutado.
+
 ### Cambiado
-- La documentación y el sitio ya no dicen que la extensión esté en el Marketplace de VS Code: Microsoft la retiró tras aprobar la 1.2.4, indicó que no la restablecerá y no dio un motivo. Se distribuye como VSIX en cada release de GitHub.
+- Las conexiones muestran su estado real (conectando, conectada, desconectada) en el explorador, la barra de estado y el selector de conexión, y tienen los comandos *Conectar*, *Desconectar* y *Desconectar todas*. Una conexión que nadie usa durante 30 minutos (ajuste `rizomadb.connections.idleMinutes`, 0 = nunca) se cierra sola, nunca mientras corre una sentencia, y se reconecta al usarla de nuevo.
 
 ### Corregido
+- El texto de estado del panel de resultados («5 filas · 10 ms», «1 filas afectadas») era gris sobre la insignia azul y no se podía leer; ahora usa el color de texto de la propia insignia.
+- Desconectar una conexión expandida en el explorador la reconectaba al instante al redibujarse el árbol; ahora se colapsa.
+- El grupo *Conexiones* de la pantalla de ajustes mostraba su id sin traducir en vez de un título traducido.
+- Un driver que ignoraba *Cancelar* (o el tiempo límite de consulta) dejaba la extensión «en ejecución» para siempre, y todos los botones de ejecutar respondían que ya había una consulta en curso. A los 1,5 s la ejecución se abandona, se libera la interfaz y se descarta esa conexión (se reconecta en la siguiente ejecución).
+- Oracle: leer el diccionario de datos (esquema, autocompletado, explorador) se limita a 30 s por llamada en vez de dejar en cola las sentencias del usuario detrás de una lenta, y una lectura de esquema fallida o lenta no se reintenta en cada pulsación (pausa de 2 minutos).
 - Los archivos SQL de más de 1 MB (volcados de datos, scripts generados) ya no se analizan en cada pulsación para subrayar errores y autocompletar, lo que podía detener el host de extensiones durante segundos en una máquina lenta.
 
 ## [1.2.4] — 2026-10-23
@@ -107,4 +115,4 @@ Primera versión.
 - Varios problemas de enmascarado, de restricciones por defecto de SQL Server y de cancelación en HydraDB encontrados al probar con servidores reales.
 
 ### Límites conocidos
-- Nunca se han probado cuentas reales en la nube (AWS, Google Cloud, MongoDB Atlas, servicios gestionados de PostgreSQL/MySQL). Redshift, Snowflake y BigQuery no están implementados. El paquete está en el Marketplace de VS Code y adjunto a este release; todavía no está en Open VSX. Ver [docs/es/release/lista-de-aceptacion-v1.md](docs/es/release/lista-de-aceptacion-v1.md).
+- Nunca se han probado cuentas reales en la nube (AWS, Google Cloud, MongoDB Atlas, servicios gestionados de PostgreSQL/MySQL). Redshift, Snowflake y BigQuery no están implementados. El paquete está adjunto a este release. Ver [docs/es/release/lista-de-aceptacion-v1.md](docs/es/release/lista-de-aceptacion-v1.md).

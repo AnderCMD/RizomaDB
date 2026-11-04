@@ -36,6 +36,15 @@ export class ConnectionManager {
   /** Secret values seen while connecting, per connection, so messages can be scrubbed. */
   private known = new Map<string, string[]>();
   private listeners = new Set<() => void>();
+  /** Connections whose driver has answered; one in `open` but not here is still connecting. */
+  private ready = new Set<string>();
+  private lastUsed = new Map<string, number>();
+  private sweeper: NodeJS.Timeout | undefined;
+  /** Close a connection nobody has used for this long (0 = never). */
+  private idleMs = 0;
+  /** The host says which connection is running a statement right now: never closed while busy. */
+  isBusy: (id: string) => boolean = () => false;
+  private closedListeners = new Set<(id: string, reason: "idle") => void>();
   /** The built-in default: connections in `prod` are read-only unless they were switched to editable on purpose. */
   prodReadOnly = true;
   /** How long a driver or tunnel may take to answer before the attempt is abandoned. */
@@ -139,11 +148,33 @@ export class ConnectionManager {
     return out;
   }
 
-  isConnected(id: string) { return this.open.has(id); }
+  isConnected(id: string) { return this.ready.has(id); }
+  isConnecting(id: string) { return this.open.has(id) && !this.ready.has(id); }
+  stateOf(id: string): "connected" | "connecting" | "disconnected" { return this.ready.has(id) ? "connected" : this.open.has(id) ? "connecting" : "disconnected"; }
+  /** Marks the connection as in use, so the idle timer starts over. */
+  touch(id: string) { if (this.open.has(id)) this.lastUsed.set(id, Date.now()); }
+  lastUsedAt(id: string): number | undefined { return this.lastUsed.get(id); }
+  onClosed(fn: (id: string, reason: "idle") => void) { this.closedListeners.add(fn); return { dispose: () => this.closedListeners.delete(fn) }; }
+
+  /** Idle connections are closed after `minutes` without use; 0 turns it off. */
+  setIdleMinutes(minutes: number) {
+    this.idleMs = Math.max(0, minutes) * 60_000;
+    if (this.sweeper) { clearInterval(this.sweeper); this.sweeper = undefined; }
+    if (this.idleMs > 0) { this.sweeper = setInterval(() => void this.closeIdle(), Math.min(30_000, Math.max(1_000, this.idleMs / 2))); this.sweeper.unref?.(); }
+  }
+  async closeIdle(now = Date.now()) {
+    if (this.idleMs <= 0) return;
+    for (const id of [...this.ready]) {
+      if (this.isBusy(id)) { this.lastUsed.set(id, now); continue; }
+      if (now - (this.lastUsed.get(id) ?? now) < this.idleMs) continue;
+      await this.disconnect(id);
+      for (const fn of this.closedListeners) fn(id, "idle");
+    }
+  }
 
   connect(id: string, vars: Record<string, string> = {}): Promise<Connection> {
     const existing = this.open.get(id);
-    if (existing) return existing;
+    if (existing) { this.lastUsed.set(id, Date.now()); return existing; }
     const p = this.get(id);
     if (!p) return Promise.reject(new Error(`Unknown connection: ${id}`));
     const pending = (async () => {
@@ -186,20 +217,23 @@ export class ConnectionManager {
       catch (e) { await this.tunnels.get(id)?.close().catch(() => {}); this.tunnels.delete(id); throw e; }
     })();
     this.open.set(id, pending);
-    pending.then(() => this.fire(), () => this.open.delete(id));
+    this.lastUsed.set(id, Date.now());
+    this.fire();
+    pending.then(() => { if (this.open.get(id) === pending) this.ready.add(id); this.fire(); }, () => { if (this.open.get(id) === pending) { this.open.delete(id); this.lastUsed.delete(id); } this.fire(); });
     return pending;
   }
 
   async disconnect(id: string) {
     const c = this.open.get(id);
-    this.open.delete(id);
+    this.open.delete(id); this.ready.delete(id); this.lastUsed.delete(id);
     if (c) await c.then((x) => x.close(), () => {});
     await this.tunnels.get(id)?.close().catch(() => {});
     this.tunnels.delete(id);
     this.fire();
   }
 
-  async disposeAll() { await Promise.all([...this.open.keys()].map((id) => this.disconnect(id))); }
+  async disposeAll() {
+    if (this.sweeper) { clearInterval(this.sweeper); this.sweeper = undefined; } await Promise.all([...this.open.keys()].map((id) => this.disconnect(id))); }
 }
 
 /** Flat `ssh.*` options hold the tunnel settings; they are removed before the driver sees the config. */

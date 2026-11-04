@@ -4,7 +4,7 @@
 
 ## Air-gapped / offline
 * The extension makes **no network connections of its own**: no telemetry, no update checks, no remote configuration. A test (`apps/extension/src/activation.test.ts`) fails if activation opens a socket or if extension/core sources import network modules.
-* Install from a VSIX (`code --install-extension rizomadb-x.y.z.vsix`) or from an internal Open VSX mirror. Verify `SHA256SUMS` and the build provenance attestation attached to each release.
+* Install from a VSIX (`code --install-extension rizomadb-client-x.y.z.vsix`) or from an internal Open VSX mirror. Verify `SHA256SUMS` and the build provenance attestation attached to each release.
 * Pin the version in your management tooling; updates are explicit.
 
 ## Mass installation

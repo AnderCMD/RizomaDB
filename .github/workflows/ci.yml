@@ -113,7 +113,7 @@ jobs:
       - run: node scripts/wait-engines.mjs
       - run: pnpm test
       - run: pnpm bench
-      - run: pnpm --filter rizomadb package
+      - run: pnpm --filter rizomadb-client package
       - run: node scripts/check-vsix-size.mjs apps/extension/*.vsix 8
       - name: Keep the built extension
         uses: actions/upload-artifact@v7
@@ -175,8 +175,8 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm build   # builds the workspace packages the extension bundles
       - run: node scripts/package-platform.mjs linux-x64 out
-      - run: node scripts/check-vsix-size.mjs out/rizomadb-linux-x64.vsix 60
-      - run: node scripts/smoke-vsix-duckdb.mjs out/rizomadb-linux-x64.vsix
+      - run: node scripts/check-vsix-size.mjs out/rizomadb-client-linux-x64.vsix 60
+      - run: node scripts/smoke-vsix-duckdb.mjs out/rizomadb-client-linux-x64.vsix
   secrets:
     runs-on: ubuntu-latest
     steps:

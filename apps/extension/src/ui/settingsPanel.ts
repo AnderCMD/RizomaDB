@@ -25,6 +25,7 @@ const TITLES: Record<string, () => string> = {
   "security.prodReadOnlyByDefault": () => t("Production is read-only by default"),
   "query.maxRows": () => t("Maximum rows per result"),
   "query.timeoutSeconds": () => t("Query timeout (seconds)"),
+  "connections.idleMinutes": () => t("Close idle connections after (minutes)"),
   "history.enabled": () => t("Keep query history"),
   "history.retentionDays": () => t("History retention (days)"),
   "table.openRows": () => t("Rows loaded when opening a table"),
@@ -41,7 +42,7 @@ const TITLES: Record<string, () => string> = {
   "ai.redactLiterals": () => t("Redact literals before sending"),
 };
 const GROUPS: Record<string, () => string> = {
-  language: () => t("Language"), environments: () => t("Environments"), results: () => t("Results"), editor: () => t("Query editor"), edit: () => t("Editing"), explorer: () => t("Connections tree"),
+  language: () => t("Language"), environments: () => t("Environments"), results: () => t("Results"), editor: () => t("Query editor"), edit: () => t("Editing"), explorer: () => t("Connections tree"), connections: () => t("Connections"),
   security: () => t("Security"), query: () => t("Queries"), history: () => t("History"), table: () => t("Tables"), policy: () => t("Policy"),
   catalog: () => t("Shared connections"), audit: () => t("Audit"), mcp: () => t("MCP server"), ai: () => t("AI assistant"),
 };

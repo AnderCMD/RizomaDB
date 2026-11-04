@@ -5,11 +5,14 @@ import type { ConnectionManager } from "./connections.js";
 /** Above this many tables in a schema, completion uses table names only. */
 const BIG_SCHEMA_TABLES = 1500;
 const MAX_NAMES_ONLY = 5000;
+/** Reading the schema is a convenience (completion, diagnostics): it gets this long, and after a failure it is not retried for a while, so a slow dictionary is not re-queried on every keystroke. */
+export const LOAD_TIMEOUT_MS = 60_000, RETRY_AFTER_FAILURE_MS = 120_000;
 
 /** Lazily loaded, invalidatable schema snapshots per connection (feeds completion and diagnostics). */
 export class SchemaCache {
   private cache = new Map<string, Promise<SchemaIndex>>();
   private ready = new Map<string, SchemaIndex>();
+  private failedAt = new Map<string, number>();
   constructor(private mgr: ConnectionManager, private maxSchemas = 25) {}
 
   /** Synchronous peek for latency-sensitive callers (diagnostics): never triggers I/O. */
@@ -18,14 +21,16 @@ export class SchemaCache {
   get(id: string): Promise<SchemaIndex> {
     let p = this.cache.get(id);
     if (!p) {
-      p = this.load(id).then((idx) => { this.ready.set(id, idx); return idx; }, (e) => { this.cache.delete(id); throw e; });
+      const failed = this.failedAt.get(id);
+      if (failed !== undefined && Date.now() - failed < RETRY_AFTER_FAILURE_MS) return Promise.reject(new Error("The schema could not be read recently; not trying again yet."));
+      p = withTimeout(this.load(id), LOAD_TIMEOUT_MS, "Reading the schema took too long").then((idx) => { this.failedAt.delete(id); this.ready.set(id, idx); return idx; }, (e) => { this.cache.delete(id); this.failedAt.set(id, Date.now()); throw e; });
       this.cache.set(id, p);
     }
     return p;
   }
 
   invalidate(id?: string) {
-    if (id) { this.cache.delete(id); this.ready.delete(id); } else { this.cache.clear(); this.ready.clear(); }
+    if (id) { this.cache.delete(id); this.ready.delete(id); this.failedAt.delete(id); } else { this.cache.clear(); this.ready.clear(); this.failedAt.clear(); }
   }
 
   /** Which schemas feed completion. A server with hundreds of them (Oracle) would load for minutes, so only the user's own plus a few. */
@@ -61,3 +66,10 @@ export class SchemaCache {
 export const DIALECT_OF: Record<string, "postgres" | "mysql" | "sqlite" | "mssql" | "oracle"> = {
   postgres: "postgres", mysql: "mysql", sqlite: "sqlite", mssql: "mssql", oracle: "oracle",
 };
+
+function withTimeout<T>(work: Promise<T>, ms: number, message: string): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const t = setTimeout(() => reject(new Error(message)), ms);
+    work.then((v) => { clearTimeout(t); resolve(v); }, (e) => { clearTimeout(t); reject(e); });
+  });
+}

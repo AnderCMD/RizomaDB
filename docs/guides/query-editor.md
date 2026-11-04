@@ -14,7 +14,7 @@ Right-click a SQL connection and choose **Build a Query…**: pick a table, the 
 | Run the selection | **Ctrl+Shift+Enter** (⌘+Shift+Enter) |
 | Run every statement | **Run all (N)** lens at the top of the file, or **RizomaDB: Run All Statements** |
 | Explain the plan (SQL engines that support it) | **Explain** lens, or **RizomaDB: Explain Query Plan** |
-| Cancel | **RizomaDB: Cancel Running Query**, or the stop button in the results header |
+| Cancel | **RizomaDB: Cancel Running Query**, the stop button in the results header, or the *Running… click to cancel* item in the status bar. If the engine does not stop within 1.5 seconds the run is abandoned, the screen is freed and that connection is closed (it reconnects on the next run) |
 
 **Run all** runs the statements in order and stops at the first error. Outside `dev` it asks for confirmation first, once for the whole file. Each statement still goes through the policy and the audit log on its own.
 

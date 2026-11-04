@@ -30,14 +30,22 @@ La segunda pestaña de la misma pantalla lista las conexiones que tienes. Cada t
 
 ## El árbol de conexiones
 - Las conexiones se agrupan por tipo de motor (desactívalo con `rizomadb.explorer.groupByFamily`).
-- Cada fila lleva el logo del motor, `[ENTORNO]`, la base de datos y un punto para la activa.
+- Cada fila lleva el logo del motor, el estado (`conectando…`, `conectada` o `desconectada`), `[ENTORNO]`, la base de datos y un punto para la activa. El estado va primero para que se vea aunque la barra lateral sea estrecha.
 - Bajo una conexión: **Tablas** (o Colecciones, Claves, Índices, Etiquetas, Mediciones, según el motor) con su cantidad, y **Vistas**.
 - Pasa el mouse sobre una fila para ver botones rápidos. El título de la vista tiene botones para nueva conexión, actualizar, importar, configuración, la guía y **contraer todo**.
 
 ## Varias conexiones: cuál se usa
-Nada se conecta al iniciar VS Code: una conexión se abre la primera vez que la expandes, ejecutas una consulta o pulsas **Conectar**. La conexión **en uso** es la ligada al editor de consultas que estás viendo; si no hay ninguna ligada, es la última en la que ejecutaste algo. Un editor nuevo pregunta qué conexión usar la primera vez que ejecutas una consulta.
+Nada se conecta al iniciar VS Code: una conexión se abre la primera vez que la expandes, ejecutas una consulta o pulsas **Conectar**, y puede cerrarse sola cuando está inactiva (mira *Conectada, conectando, desconectada*). La conexión **en uso** es la ligada al editor de consultas que estás viendo; si no hay ninguna ligada, es la última en la que ejecutaste algo. Un editor nuevo pregunta qué conexión usar la primera vez que ejecutas una consulta.
 
 Para cambiarla, haz clic en el nombre de la conexión en la barra de estado (abajo a la izquierda) o ejecuta **RizomaDB: Elegir conexión para este editor**. La lista marca la que está en uso, las ya conectadas y las de solo lectura. Con un editor de consultas abierto, la elección vale para ese editor, así que dos editores pueden usar dos bases Oracle distintas a la vez. Si un servidor no responde, el intento se abandona a los 45 segundos en lugar de quedarse «conectando».
+
+## Conectada, conectando, desconectada
+Una conexión está **desconectada** hasta que la usas, **conectando…** mientras el servidor responde y **conectada** después. El estado se ve en tres sitios: el árbol de conexiones, la barra de estado (un enchufe si está conectada, un círculo giratorio mientras conecta, un enchufe roto si está desconectada, y en el tooltip cuántas conexiones hay abiertas) y el selector de conexión.
+
+- **Conectar** y **Desconectar** son botones en la fila de la conexión y en su menú contextual. **RizomaDB: Desconectar todas** (paleta de comandos) cierra todas las conexiones abiertas.
+- Al desconectar una conexión también se contrae en el árbol, para que redibujarlo no la vuelva a abrir.
+- Puede haber varias conexiones abiertas a la vez: abrir una de Oracle no cierra una de MongoDB.
+- **Las conexiones inactivas se cierran solas.** Una conexión que nadie ha usado durante `rizomadb.connections.idleMinutes` minutos (30 por defecto, `0` para no cerrar nunca) se cierra y una notificación lo avisa, con un botón **Reconectar**. Nunca se cierra mientras corre una sentencia, y se reconecta la próxima vez que ejecutes algo.
 
 ## Bases de datos con miles de tablas
 Un nodo del árbol lista las primeras 2.000 tablas y termina con una fila «…y N más». Para llegar a cualquier tabla, ejecuta **Abrir datos de la tabla** desde la paleta de comandos: pide una conexión (y un esquema) y luego puedes escribir para acotar la lista. En un esquema con más de 1.500 tablas, el autocompletado SQL conoce los nombres de las tablas pero no sus columnas, para no leer todo el catálogo.

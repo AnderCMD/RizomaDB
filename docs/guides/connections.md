@@ -55,14 +55,22 @@ The second tab of the same screen lists the connections you have. Each card show
 
 ## The connections tree
 - Connections are grouped by engine type (turn this off with `rizomadb.explorer.groupByFamily`).
-- Each row carries the engine's logo, `[ENVIRONMENT]`, the database and a dot for the active one.
+- Each row carries the engine's logo, the state (`connecting…`, `connected` or `disconnected`), `[ENVIRONMENT]`, the database and a dot for the active one. The state comes first so it is still visible in a narrow sidebar.
 - Under a connection: **Tables** (or Collections, Keys, Indices, Labels, Measurements, depending on the engine) with a count, and **Views**.
 - Hover a row for quick buttons. The view title has buttons for new connection, refresh, import, settings, the guide and **collapse all**.
 
 ## Several connections: which one is used
-Nothing connects when VS Code starts: a connection opens the first time you expand it, run a query or press **Connect**. The connection **in use** is the one bound to the query editor you are looking at; with no editor bound it is the last one you ran something on. A new editor asks which connection to use when you first run a query.
+Nothing connects when VS Code starts: a connection opens the first time you expand it, run a query or press **Connect**, and it can close again on its own when it is idle (see *Connected, connecting, disconnected*). The connection **in use** is the one bound to the query editor you are looking at; with no editor bound it is the last one you ran something on. A new editor asks which connection to use when you first run a query.
 
 To change it, click the connection name in the status bar (bottom left) or run **RizomaDB: Select Connection for This Editor**. The list marks the one in use, the ones already connected and the read-only ones. With a query editor open the choice applies to that editor, so two editors can use two different Oracle databases at once. If a server does not answer, the attempt is abandoned after 45 seconds instead of staying "connecting".
+
+## Connected, connecting, disconnected
+A connection is **disconnected** until you use it, **connecting…** while the server answers, and **connected** afterwards. You see the state in three places: the connections tree, the status bar (a plug when connected, a spinner while connecting, a broken plug when disconnected, with the number of open connections in the tooltip) and the connection picker.
+
+- **Connect** and **Disconnect** are buttons on the row of a connection and in its context menu. **RizomaDB: Disconnect All** (command palette) closes every open connection.
+- Disconnecting a connection also collapses it in the tree, so redrawing the tree does not open it again.
+- Several connections can be open at the same time: opening an Oracle one does not close a MongoDB one.
+- **Idle connections close by themselves.** A connection nobody has used for `rizomadb.connections.idleMinutes` minutes (30 by default, `0` to never close) is closed and a notification says so, with a **Reconnect** button. It is never closed while a statement is running, and it reconnects the next time you run something.
 
 ## Databases with thousands of tables
 A tree node lists the first 2,000 tables and ends with an "…and N more" row. To reach any table, run **Open Table Data** from the command palette: it asks for a connection (and schema), then lets you type to narrow the list. In a schema with more than 1,500 tables, SQL completion knows the table names but not their columns, so it does not read the whole catalogue.
