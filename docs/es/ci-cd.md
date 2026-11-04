@@ -19,9 +19,11 @@ rama de funcionalidad ──PR──▶ dev ──PR (flujo Promote)──▶ ma
 No se publica nada en ningún marketplace ni registro sin que la persona responsable apruebe el entorno `marketplace`. Open VSX no está publicado.
 
 ## Ajustes del repositorio
-Son ajustes del repositorio, no código, así que los flujos no los aplican. Aplicados el 2026-10-22:
-- `main` y `dev` están protegidas: deben pasar las comprobaciones `test`, `engines-extra`, `site` y `secrets`, y se bloquean los force-push y los borrados. No se obliga a los administradores a pasar por pull requests, así que la persona responsable aún puede avanzar `main` desde `dev` con fast-forward.
+Son ajustes del repositorio, no código, así que los flujos no los aplican. Aplicados el 2026-11-04 (cambian respecto a las reglas del 2026-10-22):
+- `main` es la estricta: se exige un pull request (con 0 aprobaciones), deben pasar las comprobaciones `test`, `engines-extra`, `site` y `secrets`, la rama debe estar actualizada con `main` antes de fusionar, y las reglas se aplican también a los administradores, así que la persona responsable tampoco puede saltárselas. Se bloquean los force-push y los borrados. No se exigen historial lineal, commits firmados, resolución de conversaciones ni code owners.
+- `dev` es más laxa: solo se exige la comprobación `test`, no se exige pull request (se puede hacer push directo, pero el push debe llevar un commit cuya comprobación `test` ya haya pasado), las reglas no se aplican a los administradores, la rama no necesita estar actualizada y se bloquean los force-push y los borrados.
 - El token por defecto de los flujos es de solo lectura y Actions no puede aprobar pull requests.
+- Como `main` debe estar actualizada, un pull request `dev` → `main` queda atrasado en cuanto `main` recibe un commit de fusión; pulsa *Update branch* en el pull request (vuelve a ejecutar las comprobaciones).
 
 No activado: permitir que GitHub Actions cree pull requests (Settings → Actions → General), que `promote.yml` necesita para abrir el pull request `dev` → `main`.
 

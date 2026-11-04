@@ -19,9 +19,11 @@ feature branch ──PR──▶ dev ──PR (Promote workflow)──▶ main �
 Nothing is published to a marketplace or registry without the owner's approval of the `marketplace` environment. Open VSX is not published.
 
 ## Repository settings
-These are repository settings, not code, so the workflows do not apply them. Applied on 2026-10-22:
-- `main` and `dev` are protected: the `test`, `engines-extra`, `site` and `secrets` checks must pass, and force-pushes and deletions are blocked. Administrators are not forced through pull requests, so the owner can still fast-forward `main` from `dev`.
+These are repository settings, not code, so the workflows do not apply them. Applied on 2026-11-04 (changed from the 2026-10-22 rules):
+- `main` is the strict one: a pull request is required (with 0 approvals), the `test`, `engines-extra`, `site` and `secrets` checks must pass, the branch must be up to date with `main` before merging, and the rules apply to administrators too, so the owner cannot skip them. Force-pushes and deletions are blocked. Linear history, signed commits, conversation resolution and code owners are not required.
+- `dev` is looser: only the `test` check is required, a pull request is not required (a direct push is possible, but the push must carry a commit whose `test` check has already passed), the rules do not apply to administrators, the branch need not be up to date, and force-pushes and deletions are blocked.
 - The default workflow token is read-only and Actions cannot approve pull requests.
+- Because `main` must be up to date, a `dev` → `main` pull request goes behind as soon as `main` receives a merge commit; press *Update branch* on the pull request (this runs the checks again).
 
 Not enabled: letting GitHub Actions create pull requests (Settings → Actions → General), which `promote.yml` needs to open the `dev` → `main` pull request.
 
