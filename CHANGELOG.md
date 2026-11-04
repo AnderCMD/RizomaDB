@@ -13,6 +13,8 @@ All notable changes are listed here, newest first. The format follows [Keep a Ch
 
 ## [Unreleased]
 
+## [1.2.5] — 2026-11-04
+
 ### Added
 - The *Release* workflow has a `marketplace` job that publishes the universal VSIX to the VS Code Marketplace through trusted publishing (OIDC, no token). It runs only for tags and waits for the owner's approval of the `marketplace` environment. Not tested yet: no release has run it.
 
