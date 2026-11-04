@@ -18,6 +18,7 @@ Every setting of the extension. Open the settings screen with **RizomaDB: Open S
 | `rizomadb.query.keysetPaging` | boolean | `true` | Page tables by their primary key instead of skipping rows. "Load more" then starts right after the last row, so it stays fast on large tables. Opening a table sorts it by its key. SQLite, PostgreSQL, MySQL, SQL Server and Oracle only; other engines and tables without a primary key keep skipping rows. A custom sort in the filter box also keeps skipping rows. |
 | `rizomadb.query.maxRows` | number | `100000` | Maximum rows kept in one result view across all loaded pages. |
 | `rizomadb.query.timeoutSeconds` | number | `0` | Query timeout in seconds (0 = none). |
+| `rizomadb.connections.idleMinutes` | number | `30` | Close a connection nobody has used for this many minutes; it reconnects the next time you use it (0 = never close automatically). |
 | `rizomadb.history.enabled` | boolean | `true` | Record executed statements in a local history file (secrets are redacted). |
 | `rizomadb.history.retentionDays` | number | `90` | Days to keep history entries. |
 | `rizomadb.edit.applyImmediately` | boolean | `false` | Save each cell edit as soon as you confirm it, without pressing Apply. On `dev` connections it applies silently; every other environment still asks first, and policies and read-only rules always apply. |

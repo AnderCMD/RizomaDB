@@ -13,10 +13,18 @@ All notable changes are listed here, newest first. The format follows [Keep a Ch
 
 ## [Unreleased]
 
+### Added
+- The *Release* workflow has a `marketplace` job that publishes the universal VSIX to the VS Code Marketplace through trusted publishing (OIDC, no token). It runs only for tags and waits for the owner's approval of the `marketplace` environment. Not tested yet: no release has run it.
+
 ### Changed
-- Documentation and site no longer say the extension is on the VS Code Marketplace: Microsoft removed it after 1.2.4 was approved, said it will not be reinstated and gave no reason. It is distributed as a VSIX on each GitHub release.
+- Connections show their real state (connecting, connected, disconnected) in the explorer, the status bar and the connection picker, and have *Connect*, *Disconnect* and *Disconnect all* commands. A connection nobody has used for 30 minutes (setting `rizomadb.connections.idleMinutes`, 0 = never) is closed automatically, never while a statement is running, and reconnects on next use.
 
 ### Fixed
+- The status text of the results panel ("5 rows · 10 ms", "1 rows affected") was grey on the blue badge and could not be read; it now uses the badge's own text colour.
+- Disconnecting an expanded connection in the explorer reconnected it at once when the tree redrew; it now collapses.
+- The *Connections* group of the settings screen showed its raw id instead of a translated title.
+- A driver that ignored *Cancel* (or the query timeout) used to leave the extension "running" forever, so every run button answered that a query was already running. After 1.5 s the run is abandoned, the interface is freed and that connection is dropped (it reconnects on the next run).
+- Oracle: reading the data dictionary (schema, completion, explorer) is now limited to 30 s per call instead of queueing the user's statements behind a slow one, and a failed or slow schema read is not retried on every keystroke (2 minutes pause).
 - SQL files larger than 1 MB (data dumps, generated scripts) are no longer analysed for error underlining and completion on every keystroke, which could stall the extension host for seconds on a slow machine.
 
 ## [1.2.4] — 2026-10-23
@@ -107,4 +115,4 @@ First release.
 - Several redaction, SQL Server default-constraint and HydraDB abort issues found by testing against real servers.
 
 ### Known limits
-- Real cloud accounts (AWS, Google Cloud, MongoDB Atlas, managed PostgreSQL/MySQL services) have never been tested. Redshift, Snowflake and BigQuery are not implemented. The package is on the VS Code Marketplace and attached to this release; it is not on Open VSX yet. See [docs/release/v1-checklist.md](docs/release/v1-checklist.md).
+- Real cloud accounts (AWS, Google Cloud, MongoDB Atlas, managed PostgreSQL/MySQL services) have never been tested. Redshift, Snowflake and BigQuery are not implemented. The package is attached to this release. See [docs/release/v1-checklist.md](docs/release/v1-checklist.md).

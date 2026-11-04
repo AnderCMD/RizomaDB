@@ -20,6 +20,8 @@ Todos los comandos, como aparecen en la paleta de comandos (⇧⌘P / Ctrl+Shift
 | `rizomadb.importCatalog` | Importar conexiones (cifradas)… | — |
 | `rizomadb.readOnlyUser` | Generar script de usuario de solo lectura… | — |
 | `rizomadb.disconnect` | Desconectar | — |
+| `rizomadb.connect` | Conectar | — |
+| `rizomadb.disconnectAll` | Desconectar todas | — |
 | `rizomadb.deleteConnection` | Eliminar conexión | — |
 | `rizomadb.refresh` | Actualizar | — |
 | `rizomadb.reviewPendingChanges` | Revisar cambios pendientes | — |

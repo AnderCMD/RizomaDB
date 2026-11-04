@@ -19,7 +19,7 @@ features:
 ---
 
 ::: warning Versión 1.2
-RizomaDB 1.2 se instala con el VSIX adjunto a cada release de GitHub: no está en el Marketplace de VS Code (Microsoft la retiró sin dar un motivo) ni en Open VSX. Además, hay cosas sin confirmar. La [lista de aceptación](/es/release/lista-de-aceptacion-v1) y la [comparación honesta](/es/mercado/comparacion-honesta) dicen exactamente qué está y qué no está verificado.
+RizomaDB 1.2 se instala con el VSIX adjunto a cada release de GitHub. Hay cosas sin confirmar. La [lista de aceptación](/es/release/lista-de-aceptacion-v1) y la [comparación honesta](/es/mercado/comparacion-honesta) dicen exactamente qué está y qué no está verificado.
 
 **Los servicios en la nube no están confirmados.** RizomaDB solo se ha probado con motores locales y emuladores oficiales, nunca con una cuenta real en la nube (AWS, Google Cloud, MongoDB Atlas, PostgreSQL/MySQL gestionados). Pruébalo con un usuario de solo lectura o una base de datos desechable antes de depender de él: ver [Nube y servicios gestionados](/es/motores/#nube-y-servicios-gestionados-sin-confirmar).
 :::
