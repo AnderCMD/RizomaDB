@@ -5,7 +5,13 @@
 Esta página te lleva de cero a editar un valor en una tabla. El mismo recorrido está dentro de la extensión: ejecuta **RizomaDB: Abrir la guía** (el icono del libro en la vista de conexiones) y te guía paso a paso, con botones que hacen cada paso por ti.
 
 ## 1. Instalar
-Descarga el archivo `.vsix` del último [release de GitHub](https://github.com/AnderCMD/RizomaDB/releases) e instálalo:
+Instálala desde el [Marketplace de VS Code](https://marketplace.visualstudio.com/items?itemName=AnderCMD.rizomadb-client) (id de la extensión `AnderCMD.rizomadb-client`) o desde una terminal:
+
+```bash
+code --install-extension AnderCMD.rizomadb-client
+```
+
+Para instalar una compilación concreta, descarga el archivo `.vsix` del último [release de GitHub](https://github.com/AnderCMD/RizomaDB/releases) e instálalo:
 
 ```bash
 code --install-extension rizomadb-client-1.2.5.vsix

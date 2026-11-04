@@ -16,7 +16,7 @@ All notable changes are listed here, newest first. The format follows [Keep a Ch
 ## [1.2.5] — 2026-11-04
 
 ### Added
-- The *Release* workflow has a `marketplace` job that publishes the universal VSIX to the VS Code Marketplace through trusted publishing (OIDC, no token). It runs only for tags and waits for the owner's approval of the `marketplace` environment. Not tested yet: no release has run it.
+- The *Release* workflow has a `marketplace` job that publishes the universal VSIX to the VS Code Marketplace through trusted publishing (OIDC, no token). It runs only for tags and waits for the owner's approval of the `marketplace` environment. Tested with the `v1.2.5` release. The extension is on the Marketplace as `AnderCMD.rizomadb-client`.
 
 ### Changed
 - Connections show their real state (connecting, connected, disconnected) in the explorer, the status bar and the connection picker, and have *Connect*, *Disconnect* and *Disconnect all* commands. A connection nobody has used for 30 minutes (setting `rizomadb.connections.idleMinutes`, 0 = never) is closed automatically, never while a statement is running, and reconnects on next use.

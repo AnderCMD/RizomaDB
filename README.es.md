@@ -7,6 +7,7 @@
 
 **Todas tus bases de datos, un solo lugar. Gratis.**
 
+[![VS Code Marketplace](https://img.shields.io/visual-studio-marketplace/v/AnderCMD.rizomadb-client?label=VS%20Code%20Marketplace)](https://marketplace.visualstudio.com/items?itemName=AnderCMD.rizomadb-client)
 [![License](https://img.shields.io/github/license/AnderCMD/RizomaDB)](LICENSE)
 
 [English](README.md) · Español
@@ -28,7 +29,7 @@ Un cliente de bases de datos multimotor para VS Code (y VSCodium, Cursor, Windsu
 Probados contra servidores reales: PostgreSQL (y CockroachDB, YugabyteDB), MySQL/MariaDB (y TiDB), SQL Server, Oracle, SQLite, MongoDB, Redis/Valkey, ClickHouse, Elasticsearch/OpenSearch, DuckDB, Neo4j, DynamoDB (Local), InfluxDB 2 y 3, Cassandra/ScyllaDB, Firestore (emulador), Trino y **HydraDB (experimental)**. Lo que admite cada uno está en la [matriz de capacidades](docs/es/referencia/matriz-de-motores.md); los límites están en la página de cada motor en [docs/es/motores](docs/es/motores/README.md). **Sin confirmar:** nunca se han probado cuentas reales en la nube (AWS, Google Cloud, MongoDB Atlas ni servicios gestionados de PostgreSQL/MySQL); pruébalos con un usuario de solo lectura o una base de datos desechable antes de depender de ellos. Redshift, Snowflake y BigQuery no están implementados. Ver [Nube y servicios gestionados](docs/es/motores/README.md#nube-y-servicios-gestionados-sin-confirmar).
 
 ## Instalar
-Descarga el `.vsix` del último [release](https://github.com/AnderCMD/RizomaDB/releases), compruébalo con `SHA256SUMS` y ejecuta `code --install-extension rizomadb-client-1.2.5.vsix`. Para construirlo tú:
+Instálala desde el [Marketplace de VS Code](https://marketplace.visualstudio.com/items?itemName=AnderCMD.rizomadb-client) (`AnderCMD.rizomadb-client`), o ejecuta `code --install-extension AnderCMD.rizomadb-client`. Para instalar una compilación concreta, descarga el `.vsix` del último [release](https://github.com/AnderCMD/RizomaDB/releases), compruébalo con `SHA256SUMS` y ejecuta `code --install-extension rizomadb-client-1.2.5.vsix`. Para construirlo tú:
 ```bash
 pnpm install
 pnpm --filter rizomadb-client package

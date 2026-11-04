@@ -7,6 +7,7 @@
 
 **All your databases, one place. Free.**
 
+[![VS Code Marketplace](https://img.shields.io/visual-studio-marketplace/v/AnderCMD.rizomadb-client?label=VS%20Code%20Marketplace)](https://marketplace.visualstudio.com/items?itemName=AnderCMD.rizomadb-client)
 [![License](https://img.shields.io/github/license/AnderCMD/RizomaDB)](LICENSE)
 
 English · [Español](README.es.md)
@@ -28,7 +29,7 @@ A multi-engine database client for VS Code (and VSCodium, Cursor, Windsurf): Apa
 Tested against real servers: PostgreSQL (and CockroachDB, YugabyteDB), MySQL/MariaDB (and TiDB), SQL Server, Oracle, SQLite, MongoDB, Redis/Valkey, ClickHouse, Elasticsearch/OpenSearch, DuckDB, Neo4j, DynamoDB (Local), InfluxDB 2 and 3, Cassandra/ScyllaDB, Firestore (emulator), Trino, and **HydraDB (experimental)**. What each one supports is in the [capability matrix](docs/reference/engine-matrix.md); limits are on each engine's page in [docs/engines](docs/engines/README.md). **Not confirmed:** real cloud accounts (AWS, Google Cloud, MongoDB Atlas and managed PostgreSQL/MySQL services) have never been tested, so test with a read-only user or a throwaway database before relying on them; Redshift, Snowflake and BigQuery are not implemented. See [Cloud and managed services](docs/engines/README.md#cloud-and-managed-services-not-confirmed).
 
 ## Install
-Download the `.vsix` from the latest [release](https://github.com/AnderCMD/RizomaDB/releases), check it against `SHA256SUMS`, and run `code --install-extension rizomadb-client-1.2.5.vsix`. To build it yourself:
+Install it from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=AnderCMD.rizomadb-client) (`AnderCMD.rizomadb-client`), or run `code --install-extension AnderCMD.rizomadb-client`. To install a specific build instead, download the `.vsix` from the latest [release](https://github.com/AnderCMD/RizomaDB/releases), check it against `SHA256SUMS`, and run `code --install-extension rizomadb-client-1.2.5.vsix`. To build it yourself:
 ```bash
 pnpm install
 pnpm --filter rizomadb-client package

@@ -39,7 +39,7 @@ No activado: permitir que GitHub Actions cree pull requests (Settings → Action
 ### Configuración única (ya hecha)
 - Marketplace → publisher AnderCMD → *Trusted Publishing*: política `RizomaDB release`, proveedor GitHub Actions, propietario `AnderCMD`, repositorio `RizomaDB`, workflow `release.yml`, entorno `marketplace`.
 - GitHub → Settings → Environments → `marketplace`: revisor obligatorio AnderCMD, despliegues limitados a las etiquetas `v*`.
-- Sin probar todavía: ningún release ha ejecutado este job, así que el primero también es la primera prueba real del intercambio OIDC.
+- Probado: el release `v1.2.5` ejecutó este job y publicó en el Marketplace mediante el intercambio OIDC, sin ningún token.
 
 ## Verificar un paquete de una versión
 Cada VSIX de una versión viene con `SHA256SUMS`, un SBOM (`sbom.cdx.json`) y una atestación de procedencia de compilación de GitHub. Para comprobar una descarga:

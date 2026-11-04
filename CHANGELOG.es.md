@@ -16,7 +16,7 @@ Aquí se listan los cambios notables, del más nuevo al más antiguo. El formato
 ## [1.2.5] — 2026-11-04
 
 ### Añadido
-- El flujo *Release* tiene un job `marketplace` que publica el VSIX universal en el Marketplace de VS Code mediante publicación de confianza (OIDC, sin token). Solo corre con etiquetas y espera la aprobación de la persona responsable del entorno `marketplace`. Sin probar todavía: ningún release lo ha ejecutado.
+- El flujo *Release* tiene un job `marketplace` que publica el VSIX universal en el Marketplace de VS Code mediante publicación de confianza (OIDC, sin token). Solo corre con etiquetas y espera la aprobación de la persona responsable del entorno `marketplace`. Probado con el release `v1.2.5`. La extensión está en el Marketplace como `AnderCMD.rizomadb-client`.
 
 ### Cambiado
 - Las conexiones muestran su estado real (conectando, conectada, desconectada) en el explorador, la barra de estado y el selector de conexión, y tienen los comandos *Conectar*, *Desconectar* y *Desconectar todas*. Una conexión que nadie usa durante 30 minutos (ajuste `rizomadb.connections.idleMinutes`, 0 = nunca) se cierra sola, nunca mientras corre una sentencia, y se reconecta al usarla de nuevo.
