@@ -7,6 +7,7 @@
 
 **Todas tus bases de datos, un solo lugar. Gratis.**
 
+[![VS Code Marketplace](https://img.shields.io/visual-studio-marketplace/v/AnderCMD.rizomadb-client?label=VS%20Code%20Marketplace)](https://marketplace.visualstudio.com/items?itemName=AnderCMD.rizomadb-client)
 [![License](https://img.shields.io/github/license/AnderCMD/RizomaDB)](LICENSE)
 
 [English](README.md) · Español

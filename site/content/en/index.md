@@ -7,6 +7,7 @@ hero:
   image: { src: /logo.svg, alt: RizomaDB }
   actions:
     - { theme: brand, text: Get started, link: /en/guides/getting-started }
+    - { theme: brand, text: Install from the Marketplace, link: "https://marketplace.visualstudio.com/items?itemName=AnderCMD.rizomadb-client" }
     - { theme: alt, text: Engines, link: /en/reference/engine-matrix }
     - { theme: alt, text: GitHub, link: "https://github.com/AnderCMD/RizomaDB" }
 features:
