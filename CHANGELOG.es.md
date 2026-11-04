@@ -13,6 +13,8 @@ Aquí se listan los cambios notables, del más nuevo al más antiguo. El formato
 
 ## [Sin publicar]
 
+## [1.2.5] — 2026-11-04
+
 ### Añadido
 - El flujo *Release* tiene un job `marketplace` que publica el VSIX universal en el Marketplace de VS Code mediante publicación de confianza (OIDC, sin token). Solo corre con etiquetas y espera la aprobación de la persona responsable del entorno `marketplace`. Sin probar todavía: ningún release lo ha ejecutado.
 

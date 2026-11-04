@@ -8,7 +8,7 @@ This page takes you from nothing to editing a value in a table. The same walk-th
 Download the `.vsix` file from the latest [GitHub release](https://github.com/AnderCMD/RizomaDB/releases) and install it:
 
 ```bash
-code --install-extension rizomadb-client-1.2.4.vsix
+code --install-extension rizomadb-client-1.2.5.vsix
 ```
 
 To build it yourself:
