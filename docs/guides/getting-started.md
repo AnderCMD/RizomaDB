@@ -14,7 +14,7 @@ code --install-extension AnderCMD.rizomadb-client
 To install a specific build instead, download the `.vsix` file from the latest [GitHub release](https://github.com/AnderCMD/RizomaDB/releases) and install it:
 
 ```bash
-code --install-extension rizomadb-client-1.2.5.vsix
+code --install-extension rizomadb-client-1.2.6.vsix
 ```
 
 To build it yourself:

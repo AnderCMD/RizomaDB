@@ -13,6 +13,12 @@ All notable changes are listed here, newest first. The format follows [Keep a Ch
 
 ## [Unreleased]
 
+## [1.2.6] — 2026-11-04
+
+### Fixed
+- The extension host could freeze (VS Code's "extension host is unresponsive") in a SQL or Cypher editor whose statement started with a run of block comments, for example a header of `/* … */` lines: the check that a fragment holds only comments backtracked exponentially, and the statement highlight ran it on every cursor move. It is now a single linear pass.
+- Moving the cursor no longer re-parses a document that did not change: statement ranges are cached per document version, and the run buttons only parse as far as their 300-statement limit. Dollar-quote detection no longer copies the rest of the text on each `$`.
+
 ## [1.2.5] — 2026-11-04
 
 ### Added

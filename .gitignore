@@ -18,6 +18,7 @@ graphify-out/.graphify_*
 graphify-out/graph.html
 graphify-out/cost.json
 site/content/en/ci-cd.md
+site/content/es/ci-cd.md
 
 # OS, editors, logs, local environment
 .DS_Store

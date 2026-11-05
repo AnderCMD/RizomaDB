@@ -2,7 +2,7 @@
   "name": "rizomadb-client",
   "displayName": "RizomaDB Client for Databases",
   "description": "%description%",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "repository": { "type": "git", "url": "https://github.com/AnderCMD/RizomaDB.git" },
   "bugs": { "url": "https://github.com/AnderCMD/RizomaDB/issues" },
   "homepage": "https://andercmd.github.io/RizomaDB/",
