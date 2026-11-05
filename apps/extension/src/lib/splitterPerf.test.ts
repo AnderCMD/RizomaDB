@@ -57,11 +57,12 @@ describe("maxStatements", () => {
     expect(texts(sql, 1)).toEqual(["SELECT 0"]);
     expect(splitStatements("SELECT 1", { maxStatements: 5 })).toHaveLength(1);
   });
-  it("stops scanning early instead of parsing the whole text", () => {
-    const huge = "SELECT 1;".repeat(3) + "x".repeat(1) + "/* a */ ".repeat(10) + "'" + "y".repeat(10_000_000);
-    const t0 = performance.now();
-    expect(splitStatements(huge, { maxStatements: 3 })).toHaveLength(3);
-    expect(performance.now() - t0).toBeLessThan(50);
+  it("stops scanning early: far cheaper than a full parse of a large document (relative, best of 5)", () => {
+    const big = "SELECT 1, 'a;b'; -- c\n".repeat(200_000);
+    const best = (f: () => unknown) => { let m = Infinity; for (let i = 0; i < 5; i++) { const t = performance.now(); f(); m = Math.min(m, performance.now() - t); } return m; };
+    expect(splitStatements(big, { maxStatements: 3 })).toHaveLength(3);
+    const early = best(() => splitStatements(big, { maxStatements: 3 })), full = best(() => splitStatements(big));
+    expect(early * 20).toBeLessThan(full);
   });
   it("applies to Cypher through statementRanges and leaves the default unlimited", () => {
     const cy = Array.from({ length: 50 }, (_, i) => `RETURN ${i};`).join("\n");
