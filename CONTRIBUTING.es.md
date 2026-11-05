@@ -11,7 +11,7 @@
 
 1. `pnpm install`. Levanta los motores que necesites para las pruebas: `docker compose -f test/compose/docker-compose.yml up -d <motor>`.
 2. `pnpm lint && pnpm build && pnpm typecheck && pnpm test` debe pasar. Las suites de motores se omiten cuando su motor está apagado en local y fallan en el CI. Para la extensión ejecuta también `pnpm --filter rizomadb-client test:e2e` (un VS Code real).
-3. Ramas: trabaja en una rama y abre un pull request hacia **`dev`**; `dev` se promueve a **`main`** con un pull request (lo abre el workflow *Promote dev to main*). Mira [docs/es/ci-cd.md](docs/es/ci-cd.md).
+3. Ramas: ejecuta lint, tipos y pruebas en local y haz push directo a **`dev`** (allí no se exige pull request ni comprobación; la CI se ejecuta igualmente con el push, y un pull request hacia `dev` también sirve); `dev` se promueve a **`main`** con un pull request (lo abre el workflow *Promote dev to main*). Mira [docs/es/ci-cd.md](docs/es/ci-cd.md).
 4. Conventional Commits (`feat:`, `fix:`, `docs:`, `ci:`…). Sin telemetría, sin secretos fuera de SecretStorage, sin `TODO` en el código terminado.
 5. Todo driver nuevo debe pasar `runConformance` de `@rizomadb/driver-api/conformance`, añadir una página de motor en `docs/engines/` y aparecer en `scripts/gen-reference.mjs`.
 6. El texto visible para el usuario pasa por `t()` (host) o por la tabla de textos del webview, con la traducción al español en `apps/extension/l10n/bundle.l10n.es.json` (y `package.nls.es.json` para el texto del manifiesto); una prueba falla si falta alguna.
