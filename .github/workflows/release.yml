@@ -1,5 +1,5 @@
 name: Release
-# Builds the packages, attests their provenance and attaches them to the GitHub release of a tag. The Marketplace job below then publishes the universal VSIX through trusted publishing (OIDC, no token), but only after the owner approves the `marketplace` environment (see docs/ci-cd.md).
+# Builds the packages, attests their provenance and attaches them to the GitHub release of a tag. The Marketplace job below then publishes the universal VSIX through trusted publishing (OIDC, no token), for tags only. The `marketplace` environment has no required reviewer, so a `v*` tag publishes by itself (see docs/ci-cd.md).
 on:
   push: { tags: ["v*"] }
   workflow_dispatch:
@@ -42,7 +42,7 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         with: { files: "*.vsix\nSHA256SUMS\nsbom.cdx.json", body_path: release-notes.md, make_latest: true }
   marketplace:
-    # Needs the owner's approval: the `marketplace` environment has a required reviewer. Its name is also what the Marketplace's trusted-publishing policy checks.
+    # No approval step: the `marketplace` environment only limits deployments to `v*` tags. Its name is also what the Marketplace's trusted-publishing policy checks.
     needs: build
     if: startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
