@@ -13,6 +13,12 @@ Aquí se listan los cambios notables, del más nuevo al más antiguo. El formato
 
 ## [Sin publicar]
 
+## [1.2.6] — 2026-11-04
+
+### Corregido
+- El host de extensiones podía congelarse (el aviso de VS Code «el host de extensiones no responde») en un editor SQL o Cypher cuya sentencia empezaba con una serie de comentarios de bloque, por ejemplo una cabecera de líneas `/* … */`: la comprobación de que un fragmento solo contiene comentarios retrocedía de forma exponencial, y el resaltado de la sentencia la ejecutaba en cada movimiento del cursor. Ahora es una sola pasada lineal.
+- Mover el cursor ya no vuelve a analizar un documento que no cambió: los rangos de sentencias se guardan por versión del documento, y los botones de ejecución solo analizan hasta su límite de 300 sentencias. La detección de cadenas con dólares ya no copia el resto del texto en cada `$`.
+
 ## [1.2.5] — 2026-11-04
 
 ### Añadido

@@ -45,7 +45,7 @@ Engine suites skip when their engine is down locally and **fail in CI** (`RZ_REQ
 
 ## Conventions
 - Match the surrounding code: terse, strict types, comments only for the *why*.
-- Commits: Conventional Commits (`feat:`, `fix:`, `docs:`, `ci:`). Work on a branch → PR into `dev`; `dev` → `main` by PR (see `docs/ci-cd.md`).
+- Commits: Conventional Commits (`feat:`, `fix:`, `docs:`, `ci:`). `dev` takes direct pushes: no pull request and no required check (CI still runs on every push, but does not gate it, so run lint, typecheck and tests locally first). `main` only by PR from `dev`, with its checks green. Never force-push. Rules and rationale: `docs/ci-cd.md`.
 - New driver: pass `runConformance`, add `docs/engines/<id>.md`, register it in `extension.ts`, `worker/driverWorker.ts`, `engineCatalog.ts`, `scripts/gen-reference.mjs`, and `docker-compose.yml` if it has an image. Read-only mode must be enforced by the server where possible, otherwise by a default-deny classifier — and say which in the docs.
 - New setting or command: declare it in `package.json` and both `package.nls*.json`, give it a title in `settingsPanel.ts` if it is a setting, then regenerate the references.
 - Packaging uses the **built** driver packages: after changing a driver run `pnpm --filter rizomadb-client package` (it builds dependencies), not just esbuild.

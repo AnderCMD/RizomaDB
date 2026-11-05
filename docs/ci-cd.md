@@ -5,7 +5,7 @@
 How a change travels from a branch to users, and what is automatic.
 
 ```
-feature branch ──PR──▶ dev ──PR (Promote workflow)──▶ main ──▶ docs site (GitHub Pages)
+feature branch ──push or PR──▶ dev ──PR (Promote workflow)──▶ main ──▶ docs site (GitHub Pages)
                                                          └──tag v*──▶ Release workflow ──▶ (GitHub release) ──▶ (owner approves `marketplace`) ──▶ Marketplace
 ```
 
@@ -21,7 +21,7 @@ Nothing is published to a marketplace or registry without the owner's approval o
 ## Repository settings
 These are repository settings, not code, so the workflows do not apply them. Applied on 2026-11-04 (changed from the 2026-10-22 rules):
 - `main` is the strict one: a pull request is required (with 0 approvals), the `test`, `engines-extra`, `site` and `secrets` checks must pass, the branch must be up to date with `main` before merging, and the rules apply to administrators too, so the owner cannot skip them. Force-pushes and deletions are blocked. Linear history, signed commits, conversation resolution and code owners are not required.
-- `dev` is looser: only the `test` check is required, a pull request is not required (a direct push is possible, but the push must carry a commit whose `test` check has already passed), the rules do not apply to administrators, the branch need not be up to date, and force-pushes and deletions are blocked.
+- `dev` is looser: no status check and no pull request are required (push to it directly; CI still runs on every push but does not gate it, so run the local equivalents below first), the rules do not apply to administrators, the branch need not be up to date, and force-pushes and deletions are blocked.
 - The default workflow token is read-only and Actions cannot approve pull requests.
 - Because `main` must be up to date, a `dev` → `main` pull request goes behind as soon as `main` receives a merge commit; press *Update branch* on the pull request (this runs the checks again).
 

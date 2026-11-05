@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { t } from "../i18n.js";
-import { statementRanges } from "../lib/statements.js";
+import { cachedStatementRanges } from "../lib/statements.js";
 import { isQueryLanguage, QUERY_LANGUAGES } from "../lib/commandAt.js";
 
 const cfg = () => vscode.workspace.getConfiguration("rizomadb");
@@ -22,7 +22,7 @@ export function registerEditorTools(ctx: vscode.ExtensionContext, deps: { label:
     onDidChangeCodeLenses: changed.event,
     provideCodeLenses(doc) {
       if (!cfg().get<boolean>("editor.codeLens", true)) return [];
-      const stmts = statementRanges(doc.languageId, doc.getText()).slice(0, 300);
+      const stmts = cachedStatementRanges(doc, { maxStatements: 300 });
       if (!stmts.length) return [];
       const uri = doc.uri.toString(), top = new vscode.Range(0, 0, 0, 0), out: vscode.CodeLens[] = [];
       out.push(new vscode.CodeLens(top, { title: `$(database) ${deps.label(doc) ?? t("Choose a connection")}`, command: "rizomadb.selectConnection", tooltip: t("Change the connection of this editor") }));
@@ -41,7 +41,7 @@ export function registerEditorTools(ctx: vscode.ExtensionContext, deps: { label:
     if (!ed) return;
     if (!isQueryLanguage(ed.document.languageId) || !cfg().get<boolean>("editor.highlightStatement", true) || !ed.selection.isEmpty) { ed.setDecorations(deco, []); return; }
     const off = ed.document.offsetAt(ed.selection.active);
-    const s = statementRanges(ed.document.languageId, ed.document.getText()).find((x) => off >= x.start && off <= x.end + 1);
+    const s = cachedStatementRanges(ed.document).find((x) => off >= x.start && off <= x.end + 1);
     ed.setDecorations(deco, s ? [new vscode.Range(ed.document.positionAt(s.start), ed.document.positionAt(s.end))] : []);
   };
   let timer: ReturnType<typeof setTimeout> | undefined;
