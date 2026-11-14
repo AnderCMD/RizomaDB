@@ -33,6 +33,21 @@ exports.run = async function run() {
   const mlenses = await vscode.commands.executeCommand("vscode.executeCodeLensProvider", mongo.uri);
   assert.strictEqual(mlenses.filter((l) => l.command?.command === "rizomadb.runAt").length, 2, "Mongo blocks get lenses too");
   assert.ok(mlenses.every((l) => l.command?.command !== "rizomadb.explainAt"), "no Explain lens outside SQL");
+  // Formatting uses the editor's indentation and the rizomadb.format.* settings, read for the document.
+  const formatted = async (options) => {
+    const d = await vscode.workspace.openTextDocument({ language: "sql", content: "SELECT a FROM t WHERE x=1\n" });
+    await vscode.window.showTextDocument(d);
+    const edits = await vscode.commands.executeCommand("vscode.executeFormatDocumentProvider", d.uri, options);
+    assert.ok(edits && edits.length > 0, "the SQL formatter answers");
+    const we = new vscode.WorkspaceEdit(); we.set(d.uri, edits); await vscode.workspace.applyEdit(we);
+    return d.getText();
+  };
+  const fcfg = vscode.workspace.getConfiguration("rizomadb.format");
+  await fcfg.update("keywordCase", "lower", vscode.ConfigurationTarget.Global);
+  try {
+    assert.strictEqual(await formatted({ tabSize: 4, insertSpaces: false }), "select\n\ta\nfrom\n\tt\nwhere\n\tx = 1\n", "tabs from the editor, lower-case keywords from the setting");
+    assert.strictEqual(await formatted({ tabSize: 3, insertSpaces: true }), "select\n   a\nfrom\n   t\nwhere\n   x = 1\n", "tab size from the editor");
+  } finally { await fcfg.update("keywordCase", undefined, vscode.ConfigurationTarget.Global); }
   // Every screen opens as a real webview tab (CSP, nonce and the bundled scripts load without throwing).
   const opened = async (cmd, title) => {
     await vscode.commands.executeCommand(cmd);

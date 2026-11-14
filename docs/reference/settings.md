@@ -8,6 +8,15 @@ Every setting of the extension. Open the settings screen with **RizomaDB: Open S
 |---|---|---|---|
 | `rizomadb.language` | string (`auto`, `en`, `es`) | `auto` | Language of the RizomaDB screens and messages: `auto` follows the VS Code display language, or force `en` or `es`. Command and setting names always follow VS Code. |
 | `rizomadb.environments` | list | `[]` | Extra environments next to dev, staging and prod, e.g. `{ "name": "qa", "protection": "confirm" }`. Protection: `none`, `confirm` (ask before every write) or `readOnly` (block writes). Add one from the New connection screen too. |
+| `rizomadb.format.keywordCase` | string (`upper`, `lower`, `preserve`) | `upper` | Letter case of SQL keywords (`SELECT`, `FROM`…) when you format a query. `preserve` keeps them as you typed them. Indentation always follows the editor: `editor.tabSize` and `editor.insertSpaces` (or `[sql]` overrides and detected indentation). Like every `rizomadb.format.*` setting, it can be set per workspace or inside `"[sql]"`. |
+| `rizomadb.format.dataTypeCase` | string (`upper`, `lower`, `preserve`) | `preserve` | Letter case of data types (`integer`, `varchar`…) when you format a query. |
+| `rizomadb.format.functionCase` | string (`upper`, `lower`, `preserve`) | `preserve` | Letter case of function names (`count`, `coalesce`…) when you format a query. |
+| `rizomadb.format.indentStyle` | string (`standard`, `tabularLeft`, `tabularRight`) | `standard` | Layout of formatted queries. `standard` puts each clause on its own line and indents its contents; `tabularLeft` and `tabularRight` align the contents in a column after the keywords (aligned with spaces even when the editor indents with tabs). |
+| `rizomadb.format.logicalOperatorNewline` | string (`before`, `after`) | `before` | Whether `AND` and `OR` start a new line (`before`) or end the previous one (`after`) when you format a query. |
+| `rizomadb.format.expressionWidth` | number | `50` | Parenthesized expressions up to this many characters stay on one line when you format a query; longer ones are split. |
+| `rizomadb.format.linesBetweenQueries` | number | `1` | Empty lines between statements when you format a query. |
+| `rizomadb.format.denseOperators` | boolean | `false` | Write operators without spaces around them (`a=1` instead of `a = 1`) when you format a query. |
+| `rizomadb.format.newlineBeforeSemicolon` | boolean | `false` | Put each statement's closing `;` on a line of its own when you format a query. |
 | `rizomadb.editor.codeLens` | boolean | `true` | Show Run and Explain buttons above each statement in query editors, plus Run all and the connection in use. |
 | `rizomadb.editor.highlightStatement` | boolean | `true` | Highlight the statement under the cursor in query editors. |
 | `rizomadb.explorer.groupByFamily` | boolean | `true` | Group the connections in the tree by engine type (relational, document, key-value…). |
@@ -22,6 +31,7 @@ Every setting of the extension. Open the settings screen with **RizomaDB: Open S
 | `rizomadb.history.enabled` | boolean | `true` | Record executed statements in a local history file (secrets are redacted). |
 | `rizomadb.history.retentionDays` | number | `90` | Days to keep history entries. |
 | `rizomadb.edit.applyImmediately` | boolean | `false` | Save each cell edit as soon as you confirm it, without pressing Apply. On `dev` connections it applies silently; every other environment still asks first, and policies and read-only rules always apply. |
+| `rizomadb.edit.withoutPrimaryKey` | boolean | `true` | Let you edit tables that have no primary key (SQL engines with transactions). Rows are identified by a unique index on NOT NULL columns when there is one, otherwise by the values of their columns (floating-point, date/time, binary, JSON and large-object columns are not compared). Every change must match exactly one row: if two identical rows match, the whole batch is rolled back. |
 | `rizomadb.table.openRows` | number | `200` | Rows loaded when opening a table. |
 | `rizomadb.policy.team` | object | `{}` | Team policy layer (same format as `.rizomadb/policy.json`). Deploy it through managed VS Code settings; project and user layers can only make it stricter. |
 | `rizomadb.catalog.teamFile` | string | *(empty)* | Path of a shared connection catalog file (no secrets). |

@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { parseNotebook, serializeNotebook, tableHtml } from "../lib/notebookFormat.js";
 import { runStatement } from "../lib/runner.js";
+import { stripLeadingComments } from "../lib/splitter.js";
 import { splitScript } from "@rizomadb/sql";
 import { formatValue } from "../lib/format.js";
 import { DIALECT_OF } from "../lib/schemaCache.js";
@@ -47,7 +48,8 @@ export function registerNotebooks(ctx: vscode.ExtensionContext, mgr: ConnectionM
       let ok = true;
       try {
         const conn = await mgr.connect(id);
-        for (const st of splitScript(cell.document.getText(), DIALECT_OF[profile.driver] ?? "ansi")) {
+        for (const raw of splitScript(cell.document.getText(), DIALECT_OF[profile.driver] ?? "ansi")) {
+          const st = { ...raw, text: stripLeadingComments(raw.text) };
           let cols: string[] = [], truncated = false, errMsg: string | undefined, affected: number | undefined;
           const rows: (string | null)[][] = [];
           const out = await runStatement({

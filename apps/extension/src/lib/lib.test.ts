@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { MemorySecretStore, defaultEffectivePolicy } from "@rizomadb/core";
 import { sqliteDriver } from "@rizomadb/driver-sqlite";
 import { collect } from "@rizomadb/driver-api";
-import { splitStatements, statementAt } from "./splitter.js";
+import { splitStatements, statementAt, stripLeadingComments } from "./splitter.js";
 import { formatValue } from "./format.js";
 import { History } from "./history.js";
 import { ConnectionManager, type Memento } from "./connections.js";
@@ -26,6 +26,17 @@ describe("splitter", () => {
     const sql = "SELECT 1;\nSELECT 2;";
     expect(statementAt(sql, 12)?.text).toBe("SELECT 2");
     expect(statementAt(sql, 3)?.text).toBe("SELECT 1");
+  });
+  it("drops the comments written above a statement, but keeps hints, executable comments and inner comments", () => {
+    expect(stripLeadingComments("-- what this does\n-- more\n\n/* block\n */ SELECT 1 -- tail\n")).toBe("SELECT 1 -- tail");
+    expect(stripLeadingComments("/*!40101 SET NAMES utf8 */")).toBe("/*!40101 SET NAMES utf8 */");
+    expect(stripLeadingComments("/*+ INDEX(t i) */ SELECT 1")).toBe("/*+ INDEX(t i) */ SELECT 1");
+    expect(stripLeadingComments("SELECT '--x' /* y */")).toBe("SELECT '--x' /* y */");
+    expect(stripLeadingComments("// find users\ndb.users.find()", "//")).toBe("db.users.find()");
+    expect(stripLeadingComments("-- only a comment")).toBe("-- only a comment");
+    expect(stripLeadingComments("/* unterminated SELECT 1")).toBe("/* unterminated SELECT 1");
+    // The cursor on a comment line above a statement still selects that statement.
+    expect(statementAt("SELECT 1;\n-- next\nSELECT 2;", 13)?.text).toBe("-- next\nSELECT 2");
   });
   it("never throws on odd input (unterminated quotes/comments)", () => {
     for (const s of ["'", "\"", "/*", "$$", "$a", "--", ";;;", "`x"]) expect(() => splitStatements(s)).not.toThrow();

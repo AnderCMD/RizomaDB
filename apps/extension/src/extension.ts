@@ -1,13 +1,13 @@
 import * as vscode from "vscode";
 import { join } from "node:path";
-import { applyChanges, AuditLog, builtInPolicy, decideEffective, mergePolicies, EditError, featureEnabled, generate, type EditTarget, type EffectivePolicy, type SecretStore } from "@rizomadb/core";
+import { applyChanges, AuditLog, chooseRowKey, builtInPolicy, decideEffective, mergePolicies, EditError, featureEnabled, generate, type EditTarget, type EffectivePolicy, type SecretStore } from "@rizomadb/core";
 import { loadPolicy } from "./lib/policyFiles.js";
 import { loadCatalog } from "./lib/catalog.js";
-import type { ColumnInfo, Value } from "@rizomadb/driver-api";
+import type { ColumnDef, ColumnInfo, Value } from "@rizomadb/driver-api";
 import { ConnectionManager, type DriverRegistry, type TunnelFactory } from "./lib/connections.js";
 import { runStatement, type RunEvent } from "./lib/runner.js";
 import { History } from "./lib/history.js";
-import { splitStatements, statementAt } from "./lib/splitter.js";
+import { statementAt, stripLeadingComments } from "./lib/splitter.js";
 import { commandAt, isQueryLanguage } from "./lib/commandAt.js";
 import { formatValue } from "./lib/format.js";
 import { Explorer, type Node } from "./ui/explorer.js";
@@ -398,10 +398,12 @@ export async function activate(ctx: vscode.ExtensionContext) {
   }
 
   /** The key columns to page a table by, when the user turned keyset paging on and the table and engine allow it. */
-  async function keysetFor(profile: NonNullable<ReturnType<typeof mgr.get>>, conn: Awaited<ReturnType<typeof mgr.connect>>, ref: TableRef): Promise<KeysetState | undefined> {
+  /** Engines where editing a table without a primary key is tested against a real server (packages/core/src/editing.test.ts). */
+  const ROW_KEY_ENGINES = new Set(["sqlite", "postgres", "mysql", "mssql", "oracle"]);
+  async function keysetFor(profile: NonNullable<ReturnType<typeof mgr.get>>, conn: Awaited<ReturnType<typeof mgr.connect>>, ref: TableRef, described?: Promise<ColumnDef[] | undefined>): Promise<KeysetState | undefined> {
     if (!cfg().get<boolean>("query.keysetPaging", true) || !keysetSupported(profile.driver) || ref.isView) return undefined;
-    const info = await conn.introspect().describeTable({ name: ref.name, ...(ref.schema ? { schema: ref.schema } : {}) });
-    const keys = (info.columns ?? []).filter((c) => c.primaryKey).map((c) => ({ name: c.name, quoted: conn.quoteIdent(c.name) }));
+    const columns = described ? await described : (await conn.introspect().describeTable({ name: ref.name, ...(ref.schema ? { schema: ref.schema } : {}) })).columns;
+    const keys = (columns ?? []).filter((c) => c.primaryKey).map((c) => ({ name: c.name, quoted: conn.quoteIdent(c.name) }));
     return keys.length ? { keys } : undefined;
   }
 
@@ -434,7 +436,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
     let mask: ((r: Value[]) => Value[]) | undefined;
     const rawRows: Value[][] = skip > 0 ? lastRaw : []; lastRaw = rawRows; let cols: ColumnInfo[] = [];
     const emit = (e: RunEvent) => {
-      if (e.type === "start") { columnsSeen = true; cols = e.columns; mask = maskFor(policy().maskColumns, e.columns.map((c) => c.name)); if (mask) edit = undefined; results.describe(tableRef ? `${profile.name}.${tableRef.name}` : `${profile.name} · ${title}`, tabIcon()); results.post({ v: 1, type: "start", title, sql: e.sql, columns: e.columns, editable: !!edit, ...(skip > 0 ? { append: true } : {}), connection: connectionInfo(), ...(edit ? { flags: { pk: edit.target.columns.filter((c) => c.primaryKey).map((c) => c.name), required: edit.target.columns.filter((c) => !c.nullable).map((c) => c.name) } } : {}), ...(tableRef ? { table: { name: tableRef.name, ...(tableRef.schema ? { schema: tableRef.schema } : {}), alter: !tableRef.isView && !mgr.isReadOnly(profile) && profile.driver in DIALECT_OF && ["sqlite", "postgres", "mysql", "mssql", "oracle"].includes(profile.driver), ...(filterKindOf(profile.driver) ? { filter: { kind: filterKindOf(profile.driver)!, where: filter?.where ?? "", order: filter?.order ?? "" } } : {}) } } : {}) }); }
+      if (e.type === "start") { columnsSeen = true; cols = e.columns; mask = maskFor(policy().maskColumns, e.columns.map((c) => c.name)); if (mask) edit = undefined; results.describe(tableRef ? `${profile.name}.${tableRef.name}` : `${profile.name} · ${title}`, tabIcon()); results.post({ v: 1, type: "start", title, sql: e.sql, columns: e.columns, editable: !!edit, ...(skip > 0 ? { append: true } : {}), connection: connectionInfo(), ...(edit ? { flags: { pk: edit.target.columns.some((c) => c.primaryKey) ? edit.target.columns.filter((c) => c.primaryKey).map((c) => c.name) : edit.target.rowKey?.source === "unique" ? edit.target.rowKey.columns : [], required: edit.target.columns.filter((c) => !c.nullable).map((c) => c.name) } } : {}), ...(tableRef ? { table: { name: tableRef.name, ...(tableRef.schema ? { schema: tableRef.schema } : {}), alter: !tableRef.isView && !mgr.isReadOnly(profile) && profile.driver in DIALECT_OF && ["sqlite", "postgres", "mysql", "mssql", "oracle"].includes(profile.driver), ...(filterKindOf(profile.driver) ? { filter: { kind: filterKindOf(profile.driver)!, where: filter?.where ?? "", order: filter?.order ?? "" } } : {}) } } : {}) }); }
       else if (e.type === "rows") { if (keyset && e.rows.length) { keyset.last = lastKey(keyset.keys, cols, e.rows[e.rows.length - 1]!); } const shown = mask ? e.rows.map(mask) : e.rows; if (edit) rawRows.push(...e.rows); results.post({ v: 1, type: "rows", rows: shown.map((r) => r.map(formatValue)) }); }
       else if (e.type === "done") {
         if (!columnsSeen) results.post({ v: 1, type: "start", title, sql: "", columns: [] });
@@ -535,6 +537,9 @@ export async function activate(ctx: vscode.ExtensionContext) {
     if (d && isQueryLanguage(d.languageId)) await ctx.workspaceState.update(`doc:${d.uri.toString()}`, id); else lastUsedId = id;
     refreshStatus();
   });
+  /** The results tab and the history show the statement, not the comments written above it. */
+  const withoutLeadingComments = (lang: string, text: string) =>
+    lang === "sql" ? stripLeadingComments(text) : lang === "rizomadb-cypher" || lang === "rizomadb-mongo" || lang === "rizomadb-es" ? stripLeadingComments(text, "//") : text;
   reg("rizomadb.runQuery", async () => {
     const ed = vscode.window.activeTextEditor; if (!ed) return;
     const sel = ed.selection;
@@ -542,15 +547,22 @@ export async function activate(ctx: vscode.ExtensionContext) {
     const text = !sel.isEmpty ? ed.document.getText(sel) : lang === "sql" ? statementAt(ed.document.getText(), ed.document.offsetAt(sel.active))?.text : commandAt(lang, ed.document.getText(), ed.document.offsetAt(sel.active));
     if (!text?.trim()) { void vscode.window.showInformationMessage(t("Nothing to run.")); return; }
     const id = await bind(ed.document); if (!id) return;
-    const bound = await promptParameters(id, text); if (!bound) return;
+    const bound = await promptParameters(id, withoutLeadingComments(lang, text)); if (!bound) return;
     await execute(id, bound.sql, t("Query"), undefined, bound.params);
   });
   reg("rizomadb.runSelection", async () => {
     const ed = vscode.window.activeTextEditor; if (!ed) return;
     const text = ed.selection.isEmpty ? ed.document.getText() : ed.document.getText(ed.selection);
-    const stmts = splitStatements(text);
+    // Split as the editor's language does (a Mongo or Redis selection is not SQL), ask for parameters, and stop at the first failure like Run All.
+    const lang = isQueryLanguage(ed.document.languageId) ? ed.document.languageId : "sql";
+    const stmts = statementRanges(lang, text);
+    if (!stmts.length) { void vscode.window.showInformationMessage(t("Nothing to run.")); return; }
     const id = await bind(ed.document); if (!id) return;
-    for (const s of stmts) { await execute(id, s.text, t("Query")); }
+    for (let i = 0; i < stmts.length; i++) {
+      const bound = await promptParameters(id, withoutLeadingComments(lang, stmts[i]!.text)); if (!bound) return;
+      const status = await execute(id, bound.sql, stmts.length > 1 ? t("Statement {0} of {1}", i + 1, stmts.length) : t("Query"), undefined, bound.params);
+      if (status !== "ok") { if (stmts.length > 1) void vscode.window.showWarningMessage(t("Stopped at statement {0} of {1}.", i + 1, stmts.length)); return; }
+    }
   });
   /** Brings the document to the front with the cursor at `offset`, so the existing run/explain commands act on that statement. */
   const focusAt = async (uri: string, offset: number) => {
@@ -573,7 +585,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
       if ((await vscode.window.showWarningMessage(t("[{0}] {1}: run {2} statements in order?", profile.environment.toUpperCase(), profile.name, stmts.length), { modal: true }, go)) !== go) return;
     }
     for (let i = 0; i < stmts.length; i++) {
-      const bound = await promptParameters(id, stmts[i]!.text); if (!bound) return;
+      const bound = await promptParameters(id, withoutLeadingComments(doc.languageId, stmts[i]!.text)); if (!bound) return;
       const status = await execute(id, bound.sql, t("Statement {0} of {1}", i + 1, stmts.length), undefined, bound.params);
       if (status !== "ok") { void vscode.window.showWarningMessage(t("Stopped at statement {0} of {1}.", i + 1, stmts.length)); return; }
     }
@@ -603,17 +615,32 @@ export async function activate(ctx: vscode.ExtensionContext) {
     const plugin = await mgr.loadDriver(profile.driver);
     const name = n.schema ? `${conn.quoteIdent(n.schema)}.${conn.quoteIdent(n.name)}` : conn.quoteIdent(n.name);
     let edit: { target: EditTarget } | undefined;
-    if (!n.isView && (plugin.capabilities.rowEditing === "primaryKey" || plugin.capabilities.rowEditing === "documentId") && !mgr.isReadOnly(profile)) {
-      const info = await conn.introspect().describeTable({ name: n.name, ...(n.schema ? { schema: n.schema } : {}) });
-      if (info.columns?.some((c) => c.primaryKey)) edit = { target: { ...(n.schema ? { schema: n.schema } : {}), table: n.name, columns: info.columns } };
+    const ref: TableRef = { name: n.name, ...(n.schema ? { schema: n.schema } : {}), isView: !!n.isView };
+    const canEdit = !n.isView && (plugin.capabilities.rowEditing === "primaryKey" || plugin.capabilities.rowEditing === "documentId") && !mgr.isReadOnly(profile);
+    // One describe serves both editing and keyset paging (it used to run twice before the first row).
+    const described = canEdit || (cfg().get<boolean>("query.keysetPaging", true) && keysetSupported(profile.driver) && !n.isView)
+      ? conn.introspect().describeTable({ name: n.name, ...(n.schema ? { schema: n.schema } : {}) }).then((i) => i.columns) : undefined;
+    described?.catch(() => {});
+    const keysetP = keysetFor(profile, conn, ref, described);
+    if (canEdit) {
+      const columns = await described!;
+      if (columns?.some((c) => c.primaryKey)) edit = { target: { ...(n.schema ? { schema: n.schema } : {}), table: n.name, columns } };
+      else if (columns?.length && ROW_KEY_ENGINES.has(profile.driver) && plugin.capabilities.transactions && cfg().get<boolean>("edit.withoutPrimaryKey", true)) {
+        // No primary key: a unique index on NOT NULL columns, else the row's own values. applyChanges refuses any statement that touches more than one row.
+        const idx = await conn.introspect().indexes?.(n.schema).catch(() => []) ?? [];
+        const uniques = idx.filter((i) => i.unique && i.table.toLowerCase() === n!.name.toLowerCase() && (!n!.schema || !i.schema || i.schema.toLowerCase() === n!.schema.toLowerCase())).map((i) => i.columns);
+        const rowKey = chooseRowKey(columns, uniques, { lobText: profile.driver === "mssql" });
+        if (rowKey) edit = { target: { ...(n.schema ? { schema: n.schema } : {}), table: n.name, columns, rowKey } };
+      }
     }
     // The statement carries the row cap, not the first page: the runner reads pages of it and "Load more" continues from there.
     const limit = Math.min(cfg().get<number>("query.maxRows", 100000), profile.driver === "elasticsearch" ? 10000 : Infinity);
-    const ref: TableRef = { name: n.name, ...(n.schema ? { schema: n.schema } : {}), isView: !!n.isView };
-    const keyset = await keysetFor(profile, conn, ref);
+    const keyset = await keysetP;
     const open = keyset ? buildTableQuery({ driver: profile.driver, quoted: name, schema: n.schema, name: n.name, where: "", order: keysetOrder(keyset.keys), limit }) : plugin.openCommand ? plugin.openCommand({ ...(n.schema ? { schema: n.schema } : {}), name: n.name }, limit) : plugin.selectTop(name, limit);
     await execute(profile.id, open, n.name, edit, undefined, ref, keyset ? { skip: 0, keyset } : undefined);
     if (!edit) notice("info", n.isView ? t("Views are read-only.") : mgr.isReadOnly(profile) ? t("Read-only connection: editing is disabled.") : t("This table has no primary key, so its rows cannot be edited safely."));
+    else if (edit.target.rowKey?.source === "row") notice("info", t("This table has no primary key: rows are matched by their values, and an edit that would change more than one row is refused."));
+    else if (edit.target.rowKey?.source === "unique") notice("info", t("This table has no primary key: rows are identified by the unique index on {0}.", edit.target.rowKey.columns.join(", ")));
   });
   reg("rizomadb.export", async (n?: Node) => {
     let profileId: string | undefined, sql: string | undefined, quoted: string | undefined;
@@ -644,7 +671,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
       const r = await vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: t("Exporting…"), cancellable: true }, (progress, token) => {
         token.onCancellationRequested(() => ac.abort());
         let last = 0;
-        return exportResult(conn.execute({ sql: sql!, batchSize: 2000 }, ac.signal), createWriteStream(uri.fsPath, { mode: 0o600 }), {
+        return exportResult(conn.execute({ sql: sql!, batchSize: 5000 }, ac.signal), createWriteStream(uri.fsPath, { mode: 0o600 }), {
           format: fmt.label as ExportFormat, signal: ac.signal, mask: policy().maskColumns,
           ...(fmt.label === "sql" ? { sql: { table: quoted ?? plugin.quoteIdent("exported"), quoteIdent: plugin.quoteIdent } } : {}),
           onProgress: (rows) => { progress.report({ message: t("{0} rows", rows), increment: 0 }); last = rows; void last; },

@@ -6,7 +6,7 @@ Instructions for AI coding agents (and humans in a hurry) working on RizomaDB. R
 A free (Apache-2.0), no-telemetry, multi-engine database client for VS Code. pnpm workspaces + Turborepo, TypeScript strict, esbuild bundles, vitest. Code, comments and commit messages are in English; the user-facing text and the documentation exist in English and Spanish (this file stays in English only).
 
 ## Map first: use the graph
-`graphify-out/GRAPH_REPORT.md` and `graphify-out/graph.json` are a knowledge graph of the **code** (AST only; docs are not in it). Before searching files, read the report's god nodes and communities, or ask: `graphify query "<question>"`, `graphify path "A" "B"`, `graphify explain "Node"`. A post-commit hook rebuilds it locally (`graphify hook install`); after large changes run `graphify update .` and commit the refreshed `graph.json` and report. Treat the graph as a map, not as proof: confirm in the source.
+`graphify-out/GRAPH_REPORT.md` and `graphify-out/graph.json` are a knowledge graph of the **code** (AST only; `.graphifyignore` keeps docs, Markdown and translations out of it). Before searching files, read the report's god nodes and communities, or ask: `graphify query "<question>"`, `graphify path "A" "B"`, `graphify explain "Node"`. A post-commit hook rebuilds it locally (`graphify hook install`); after large changes run `graphify update .` and commit the refreshed `graph.json` and report. Treat the graph as a map, not as proof: confirm in the source.
 
 ## Layout
 | Path | What |

@@ -10,7 +10,7 @@ import { postgresDriver } from "@rizomadb/driver-postgres";
 import { mysqlDriver } from "@rizomadb/driver-mysql";
 import { mssqlDriver } from "@rizomadb/driver-mssql";
 import { oracleDriver } from "@rizomadb/driver-oracle";
-import { applyChanges, EditError, EditQueue, generate, defaultEffectivePolicy, type EditTarget } from "./index.js";
+import { applyChanges, chooseRowKey, EditError, EditQueue, generate, defaultEffectivePolicy, keySource, type EditTarget } from "./index.js";
 
 const ctl = new AbortController().signal;
 const run = (c: Connection, sql: string, params: never[] = []) => collect(c.execute({ sql, params }, ctl));
@@ -117,6 +117,43 @@ for (const e of engines) {
       const nk = await t.describe("nokey");
       expect(() => generate(e.plugin, nk, { kind: "delete", key: {}, before: {} })).toThrow(EditError);
       await expect(applyChanges([{ kind: "delete", key: {}, before: {} }], { ...t.base, target: nk })).rejects.toMatchObject({ code: "no-key" });
+      await t.close();
+    });
+
+    it("edits a table without a primary key by its row values, and refuses duplicate rows", async () => {
+      const t = await setup();
+      await run(t.admin, "INSERT INTO nokey (a, b) VALUES (1, 'x')");
+      await run(t.admin, "INSERT INTO nokey (a, b) VALUES (2, 'y')");
+      await run(t.admin, "INSERT INTO nokey (a, b) VALUES (2, 'y')");
+      const base = await t.describe("nokey");
+      const nk: EditTarget = { ...base, rowKey: chooseRowKey(base.columns, [], { lobText: e.id === "mssql" }) };
+      expect(keySource(nk)).toBe("row");
+      const [A, B] = [N("a"), N("b")];
+      const all = async () => (await run(t.admin, `SELECT ${A}, ${B} FROM nokey ORDER BY 1, 2`)).rows.map((r) => r.map((v) => (typeof v === "bigint" ? Number(v) : v)));
+      await applyChanges([{ kind: "update", key: { [A]: 1, [B]: "x" }, before: { [B]: "x" }, set: { [B]: "z" } }], { ...t.base, target: nk });
+      expect(await all()).toEqual([[1, "z"], [2, "y"], [2, "y"]]);
+      // Two identical rows: the statement would touch both, so the batch rolls back.
+      await expect(applyChanges([{ kind: "delete", key: { [A]: 2, [B]: "y" }, before: {} }], { ...t.base, target: nk })).rejects.toMatchObject({ code: "conflict" });
+      expect(await all()).toEqual([[1, "z"], [2, "y"], [2, "y"]]);
+      await applyChanges([{ kind: "delete", key: { [A]: 1, [B]: "z" }, before: {} }], { ...t.base, target: nk });
+      expect(await all()).toEqual([[2, "y"], [2, "y"]]);
+      await t.close();
+    });
+
+    it("uses a unique index on NOT NULL columns as the key of a table without a primary key", async () => {
+      const t = await setup();
+      await run(t.admin, `CREATE TABLE uq (a ${e.id === "oracle" ? "NUMBER" : "INT"} NOT NULL, b ${e.id === "oracle" ? "VARCHAR2(10)" : "VARCHAR(10)"})`);
+      await run(t.admin, "CREATE UNIQUE INDEX uq_a ON uq (a)");
+      await run(t.admin, "INSERT INTO uq (a, b) VALUES (1, 'x')");
+      const base = await t.describe("uq");
+      const idx = (await t.admin.introspect().indexes?.(base.schema)) ?? [];
+      const uniques = idx.filter((i) => i.unique && i.table.toLowerCase() === "uq").map((i) => i.columns);
+      const target: EditTarget = { ...base, rowKey: chooseRowKey(base.columns, uniques) };
+      expect(target.rowKey).toEqual({ columns: [N("a")], source: "unique" });
+      const preview = generate(e.plugin, target, { kind: "update", key: { [N("a")]: 1 }, before: { [N("b")]: "x" }, set: { [N("b")]: "y" } });
+      expect(preview.sql).toContain("WHERE");
+      await applyChanges([preview.change], { ...t.base, target });
+      expect((await run(t.admin, `SELECT ${N("b")} FROM uq`)).rows).toEqual([["y"]]);
       await t.close();
     });
 

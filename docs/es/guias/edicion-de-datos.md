@@ -10,7 +10,9 @@ Un resultado es editable cuando viene de **abrir una tabla** cuyas filas RizomaD
 | SQLite, PostgreSQL, MySQL/MariaDB, SQL Server, Oracle, DuckDB | la clave primaria |
 | MongoDB | el `_id` del documento |
 
-Las vistas, las consultas personalizadas, las líneas de consulta que editaste, las columnas enmascaradas, las conexiones de solo lectura y las tablas sin clave primaria **no** son editables; al intentarlo, la rejilla te dice por qué. Cualquier otro motor, incluidas las claves de Redis y Valkey, es de solo lectura en la rejilla (Redis tiene sus propios comandos para eliminar, renombrar y poner caducidad a las claves).
+**Las tablas sin clave primaria** (SQLite, PostgreSQL, MySQL/MariaDB, SQL Server y Oracle) también se pueden editar, salvo que apagues `rizomadb.edit.withoutPrimaryKey`. Las filas se identifican por un índice único cuyas columnas son todas `NOT NULL` si la tabla lo tiene; si no, por los valores de sus columnas, dejando fuera las que no se comparan con exactitud (coma flotante, fecha/hora, binarias, JSON, XML y objetos grandes). Cada sentencia debe cambiar exactamente una fila: si cambiaría dos filas idénticas, o el motor no dice cuántas cambiaron, se deshace todo el lote y no se cambia nada. Añade una clave primaria para editar filas duplicadas.
+
+Las vistas, las consultas personalizadas, las líneas de consulta que editaste, las columnas enmascaradas y las conexiones de solo lectura **no** son editables; al intentarlo, la rejilla te dice por qué. Cualquier otro motor, incluidas las claves de Redis y Valkey, es de solo lectura en la rejilla (Redis tiene sus propios comandos para eliminar, renombrar y poner caducidad a las claves).
 
 ## Cómo
 1. Haz **doble clic** en una celda (o selecciónala y pulsa **Enter** o **F2**, o usa el botón del lápiz). Se abre un cuadro con el valor.
@@ -25,7 +27,7 @@ Los valores se comprueban contra el tipo de la columna al escribir: una columna 
 - **Revisar el SQL** abre las sentencias exactas que se ejecutarían (con sus parámetros), sin ejecutarlas.
 - **Aplicar** envía todos los cambios **en una sola transacción** en los motores que tienen transacciones. En los que no (por ejemplo MongoDB) los cambios se aplican uno a uno, y el mensaje dice cuántos ya estaban aplicados si uno falla.
 - Producción y staging piden confirmación antes de aplicar; `requireApproval` te pide escribir el nombre de la conexión. Las políticas, las conexiones de solo lectura y el registro de auditoría se aplican igual que en el editor.
-- **Detección de conflictos.** Cada cambio comprueba que la fila aún tenga los valores que viste; si alguien más la cambió o la eliminó, no se aplica nada y se te avisa.
+- **Detección de conflictos.** Cada cambio comprueba que la fila aún tenga los valores que viste; si alguien más la cambió o la eliminó, no se aplica nada y se te avisa. Solo se comprueban los valores que se comparan con exactitud: se dejan fuera las columnas de coma flotante, fecha/hora, binarias, JSON, XML y objetos grandes (y `TEXT`/`NTEXT` en SQL Server), porque el valor cargado en la rejilla puede diferir del guardado (un timestamp de PostgreSQL guarda microsegundos y JavaScript milisegundos) o el motor no los compara con `=`.
 - **Descartar** tira todo lo pendiente.
 
 ## Guardar cada edición al instante

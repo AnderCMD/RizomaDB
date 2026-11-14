@@ -14,9 +14,19 @@ interface Prop { type?: string; default?: unknown; enum?: string[]; minimum?: nu
 const TITLES: Record<string, () => string> = {
   "language": () => t("Extension language"),
   "results.location": () => t("Where results open"),
+  "format.keywordCase": () => t("Keyword case"),
+  "format.dataTypeCase": () => t("Data type case"),
+  "format.functionCase": () => t("Function name case"),
+  "format.indentStyle": () => t("Indentation style"),
+  "format.logicalOperatorNewline": () => t("Line break around AND / OR"),
+  "format.expressionWidth": () => t("Maximum width of an expression on one line"),
+  "format.linesBetweenQueries": () => t("Empty lines between statements"),
+  "format.denseOperators": () => t("Operators without spaces"),
+  "format.newlineBeforeSemicolon": () => t("Semicolon on its own line"),
   "editor.codeLens": () => t("Run buttons above each statement"),
   "editor.highlightStatement": () => t("Highlight the statement at the cursor"),
   "edit.applyImmediately": () => t("Save each edit immediately"),
+  "edit.withoutPrimaryKey": () => t("Edit tables without a primary key"),
   "query.pageSize": () => t("Rows per page"),
   "query.keysetPaging": () => t("Page tables by primary key"),
   "environments": () => t("Extra environments"),
@@ -42,7 +52,7 @@ const TITLES: Record<string, () => string> = {
   "ai.redactLiterals": () => t("Redact literals before sending"),
 };
 const GROUPS: Record<string, () => string> = {
-  language: () => t("Language"), environments: () => t("Environments"), results: () => t("Results"), editor: () => t("Query editor"), edit: () => t("Editing"), explorer: () => t("Connections tree"), connections: () => t("Connections"),
+  language: () => t("Language"), environments: () => t("Environments"), results: () => t("Results"), editor: () => t("Query editor"), format: () => t("SQL formatting"), edit: () => t("Editing"), explorer: () => t("Connections tree"), connections: () => t("Connections"),
   security: () => t("Security"), query: () => t("Queries"), history: () => t("History"), table: () => t("Tables"), policy: () => t("Policy"),
   catalog: () => t("Shared connections"), audit: () => t("Audit"), mcp: () => t("MCP server"), ai: () => t("AI assistant"),
 };

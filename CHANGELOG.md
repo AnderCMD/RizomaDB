@@ -13,6 +13,20 @@ All notable changes are listed here, newest first. The format follows [Keep a Ch
 
 ## [Unreleased]
 
+### Fixed
+- Deleting or editing a row could fail with a false "the row changed" conflict, or an engine error, when the table had a timestamp with sub-millisecond precision (such as PostgreSQL `now()`), a CLOB, JSON, or SQL Server `TEXT`/`NTEXT` column: conflict detection now compares only the values that round-trip exactly.
+
+### Added
+- SQL formatting follows the editor's indentation (`editor.tabSize`, `editor.insertSpaces`, `[sql]` overrides, detected indentation) instead of always two spaces, and gains `rizomadb.format.*` settings: keyword, data type and function case, indentation style, `AND`/`OR` line breaks, expression width, lines between statements, dense operators and `;` on its own line. They can be set per workspace or inside `"[sql]"`. Formatting a selection keeps its indentation and final line break, never changes a multi-line string, and files over 1 MB are not formatted.
+- Tables without a primary key can be edited on SQLite, PostgreSQL, MySQL/MariaDB, SQL Server and Oracle (setting `rizomadb.edit.withoutPrimaryKey`, on by default). Rows are identified by a unique index on `NOT NULL` columns, or else by the values of their exactly comparable columns; a change that would touch more than one row (identical duplicates) rolls the whole batch back.
+
+### Changed
+- Running a statement no longer shows the comments written above it in the results tab and the history; only the statement runs. MySQL executable comments (`/*!…*/`) and optimizer hints (`/*+…*/`) are kept.
+- **Run Selection** splits the selection the way the editor's language does (it used the SQL splitter for Mongo, Redis and Cypher), asks for parameters, and stops at the first failing statement like Run All.
+- Reading the schema for completion and diagnostics no longer holds up your statements: it shares the connection, so it now waits while a statement of yours runs and reads one small step at a time. Its 60-second limit counts only the dictionary's own work.
+- Exports read 5,000 rows per batch instead of 2,000.
+- Faster results: the driver process now reads the next batch while the previous one is shown, PostgreSQL reads grow from 500 up to 8,000 rows per round trip, and opening a table describes it once instead of twice.
+
 ## [1.2.6] — 2026-11-04
 
 ### Fixed

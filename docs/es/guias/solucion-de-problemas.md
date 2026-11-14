@@ -2,7 +2,7 @@
 
 # Solución de problemas
 
-**No puedo editar una celda.** Solo se pueden editar las tablas con clave primaria (o documentos de MongoDB) abiertas desde el árbol. Las vistas, las consultas personalizadas, una línea de consulta que editaste y las conexiones de solo lectura no; la rejilla explica cuál aplica. Comprueba que la conexión no sea de solo lectura y que el entorno no sea `prod` con protección de solo lectura.
+**No puedo editar una celda.** Solo se pueden editar las tablas abiertas desde el árbol: con clave primaria, documentos de MongoDB o (en SQLite, PostgreSQL, MySQL, SQL Server y Oracle) tablas sin clave primaria cuyas filas se puedan distinguir. Las vistas, las consultas personalizadas, una línea de consulta que editaste y las conexiones de solo lectura no; la rejilla explica cuál aplica. Comprueba que la conexión no sea de solo lectura y que el entorno no sea `prod` con protección de solo lectura.
 
 **La conexión falla en localhost con un error de TLS.** Para `localhost` el formulario desmarca TLS por defecto. Si guardaste una conexión antes con TLS activado, edítala o créala de nuevo. Los servidores reales suelen necesitar TLS; mira la página del motor.
 
@@ -22,7 +22,7 @@
 
 **Todos los botones de ejecutar dicen que ya hay una consulta en curso.** Un motor que ignoraba Cancelar dejaba la ejecución abierta para siempre. Ahora se abandona 1,5 segundos después de cancelar (o tras `rizomadb.query.timeoutSeconds`) y esa conexión se cierra; vuelve a ejecutar y se reconecta. Si aun así lo ves, ejecuta **RizomaDB: Desconectar todas**.
 
-**Oracle va lento o se detiene al abrir un archivo.** El autocompletado y los diagnósticos leen el diccionario de datos por la misma sesión que tus sentencias. Cada una de esas lecturas está limitada a 30 segundos y, si falla o es demasiado lenta, no se reintenta durante 2 minutos. Las sentencias que ejecutas tú no tienen ese límite.
+**Una sentencia tarda en empezar justo después de conectar (Oracle y otros diccionarios grandes).** El autocompletado y los diagnósticos leen el diccionario de datos por la misma sesión que tus sentencias, que el motor ejecuta de una en una. Esa lectura espera mientras corre una sentencia tuya y se divide en consultas pequeñas, así que tu sentencia espera como mucho a una de ellas, no a todo el esquema. La lectura dispone de 60 segundos de trabajo del diccionario en total y, si falla o es demasiado lenta, no se reintenta durante 2 minutos. Las sentencias que ejecutas tú no tienen ese límite.
 
 **Una conexión que usaba aparece como desconectada.** Tras `rizomadb.connections.idleMinutes` minutos sin uso (30 por defecto) se cierra a propósito; pulsa **Reconectar** en la notificación o simplemente ejecuta algo. Pon el ajuste en `0` para mantener las conexiones abiertas.
 

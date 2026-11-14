@@ -673,6 +673,69 @@
           },
           "description": "%cfg.environments%"
         },
+        "rizomadb.format.keywordCase": {
+          "type": "string",
+          "enum": ["upper", "lower", "preserve"],
+          "default": "upper",
+          "scope": "language-overridable",
+          "markdownDescription": "%cfg.format.keywordCase%"
+        },
+        "rizomadb.format.dataTypeCase": {
+          "type": "string",
+          "enum": ["upper", "lower", "preserve"],
+          "default": "preserve",
+          "scope": "language-overridable",
+          "markdownDescription": "%cfg.format.dataTypeCase%"
+        },
+        "rizomadb.format.functionCase": {
+          "type": "string",
+          "enum": ["upper", "lower", "preserve"],
+          "default": "preserve",
+          "scope": "language-overridable",
+          "markdownDescription": "%cfg.format.functionCase%"
+        },
+        "rizomadb.format.indentStyle": {
+          "type": "string",
+          "enum": ["standard", "tabularLeft", "tabularRight"],
+          "default": "standard",
+          "scope": "language-overridable",
+          "markdownDescription": "%cfg.format.indentStyle%"
+        },
+        "rizomadb.format.logicalOperatorNewline": {
+          "type": "string",
+          "enum": ["before", "after"],
+          "default": "before",
+          "scope": "language-overridable",
+          "markdownDescription": "%cfg.format.logicalOperatorNewline%"
+        },
+        "rizomadb.format.expressionWidth": {
+          "type": "number",
+          "default": 50,
+          "minimum": 10,
+          "maximum": 1000,
+          "scope": "language-overridable",
+          "markdownDescription": "%cfg.format.expressionWidth%"
+        },
+        "rizomadb.format.linesBetweenQueries": {
+          "type": "number",
+          "default": 1,
+          "minimum": 0,
+          "maximum": 10,
+          "scope": "language-overridable",
+          "markdownDescription": "%cfg.format.linesBetweenQueries%"
+        },
+        "rizomadb.format.denseOperators": {
+          "type": "boolean",
+          "default": false,
+          "scope": "language-overridable",
+          "markdownDescription": "%cfg.format.denseOperators%"
+        },
+        "rizomadb.format.newlineBeforeSemicolon": {
+          "type": "boolean",
+          "default": false,
+          "scope": "language-overridable",
+          "markdownDescription": "%cfg.format.newlineBeforeSemicolon%"
+        },
         "rizomadb.editor.codeLens": {
           "type": "boolean",
           "default": true,
@@ -752,6 +815,11 @@
           "type": "boolean",
           "default": false,
           "markdownDescription": "%cfg.applyImmediately%"
+        },
+        "rizomadb.edit.withoutPrimaryKey": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "%cfg.editWithoutPrimaryKey%"
         },
         "rizomadb.table.openRows": {
           "type": "number",

@@ -58,6 +58,8 @@ function kindOf(oid: number): ColumnInfo["kind"] {
 const toParam = (v: Value) => (v !== null && typeof v === "object" && !(v instanceof Date) && !(v instanceof Uint8Array) && !Array.isArray(v)
   ? JSON.stringify((v as { json: unknown }).json) : v);
 
+const MAX_BATCH = 8000;
+
 type Runner = { client: pg.Client; cancel: (pid: number) => Promise<void>; pid: number; lost: ConnectionLoss };
 
 async function* run(r: Runner, req: ExecuteRequest, signal: AbortSignal): AsyncGenerator<ResultEvent> {
@@ -68,12 +70,16 @@ async function* run(r: Runner, req: ExecuteRequest, signal: AbortSignal): AsyncG
   let pending: Promise<void> | undefined, finished = false;
   const onAbort = () => { if (!finished) pending = r.cancel(r.pid).catch(() => {}); };
   signal.addEventListener("abort", onAbort, { once: true });
-  const batch = req.batchSize ?? 500;
+  // Every cursor read is a round trip to the server. Without an explicit size the first batch stays small (the grid
+  // shows rows sooner) and each next one doubles, so a large or distant result needs far fewer round trips.
+  let batch = req.batchSize ?? 500;
+  const grow = req.batchSize === undefined;
   const max = req.maxRows ?? Infinity;
   let n = 0, sentCols = false;
   try {
     for (;;) {
       const want = Math.min(batch, max - n);
+      if (grow) batch = Math.min(batch * 2, MAX_BATCH);
       if (want <= 0) break;
       // pg-cursor never settles when the server terminates the backend mid-read, so race against connection loss.
       const rows = await r.lost.race(cursor.read(want)) as unknown as Value[][];

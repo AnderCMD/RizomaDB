@@ -13,7 +13,14 @@ export interface EditTarget {
   schema?: string;
   table: string;
   columns: ColumnDef[];
+  /**
+   * How rows are identified when the table has no primary key: a unique index on NOT NULL columns, or the values of
+   * every comparable column ("row"). Either way a statement must match exactly one row, or the whole batch rolls back.
+   */
+  rowKey?: { columns: string[]; source: "unique" | "row" };
 }
+
+export type KeySource = "primary" | "unique" | "row";
 
 export interface GeneratedStatement { sql: string; params: Value[]; change: Change; description: string }
 
@@ -28,8 +35,37 @@ const qualified = (p: DriverPlugin, t: EditTarget) => (t.schema ? `${p.quoteIden
 
 export function keyColumns(t: EditTarget): string[] {
   const k = t.columns.filter((c) => c.primaryKey).map((c) => c.name);
-  if (k.length === 0) throw new EditError("no-key", `Table ${t.table} has no primary key: rows cannot be identified safely, so it is not editable.`);
-  return k;
+  if (k.length) return k;
+  if (t.rowKey?.columns.length) return t.rowKey.columns;
+  throw new EditError("no-key", `Table ${t.table} has no primary key: rows cannot be identified safely, so it is not editable.`);
+}
+
+export function keySource(t: EditTarget): KeySource | undefined {
+  if (t.columns.some((c) => c.primaryKey)) return "primary";
+  return t.rowKey?.columns.length ? t.rowKey.source : undefined;
+}
+
+// Values of these types do not survive a round trip exactly (precision, LOB and document types, engine-specific
+// equality), so they never identify a row. Leaving a column out only makes a match broader, and a broader match is refused.
+const INCOMPARABLE = /blob|bytea|binary|image|json|xml|clob|geometry|geography|float|real|double|date|time|interval|money|array|\[\]|hierarchyid|sql_variant|vector|bfile|raw|long|cursor|object|struct|map/i;
+
+export const exactlyComparable = (c: ColumnDef, lobText = false) => !INCOMPARABLE.test(c.nativeType) && !(lobText && /^n?text$/i.test(c.nativeType.trim()));
+
+/**
+ * Picks how to identify rows of a table without a primary key: the smallest unique index whose columns are all
+ * NOT NULL, otherwise every column whose type compares exactly. `lobText` marks engines (SQL Server) where TEXT/NTEXT
+ * cannot be compared with `=`.
+ */
+export function chooseRowKey(columns: readonly ColumnDef[], uniques: readonly (readonly string[])[], opts: { lobText?: boolean } = {}): EditTarget["rowKey"] {
+  if (columns.some((c) => c.primaryKey)) return undefined;
+  const byName = new Map(columns.map((c) => [c.name.toLowerCase(), c]));
+  const usable = uniques
+    .map((u) => u.map((n) => byName.get(n.toLowerCase())))
+    .filter((u): u is ColumnDef[] => u.length > 0 && u.every((c) => c !== undefined && !c.nullable))
+    .sort((a, b) => a.length - b.length);
+  if (usable[0]) return { columns: usable[0].map((c) => c.name), source: "unique" };
+  const comparable = columns.filter((c) => exactlyComparable(c, opts.lobText)).map((c) => c.name);
+  return comparable.length ? { columns: comparable, source: "row" } : undefined;
 }
 
 export function validateChange(t: EditTarget, c: Change): void {
@@ -72,12 +108,16 @@ export function generate(p: DriverPlugin, t: EditTarget, c: Change): GeneratedSt
     return { sql, params, change: c, description: "Insert row" };
   }
   const keys = keyColumns(t);
+  // Optimistic-concurrency predicates only on columns whose loaded value compares exactly: a timestamp with microseconds,
+  // a CLOB or SQL Server TEXT would never match (a false conflict) or fail to compare. A row key already holds every such column.
+  const defs = new Map(t.columns.map((x) => [x.name, x]));
+  const extra = (k: string) => !keys.includes(k) && keySource(t) !== "row" && defs.has(k) && exactlyComparable(defs.get(k)!, p.id === "mssql");
   if (c.kind === "update") {
     const set = Object.entries(c.set).map(([k, v]) => `${q(k)} = ${bind(v)}`).join(", ");
-    const where = [...keys.map((k) => eq(k, c.key[k]!)), ...Object.keys(c.set).filter((k) => !keys.includes(k) && k in c.before).map((k) => eq(k, c.before[k]!))];
+    const where = [...keys.map((k) => eq(k, c.key[k]!)), ...Object.keys(c.set).filter((k) => extra(k) && k in c.before).map((k) => eq(k, c.before[k]!))];
     return { sql: `UPDATE ${target} SET ${set} WHERE ${where.join(" AND ")}`, params, change: c, description: `Update ${Object.keys(c.set).join(", ")}` };
   }
-  const where = [...keys.map((k) => eq(k, c.key[k]!)), ...Object.keys(c.before).filter((k) => !keys.includes(k)).map((k) => eq(k, c.before[k]!))];
+  const where = [...keys.map((k) => eq(k, c.key[k]!)), ...Object.keys(c.before).filter(extra).map((k) => eq(k, c.before[k]!))];
   return { sql: `DELETE FROM ${target} WHERE ${where.join(" AND ")}`, params, change: c, description: "Delete row" };
 }
 
@@ -118,7 +158,9 @@ export async function applyChanges(changes: readonly Change[], o: ApplyOptions):
   if (!(await o.confirm(statements))) throw new EditError("declined", "Changes were not confirmed.");
 
   const signal = o.signal ?? new AbortController().signal;
+  const byValues = keySource(o.target) === "row";
   if (!o.plugin.capabilities.transactions || !o.conn.begin) {
+    if (keySource(o.target) !== "primary") throw new EditError("no-key", `Table ${o.target.table} has no primary key: rows cannot be identified safely, so it is not editable.`);
     // Engines without multi-statement transactions (e.g. standalone MongoDB): apply in order and stop at the first problem.
     let done = 0;
     for (const [i, s] of statements.entries()) {
@@ -139,8 +181,11 @@ export async function applyChanges(changes: readonly Change[], o: ApplyOptions):
     for (const [i, s] of statements.entries()) {
       const r = await collect(tx.execute({ sql: s.sql, params: s.params }, signal));
       const n = r.done?.affectedRows;
+      // Without a primary key only the reported count proves a single row was touched.
+      if (n === undefined && keySource(o.target) !== "primary") throw new EditError("conflict", "The engine did not report how many rows changed, so the edit was rolled back.", i);
       if (n !== undefined && n !== 1) {
-        throw new EditError("conflict", n === 0 ? "The row changed or was deleted by someone else since it was loaded." : `Statement affected ${n} rows, expected 1.`, i);
+        throw new EditError("conflict", n === 0 ? "The row changed or was deleted by someone else since it was loaded."
+          : byValues ? `${n} identical rows match this change, so nothing was changed. Add a primary key to edit duplicate rows.` : `Statement affected ${n} rows, expected 1.`, i);
       }
     }
     await tx.commit();

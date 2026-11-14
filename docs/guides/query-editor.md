@@ -16,15 +16,27 @@ Right-click a SQL connection and choose **Build a Query…**: pick a table, the 
 | Explain the plan (SQL engines that support it) | **Explain** lens, or **RizomaDB: Explain Query Plan** |
 | Cancel | **RizomaDB: Cancel Running Query**, the stop button in the results header, or the *Running… click to cancel* item in the status bar. If the engine does not stop within 1.5 seconds the run is abandoned, the screen is freed and that connection is closed (it reconnects on the next run) |
 
-**Run all** runs the statements in order and stops at the first error. Outside `dev` it asks for confirmation first, once for the whole file. Each statement still goes through the policy and the audit log on its own.
+**Run all** and **Run the selection** run the statements in order (split the way the editor's language splits them, asking for parameters) and stop at the first error. Outside `dev` it asks for confirmation first, once for the whole file. Each statement still goes through the policy and the audit log on its own.
 
 ### Statements
 - SQL is split on top-level semicolons (strings, comments and PostgreSQL dollar quotes are understood). Cypher splits on `;` too.
-- Mongo shell and the search-engine console use **blank-line separated blocks**; Redis uses **one command per line**. Comment lines (`//`, `#`, `--`) are ignored.
+- Mongo shell and the search-engine console use **blank-line separated blocks**; Redis uses **one command per line**. Comment lines (`//`, `#`, `--`) are ignored, and the comments written above a statement are not sent with it nor shown in the results or the history (MySQL `/*!…*/` and optimizer hints `/*+…*/` are kept).
 - The statement under the cursor is **highlighted** (`rizomadb.editor.highlightStatement`). The lenses can be turned off with `rizomadb.editor.codeLens`.
 
 ### Parameters
 Placeholders such as `:name`, `$1`, `@name` or `?` ask for their values before running. Values are typed (`null`, `true`, numbers and `"quoted text"`; anything else is text), bound by the driver and remembered per connection.
+
+## Formatting
+**Format Document** (Shift+Alt+F, ⇧⌥F on macOS) and **Format Selection** format SQL for the connection's dialect. `editor.formatOnSave` and `editor.formatOnPaste` work too.
+- **Indentation follows the editor**: `editor.tabSize` and `editor.insertSpaces`, including `"[sql]"` overrides and the indentation VS Code detects in the file. With spaces off, it indents with tabs.
+- The rest is set with `rizomadb.format.*`: letter case of keywords (upper case by default), data types and function names; the layout (`standard`, or `tabularLeft`/`tabularRight`, which align with spaces); whether `AND`/`OR` go before or after the line break; how wide an expression may be before it is split; empty lines between statements; operators without spaces; and `;` on its own line.
+- They can be set per workspace or folder, or only for SQL files:
+
+```json
+"[sql]": { "editor.tabSize": 4, "rizomadb.format.keywordCase": "lower" }
+```
+
+- A selection keeps the indentation it sits at and its final line break; text inside a string that spans lines is never changed. SQL the formatter cannot parse is left as it is, and files larger than 1 MB are not formatted (format a selection instead).
 
 ## Results
 Results open in the lower half of the window (`rizomadb.results.location`). Every run replaces the same tab; **Pin Results Tab** keeps it. The tab is named `connection.table` with the engine's logo. See [The results grid](results-grid.md).

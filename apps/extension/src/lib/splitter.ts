@@ -60,3 +60,19 @@ export function statementAt(sql: string, offset: number): Statement | undefined 
   return all.find((s) => offset >= s.start && offset <= s.end + 1)
     ?? [...all].reverse().find((s) => s.end <= offset) ?? all[0];
 }
+
+/**
+ * Drops the comments (and blank lines) in front of a statement, so the results tab and the history show the statement
+ * itself. MySQL executable comments (`/*!…*\/`) and optimizer hints (`/*+…*\/`) are code, not comments, and stay.
+ */
+export function stripLeadingComments(text: string, line: "--" | "//" = "--"): string {
+  const n = text.length;
+  let i = 0;
+  while (i < n) {
+    if (WS.test(text[i]!)) { i++; continue; }
+    if (text.startsWith(line, i)) { const e = text.indexOf("\n", i); i = e < 0 ? n : e + 1; continue; }
+    if (text.startsWith("/*", i) && text[i + 2] !== "!" && text[i + 2] !== "+") { const e = text.indexOf("*/", i + 2); if (e < 0) return text.trim(); i = e + 2; continue; }
+    break;
+  }
+  return i >= n ? text.trim() : text.slice(i).trimEnd();
+}

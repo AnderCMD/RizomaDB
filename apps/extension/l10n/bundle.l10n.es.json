@@ -1063,5 +1063,21 @@
  "Schema": "Esquema",
  "view": "vista",
  "Table (first {0} of {1}: type to narrow)": "Tabla (las primeras {0} de {1}: escribe para acotar)",
- "run Open Table Data to search all of them": "ejecuta «Abrir datos de la tabla» para buscarlas todas"
+ "run Open Table Data to search all of them": "ejecuta «Abrir datos de la tabla» para buscarlas todas",
+ "This table has no primary key: rows are matched by their values, and an edit that would change more than one row is refused.": "Esta tabla no tiene clave primaria: las filas se identifican por sus valores, y se rechaza cualquier edición que cambie más de una fila.",
+ "This table has no primary key: rows are identified by the unique index on {0}.": "Esta tabla no tiene clave primaria: las filas se identifican por el índice único sobre {0}.",
+ "{0} identical rows match this change, so nothing was changed. Add a primary key to edit duplicate rows.": "{0} filas idénticas coinciden con este cambio, así que no se cambió nada. Añade una clave primaria para editar filas duplicadas.",
+ "The engine did not report how many rows changed, so the edit was rolled back.": "El motor no informó de cuántas filas cambiaron, así que la edición se deshizo.",
+ "Edit tables without a primary key": "Editar tablas sin clave primaria",
+ "Keyword case": "Mayúsculas de palabras clave",
+ "Data type case": "Mayúsculas de tipos de datos",
+ "Function name case": "Mayúsculas de nombres de función",
+ "Indentation style": "Estilo de sangría",
+ "Line break around AND / OR": "Salto de línea en AND / OR",
+ "Maximum width of an expression on one line": "Ancho máximo de una expresión en una línea",
+ "Empty lines between statements": "Líneas vacías entre sentencias",
+ "Operators without spaces": "Operadores sin espacios",
+ "Semicolon on its own line": "Punto y coma en su propia línea",
+ "SQL formatting": "Formato de SQL",
+ "This SQL is larger than 1 MB, so it was not formatted: formatting it would stall VS Code. Select a part of it and format the selection.": "Este SQL ocupa más de 1 MB, así que no se formateó: hacerlo bloquearía VS Code. Selecciona una parte y formatea la selección."
 }
