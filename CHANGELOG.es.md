@@ -13,6 +13,8 @@ Aquí se listan los cambios notables, del más nuevo al más antiguo. El formato
 
 ## [Sin publicar]
 
+## [1.3.0] — 2026-11-14
+
 ### Corregido
 - Borrar o editar una fila podía fallar con un falso conflicto («la fila cambió») o con un error del motor cuando la tabla tenía un timestamp con precisión inferior al milisegundo (como `now()` de PostgreSQL), una columna CLOB, JSON o `TEXT`/`NTEXT` de SQL Server: la detección de conflictos solo compara los valores que vuelven exactamente iguales.
 

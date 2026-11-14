@@ -10,7 +10,7 @@ import { postgresDriver } from "@rizomadb/driver-postgres";
 import { mysqlDriver } from "@rizomadb/driver-mysql";
 import { mssqlDriver } from "@rizomadb/driver-mssql";
 import { oracleDriver } from "@rizomadb/driver-oracle";
-import { applyChanges, chooseRowKey, EditError, EditQueue, generate, defaultEffectivePolicy, keySource, type EditTarget } from "./index.js";
+import { applyChanges, chooseRowKey, EditError, EditQueue, generate, defaultEffectivePolicy, keyColumns, keySource, type EditTarget } from "./index.js";
 
 const ctl = new AbortController().signal;
 const run = (c: Connection, sql: string, params: never[] = []) => collect(c.execute({ sql, params }, ctl));
@@ -148,8 +148,12 @@ for (const e of engines) {
       const base = await t.describe("uq");
       const idx = (await t.admin.introspect().indexes?.(base.schema)) ?? [];
       const uniques = idx.filter((i) => i.unique && i.table.toLowerCase() === "uq").map((i) => i.columns);
-      const target: EditTarget = { ...base, rowKey: chooseRowKey(base.columns, uniques) };
-      expect(target.rowKey).toEqual({ columns: [N("a")], source: "unique" });
+      const rowKey = chooseRowKey(base.columns, uniques);
+      const target: EditTarget = { ...base, ...(rowKey ? { rowKey } : {}) };
+      // InnoDB promotes the first UNIQUE NOT NULL index of a table without a primary key to its clustered key, and
+      // MySQL reports that column as PRI: the table is then edited by it as a primary key.
+      expect(keyColumns(target)).toEqual([N("a")]);
+      expect(keySource(target)).toBe(e.id === "mysql" ? "primary" : "unique");
       const preview = generate(e.plugin, target, { kind: "update", key: { [N("a")]: 1 }, before: { [N("b")]: "x" }, set: { [N("b")]: "y" } });
       expect(preview.sql).toContain("WHERE");
       await applyChanges([preview.change], { ...t.base, target });

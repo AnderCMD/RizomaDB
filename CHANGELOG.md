@@ -13,6 +13,8 @@ All notable changes are listed here, newest first. The format follows [Keep a Ch
 
 ## [Unreleased]
 
+## [1.3.0] — 2026-11-14
+
 ### Fixed
 - Deleting or editing a row could fail with a false "the row changed" conflict, or an engine error, when the table had a timestamp with sub-millisecond precision (such as PostgreSQL `now()`), a CLOB, JSON, or SQL Server `TEXT`/`NTEXT` column: conflict detection now compares only the values that round-trip exactly.
 
