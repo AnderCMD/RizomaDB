@@ -9,3 +9,8 @@ tsconfig.json
 vitest.config.ts
 .gitignore
 .vscode-test/**
+**/*.vsix
+**/.DS_Store
+**/*.tsbuildinfo
+coverage/**
+.vitest-cache/**

@@ -1,0 +1,13 @@
+# The graph is a map of the code (see AGENTS.md): prose, translations and generated files only add noise.
+*.md
+docs/
+site/content/
+translation-review/
+assets/
+test/a11y/out/
+sbom.cdx.json
+pnpm-lock.yaml
+**/l10n/
+**/package.nls*.json
+**/dist/
+graphify-out/

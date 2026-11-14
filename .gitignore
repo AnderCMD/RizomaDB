@@ -19,6 +19,8 @@ graphify-out/graph.html
 graphify-out/cost.json
 site/content/en/ci-cd.md
 site/content/es/ci-cd.md
+# sync-docs.mjs writes relative to the working directory: run from the repository root it leaves this tree behind
+/content/
 
 # OS, editors, logs, local environment
 .DS_Store
@@ -34,6 +36,10 @@ Thumbs.db
 .vite/
 *.tsbuildinfo
 pnpm-debug.log*
+.eslintcache
+*.cpuprofile
+*.heapsnapshot
+.claude/settings.local.json
 
 # Built site and local packaging output
 site/.vitepress/dist

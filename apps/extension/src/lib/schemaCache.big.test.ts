@@ -1,7 +1,8 @@
 import { describe, it, expect } from "vitest";
 import { SchemaCache } from "./schemaCache.js";
 
-const fakeMgr = (tables: number, calls: string[]) => ({
+const fakeMgr = (tables: number, calls: string[], busy: () => boolean = () => false) => ({
+  isBusy: busy,
   connect: async () => ({ introspect: () => ({
     listSchemas: async () => ["app"],
     listTables: async () => { calls.push("listTables"); return Array.from({ length: tables }, (_, i) => ({ name: `t${i}`, kind: "table" as const })); },
@@ -24,5 +25,15 @@ describe("schema cache on a huge database", () => {
     expect(calls).not.toContain("describeSchema");
     expect(calls).not.toContain("foreignKeys");
     expect(idx).toBeDefined();
+  });
+  it("waits while a statement of the user runs before each dictionary query", async () => {
+    const calls: string[] = [];
+    let busy = true;
+    const p = new SchemaCache(fakeMgr(10, calls, () => busy)).get("c");
+    await new Promise((r) => setTimeout(r, 120));
+    expect(calls).toEqual([]);
+    busy = false;
+    await p;
+    expect(calls).toEqual(["listTables", "describeSchema", "foreignKeys"]);
   });
 });

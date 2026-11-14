@@ -91,12 +91,18 @@ class WorkerConnection implements Connection {
       if (this.killOnCancel) timer = setTimeout(() => { killed = true; this.ready = this.respawn(); this.ready.catch(() => {}); }, KILL_AFTER_MS);
     };
     signal.addEventListener("abort", onAbort, { once: true });
+    // One request is always in flight: the worker reads the next batch from the engine while this side hands the
+    // current one to the UI, instead of the two waiting on each other once per batch.
+    const ask = () => { const p = this.rpc<NextResult>({ op: "next", rid }); p.catch(() => {}); return p; };
+    let ahead = ask();
     try {
       for (;;) {
         let r: NextResult;
-        try { r = await this.rpc<NextResult>({ op: "next", rid }); }
+        try { r = await ahead; }
         catch (e) { if (killed) await this.ready.catch(() => {}); if (killed || signal.aborted) throw new DriverError("cancelled", "Query cancelled"); throw e; }
         if (r.done) return;
+        // Asked even after "done", so the driver runs its cleanup (closing a cursor) and the worker forgets the stream.
+        ahead = ask();
         yield r.value!;
         if (signal.aborted && !killed) throw new DriverError("cancelled", "Query cancelled");
       }

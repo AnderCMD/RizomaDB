@@ -13,6 +13,22 @@ Aquí se listan los cambios notables, del más nuevo al más antiguo. El formato
 
 ## [Sin publicar]
 
+## [1.3.0] — 2026-11-14
+
+### Corregido
+- Borrar o editar una fila podía fallar con un falso conflicto («la fila cambió») o con un error del motor cuando la tabla tenía un timestamp con precisión inferior al milisegundo (como `now()` de PostgreSQL), una columna CLOB, JSON o `TEXT`/`NTEXT` de SQL Server: la detección de conflictos solo compara los valores que vuelven exactamente iguales.
+
+### Añadido
+- El formato de SQL sigue la sangría del editor (`editor.tabSize`, `editor.insertSpaces`, ajustes de `[sql]`, sangría detectada) en lugar de usar siempre dos espacios, y gana los ajustes `rizomadb.format.*`: mayúsculas de palabras clave, tipos y funciones, estilo de sangría, saltos en `AND`/`OR`, ancho de expresión, líneas entre sentencias, operadores compactos y `;` en su propia línea. Se pueden definir por espacio de trabajo o dentro de `"[sql]"`. Formatear una selección conserva su sangría y su salto de línea final, nunca cambia una cadena de varias líneas, y los archivos de más de 1 MB no se formatean.
+- Las tablas sin clave primaria se pueden editar en SQLite, PostgreSQL, MySQL/MariaDB, SQL Server y Oracle (ajuste `rizomadb.edit.withoutPrimaryKey`, activado por defecto). Las filas se identifican por un índice único sobre columnas `NOT NULL` o, si no hay, por los valores de sus columnas que se comparan con exactitud; un cambio que tocaría más de una fila (duplicados idénticos) deshace todo el lote.
+
+### Cambiado
+- Al ejecutar una sentencia ya no se muestran en la pestaña de resultados ni en el historial los comentarios escritos encima; solo se ejecuta la sentencia. Se conservan los comentarios ejecutables de MySQL (`/*!…*/`) y las pistas del optimizador (`/*+…*/`).
+- **Ejecutar la selección** divide la selección como lo hace el lenguaje del editor (usaba el divisor de SQL para Mongo, Redis y Cypher), pide los parámetros y se detiene en la primera sentencia que falla, como Ejecutar todo.
+- Leer el esquema para el autocompletado y los diagnósticos ya no frena tus sentencias: comparte la conexión, así que ahora espera mientras corre una sentencia tuya y lee en pasos pequeños. Su límite de 60 segundos cuenta solo el trabajo del diccionario.
+- Las exportaciones leen 5000 filas por lote en lugar de 2000.
+- Resultados más rápidos: el proceso del driver lee el siguiente lote mientras se muestra el anterior, las lecturas de PostgreSQL crecen de 500 a 8000 filas por viaje y abrir una tabla la describe una vez en lugar de dos.
+
 ## [1.2.6] — 2026-11-04
 
 ### Corregido

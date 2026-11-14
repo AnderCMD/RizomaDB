@@ -16,15 +16,27 @@ Haz clic derecho en una conexión SQL y elige **Construir una consulta…**: eli
 | Explicar el plan (motores SQL que lo soportan) | Lente **Explicar**, o **RizomaDB: Explicar el plan de consulta** |
 | Cancelar | **RizomaDB: Cancelar la consulta en curso**, el botón de parar en la cabecera de resultados, o el elemento *Ejecutando… clic para cancelar* de la barra de estado. Si el motor no se detiene en 1,5 segundos, la ejecución se abandona, la pantalla se libera y esa conexión se cierra (se reconecta en la siguiente ejecución) |
 
-**Ejecutar todo** corre las sentencias en orden y se detiene en el primer error. Fuera de `dev` pide confirmación antes, una vez para todo el archivo. Cada sentencia sigue pasando por la política y el registro de auditoría por separado.
+**Ejecutar todo** y **Ejecutar la selección** corren las sentencias en orden (divididas como las divide el lenguaje del editor, pidiendo los parámetros) y se detienen en el primer error. Fuera de `dev` pide confirmación antes, una vez para todo el archivo. Cada sentencia sigue pasando por la política y el registro de auditoría por separado.
 
 ### Sentencias
 - SQL se divide en los punto y coma de nivel superior (se entienden cadenas, comentarios y las comillas de dólar de PostgreSQL). Cypher también se divide en `;`.
-- El shell de Mongo y la consola de los motores de búsqueda usan **bloques separados por una línea en blanco**; Redis usa **un comando por línea**. Las líneas de comentario (`//`, `#`, `--`) se ignoran.
+- El shell de Mongo y la consola de los motores de búsqueda usan **bloques separados por una línea en blanco**; Redis usa **un comando por línea**. Las líneas de comentario (`//`, `#`, `--`) se ignoran, y los comentarios escritos encima de una sentencia no se envían con ella ni se muestran en los resultados ni en el historial (se conservan `/*!…*/` de MySQL y las pistas del optimizador `/*+…*/`).
 - La sentencia bajo el cursor se **resalta** (`rizomadb.editor.highlightStatement`). Las lentes se pueden desactivar con `rizomadb.editor.codeLens`.
 
 ### Parámetros
 Los marcadores como `:nombre`, `$1`, `@nombre` o `?` piden sus valores antes de ejecutar. Los valores son tipados (`null`, `true`, números y `"texto entre comillas"`; cualquier otra cosa es texto), los enlaza el driver y se recuerdan por conexión.
+
+## Formato
+**Dar formato al documento** (Shift+Alt+F, ⇧⌥F en macOS) y **Dar formato a la selección** formatean el SQL según el dialecto de la conexión. También funcionan `editor.formatOnSave` y `editor.formatOnPaste`.
+- **La sangría sigue al editor**: `editor.tabSize` y `editor.insertSpaces`, incluidos los ajustes de `"[sql]"` y la sangría que VS Code detecta en el archivo. Si no se usan espacios, sangra con tabuladores.
+- El resto se configura con `rizomadb.format.*`: mayúsculas o minúsculas de palabras clave (mayúsculas por defecto), tipos de datos y nombres de función; la disposición (`standard`, o `tabularLeft`/`tabularRight`, que alinean con espacios); si `AND`/`OR` van antes o después del salto de línea; cuánto puede medir una expresión antes de dividirse; líneas vacías entre sentencias; operadores sin espacios; y el `;` en su propia línea.
+- Se pueden definir por espacio de trabajo o carpeta, o solo para los archivos SQL:
+
+```json
+"[sql]": { "editor.tabSize": 4, "rizomadb.format.keywordCase": "lower" }
+```
+
+- Una selección conserva la sangría en la que está y su salto de línea final; el texto de una cadena que ocupa varias líneas nunca se cambia. El SQL que el formateador no entiende se deja tal cual, y los archivos de más de 1 MB no se formatean (formatea una selección).
 
 ## Resultados
 Los resultados se abren en la mitad inferior de la ventana (`rizomadb.results.location`). Cada ejecución reemplaza la misma pestaña; **Fijar la pestaña de resultados** la conserva. La pestaña se llama `conexión.tabla` y lleva el logo del motor. Mira [La rejilla de resultados](rejilla-de-resultados.md).

@@ -10,7 +10,9 @@ A result is editable when it comes from **opening a table** that RizomaDB can id
 | SQLite, PostgreSQL, MySQL/MariaDB, SQL Server, Oracle, DuckDB | the primary key |
 | MongoDB | the document `_id` |
 
-Views, custom queries, edited query lines, masked columns, read-only connections and tables without a primary key are **not** editable; when you try, the grid tells you why. Every other engine, including Redis and Valkey keys, is read-only in the grid (Redis has its own commands for deleting, renaming and expiring keys).
+**Tables without a primary key** (SQLite, PostgreSQL, MySQL/MariaDB, SQL Server and Oracle) are editable too, unless you turn off `rizomadb.edit.withoutPrimaryKey`. Rows are identified by a unique index whose columns are all `NOT NULL` when the table has one; otherwise by the values of their columns, leaving out those that do not compare exactly (floating-point, date/time, binary, JSON, XML and large objects). Every statement must change exactly one row: if it would change two identical rows, or the engine does not say how many changed, the whole batch is rolled back and nothing is changed. Add a primary key to edit duplicate rows.
+
+Views, custom queries, edited query lines, masked columns and read-only connections are **not** editable; when you try, the grid tells you why. Every other engine, including Redis and Valkey keys, is read-only in the grid (Redis has its own commands for deleting, renaming and expiring keys).
 
 ## How
 1. **Double-click** a cell (or select it and press **Enter** or **F2**, or use the pencil button). A box opens with the value.
@@ -25,7 +27,7 @@ Values are checked against the column type as you type: an integer column refuse
 - **Review SQL** opens the exact statements that would run (with their parameters), without running them.
 - **Apply** sends all changes **in one transaction** on engines that have transactions. On engines without transactions (for example MongoDB) changes are applied one by one, and the message says how many were already applied if one fails.
 - Production and staging ask for confirmation before applying; `requireApproval` asks you to type the connection name. Policies, read-only connections and the audit log apply exactly as for the editor.
-- **Conflict detection.** Each change checks that the row still has the values you saw; if someone else changed or deleted it, nothing is applied and you are told.
+- **Conflict detection.** Each change checks that the row still has the values you saw; if someone else changed or deleted it, nothing is applied and you are told. Only values that compare exactly are checked: floating-point, date/time, binary, JSON, XML and large-object columns (and `TEXT`/`NTEXT` on SQL Server) are left out, because the value loaded into the grid can differ from the stored one (a PostgreSQL timestamp keeps microseconds, JavaScript milliseconds) or the engine cannot compare them with `=`.
 - **Discard** drops everything pending.
 
 ## Save each edit immediately

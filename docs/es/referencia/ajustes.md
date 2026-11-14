@@ -8,6 +8,15 @@ Todos los ajustes de la extensión. Abre la pantalla de configuración con **Riz
 |---|---|---|---|
 | `rizomadb.language` | string (`auto`, `en`, `es`) | `auto` | Idioma de las pantallas y mensajes de RizomaDB: `auto` sigue el idioma de VS Code, o fuerza `en` o `es`. Los nombres de comandos y ajustes siempre siguen a VS Code. |
 | `rizomadb.environments` | lista | `[]` | Entornos adicionales además de dev, staging y prod, p. ej. `{ "name": "qa", "protection": "confirm" }`. Protección: `none`, `confirm` (preguntar antes de cada escritura) o `readOnly` (bloquear escrituras). También puedes crear uno desde la pantalla Nueva conexión. |
+| `rizomadb.format.keywordCase` | string (`upper`, `lower`, `preserve`) | `upper` | Mayúsculas o minúsculas de las palabras clave de SQL (`SELECT`, `FROM`…) al formatear una consulta. `preserve` las deja como las escribiste. La sangría siempre sigue al editor: `editor.tabSize` y `editor.insertSpaces` (o los ajustes de `[sql]` y la sangría detectada). Como todos los ajustes `rizomadb.format.*`, se puede definir por espacio de trabajo o dentro de `"[sql]"`. |
+| `rizomadb.format.dataTypeCase` | string (`upper`, `lower`, `preserve`) | `preserve` | Mayúsculas o minúsculas de los tipos de datos (`integer`, `varchar`…) al formatear una consulta. |
+| `rizomadb.format.functionCase` | string (`upper`, `lower`, `preserve`) | `preserve` | Mayúsculas o minúsculas de los nombres de función (`count`, `coalesce`…) al formatear una consulta. |
+| `rizomadb.format.indentStyle` | string (`standard`, `tabularLeft`, `tabularRight`) | `standard` | Disposición de las consultas formateadas. `standard` pone cada cláusula en su propia línea y sangra su contenido; `tabularLeft` y `tabularRight` alinean el contenido en una columna tras las palabras clave (alineado con espacios aunque el editor sangre con tabuladores). |
+| `rizomadb.format.logicalOperatorNewline` | string (`before`, `after`) | `before` | Si `AND` y `OR` empiezan una línea nueva (`before`) o terminan la anterior (`after`) al formatear una consulta. |
+| `rizomadb.format.expressionWidth` | number | `50` | Las expresiones entre paréntesis de hasta estos caracteres se quedan en una línea al formatear una consulta; las más largas se dividen. |
+| `rizomadb.format.linesBetweenQueries` | number | `1` | Líneas vacías entre sentencias al formatear una consulta. |
+| `rizomadb.format.denseOperators` | boolean | `false` | Escribe los operadores sin espacios alrededor (`a=1` en vez de `a = 1`) al formatear una consulta. |
+| `rizomadb.format.newlineBeforeSemicolon` | boolean | `false` | Pone el `;` final de cada sentencia en su propia línea al formatear una consulta. |
 | `rizomadb.editor.codeLens` | boolean | `true` | Muestra botones Ejecutar y Explicar sobre cada sentencia de los editores de consultas, además de Ejecutar todo y la conexión en uso. |
 | `rizomadb.editor.highlightStatement` | boolean | `true` | Resalta la sentencia bajo el cursor en los editores de consultas. |
 | `rizomadb.explorer.groupByFamily` | boolean | `true` | Agrupa las conexiones del árbol por tipo de motor (relacional, documentos, clave-valor…). |
@@ -22,6 +31,7 @@ Todos los ajustes de la extensión. Abre la pantalla de configuración con **Riz
 | `rizomadb.history.enabled` | boolean | `true` | Registrar las sentencias ejecutadas en un historial local (los secretos se redactan). |
 | `rizomadb.history.retentionDays` | number | `90` | Días que se conservan las entradas del historial. |
 | `rizomadb.edit.applyImmediately` | boolean | `false` | Guarda cada edición de celda en cuanto la confirmas, sin pulsar Aplicar. En conexiones `dev` se aplica sin preguntar; los demás entornos siguen preguntando, y las políticas y el solo lectura siempre se respetan. |
+| `rizomadb.edit.withoutPrimaryKey` | boolean | `true` | Permite editar tablas sin clave primaria (motores SQL con transacciones). Las filas se identifican por un índice único sobre columnas NOT NULL si existe; si no, por los valores de sus columnas (no se comparan columnas de coma flotante, fecha/hora, binarias, JSON ni objetos grandes). Cada cambio debe coincidir con una sola fila: si coinciden dos filas idénticas, se deshace todo el lote. |
 | `rizomadb.table.openRows` | number | `200` | Filas cargadas al abrir una tabla. |
 | `rizomadb.policy.team` | object | `{}` | Capa de política de equipo (mismo formato que `.rizomadb/policy.json`). Despliégala con ajustes gestionados de VS Code; las capas de proyecto y usuario solo pueden endurecerla. |
 | `rizomadb.catalog.teamFile` | string | *(vacío)* | Ruta de un catálogo compartido de conexiones (sin secretos). |

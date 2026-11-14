@@ -2,7 +2,7 @@
 
 # Troubleshooting
 
-**I cannot edit a cell.** Only tables with a primary key (or MongoDB documents, Redis keys) opened from the tree are editable. Views, custom queries, a query line you edited and read-only connections are not; the grid explains which applies. Make sure the connection is not read-only and the environment is not `prod` with read-only protection.
+**I cannot edit a cell.** Only tables opened from the tree are editable: with a primary key, MongoDB documents, or (on SQLite, PostgreSQL, MySQL, SQL Server and Oracle) tables without a primary key whose rows can be told apart. Views, custom queries, a query line you edited and read-only connections are not; the grid explains which applies. Make sure the connection is not read-only and the environment is not `prod` with read-only protection.
 
 **The connection fails on localhost with a TLS error.** For `localhost` the form unchecks TLS by default. If you saved a connection earlier with TLS on, edit it or create it again. Real servers usually need TLS on; see the engine's page.
 
@@ -22,7 +22,7 @@
 
 **Every Run button says a query is already running.** An engine that ignored Cancel used to leave the run open forever. Now it is abandoned 1.5 seconds after you cancel (or after `rizomadb.query.timeoutSeconds`) and that connection is closed; run again and it reconnects. If you still see it, run **RizomaDB: Disconnect All**.
 
-**Oracle is slow or stalls when a file opens.** Completion and diagnostics read the data dictionary through the same session as your statements. Each of those reads is now limited to 30 seconds and, if it fails or is too slow, it is not retried for 2 minutes. Statements you run yourself are not limited by that.
+**A statement takes long to start right after connecting (Oracle and other large dictionaries).** Completion and diagnostics read the data dictionary through the same session as your statements, which the engine runs one at a time. That reading waits while a statement of yours runs and is split into small queries, so your statement waits for one of them at most, not for the whole schema. The reading gets 60 seconds of dictionary work in total and, if it fails or is too slow, it is not retried for 2 minutes. Statements you run yourself are not limited by that.
 
 **A connection I was using shows as disconnected.** After `rizomadb.connections.idleMinutes` minutes without use (30 by default) it is closed on purpose; press **Reconnect** in the notification or just run something. Set the setting to `0` to keep connections open.
 
